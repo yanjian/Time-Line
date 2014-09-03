@@ -1,0 +1,40 @@
+//
+//  Prefix header
+//
+//  The contents of this file are implicitly included at the beginning of every source file.
+//
+
+#import <Availability.h>
+#import "PublicMethodsViewController.h"
+#import <EventKit/EventKit.h>
+#import <EventKitUI/EventKitUI.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif
+//A better version of NSLog
+#define NSLog(format, ...)  do {fprintf(stderr, "<%s : %d> %s\n", [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],__LINE__, __func__);  (NSLog)((format), ##__VA_ARGS__); fprintf(stderr, "-------------------\n"); \
+   } while (0)
+
+
+#define blueColor  [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1]
+#define grayColors [UIColor colorWithRed:102.0f/255.0f green:102.0f/255.0f blue:102.0f/255.0f alpha:1]
+#define yellow  [UIColor colorWithRed:168.0f/255.0f green:166.0f/255.0f blue:72.0f/255.0f alpha:1]
+
+
+//版本号
+#define kSystem_Version [[[UIDevice currentDevice] systemVersion] floatValue]
+
+
+#define kCurrAppBuild [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]; //当前系统内部开发版本号(build)
+#define kCurrAppVersion [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] //当前系统发布版本号(version)
+
+
+#define kScreen_Width [[UIScreen mainScreen] bounds].size.width
+#define kScreen_Height [[UIScreen mainScreen] bounds].size.height

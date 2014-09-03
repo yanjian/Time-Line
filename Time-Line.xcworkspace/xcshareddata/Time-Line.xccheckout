@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>2054EFEE-7312-4CFB-9416-837A3718DE38</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Time-Line</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>2DE30E98-264A-4E12-8CF5-403C21FC8750</key>
+		<string>file:///Users/IF/Desktop/company%EF%BC%8Dproject/Time-Line-workspace/Time-Line/</string>
+		<key>59C71734-F35D-4FD4-9529-CD9B59745A0D</key>
+		<string>ssh://github.com/yanjian/TimeLine.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Time-Line.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>2DE30E98-264A-4E12-8CF5-403C21FC8750</key>
+		<string>..</string>
+		<key>59C71734-F35D-4FD4-9529-CD9B59745A0D</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/yanjian/TimeLine.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>2DE30E98-264A-4E12-8CF5-403C21FC8750</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>59C71734-F35D-4FD4-9529-CD9B59745A0D</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Time-Line</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2DE30E98-264A-4E12-8CF5-403C21FC8750</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Time-Line</string>
+		</dict>
+	</array>
+</dict>
+</plist>
