@@ -30,10 +30,6 @@
 		A894D6E219B578270088E522 /* CLCalendarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6D919B578270088E522 /* CLCalendarCell.m */; };
 		A894D6E319B578270088E522 /* CalendarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6DB19B578270088E522 /* CalendarCell.m */; };
 		A894D6E419B578270088E522 /* EventCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6DE19B578270088E522 /* EventCell.m */; };
-		A894D6F019B5786A0088E522 /* PECropRectView.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6E719B5786A0088E522 /* PECropRectView.m */; };
-		A894D6F119B5786A0088E522 /* PECropView.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6E919B5786A0088E522 /* PECropView.m */; };
-		A894D6F219B5786A0088E522 /* PECropViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6EB19B5786A0088E522 /* PECropViewController.m */; };
-		A894D6F319B5786A0088E522 /* PEResizeControl.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6ED19B5786A0088E522 /* PEResizeControl.m */; };
 		A894D6F419B5786A0088E522 /* PublicMethodsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6EF19B5786A0088E522 /* PublicMethodsViewController.m */; };
 		A894D6F819B579560088E522 /* EventCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A894D6F719B579560088E522 /* EventCell.xib */; };
 		A894D6FB19B57F470088E522 /* SHRootController.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6FA19B57F470088E522 /* SHRootController.m */; };
@@ -178,14 +174,6 @@
 		A894D6DC19B578270088E522 /* CLCanlendarDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CLCanlendarDelegate.h; sourceTree = "<group>"; };
 		A894D6DD19B578270088E522 /* EventCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventCell.h; sourceTree = "<group>"; };
 		A894D6DE19B578270088E522 /* EventCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventCell.m; sourceTree = "<group>"; };
-		A894D6E619B5786A0088E522 /* PECropRectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PECropRectView.h; sourceTree = "<group>"; };
-		A894D6E719B5786A0088E522 /* PECropRectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PECropRectView.m; sourceTree = "<group>"; };
-		A894D6E819B5786A0088E522 /* PECropView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PECropView.h; sourceTree = "<group>"; };
-		A894D6E919B5786A0088E522 /* PECropView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PECropView.m; sourceTree = "<group>"; };
-		A894D6EA19B5786A0088E522 /* PECropViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PECropViewController.h; sourceTree = "<group>"; };
-		A894D6EB19B5786A0088E522 /* PECropViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PECropViewController.m; sourceTree = "<group>"; };
-		A894D6EC19B5786A0088E522 /* PEResizeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PEResizeControl.h; sourceTree = "<group>"; };
-		A894D6ED19B5786A0088E522 /* PEResizeControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PEResizeControl.m; sourceTree = "<group>"; };
 		A894D6EE19B5786A0088E522 /* PublicMethodsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublicMethodsViewController.h; sourceTree = "<group>"; };
 		A894D6EF19B5786A0088E522 /* PublicMethodsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PublicMethodsViewController.m; sourceTree = "<group>"; };
 		A894D6F719B579560088E522 /* EventCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EventCell.xib; sourceTree = "<group>"; };
@@ -419,21 +407,13 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		A894D6E519B578580088E522 /* Lib */ = {
+		A894D6E519B578580088E522 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				A894D6E619B5786A0088E522 /* PECropRectView.h */,
-				A894D6E719B5786A0088E522 /* PECropRectView.m */,
-				A894D6E819B5786A0088E522 /* PECropView.h */,
-				A894D6E919B5786A0088E522 /* PECropView.m */,
-				A894D6EA19B5786A0088E522 /* PECropViewController.h */,
-				A894D6EB19B5786A0088E522 /* PECropViewController.m */,
-				A894D6EC19B5786A0088E522 /* PEResizeControl.h */,
-				A894D6ED19B5786A0088E522 /* PEResizeControl.m */,
 				A894D6EE19B5786A0088E522 /* PublicMethodsViewController.h */,
 				A894D6EF19B5786A0088E522 /* PublicMethodsViewController.m */,
 			);
-			name = Lib;
+			name = lib;
 			sourceTree = "<group>";
 		};
 		A894D83419B5B9D00088E522 /* Image */ = {
@@ -537,7 +517,7 @@
 		A898C8FB19B4636600559F53 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				A894D6E519B578580088E522 /* Lib */,
+				A894D6E519B578580088E522 /* lib */,
 				A894D6D219B578270088E522 /* MMLocationManager.h */,
 				A894D6D319B578270088E522 /* MMLocationManager.m */,
 				A894D6D419B578270088E522 /* JCDatePicker.h */,
@@ -803,7 +783,6 @@
 				A877C96019B450C50075D9E8 /* ViewController.m in Sources */,
 				A877C95A19B450C50075D9E8 /* AppDelegate.m in Sources */,
 				A894D71019B57F9C0088E522 /* NotesViewController.m in Sources */,
-				A894D6F119B5786A0088E522 /* PECropView.m in Sources */,
 				A894D70A19B57F890088E522 /* MapViewController.m in Sources */,
 				A877C95619B450C50075D9E8 /* main.m in Sources */,
 				A894D6E419B578270088E522 /* EventCell.m in Sources */,
@@ -818,11 +797,8 @@
 				A898C8F919B4635900559F53 /* CLDay.m in Sources */,
 				A894D6FB19B57F470088E522 /* SHRootController.m in Sources */,
 				A894D6DF19B578270088E522 /* MMLocationManager.m in Sources */,
-				A894D6F219B5786A0088E522 /* PECropViewController.m in Sources */,
 				A894D6E119B578270088E522 /* CLCalendarView.m in Sources */,
 				A894D71319B57FA80088E522 /* AlertViewController.m in Sources */,
-				A894D6F319B5786A0088E522 /* PEResizeControl.m in Sources */,
-				A894D6F019B5786A0088E522 /* PECropRectView.m in Sources */,
 				A898C8FA19B4635900559F53 /* CLEvent.m in Sources */,
 				A894D6CF19B56B200088E522 /* HomeViewController.m in Sources */,
 				A898C8FF19B463E700559F53 /* CalendarDateUtil.m in Sources */,

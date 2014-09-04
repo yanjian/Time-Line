@@ -19,6 +19,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-PEPhotoCropEditor.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Reachability.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -47,42 +52,47 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>1EA2BD68A51A4F2DA05EBAF5</key>
+		<key>0BB541D288744E629D7AFAE6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>55C8F47E99144D19B372C5B7</key>
+		<key>41F221D2017B4274B8450D98</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>767B74C5A0F94A86845454B3</key>
+		<key>6626E658E6E8468F87C78D20</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8AD6B48E334B48A489A50412</key>
+		<key>7010C8F02F87414D9151256C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8FAC65F373D94A69A98D8A1C</key>
+		<key>B233D168E8E54305BE1CDDB4</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A9A7D7173BAE4B69881F77DA</key>
+		<key>B730EE6DE91C4231A33CC767</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>ABB291D5493743868DFF530E</key>
+		<key>BE2527DCE4054F478F1E4921</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D9E5CDB8FB684CFF9DFAA88F</key>
+		<key>E5AECAC31D1E4577B5C4481D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F052B11C97DC411C9E458582</key>
 		<dict>
 			<key>primary</key>
 			<true/>

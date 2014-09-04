@@ -84,6 +84,12 @@
 #define COCOAPODS_VERSION_MINOR_EGOTableViewPullRefreshAndLoadMore 0
 #define COCOAPODS_VERSION_PATCH_EGOTableViewPullRefreshAndLoadMore 4
 
+// PEPhotoCropEditor
+#define COCOAPODS_POD_AVAILABLE_PEPhotoCropEditor
+#define COCOAPODS_VERSION_MAJOR_PEPhotoCropEditor 1
+#define COCOAPODS_VERSION_MINOR_PEPhotoCropEditor 3
+#define COCOAPODS_VERSION_PATCH_PEPhotoCropEditor 1
+
 // Reachability
 #define COCOAPODS_POD_AVAILABLE_Reachability
 #define COCOAPODS_VERSION_MAJOR_Reachability 3

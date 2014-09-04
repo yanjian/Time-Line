@@ -38,3 +38,4 @@
 
 #define kScreen_Width [[UIScreen mainScreen] bounds].size.width
 #define kScreen_Height [[UIScreen mainScreen] bounds].size.height
+#define SYS_DEFAULT_TIMEZONE [[NSTimeZone defaultTimeZone] name] //获得默认时区名 如 Asia/Hong_Kong

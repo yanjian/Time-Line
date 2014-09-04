@@ -116,16 +116,26 @@
 
 #pragma mark - 
 
-    static CalendarDateUtil *_singletion;
+  //  static CalendarDateUtil *_singletion;
 
-+ (CalendarDateUtil*)shareInstance {
-    
-    if (!_singletion) {
-        _singletion = [[self alloc] init];
-    }
+//+ (CalendarDateUtil*)shareInstance {
+//    
+//    if (!_singletion) {
+//        _singletion = [[self alloc] init];
+//    }
+//
+//    return _singletion;
+//}
 
-    return _singletion;
++(CalendarDateUtil*)shareInstance{
+    static CalendarDateUtil *calendar=nil;
+    static dispatch_once_t predicate;
+    dispatch_once(&predicate, ^{
+        calendar=[[self alloc] init];
+    });
+    return calendar;
 }
+
 //
 //+ (id)alloc
 //{

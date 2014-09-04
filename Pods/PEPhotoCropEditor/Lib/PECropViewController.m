@@ -35,6 +35,8 @@ static inline NSString *PELocalizedString(NSString *key, NSString *comment)
     return [[PECropViewController bundle] localizedStringForKey:key value:nil table:@"Localizable"];
 }
 
+#pragma mark -
+
 - (void)loadView
 {
     UIView *contentView = [[UIView alloc] init];
@@ -50,24 +52,46 @@ static inline NSString *PELocalizedString(NSString *key, NSString *comment)
 {
     [super viewDidLoad];
     
+    self.navigationController.navigationBar.translucent = NO;
+    self.navigationController.toolbar.translucent = NO;
+
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                                                                                           target:self
                                                                                           action:@selector(cancel:)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
                                                                                            target:self
                                                                                            action:@selector(done:)];
-    
-    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                                                                                   target:nil
-                                                                                   action:nil];
-    UIBarButtonItem *constrainButton = [[UIBarButtonItem alloc] initWithTitle:PELocalizedString(@"Constrain", nil)
-                                                                        style:UIBarButtonItemStyleBordered
-                                                                       target:self
-                                                                       action:@selector(constrain:)];
-    self.toolbarItems = @[flexibleSpace, constrainButton, flexibleSpace];
-    self.navigationController.toolbarHidden = NO;
+
+    if (!self.toolbarItems) {
+        UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                                       target:nil
+                                                                                       action:nil];
+        UIBarButtonItem *constrainButton = [[UIBarButtonItem alloc] initWithTitle:PELocalizedString(@"Constrain", nil)
+                                                                            style:UIBarButtonItemStyleBordered
+                                                                           target:self
+                                                                           action:@selector(constrain:)];
+        self.toolbarItems = @[flexibleSpace, constrainButton, flexibleSpace];
+    }
+    self.navigationController.toolbarHidden = self.toolbarHidden;
     
     self.cropView.image = self.image;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if (self.cropAspectRatio != 0) {
+        self.cropAspectRatio = self.cropAspectRatio;
+    }
+    if (!CGRectEqualToRect(self.cropRect, CGRectZero)) {
+        self.cropRect = self.cropRect;
+    }
+    if (!CGRectEqualToRect(self.imageCropRect, CGRectZero)) {
+        self.imageCropRect = self.imageCropRect;
+    }
+    
+    self.keepingCropAspectRatio = self.keepingCropAspectRatio;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
@@ -75,11 +99,60 @@ static inline NSString *PELocalizedString(NSString *key, NSString *comment)
     return YES;
 }
 
+#pragma mark -
+
 - (void)setImage:(UIImage *)image
 {
     _image = image;
     self.cropView.image = image;
 }
+
+- (void)setKeepingCropAspectRatio:(BOOL)keepingCropAspectRatio
+{
+    _keepingCropAspectRatio = keepingCropAspectRatio;
+    self.cropView.keepingCropAspectRatio = self.keepingCropAspectRatio;
+}
+
+- (void)setCropAspectRatio:(CGFloat)cropAspectRatio
+{
+    _cropAspectRatio = cropAspectRatio;
+    self.cropView.cropAspectRatio = self.cropAspectRatio;
+}
+
+- (void)setCropRect:(CGRect)cropRect
+{
+    _cropRect = cropRect;
+    _imageCropRect = CGRectZero;
+    
+    CGRect cropViewCropRect = self.cropView.cropRect;
+    cropViewCropRect.origin.x += cropRect.origin.x;
+    cropViewCropRect.origin.y += cropRect.origin.y;
+    
+    CGSize size = CGSizeMake(fminf(CGRectGetMaxX(cropViewCropRect) - CGRectGetMinX(cropViewCropRect), CGRectGetWidth(cropRect)),
+                             fminf(CGRectGetMaxY(cropViewCropRect) - CGRectGetMinY(cropViewCropRect), CGRectGetHeight(cropRect)));
+    cropViewCropRect.size = size;
+    self.cropView.cropRect = cropViewCropRect;
+}
+
+- (void)setImageCropRect:(CGRect)imageCropRect
+{
+    _imageCropRect = imageCropRect;
+    _cropRect = CGRectZero;
+    
+    self.cropView.imageCropRect = imageCropRect;
+}
+
+- (void)resetCropRect
+{
+    [self.cropView resetCropRect];
+}
+
+- (void)resetCropRectAnimated:(BOOL)animated
+{
+    [self.cropView resetCropRectAnimated:animated];
+}
+
+#pragma mark -
 
 - (void)cancel:(id)sender
 {
@@ -114,6 +187,8 @@ static inline NSString *PELocalizedString(NSString *key, NSString *comment)
     [self.actionSheet showFromToolbar:self.navigationController.toolbar];
 }
 
+#pragma mark -
+
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex == 0) {
@@ -131,27 +206,27 @@ static inline NSString *PELocalizedString(NSString *key, NSString *comment)
         }
         self.cropView.cropRect = cropRect;
     } else if (buttonIndex == 1) {
-        self.cropView.aspectRatio = 1.0f;
+        self.cropView.cropAspectRatio = 1.0f;
     } else if (buttonIndex == 2) {
-        self.cropView.aspectRatio = 2.0f / 3.0f;
+        self.cropView.cropAspectRatio = 2.0f / 3.0f;
     } else if (buttonIndex == 3) {
-        self.cropView.aspectRatio = 3.0f / 5.0f;
+        self.cropView.cropAspectRatio = 3.0f / 5.0f;
     } else if (buttonIndex == 4) {
         CGFloat ratio = 3.0f / 4.0f;
         CGRect cropRect = self.cropView.cropRect;
-        CGFloat width = CGRectGetHeight(cropRect);
+        CGFloat width = CGRectGetWidth(cropRect);
         cropRect.size = CGSizeMake(width, width * ratio);
         self.cropView.cropRect = cropRect;
     } else if (buttonIndex == 5) {
-        self.cropView.aspectRatio = 4.0f / 6.0f;
+        self.cropView.cropAspectRatio = 4.0f / 6.0f;
     } else if (buttonIndex == 6) {
-        self.cropView.aspectRatio = 5.0f / 7.0f;
+        self.cropView.cropAspectRatio = 5.0f / 7.0f;
     } else if (buttonIndex == 7) {
-        self.cropView.aspectRatio = 8.0f / 10.0f;
+        self.cropView.cropAspectRatio = 8.0f / 10.0f;
     } else if (buttonIndex == 8) {
         CGFloat ratio = 9.0f / 16.0f;
         CGRect cropRect = self.cropView.cropRect;
-        CGFloat width = CGRectGetHeight(cropRect);
+        CGFloat width = CGRectGetWidth(cropRect);
         cropRect.size = CGSizeMake(width, width * ratio);
         self.cropView.cropRect = cropRect;
     }

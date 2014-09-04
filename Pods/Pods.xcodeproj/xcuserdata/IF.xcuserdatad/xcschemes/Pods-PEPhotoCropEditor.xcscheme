@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0BB541D288744E629D7AFAE6"
-               BuildableName = "libPods-AFNetworking.a"
-               BlueprintName = "Pods-AFNetworking"
+               BlueprintIdentifier = "6626E658E6E8468F87C78D20"
+               BuildableName = "libPods-PEPhotoCropEditor.a"
+               BlueprintName = "Pods-PEPhotoCropEditor"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

@@ -26,7 +26,7 @@
 
 @property (nonatomic, weak) id<CalendarCellDelegate> detelegate;
 @property (nonatomic, strong) NSArray *weekArr;
-@property (nonatomic,retain)NSString* time;
+@property (nonatomic,copy)NSString* time;
 
 
 @end

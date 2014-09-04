@@ -48,6 +48,7 @@
                 </subviews>
             </tableViewCellContentView>
             <connections>
+                <outlet property="backImage" destination="cPu-3i-3c5" id="Y9Y-gA-un1"/>
                 <outlet property="content" destination="Cnh-Se-yaT" id="Cvn-JG-ghM"/>
                 <outlet property="starttimelabel" destination="Ya8-Ru-6CW" id="56d-nm-xjp"/>
                 <outlet property="timelabel" destination="D1B-WU-sWZ" id="ww2-9k-v0m"/>

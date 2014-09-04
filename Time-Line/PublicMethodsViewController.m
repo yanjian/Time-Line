@@ -32,7 +32,7 @@ static PublicMethodsViewController * PublicMethods = nil;
     NSDate *dates = [NSDate date];
     NSDateFormatter *formatter =  [[NSDateFormatter alloc] init];
     [formatter setDateFormat:format];
-    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:@"Asia/beijing"];
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE];
     [formatter setTimeZone:timeZone];
     NSString *loctime = [formatter stringFromDate:dates];
     NSLog(@"%@",loctime);
@@ -42,7 +42,7 @@ static PublicMethodsViewController * PublicMethods = nil;
 -(NSString *)getonehourstime:(NSString*)format{
     NSDateFormatter *formatter =  [[NSDateFormatter alloc] init];
     [formatter setDateFormat:format];
-    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:@"Asia/beijing"];
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE];
     [formatter setTimeZone:timeZone];
     NSString *timeSp = [NSString stringWithFormat:@"%ld", (long)[[NSDate date] timeIntervalSince1970]];
     NSInteger timer=[timeSp integerValue];
