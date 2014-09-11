@@ -147,7 +147,7 @@
             if (event.notes) {
                 [dictem setObject:event.notes forKey:@"note"];
             }
-            [dictem setObject:[event.URL absoluteString] forKey:@"url"];
+           // [dictem setObject:[event.URL absoluteString] forKey:@"url"];
             NSLog(@"%@",[event.URL absoluteString]);
             
             for (NSString* str in [data allKeys]) {

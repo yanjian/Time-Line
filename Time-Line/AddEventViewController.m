@@ -11,6 +11,7 @@
 #import "CLEvent.h"
 #import "AlertViewController.h"
 #import "AppDelegate.h"
+#import "LocationViewController.h"
 #import <CoreLocation/CLGeocoder.h>
 #import <CoreLocation/CLPlacemark.h>
 @interface AddEventViewController (){
@@ -947,23 +948,15 @@
 //    }
     
     NSLog(@"brnbrnbrnbnr %d",btn.tag);
-    
-    
-    
     switch (btn.tag)
     {
         case 10:
-            
             isUse = !isUse;
-            
                 if (isUse)
                 {
-            
                     [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-            
                 }else
                 {
-            
                     [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
                 }
             break;
@@ -1125,8 +1118,13 @@
     
     
     [UIView commitAnimations];
-
+    NSLog(@"%d",textField.tag);
+    if ([@"1" isEqualToString:[NSString stringWithFormat:@"%d",textField.tag] ]) {
+        LocationViewController *locationView=[[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
         
+        [self.navigationController pushViewController:locationView animated:NO];
+        
+    }
       NSLog(@"开始编辑");
     
     

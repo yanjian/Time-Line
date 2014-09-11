@@ -141,8 +141,8 @@
 //到顶或到底剪头
 - (void)loadTodayBtn {
     goBackbtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [goBackbtn setBackgroundImage:[UIImage imageNamed:@"Icon_Upward.png"] forState:UIControlStateNormal];
-    goBackbtn.backgroundColor=[UIColor redColor];
+    [goBackbtn setBackgroundImage:[UIImage imageNamed:@"go_back_today.png"] forState:UIControlStateNormal];
+    goBackbtn.backgroundColor=[UIColor clearColor];
     [goBackbtn setFrame:CGRectMake(self.frame.size.width-50, self.frame.size.height-50, 30, 30)];
     [goBackbtn setHidden:YES];
     [goBackbtn addTarget:self action:@selector(goBackToday) forControlEvents:UIControlEventTouchUpInside];
@@ -336,13 +336,13 @@
                 
                 for (NSArray* arr in temarray ) {
                     if (day.month==[[arr objectAtIndex:1] integerValue]&&day.day==[[arr objectAtIndex:2] integerValue]) {
-                        cell.imageview.image=[UIImage imageNamed:@"Rectangle 13.png"];
+                        cell.imageview.image=[UIImage imageNamed:@"Rectangle_13.png"];
                     NSLog(@"%lu---dsdsdsdsdsd-%lu",(unsigned long)day.month,(unsigned long)day.day);
                     }
                 }
                 if (showMonth != day.month) {
                     showMonth = day.month;
-                    month.text=[NSString stringWithFormat:@"%lu 月",(unsigned long)day.month];
+                    month.text=[NSString stringWithFormat:@"%lu Month",(unsigned long)day.month];
                     [self.delegate calendarDidToMonth:day.month year:day.year CalendarView:self];
                 }
                 cell.weekArr = [dateArr objectAtIndex:indexPath.row];
@@ -369,7 +369,7 @@
                 CLDay *day = [[dateArr objectAtIndex:i] objectAtIndex:0];
                 if (showMonth != day.month) {
                     showMonth = day.month;
-                    month.text=[NSString stringWithFormat:@"%lu 月",(unsigned long)day.month];
+                    month.text=[NSString stringWithFormat:@"%lu Month",(unsigned long)day.month];
                     [self.delegate calendarDidToMonth:day.month year:day.year CalendarView:self];
                 }
                 cell.weekArr = [dateArr objectAtIndex:indexPath.row];
@@ -394,8 +394,7 @@
         for (NSString* temstr in [data allKeys]) {
             if ([str isEqualToString:temstr]) {
                 NSDictionary* dic=[[data objectForKey:temstr] objectAtIndex:indexPath.row];
-                NSString* strtime=[dic objectForKey:@"start"]
-                ;
+                NSString* strtime=[dic objectForKey:@"start"];
                 NSRange range=[strtime rangeOfString:@"日"];
                 NSString* strs=[strtime substringWithRange:NSMakeRange(range.location+1,strtime.length-range.location-1)];
                 NSString* endtime=[dic objectForKey:@"end"];
@@ -510,12 +509,12 @@
                 }
                     break;
                 case NSOrderedAscending:{
-                    [goBackbtn setBackgroundImage:[UIImage imageNamed:@"Icon_Upward.png"] forState:UIControlStateNormal];
+                    [goBackbtn setBackgroundImage:[UIImage imageNamed:@"go_back_today"] forState:UIControlStateNormal];
                 }
                     break;
                 case NSOrderedDescending:
                 {
-                    [goBackbtn setBackgroundImage:[UIImage imageNamed:@"Icon_Downward.png"] forState:UIControlStateNormal];
+                    [goBackbtn setBackgroundImage:[UIImage imageNamed:@"go_back_today"] forState:UIControlStateNormal];
                 }
                     break;
             }
@@ -591,7 +590,7 @@
 
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
      if (calendar_tableView == scrollView) {
-    [self addSubview:month];
+         [self addSubview:month];
      }else{
          isshow=YES;
      }

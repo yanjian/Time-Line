@@ -37,7 +37,7 @@
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.font = [UIFont boldSystemFontOfSize:22];
     titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.text =@"活动地址";
+    titleLabel.text =@"Location";
     [titleView addSubview:titleLabel];
     self.navigationItem.titleView = titleView;
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
@@ -45,7 +45,6 @@
     [[MMLocationManager shareLocation] getCity:^(NSString *cityString) {
         [wself setLabelText:cityString];
     }];
-    // Do any additional setup after loading the view from its nib.
 }
 
 -(void)disviewcontroller{

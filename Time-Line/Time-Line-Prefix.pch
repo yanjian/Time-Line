@@ -35,7 +35,7 @@
 #define kCurrAppBuild [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]; //当前系统内部开发版本号(build)
 #define kCurrAppVersion [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"] //当前系统发布版本号(version)
 
-
+#define SYSTEM_VERSION_LESS_THAN(v) ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)//判断版本是ios6 还是 6 以上 地图应用
 #define kScreen_Width [[UIScreen mainScreen] bounds].size.width
 #define kScreen_Height [[UIScreen mainScreen] bounds].size.height
 #define SYS_DEFAULT_TIMEZONE [[NSTimeZone defaultTimeZone] name] //获得默认时区名 如 Asia/Hong_Kong

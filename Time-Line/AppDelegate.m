@@ -9,6 +9,10 @@
 #import "AppDelegate.h"
 #import "HomeViewController.h"
 
+@interface AppDelegate ()
+
+@end
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -16,13 +20,39 @@
     // Override point for customization after application launch.
     self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor=[UIColor whiteColor];
-    [self.window makeKeyAndVisible];
+   
+   
     HomeViewController *homeVC=[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
     UINavigationController *nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
     nav.navigationBarHidden=YES;
     self.window.rootViewController=nav;
-    homeVC=nil;
     nav=nil;
+     //_flipNC=[[FlipBoardNavigationController alloc] initWithRootViewController:homeVC];
+     // self.window.rootViewController = _flipNC;
+    homeVC=nil;
+    
+     [self.window makeKeyAndVisible];
+    
+    // 监测网络情况
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reachabilityChanged:)
+                                                 name: kReachabilityChangedNotification
+                                               object: nil];
+    Reachability *hostReach = [Reachability reachabilityWithHostname:@"www.baidu.com"];
+    [hostReach startNotifier];
+    
+    
+    //ASI QUENE
+    _netWorkQueue= [[ASINetworkQueue alloc] init];
+    [_netWorkQueue setShouldCancelAllRequestsOnFailure:NO];
+    
+    _netWorkStatus = ReachableViaWiFi;
+    
+    //初始化 MBProgressHUD控件
+    _HUD=[[MBProgressHUD alloc] initWithView:self.window];
+    [self.window addSubview:_HUD];
+    
+    
     
     UILocalNotification *localNotif =
 	[launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
@@ -52,7 +82,95 @@
     
     return YES;
 }
-							
+
+
+
+//网络状态发生变化
+- (void)reachabilityChanged:(NSNotification *)note
+{
+    Reachability* curReach = [note object];
+    NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
+    NetworkStatus status = [curReach currentReachabilityStatus];
+    self.netWorkStatus = status;
+    
+    if([curReach isReachable]){
+        NSLog(@"yyyyyyyyyyyyyyyyyyyyyy");
+    }else{
+        
+        NSLog(@"nnnnnnnnnnnnnnnnnnnnnn");
+        [self reachabilityChanged];
+    }
+}
+
+//网络改变
+-(void)reachabilityChanged
+{
+    UIAlertView *alert;
+    alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请检查你的网络连接" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    [alert show];
+}
+
+
+
+
+#pragma mark - MBProgressHuD Method
+//显示带时限的等待进度提示框
+-(void)showActivityView:(NSString *)text interval:(NSTimeInterval)time{
+    if( _HUD ){
+        _HUD.mode=MBProgressHUDModeIndeterminate;
+        _HUD.labelText=text;
+        if( [_HUD isHidden] ) {
+            [_HUD show:YES];
+        }
+        [_HUD hide:YES afterDelay:time];
+    }
+}
+
+
+//持续显示的提示框
+-(void)showActivityView:(NSString *)text{
+    if ( _HUD ) {
+        _HUD.labelText=text;
+        _HUD.mode=MBProgressHUDModeIndeterminate;
+        [_HUD show:YES];
+    }
+}
+
+
+//显示普通的文字提示框
+- (void)showNormalyTextView:(NSString *)text interval:(NSTimeInterval)time
+{
+    if ( _HUD ) {
+        if (text != nil && ![text isEqualToString:@""]) {
+            _HUD.mode = MBProgressHUDModeText;
+            _HUD.labelText = text;
+            [_HUD show:YES];
+            [_HUD hide:YES afterDelay:time];
+        } else {
+            [_HUD hide:YES];
+        }
+    }
+}
+
+//隐藏提示框
+- (void)hideActivityView {
+    if (_HUD) {
+        [_HUD hide:YES];
+    }
+}
+
+
+
+#pragma mark - LoginViewController Method
+//显示带时限的等待进度提示框
+- (void)push2LoginViewController
+{
+   // [self.window.rootViewController presentViewController:[LoginViewController new] animated:YES completion:nil];
+}
+
+
+
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -78,6 +196,11 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
++ (AppDelegate *)getAppDelegate
+{
+    return (AppDelegate *) [[UIApplication sharedApplication] delegate];
 }
 
 @end

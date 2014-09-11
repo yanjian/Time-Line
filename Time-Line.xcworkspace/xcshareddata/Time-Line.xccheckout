@@ -5,46 +5,34 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>2054EFEE-7312-4CFB-9416-837A3718DE38</string>
+	<string>6FBB720D-D1E3-466F-894F-CA59DA56A99F</string>
 	<key>IDESourceControlProjectName</key>
 	<string>Time-Line</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>2DE30E98-264A-4E12-8CF5-403C21FC8750</key>
-		<string>file:///Users/IF/Desktop/company%EF%BC%8Dproject/Time-Line-workspace/Time-Line/</string>
-		<key>59C71734-F35D-4FD4-9529-CD9B59745A0D</key>
-		<string>ssh://github.com/yanjian/TimeLine.git</string>
+		<key>324EFB75-B6AE-447B-9C02-51CD9A04F107</key>
+		<string>https://github.com/yanjian/Time-Line.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Time-Line.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>2DE30E98-264A-4E12-8CF5-403C21FC8750</key>
-		<string>..</string>
-		<key>59C71734-F35D-4FD4-9529-CD9B59745A0D</key>
+		<key>324EFB75-B6AE-447B-9C02-51CD9A04F107</key>
 		<string>..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/yanjian/TimeLine.git</string>
+	<string>https://github.com/yanjian/Time-Line.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>2DE30E98-264A-4E12-8CF5-403C21FC8750</string>
+	<string>324EFB75-B6AE-447B-9C02-51CD9A04F107</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>59C71734-F35D-4FD4-9529-CD9B59745A0D</string>
-			<key>IDESourceControlWCCName</key>
-			<string>Time-Line</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>2DE30E98-264A-4E12-8CF5-403C21FC8750</string>
+			<string>324EFB75-B6AE-447B-9C02-51CD9A04F107</string>
 			<key>IDESourceControlWCCName</key>
 			<string>Time-Line</string>
 		</dict>

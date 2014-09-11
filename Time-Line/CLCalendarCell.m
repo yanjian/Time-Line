@@ -66,7 +66,7 @@
         /* 调整背景色 */
         if (day.isToday) {
 //            当前日期的图片
-            [tempBgView setImage:[UIImage imageNamed:@"daybackgrd2"]];
+            [tempBgView setImage:[UIImage imageNamed:@"day_today"]];
         } else if ([self.detelegate getShowSelectDay:self] == i) {
             
 //            点击的日期图片

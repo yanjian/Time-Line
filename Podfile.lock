@@ -33,7 +33,10 @@ PODS:
     - Reachability
   - ASIHTTPRequest/S3 (1.8.2):
     - ASIHTTPRequest/Core
+  - EAIntroView (2.6.3)
   - EGOTableViewPullRefreshAndLoadMore (1.0.4)
+  - FXBlurView (1.6.2)
+  - MBProgressHUD (0.9)
   - PEPhotoCropEditor (1.3.1)
   - Reachability (3.1.1)
   - SBJson (4.0.1)
@@ -43,7 +46,10 @@ PODS:
 DEPENDENCIES:
   - AFNetworking (~> 2.3.1)
   - ASIHTTPRequest (~> 1.8.2)
+  - EAIntroView (~> 2.6.3)
   - EGOTableViewPullRefreshAndLoadMore (~> 1.0.4)
+  - FXBlurView (~> 1.6.2)
+  - MBProgressHUD (~> 0.9)
   - PEPhotoCropEditor (~> 1.3.1)
   - SBJson (~> 4.0.1)
   - SHLineGraphView (~> 1.0.6)
@@ -52,7 +58,10 @@ DEPENDENCIES:
 SPEC CHECKSUMS:
   AFNetworking: 6d7b76aa5d04c8c37daad3eef4b7e3f2a7620da3
   ASIHTTPRequest: 2c8335b49410c0e2ad42829c438e74d454b77590
+  EAIntroView: 45924b81c153d1206ee24f4fa654e9d9dae79e93
   EGOTableViewPullRefreshAndLoadMore: 1dcd0f78d7aa8dee28adf64891b627904be8cd71
+  FXBlurView: 47496afc9160097fa34af35fc4b310bd85d65dca
+  MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
   PEPhotoCropEditor: ec3d241673c914d5c561166d00cd07f6b91194e8
   Reachability: 8e9635e3cb4f98e7f825e51147f677ecc694d0e7
   SBJson: d71212c078abf4679d54b0d0565260c474e46235
