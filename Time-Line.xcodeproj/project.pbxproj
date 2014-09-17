@@ -10,6 +10,7 @@
 		5A89419930F14EE2AE7A6067 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A79FC40584C54ABD95BCBAD3 /* libPods.a */; };
 		A8116A2419B9B7EF003EB3ED /* FlipBoardNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8116A2319B9B7EF003EB3ED /* FlipBoardNavigationController.m */; };
 		A82B72B719C133ED00D89816 /* day_today.png in Resources */ = {isa = PBXBuildFile; fileRef = A82B72B619C133ED00D89816 /* day_today.png */; };
+		A86CEA2019C7CF8D0015BB25 /* GoogleMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A86CEA1F19C7CF8D0015BB25 /* GoogleMapViewController.m */; };
 		A877C94A19B450C50075D9E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A877C94919B450C50075D9E8 /* Foundation.framework */; };
 		A877C94C19B450C50075D9E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A877C94B19B450C50075D9E8 /* CoreGraphics.framework */; };
 		A877C94E19B450C50075D9E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A877C94D19B450C50075D9E8 /* UIKit.framework */; };
@@ -110,7 +111,7 @@
 		A894D8AF19B5BB150088E522 /* Time_End.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A119B5BB150088E522 /* Time_End.png */; };
 		A894D8B019B5BB150088E522 /* TIme_Start.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A219B5BB150088E522 /* TIme_Start.png */; };
 		A894D8B119B5BB150088E522 /* go_back_today.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A319B5BB150088E522 /* go_back_today.png */; };
-		A894D8B219B5BB150088E522 /* 地點.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A419B5BB150088E522 /* 地點.png */; };
+		A894D8B219B5BB150088E522 /* adress_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A419B5BB150088E522 /* adress_Icon.png */; };
 		A894D8B319B5BB150088E522 /* 當那一天有活動（顯示在日子下面).png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A519B5BB150088E522 /* 當那一天有活動（顯示在日子下面).png */; };
 		A894D8B419B5BB150088E522 /* 發起活動.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A619B5BB150088E522 /* 發起活動.png */; };
 		A894D8B519B5BB150088E522 /* 編輯活動.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A719B5BB150088E522 /* 編輯活動.png */; };
@@ -127,6 +128,8 @@
 		A898C8F919B4635900559F53 /* CLDay.m in Sources */ = {isa = PBXBuildFile; fileRef = A898C8F619B4635900559F53 /* CLDay.m */; };
 		A898C8FA19B4635900559F53 /* CLEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = A898C8F819B4635900559F53 /* CLEvent.m */; };
 		A898C8FF19B463E700559F53 /* CalendarDateUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = A898C8FE19B463E700559F53 /* CalendarDateUtil.m */; };
+		A89F91D819C5D18D00CB7FAE /* powered-by-google-on-white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A89F91D719C5D18D00CB7FAE /* powered-by-google-on-white@2x.png */; };
+		A89F91DB19C5D73A00CB7FAE /* AutocompletionTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = A89F91DA19C5D73A00CB7FAE /* AutocompletionTableView.m */; };
 		A8A8C26919C1915900362EE5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C26819C1915900362EE5 /* QuartzCore.framework */; };
 		A8A8C26B19C1916600362EE5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C26A19C1916600362EE5 /* OpenGLES.framework */; };
 		A8A8C26D19C1917500362EE5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C26C19C1917500362EE5 /* libz.dylib */; };
@@ -139,6 +142,7 @@
 		A8A8C27B19C191F600362EE5 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C27A19C191F600362EE5 /* AVFoundation.framework */; };
 		A8A8C27D19C1924300362EE5 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C27C19C1924300362EE5 /* GoogleMaps.framework */; };
 		A8A8C27F19C1925F00362EE5 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A8A8C27E19C1925F00362EE5 /* GoogleMaps.bundle */; };
+		A8A8C28919C1A9B000362EE5 /* z_Network.m in Sources */ = {isa = PBXBuildFile; fileRef = A8A8C28819C1A9B000362EE5 /* z_Network.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -156,6 +160,8 @@
 		A8116A2219B9B7EF003EB3ED /* FlipBoardNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlipBoardNavigationController.h; sourceTree = "<group>"; };
 		A8116A2319B9B7EF003EB3ED /* FlipBoardNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlipBoardNavigationController.m; sourceTree = "<group>"; };
 		A82B72B619C133ED00D89816 /* day_today.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = day_today.png; sourceTree = "<group>"; };
+		A86CEA1E19C7CF8D0015BB25 /* GoogleMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleMapViewController.h; sourceTree = "<group>"; };
+		A86CEA1F19C7CF8D0015BB25 /* GoogleMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleMapViewController.m; sourceTree = "<group>"; };
 		A877C94619B450C50075D9E8 /* Time-Line.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Time-Line.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A877C94919B450C50075D9E8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A877C94B19B450C50075D9E8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -175,6 +181,8 @@
 		A877C97019B450C50075D9E8 /* Time-LineTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Time-LineTests-Info.plist"; sourceTree = "<group>"; };
 		A877C97219B450C50075D9E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A877C97419B450C50075D9E8 /* Time_LineTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Time_LineTests.m; sourceTree = "<group>"; };
+		A89117F919C1F03D00A0960B /* MacroDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroDefinition.h; sourceTree = "<group>"; };
+		A89117FA19C1F36C00A0960B /* InterfaceMrco.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InterfaceMrco.h; sourceTree = "<group>"; };
 		A894D6CD19B56B200088E522 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
 		A894D6CE19B56B200088E522 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
 		A894D6D019B56B490088E522 /* HomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HomeViewController.xib; sourceTree = "<group>"; };
@@ -279,7 +287,7 @@
 		A894D8A119B5BB150088E522 /* Time_End.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Time_End.png; sourceTree = "<group>"; };
 		A894D8A219B5BB150088E522 /* TIme_Start.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TIme_Start.png; sourceTree = "<group>"; };
 		A894D8A319B5BB150088E522 /* go_back_today.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = go_back_today.png; sourceTree = "<group>"; };
-		A894D8A419B5BB150088E522 /* 地點.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "地點.png"; sourceTree = "<group>"; };
+		A894D8A419B5BB150088E522 /* adress_Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = adress_Icon.png; sourceTree = "<group>"; };
 		A894D8A519B5BB150088E522 /* 當那一天有活動（顯示在日子下面).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "當那一天有活動（顯示在日子下面).png"; sourceTree = "<group>"; };
 		A894D8A619B5BB150088E522 /* 發起活動.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "發起活動.png"; sourceTree = "<group>"; };
 		A894D8A719B5BB150088E522 /* 編輯活動.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "編輯活動.png"; sourceTree = "<group>"; };
@@ -299,6 +307,9 @@
 		A898C8F819B4635900559F53 /* CLEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CLEvent.m; sourceTree = "<group>"; };
 		A898C8FD19B463E700559F53 /* CalendarDateUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalendarDateUtil.h; sourceTree = "<group>"; };
 		A898C8FE19B463E700559F53 /* CalendarDateUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalendarDateUtil.m; sourceTree = "<group>"; };
+		A89F91D719C5D18D00CB7FAE /* powered-by-google-on-white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "powered-by-google-on-white@2x.png"; sourceTree = "<group>"; };
+		A89F91D919C5D73A00CB7FAE /* AutocompletionTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutocompletionTableView.h; sourceTree = "<group>"; };
+		A89F91DA19C5D73A00CB7FAE /* AutocompletionTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutocompletionTableView.m; sourceTree = "<group>"; };
 		A8A8C26819C1915900362EE5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A8A8C26A19C1916600362EE5 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		A8A8C26C19C1917500362EE5 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -311,6 +322,8 @@
 		A8A8C27A19C191F600362EE5 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		A8A8C27C19C1924300362EE5 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
 		A8A8C27E19C1925F00362EE5 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle; sourceTree = "<group>"; };
+		A8A8C28719C1A9B000362EE5 /* z_Network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = z_Network.h; sourceTree = "<group>"; };
+		A8A8C28819C1A9B000362EE5 /* z_Network.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = z_Network.m; sourceTree = "<group>"; };
 		CE4144533101480F872A30BB /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -362,6 +375,7 @@
 		A8116A2119B9A24B003EB3ED /* ThirdLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				A89117F919C1F03D00A0960B /* MacroDefinition.h */,
 				A8116A2519B9B815003EB3ED /* FlipBoardNavigation */,
 			);
 			name = ThirdLibrary;
@@ -374,6 +388,25 @@
 				A8116A2319B9B7EF003EB3ED /* FlipBoardNavigationController.m */,
 			);
 			name = FlipBoardNavigation;
+			sourceTree = "<group>";
+		};
+		A86CEA1D19C7CE830015BB25 /* googleMapController */ = {
+			isa = PBXGroup;
+			children = (
+				A89F91D919C5D73A00CB7FAE /* AutocompletionTableView.h */,
+				A89F91DA19C5D73A00CB7FAE /* AutocompletionTableView.m */,
+				A894D6D219B578270088E522 /* MMLocationManager.h */,
+				A894D6D319B578270088E522 /* MMLocationManager.m */,
+				A894D70B19B57F920088E522 /* LocationViewController.h */,
+				A894D70C19B57F920088E522 /* LocationViewController.m */,
+				A894D72219B59ADB0088E522 /* LocationViewController.xib */,
+				A894D70819B57F890088E522 /* MapViewController.h */,
+				A894D70919B57F890088E522 /* MapViewController.m */,
+				A894D72019B59A930088E522 /* MapViewController.xib */,
+				A86CEA1E19C7CF8D0015BB25 /* GoogleMapViewController.h */,
+				A86CEA1F19C7CF8D0015BB25 /* GoogleMapViewController.m */,
+			);
+			name = googleMapController;
 			sourceTree = "<group>";
 		};
 		A877C93D19B450C50075D9E8 = {
@@ -432,9 +465,10 @@
 		A877C94F19B450C50075D9E8 /* Time-Line */ = {
 			isa = PBXGroup;
 			children = (
-				A8A8C28019C1A67F00362EE5 /* NetWork */,
+				A89117FA19C1F36C00A0960B /* InterfaceMrco.h */,
 				A898C8FD19B463E700559F53 /* CalendarDateUtil.h */,
 				A898C8FE19B463E700559F53 /* CalendarDateUtil.m */,
+				A8A8C28019C1A67F00362EE5 /* NetWork */,
 				A898C8FC19B4638000559F53 /* Controller */,
 				A898C8FB19B4636600559F53 /* View */,
 				A898C8F419B4633300559F53 /* Model */,
@@ -490,6 +524,7 @@
 		A894D83419B5B9D00088E522 /* Image */ = {
 			isa = PBXGroup;
 			children = (
+				A89F91D719C5D18D00CB7FAE /* powered-by-google-on-white@2x.png */,
 				A894D89A19B5BAF00088E522 /* Stage */,
 				A894D83519B5BACC0088E522 /* Icon_BackArrow1.png */,
 				A894D83619B5BACC0088E522 /* PEPhotoCropEditor.bundle */,
@@ -566,7 +601,7 @@
 				A894D8A119B5BB150088E522 /* Time_End.png */,
 				A894D8A219B5BB150088E522 /* TIme_Start.png */,
 				A894D8A319B5BB150088E522 /* go_back_today.png */,
-				A894D8A419B5BB150088E522 /* 地點.png */,
+				A894D8A419B5BB150088E522 /* adress_Icon.png */,
 				A894D8A519B5BB150088E522 /* 當那一天有活動（顯示在日子下面).png */,
 				A894D8A619B5BB150088E522 /* 發起活動.png */,
 				A894D8A719B5BB150088E522 /* 編輯活動.png */,
@@ -590,8 +625,6 @@
 			isa = PBXGroup;
 			children = (
 				A894D6E519B578580088E522 /* lib */,
-				A894D6D219B578270088E522 /* MMLocationManager.h */,
-				A894D6D319B578270088E522 /* MMLocationManager.m */,
 				A894D6D419B578270088E522 /* JCDatePicker.h */,
 				A894D6D519B578270088E522 /* JCDatePicker.m */,
 				A894D6D619B578270088E522 /* CLCalendarView.h */,
@@ -611,18 +644,13 @@
 		A898C8FC19B4638000559F53 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				A86CEA1D19C7CE830015BB25 /* googleMapController */,
 				A894D71119B57FA80088E522 /* AlertViewController.h */,
 				A894D71219B57FA80088E522 /* AlertViewController.m */,
 				A894D72819B59C730088E522 /* AlertViewController.xib */,
 				A894D70E19B57F9C0088E522 /* NotesViewController.h */,
 				A894D70F19B57F9C0088E522 /* NotesViewController.m */,
 				A894D72A19B59D6A0088E522 /* NotesViewController.xib */,
-				A894D70B19B57F920088E522 /* LocationViewController.h */,
-				A894D70C19B57F920088E522 /* LocationViewController.m */,
-				A894D72219B59ADB0088E522 /* LocationViewController.xib */,
-				A894D70819B57F890088E522 /* MapViewController.h */,
-				A894D70919B57F890088E522 /* MapViewController.m */,
-				A894D72019B59A930088E522 /* MapViewController.xib */,
 				A894D70519B57F7F0088E522 /* DateDetailsViewController.h */,
 				A894D70619B57F7F0088E522 /* DateDetailsViewController.m */,
 				A894D71E19B599380088E522 /* DateDetailsViewController.xib */,
@@ -649,6 +677,8 @@
 		A8A8C28019C1A67F00362EE5 /* NetWork */ = {
 			isa = PBXGroup;
 			children = (
+				A8A8C28719C1A9B000362EE5 /* z_Network.h */,
+				A8A8C28819C1A9B000362EE5 /* z_Network.m */,
 			);
 			name = NetWork;
 			sourceTree = "<group>";
@@ -757,6 +787,7 @@
 				A894D88719B5BAE70088E522 /* Friends_03.jpg in Resources */,
 				A894D85119B5BACC0088E522 /* Rectangle_13.png in Resources */,
 				A894D8AE19B5BB150088E522 /* Tick.png in Resources */,
+				A89F91D819C5D18D00CB7FAE /* powered-by-google-on-white@2x.png in Resources */,
 				A894D8AC19B5BB150088E522 /* Cross.png in Resources */,
 				A894D85919B5BACC0088E522 /* Icon_Upward.png in Resources */,
 				A894D72B19B59D6A0088E522 /* NotesViewController.xib in Resources */,
@@ -805,7 +836,7 @@
 				A894D85519B5BACC0088E522 /* E6.jpg in Resources */,
 				A894D72919B59C730088E522 /* AlertViewController.xib in Resources */,
 				A894D89819B5BAE70088E522 /* Work_01.jpg in Resources */,
-				A894D8B219B5BB150088E522 /* 地點.png in Resources */,
+				A894D8B219B5BB150088E522 /* adress_Icon.png in Resources */,
 				A82B72B719C133ED00D89816 /* day_today.png in Resources */,
 				A894D88E19B5BAE70088E522 /* Random_02.jpg in Resources */,
 				A894D88C19B5BAE70088E522 /* Movie_01.jpg in Resources */,
@@ -865,6 +896,7 @@
 				A877C95A19B450C50075D9E8 /* AppDelegate.m in Sources */,
 				A894D71019B57F9C0088E522 /* NotesViewController.m in Sources */,
 				A894D70A19B57F890088E522 /* MapViewController.m in Sources */,
+				A86CEA2019C7CF8D0015BB25 /* GoogleMapViewController.m in Sources */,
 				A877C95619B450C50075D9E8 /* main.m in Sources */,
 				A894D6E419B578270088E522 /* EventCell.m in Sources */,
 				A894D6FE19B57F510088E522 /* EventCountView.m in Sources */,
@@ -873,10 +905,12 @@
 				A8116A2419B9B7EF003EB3ED /* FlipBoardNavigationController.m in Sources */,
 				A894D70D19B57F920088E522 /* LocationViewController.m in Sources */,
 				A894D70719B57F7F0088E522 /* DateDetailsViewController.m in Sources */,
+				A89F91DB19C5D73A00CB7FAE /* AutocompletionTableView.m in Sources */,
 				A894D6F419B5786A0088E522 /* PublicMethodsViewController.m in Sources */,
 				A894D70119B57F5E0088E522 /* AddEventViewController.m in Sources */,
 				A894D6E219B578270088E522 /* CLCalendarCell.m in Sources */,
 				A898C8F919B4635900559F53 /* CLDay.m in Sources */,
+				A8A8C28919C1A9B000362EE5 /* z_Network.m in Sources */,
 				A894D6FB19B57F470088E522 /* SHRootController.m in Sources */,
 				A894D6DF19B578270088E522 /* MMLocationManager.m in Sources */,
 				A894D6E119B578270088E522 /* CLCalendarView.m in Sources */,

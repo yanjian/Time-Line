@@ -1,5 +1,5 @@
 #include "Pods-ASIHTTPRequest.xcconfig"
 GCC_PREPROCESSOR_DEFINITIONS = COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/ASIHTTPRequest" "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/AFNetworking" "${PODS_ROOT}/Headers/ASIHTTPRequest" "${PODS_ROOT}/Headers/EAIntroView" "${PODS_ROOT}/Headers/EGOTableViewPullRefreshAndLoadMore" "${PODS_ROOT}/Headers/FXBlurView" "${PODS_ROOT}/Headers/MBProgressHUD" "${PODS_ROOT}/Headers/PEPhotoCropEditor" "${PODS_ROOT}/Headers/Reachability" "${PODS_ROOT}/Headers/SBJson" "${PODS_ROOT}/Headers/SHLineGraphView" "${PODS_ROOT}/Headers/TBXML" ${PODS_ASIHTTPREQUEST_HEADER_SEARCH_PATHS}
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/BuildHeaders" "${PODS_ROOT}/BuildHeaders/ASIHTTPRequest" "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/AFNetworking" "${PODS_ROOT}/Headers/ASIHTTPRequest" "${PODS_ROOT}/Headers/EAIntroView" "${PODS_ROOT}/Headers/EGOTableViewPullRefreshAndLoadMore" "${PODS_ROOT}/Headers/FXBlurView" "${PODS_ROOT}/Headers/JSONKit-NoWarning" "${PODS_ROOT}/Headers/MBProgressHUD" "${PODS_ROOT}/Headers/PEPhotoCropEditor" "${PODS_ROOT}/Headers/Reachability" "${PODS_ROOT}/Headers/SBJson" "${PODS_ROOT}/Headers/SHLineGraphView" "${PODS_ROOT}/Headers/TBXML" ${PODS_ASIHTTPREQUEST_HEADER_SEARCH_PATHS}
 OTHER_LDFLAGS = -ObjC ${PODS_ASIHTTPREQUEST_OTHER_LDFLAGS}
 PODS_ROOT = ${SRCROOT}

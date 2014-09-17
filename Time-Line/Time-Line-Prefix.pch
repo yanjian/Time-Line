@@ -8,7 +8,9 @@
 #import "PublicMethodsViewController.h"
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
-
+#import "z_Network.h"
+#import "MacroDefinition.h"
+#import "InterfaceMrco.h"
 #ifndef __IPHONE_3_0
 #warning "This project uses features only available in iOS SDK 3.0 and later."
 #endif
@@ -19,7 +21,7 @@
     #import <Foundation/Foundation.h>
 #endif
 //A better version of NSLog
-#define NSLog(format, ...)  do {fprintf(stderr, "<%s : %d> %s\n", [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],__LINE__, __func__);  (NSLog)((format), ##__VA_ARGS__); fprintf(stderr, "-------------------\n"); \
+//#define NSLog(format, ...)  do {fprintf(stderr, "<%s : %d> %s\n", [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],__LINE__, __func__);  (NSLog)((format), ##__VA_ARGS__); fprintf(stderr, "-------------------\n"); \
    } while (0)
 
 

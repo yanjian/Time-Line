@@ -14,7 +14,10 @@
 #import "LocationViewController.h"
 #import <CoreLocation/CLGeocoder.h>
 #import <CoreLocation/CLPlacemark.h>
-@interface AddEventViewController (){
+#import "GoogleMapViewController.h"
+
+@interface AddEventViewController () <ASIHTTPRequestDelegate>
+{
     UITextField* textfiled;
     UILabel *_textlable;
     
@@ -23,9 +26,11 @@
     UILabel* endlabel;
     NSMutableArray* seledayArr;
     NSArray* alertarr;
+    
     UITextField* localfiled;
     UILabel*_locallable;
-    
+    UIButton *_localtionBtn;//地图点击事件
+    UIImageView *addressIcon;
     
     UIButton* addImage;
     NSString* imagename;
@@ -38,19 +43,12 @@
     UILabel* timealert;
     UILabel* peoplelabel;
     UILabel* calendarlabel;
-   
-    
+    NSDictionary *coordinates;
     UILabel *_CAlable;
-    
     BOOL isUse;
     
-    
-   
-        
-    
-    
 }
-
+@property (nonatomic,assign) BOOL isShowMap;
 @end
 
 @implementation AddEventViewController
@@ -81,19 +79,14 @@
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Cross.png"] forState:UIControlStateNormal];
     [leftBtn setFrame:CGRectMake(0, 2, 20, 20)];
     [leftBtn addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
-    
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
+    
     
     UIButton*  rightBtn_arrow = [UIButton buttonWithType:UIButtonTypeCustom];
     [rightBtn_arrow setBackgroundImage:[UIImage imageNamed:@"Icon_Tick.png"] forState:UIControlStateNormal];
-    
     [rightBtn_arrow setFrame:CGRectMake(0, 2, 25, 20)];
     [rightBtn_arrow addTarget:self action:@selector(onClickAdd) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn_arrow];
-    
-    
-    
-    
     
     
     UIView *rightView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
@@ -103,6 +96,7 @@
     titlelabel.textColor = [UIColor whiteColor];
     [rightView addSubview:titlelabel];
     self.navigationItem.titleView =rightView;
+    
     titlelabel.text = @"New Event";
     if ([state isEqualToString:@"edit"]) {
         titlelabel.text=@"Edit Event";
@@ -113,6 +107,7 @@
     startlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 84)];
     startlabel.textAlignment=NSTextAlignmentCenter;
     startlabel.font=[UIFont boldSystemFontOfSize:15.0f];
+    
     
     endlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 24, self.view.frame.size.width, 0)];
     endlabel.textAlignment=NSTextAlignmentCenter;
@@ -140,23 +135,14 @@
     }else{
 //        startlabel.text=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyy年 M月d日HH:mm"];
 //        endlabel.text=[[PublicMethodsViewController getPublicMethods] getonehourstime:@"yyyy年 M月d日HH:mm"];
-        
         startlabel.text=@"TIME";
         
     }
     [self InitUI];
 //    UIView* headview=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 140)];
 //    headview.backgroundColor=[UIColor redColor];
-//    
-    
-    
-    
 //    addImage=[UIButton buttonWithType:UIButtonTypeCustom];
 //    addImage.frame=headview.frame;
-    
-    
-    
-    
     
     if ([state isEqualToString:@"edit"]) {
         if ([[dateDic objectForKey:@"url"] isEqualToString:@"photo.png"]) {
@@ -184,56 +170,44 @@
 
 -(void)InitUI{
     _textlable = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, self.view.frame.size.width, 20)];
-    
-    
-    
     textfiled=[[UITextField alloc]initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 64)];
-  
     textfiled.delegate = self;
     textfiled.tag = 3;
     textfiled.font=[UIFont boldSystemFontOfSize:15.0f];
     textfiled.textAlignment=NSTextAlignmentCenter;
     [textfiled setBorderStyle:UITextBorderStyleNone];
-
-   
     
     _locallable = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, self.view.frame.size.width, 20)];
-    
     localfiled=[[UITextField alloc]initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 64)];
-  
     localfiled.textAlignment=NSTextAlignmentCenter;
     localfiled.font=[UIFont boldSystemFontOfSize:15.0f];
     localfiled.tag=1;
     localfiled.delegate=self;
     
+    _localtionBtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    _localtionBtn.frame=CGRectMake(0, 0, self.view.frame.size.width, 164);
+    _localtionBtn.showsTouchWhenHighlighted=NO;
+    _localtionBtn.backgroundColor=[UIColor clearColor];
+    
+    addressIcon=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"adress_Icon"]];
+    
     _CAlable = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, self.view.frame.size.width, 20)];
-    
-    
-    
-    
-    
+
     notefiled=[[UITextField alloc]initWithFrame:CGRectMake(0,20,self.view.frame.size.width, 64)];
     notefiled.tag=2;
     notefiled.delegate=self;
     notefiled.textAlignment=NSTextAlignmentCenter;
     notefiled.font=[UIFont boldSystemFontOfSize:15.0f];
     notefiled.textColor=[UIColor blackColor];
-  
-    
-    
-    
-    
+
     peoplelabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 5, self.view.frame.size.width, 20)];
     peoplelabel.backgroundColor=[UIColor clearColor];
     peoplelabel.textAlignment=NSTextAlignmentCenter;
     peoplelabel.font=[UIFont boldSystemFontOfSize:15.0f];
-    
     calendarlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 5, self.view.frame.size.width, 20)];
-
     
      self.isOpen = NO;
-
-    
+     self.isShowMap=NO;
 }
 
 
@@ -686,63 +660,53 @@
 
 #pragma mark - tableview
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-//    if (section==0||section==2) {
-        if (self.isOpen) {
-            if (self.selectIndex.section == section) {
-                return 3;
-            }
-        }
-//    }
-    return 1;
-}
-
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 7;
 }
 
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    if (self.isOpen) {
+        if (self.selectIndex.section == section) {
+             return 3;
+        }
+    }
+    if (self.isShowMap) {
+        if (2==section) {//当是location时为两行
+            return 2;
+        }
+    }
+    
+    return 1;
+}
+
+
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-//    if (indexPath.row==1||indexPath.row==4) {
-//        return 84;
-//    }
-//    if (indexPath.row==4) {
-//        return 64+24*[alarmArray count];
-//    }
-    
-    
-    if (indexPath.section==4) {
+   if (indexPath.section==4) {
         if (indexPath.row==0) {
-            
             return 200;
         }
     }
-
-    
-    
-    
+    if (self.isShowMap) {
+        if (indexPath.section==2) {
+            if (indexPath.row==1) {
+                return 164;
+            }
+        }
+    }
     return 84;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
-//    if (self.isOpen&&self.selectIndex.section == indexPath.section&&indexPath.row!=0) {
-//        static NSString* cellId2=@"adds";
-//        UITableViewCell *cell2 = [tableView dequeueReusableCellWithIdentifier:cellId2];
-//        if (cell2==nil) {
-//            cell2 = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId2];
-//        }
-//        cell2.textLabel.text=@"1";
-//        return cell2;
-//
-//    }else{
-        static NSString* cellId=@"add";
+        static NSString* cellId=@"addIdentifier";
         UITableViewCell *cell1 = [tableView dequeueReusableCellWithIdentifier:cellId];
         if (cell1 == nil) {
             cell1 = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
         }
-        NSArray*subviews = [[NSArray alloc]initWithArray:cell1.contentView.subviews];
+        NSArray *subviews = [[NSArray alloc]initWithArray:cell1.contentView.subviews];
         for (UIView *subview in subviews) {
             [subview removeFromSuperview];
         }
@@ -766,6 +730,17 @@
             if (indexPath.row==0) {
                 [cell1.contentView addSubview:_locallable];
                 [cell1.contentView addSubview:localfiled];
+                if(localfiled.text.length >0){//地图文本不为空
+                    NSString *str = localfiled.text;
+                    //计算文本的宽度
+                    NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:15]};
+                    CGSize size = [str boundingRectWithSize:CGSizeMake(320, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+                    addressIcon.frame=CGRectMake( (self.view.bounds.size.width/2-size.width/2)-15,27, 10, 10);
+                    [localfiled addSubview:addressIcon ];
+                }
+            }else if (indexPath.row==1){
+                [cell1.contentView addSubview:_localtionBtn];
+                [_localtionBtn addTarget:self action:@selector(openMapDetails:) forControlEvents:UIControlEventTouchUpInside];
             }
         }
         if (indexPath.section==3){
@@ -776,7 +751,7 @@
         }
         if (indexPath.section==4) {
             if (indexPath.row==0) {
-    NSArray *array = [[NSArray alloc] initWithObjects:@"Alert_Day.png",@"Alert_Hour.png",@"Alert_Minute.png", nil];
+                NSArray *array = [[NSArray alloc] initWithObjects:@"Alert_Day.png",@"Alert_Hour.png",@"Alert_Minute.png", nil];
                 for (int i=0; i<3; i++)
                 {
                     UIImageView*imageview = [[UIImageView alloc] init];
@@ -784,20 +759,21 @@
                     imageview.image = [UIImage imageNamed:[array objectAtIndex:i]];
                     [cell1.contentView addSubview:imageview];
                 }
-    NSArray *arr = [[NSArray alloc] initWithObjects:@"1d",@"0.5h",@"5m",@"2d",@"1h",@"10m",@"7d",@"2h",@"15m", nil];
-                for (int i=0; i<9; i++) {
-                  UIButton *Btn = [[UIButton alloc] init];
-                    Btn.tag = i+10;
+                
+               NSArray *arr = [[NSArray alloc] initWithObjects:@"1d",@"0.5h",@"5m",@"2d",@"1h",@"10m",@"7d",@"2h",@"15m", nil];
+                for (int i=0; i<arr.count; i++) {
+                    UIButton *btn = [[UIButton alloc] init];
+                    btn.tag = i+10;
                     CGRect frame;
                     frame.size.width = 40;//设置按钮坐标及大小
                     frame.size.height = 20;
                     frame.origin.x = (i%3)*(65+35)+45;
                     frame.origin.y = floor(i/3)*(30+20)+70;
-                    [Btn setFrame:frame];
-                    [Btn setTitle:[arr objectAtIndex:i] forState:UIControlStateNormal];
-                    [Btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-                    [Btn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
-                    [cell1.contentView addSubview:Btn];
+                    [btn setFrame:frame];
+                    [btn setTitle:[arr objectAtIndex:i] forState:UIControlStateNormal];
+                    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+                    [btn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+                    [cell1.contentView addSubview:btn];
                 }
                 [cell1.contentView addSubview:peoplelabel];
             }
@@ -821,8 +797,6 @@
                 alertlabel.textColor=[UIColor blackColor];
                 [cell1.contentView addSubview:alertlabel];
                 
-                
-                
                 NSArray *Array = [[NSArray alloc] initWithObjects:@"Daily",@"Weekly",@"Monthly", nil];
                 
                 for (int i=0; i<3; i++)
@@ -833,28 +807,15 @@
                      [button setTitle:[Array objectAtIndex:i] forState:UIControlStateNormal];
                     [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
                     [button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
-
-                    
                     
                     [cell1.contentView addSubview:button];
                 }
-
-                
-                
-                
-                
-                
-                
-                
                 
             }
-            
-            
-            
         }
         
             localfiled.placeholder=@"LOCATION";
-        _locallable.text = @"                          Location";
+            _locallable.text = @"                          Location";
             notefiled.placeholder=@"Note";
             peoplelabel.text=@"3 Alerts";
             calendarlabel.text=@"                              Note";
@@ -925,40 +886,105 @@
     //
    
 }
+
+
+
+-(void)openMapDetails:(UIButton *) button
+{
+    GoogleMapViewController *googleMapCon=[[GoogleMapViewController alloc] init];
+    if ([googleMapCon respondsToSelector:@selector(setCoordinateDictionary:)]) {
+        [googleMapCon setCoordinateDictionary:coordinates];
+    }
+    [self.navigationController pushViewController:googleMapCon animated:YES];
+    NSLog(@"点击咯地图");
+}
+
+
+
 -(void)buttonPressed:(UIButton *)button
 {
-    
-    
-    NSLog(@"buttonPressed %d",button.tag);
+    NSLog(@"buttonPressed %ld",(long)button.tag);
 }
+
+
 -(void)btnPressed:(UIButton *)btn
 {
-    //isUse = !isUse;
-    
-//    if (isUse)
-//    {
-//        
-//        [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-//        
-//    }else
-//    {
-//        
-//        
-//        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-//    }
-    
-    NSLog(@"brnbrnbrnbnr %d",btn.tag);
+    NSLog(@"brnbrnbrnbnr %ld",(long)btn.tag);
     switch (btn.tag)
     {
         case 10:
             isUse = !isUse;
-                if (isUse)
-                {
+                if (isUse){
                     [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-                }else
-                {
+                    isUse=YES;
+                }else{
                     [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
                 }
+            break;
+        case 11:
+            isUse = !isUse;
+            if (isUse){
+                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+                 isUse=YES;
+            }else{
+                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            }
+            break;
+        case 12:
+            if (isUse){
+                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            }else{
+                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            }
+            break;
+        case 13:
+            if (isUse){
+                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            }else{
+                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            }
+            break;
+        case 14:
+            if (isUse){
+                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            }else{
+                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            }
+            break;
+        case 15:
+            if (isUse){
+                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            }else{
+                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            }
+            break;
+        case 16:
+            if (isUse){
+                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            }else{
+                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            }
+            break;
+        case 17:
+            if (isUse){
+                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            }else{
+                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            }
+            break;
+        case 18:
+            if (isUse){
+                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            }else{
+                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            }
+            break;
+        case 19:
+            if (isUse){
+                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+            }else{
+                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            }
             break;
         default:
             break;
@@ -1046,7 +1072,7 @@
     //[tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
-
+//没有使用到
 - (void)didSelectCellRowFirstDo:(BOOL)firstDoInsert nextDo:(BOOL)nextDoInsert
 {
     self.isOpen = firstDoInsert;
@@ -1073,7 +1099,8 @@
         self.selectIndex = [self.tableView indexPathForSelectedRow];
         [self didSelectCellRowFirstDo:YES nextDo:NO];
     }
-    if (self.isOpen) [self.tableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:YES];
+    if (self.isOpen)
+        [self.tableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
 
@@ -1093,13 +1120,45 @@
     seledayArr=[[PublicMethodsViewController getPublicMethods] intervalSinceNow:ends getStrart:strsend];
 }
 
-#pragma mark getlocationDelegate
--(void)getlocation:(NSString *)loc{
-    if (loc.length>0) {
-        localfiled.text=loc;
+#pragma mark -代理方法 -- getlocation:coordinate:
+-(void)getlocation:(NSString*) name coordinate:(NSDictionary *) coordinatesDic{
+    coordinates =  coordinatesDic;
+    if (name.length>0) {
+        localfiled.text=name;
+        if (coordinatesDic) {
+            NSString *coordStr= [NSString stringWithFormat:@"%@,%@",[coordinatesDic objectForKey:LATITUDE],[coordinatesDic objectForKey:LONGITUDE] ];
+            NSMutableDictionary *paramDic=@{@"center":coordStr,
+                                            @"zoom":@"9",
+                                            @"size":@"320x164",
+                                            @"sensor":@"false",
+                                            @"format":@"PNG",
+                                            @"markers":coordStr,
+                                            @"language":CurrentLanguage,
+                                            @"key":GOOGLE_API_KEY }.mutableCopy;
+            ASIHTTPRequest *request=[z_Network httpGet:paramDic Url:GOOGLE_ADDRESS_PIC Delegate:self Tag:GOOGLE_ADDRESS_PIC_TAG];
+            [request startAsynchronous];
+            self.isShowMap=YES;
+        }else{
+            self.isShowMap=NO;
+        }
+        [self.tableView reloadData];
     }
-    
 }
+
+- (void)requestFinished:(ASIHTTPRequest *)request
+{    NSError * error=[request error];
+    if (error) {
+        NSLog(@"请求数据出错：%@",error.debugDescription);
+        return;
+    }
+    if (request.responseString||![@"" isEqualToString:request.responseString]) {
+         [_localtionBtn setBackgroundImage:[UIImage imageWithData:[request responseData]] forState:UIControlStateNormal];
+    }else{
+        NSLog(@"图片空。。。。。！");
+    }
+}
+
+
 #pragma mark getnotesdelegate
 -(void)getnotes:(NSString *)notestr{
     NSLog(@"%@",notestr);
@@ -1110,24 +1169,17 @@
 
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
-    
-    
     [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:.25];
+    [UIView setAnimationDuration:0.3];
     self.tableView.frame=CGRectMake(0, -150, self.tableView.frame.size.width, self.tableView.frame.size.height);
     
-    
     [UIView commitAnimations];
-    NSLog(@"%d",textField.tag);
-    if ([@"1" isEqualToString:[NSString stringWithFormat:@"%d",textField.tag] ]) {
+    NSLog(@"%ld",textField.tag);
+    if ([@"1" isEqualToString:[NSString stringWithFormat:@"%ld",textField.tag] ]) {
         LocationViewController *locationView=[[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
-        
+        locationView.detelegate=self;
         [self.navigationController pushViewController:locationView animated:NO];
-        
     }
-      NSLog(@"开始编辑");
-    
-    
     
 }
 
