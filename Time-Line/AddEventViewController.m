@@ -16,6 +16,16 @@
 #import <CoreLocation/CLPlacemark.h>
 #import "GoogleMapViewController.h"
 
+#define TITLE      @"title"
+#define LOCATION   @"loc"
+#define STARTDATE  @"start"
+#define ENDDATE    @"end"
+#define NOTE       @"note"
+#define CACCOUNT   @"account"
+#define ALERTS     @"alerts"
+#define COORDINATE @"coordinate"
+#define  REPEAT    @"repeat"
+
 @interface AddEventViewController () <ASIHTTPRequestDelegate>
 {
     UITextField* textfiled;
@@ -32,6 +42,11 @@
     UIButton *_localtionBtn;//地图点击事件
     UIImageView *addressIcon;
     
+    NSMutableArray *alertButtonArr;//存放alert按钮
+    NSMutableArray *selectAlertArr;//存放用户选择的提醒时间
+    NSMutableArray *repeatButtonArr;//事件重复
+    NSMutableArray *selectRepeatArr;//现在的重复事件 如：每天，每周，等
+    
     UIButton* addImage;
     NSString* imagename;
     UITextField* notefiled;
@@ -46,9 +61,12 @@
     NSDictionary *coordinates;
     UILabel *_CAlable;
     BOOL isUse;
+    BOOL isReadFlag;//编辑是取数据只执行一次！
     
 }
-@property (nonatomic,assign) BOOL isShowMap;
+@property (nonatomic,assign) BOOL isShowMap;//地图是否显示
+@property (nonatomic,assign) NSInteger alertCount;//设置的闹钟数
+
 @end
 
 @implementation AddEventViewController
@@ -108,6 +126,11 @@
     startlabel.textAlignment=NSTextAlignmentCenter;
     startlabel.font=[UIFont boldSystemFontOfSize:15.0f];
     
+    alertButtonArr=[[NSMutableArray alloc] initWithCapacity:0];//存放alert按钮的array
+    selectAlertArr=[[NSMutableArray alloc] initWithCapacity:0];
+    repeatButtonArr=[[NSMutableArray alloc] initWithCapacity:0];//存放事件重复周期
+    selectRepeatArr=[[NSMutableArray alloc] initWithCapacity:0];
+    
     
     endlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 24, self.view.frame.size.width, 0)];
     endlabel.textAlignment=NSTextAlignmentCenter;
@@ -124,6 +147,7 @@
         seledayArr=[[PublicMethodsViewController getPublicMethods] intervalSinceNow:end getStrart:strsend];
         startlabel.text=starttime;
         endlabel.text=endtime;
+        
         UIView* headview=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 60)];
         UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
         button.backgroundColor=[UIColor redColor];
@@ -133,22 +157,15 @@
         [headview addSubview:button];
         self.tableView.tableFooterView=headview;
     }else{
-//        startlabel.text=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyy年 M月d日HH:mm"];
-//        endlabel.text=[[PublicMethodsViewController getPublicMethods] getonehourstime:@"yyyy年 M月d日HH:mm"];
         startlabel.text=@"TIME";
-        
     }
-    [self InitUI];
-//    UIView* headview=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 140)];
-//    headview.backgroundColor=[UIColor redColor];
-//    addImage=[UIButton buttonWithType:UIButtonTypeCustom];
-//    addImage.frame=headview.frame;
     
+    [self InitUI];
+    
+    //批注：这个没有什么用，放后删除
     if ([state isEqualToString:@"edit"]) {
         if ([[dateDic objectForKey:@"url"] isEqualToString:@"photo.png"]) {
-            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-            NSString *documentsDirectory = [paths objectAtIndex:0];
-            NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"photo.png"];
+            NSString *plistPath = setSysDocumentsDir(@"photo.png");
             UIImage* image=[UIImage imageWithContentsOfFile:plistPath];
             [addImage setBackgroundImage:image forState:UIControlStateNormal];
             imagename=@"photo.png";
@@ -160,12 +177,11 @@
     }else{
         [addImage setTitle:@"CHOOSE A PICTURE" forState:UIControlStateNormal];
     }
+    
     addImage.titleLabel.textColor=[UIColor whiteColor];
     addImage.titleLabel.textAlignment=NSTextAlignmentCenter;
     addImage.titleLabel.font=[UIFont boldSystemFontOfSize:17.0f];
     [addImage addTarget:self action:@selector(handleSingleTapFrom) forControlEvents:UIControlEventTouchUpInside];
-//    [headview addSubview:addImage];
-//    self.tableView.tableHeaderView=headview;
   }
 
 -(void)InitUI{
@@ -185,11 +201,43 @@
     localfiled.delegate=self;
     
     _localtionBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    _localtionBtn.frame=CGRectMake(0, 0, self.view.frame.size.width, 164);
+    _localtionBtn.frame=CGRectMake(5, 0, self.view.frame.size.width-10, 164);
     _localtionBtn.showsTouchWhenHighlighted=NO;
     _localtionBtn.backgroundColor=[UIColor clearColor];
+    [_localtionBtn addTarget:self action:@selector(openMapDetails:) forControlEvents:UIControlEventTouchUpInside];
     
     addressIcon=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"adress_Icon"]];
+    
+    
+    //alert按钮初始化
+    NSArray *arr = [[NSArray alloc] initWithObjects:@"1d",@"0.5h",@"5m",@"2d",@"1h",@"10m",@"7d",@"2h",@"15m", nil];
+    for (int i=0; i<arr.count; i++) {
+        UIButton *btn = [[UIButton alloc] init];
+        btn.tag = i+10;
+        CGRect frame;
+        frame.size.width = 40;//设置按钮坐标及大小
+        frame.size.height = 20;
+        frame.origin.x = (i%3)*(65+35)+45;
+        frame.origin.y = floor(i/3)*(30+20)+70;
+        [btn setFrame:frame];
+        [btn setTitle:[arr objectAtIndex:i] forState:UIControlStateNormal];
+        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [btn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [alertButtonArr addObject:btn];
+    }
+    
+    
+    NSArray *Array = [[NSArray alloc] initWithObjects:@"Daily",@"Weekly",@"Monthly", nil];
+    for (int i=0; i<Array.count; i++)
+    {
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        button.frame = CGRectMake(30+(i*100), 45, 55, 20);
+        button.tag = i+100;
+        [button setTitle:[Array objectAtIndex:i] forState:UIControlStateNormal];
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [repeatButtonArr addObject:button];
+    }
     
     _CAlable = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, self.view.frame.size.width, 20)];
 
@@ -204,6 +252,7 @@
     peoplelabel.backgroundColor=[UIColor clearColor];
     peoplelabel.textAlignment=NSTextAlignmentCenter;
     peoplelabel.font=[UIFont boldSystemFontOfSize:15.0f];
+    peoplelabel.text=@"0 Alerts";
     calendarlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 5, self.view.frame.size.width, 20)];
     
      self.isOpen = NO;
@@ -285,16 +334,17 @@
 - (void)onClickAdd
 {
     
-    
+    NSLog(@"点击保存数据");
     if (textfiled.text.length<=0) {
        [textfiled becomeFirstResponder];
+       // [g_AppDelegate showActivityView:@"Please enter Event Title" interval:.5];
         return;
     }
-    if ([addImage.titleLabel.text isEqualToString:@"CHOOSE A PICTURE"]) {
-        UIAlertView* alert=[[UIAlertView alloc]initWithTitle:@"提示:" message:@"请选择一张背景图片" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        return;
-    }
+//    if ([addImage.titleLabel.text isEqualToString:@"CHOOSE A PICTURE"]) {
+//        UIAlertView* alert=[[UIAlertView alloc]initWithTitle:@"提示:" message:@"请选择一张背景图片" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+//        [alert show];
+//        return;
+//    }
     if ([startlabel.text isEqualToString:@"CHOOSE"])
     {
         UIAlertView* alert=[[UIAlertView alloc]initWithTitle:@"提示:" message:@"请选择时间" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
@@ -304,7 +354,7 @@
     if ([state isEqualToString:@"edit"]) {
         [self editEvent];
     }else{
-    [self postEvent];
+     [self postEvent];
 
 //        [self getLocalNotification:startlabel.text];
 //    NSString* destDateString=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"YYYY年 M月d日"];
@@ -706,6 +756,8 @@
         if (cell1 == nil) {
             cell1 = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
         }
+    
+        //清除contentView中的所有视图
         NSArray *subviews = [[NSArray alloc]initWithArray:cell1.contentView.subviews];
         for (UIView *subview in subviews) {
             [subview removeFromSuperview];
@@ -719,14 +771,14 @@
                 }
             }
         }
-        if (indexPath.section==1) {
+        if (indexPath.section==1) {//time 时间显示区
             if (indexPath.row==0) {
                //cell1.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
                 [cell1.contentView addSubview:startlabel];
                 [cell1.contentView addSubview:endlabel];
             }
         }
-        if (indexPath.section==2){
+        if (indexPath.section==2){//地图，地址显示区
             if (indexPath.row==0) {
                 [cell1.contentView addSubview:_locallable];
                 [cell1.contentView addSubview:localfiled];
@@ -735,12 +787,11 @@
                     //计算文本的宽度
                     NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:15]};
                     CGSize size = [str boundingRectWithSize:CGSizeMake(320, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
-                    addressIcon.frame=CGRectMake( (self.view.bounds.size.width/2-size.width/2)-15,27, 10, 10);
+                    addressIcon.frame=CGRectMake( (self.view.bounds.size.width/2-size.width/2)-17,25, 12, 15);
                     [localfiled addSubview:addressIcon ];
                 }
             }else if (indexPath.row==1){
                 [cell1.contentView addSubview:_localtionBtn];
-                [_localtionBtn addTarget:self action:@selector(openMapDetails:) forControlEvents:UIControlEventTouchUpInside];
             }
         }
         if (indexPath.section==3){
@@ -749,7 +800,7 @@
                 [cell1 viewWithTag:0];
             }
         }
-        if (indexPath.section==4) {
+        if (indexPath.section==4) {//alerts 提醒
             if (indexPath.row==0) {
                 NSArray *array = [[NSArray alloc] initWithObjects:@"Alert_Day.png",@"Alert_Hour.png",@"Alert_Minute.png", nil];
                 for (int i=0; i<3; i++)
@@ -759,21 +810,8 @@
                     imageview.image = [UIImage imageNamed:[array objectAtIndex:i]];
                     [cell1.contentView addSubview:imageview];
                 }
-                
-               NSArray *arr = [[NSArray alloc] initWithObjects:@"1d",@"0.5h",@"5m",@"2d",@"1h",@"10m",@"7d",@"2h",@"15m", nil];
-                for (int i=0; i<arr.count; i++) {
-                    UIButton *btn = [[UIButton alloc] init];
-                    btn.tag = i+10;
-                    CGRect frame;
-                    frame.size.width = 40;//设置按钮坐标及大小
-                    frame.size.height = 20;
-                    frame.origin.x = (i%3)*(65+35)+45;
-                    frame.origin.y = floor(i/3)*(30+20)+70;
-                    [btn setFrame:frame];
-                    [btn setTitle:[arr objectAtIndex:i] forState:UIControlStateNormal];
-                    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-                    [btn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
-                    [cell1.contentView addSubview:btn];
+                for (UIButton *eachBtn in alertButtonArr) {
+                    [cell1.contentView addSubview:eachBtn];
                 }
                 [cell1.contentView addSubview:peoplelabel];
             }
@@ -784,40 +822,27 @@
                 [cell1.contentView addSubview:calendarlabel];
             }
         }
-        if (indexPath.section==6)
+        if (indexPath.section==6)//重复提醒事件
         {
             if (indexPath.row==0)
             {
-               // cell1.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
-                
                 UILabel* alertlabel=[[UILabel alloc]initWithFrame:CGRectMake(0,0,self.view.frame.size.width, 44)];
                 alertlabel.tag=2000;
                 alertlabel.textAlignment=NSTextAlignmentCenter;
                 alertlabel.font=[UIFont boldSystemFontOfSize:15.0f];
                 alertlabel.textColor=[UIColor blackColor];
                 [cell1.contentView addSubview:alertlabel];
-                
-                NSArray *Array = [[NSArray alloc] initWithObjects:@"Daily",@"Weekly",@"Monthly", nil];
-                
-                for (int i=0; i<3; i++)
+                for (int i=0; i<repeatButtonArr.count; i++)
                 {
-                    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-                    button.frame = CGRectMake(30+(i*100), 45, 55, 20);
-                    button.tag = i+100;
-                     [button setTitle:[Array objectAtIndex:i] forState:UIControlStateNormal];
-                    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-                    [button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
-                    
-                    [cell1.contentView addSubview:button];
+                    [cell1.contentView addSubview:repeatButtonArr[i]];
                 }
-                
             }
         }
         
             localfiled.placeholder=@"LOCATION";
             _locallable.text = @"                          Location";
             notefiled.placeholder=@"Note";
-            peoplelabel.text=@"3 Alerts";
+          //  peoplelabel.text=@"0 Alerts";
             calendarlabel.text=@"                              Note";
         
             _CAlable.text = @"                    Calendar Account";
@@ -828,22 +853,47 @@
             _textlable.text = @"                         Event Title";
         
             if ([state isEqualToString:@"edit"]) {
-                startString=[dateDic objectForKey:@"start"];
-                endString=[dateDic objectForKey:@"end"];
-                startlabel.text=[startString substringFromIndex:5];
-                endlabel.text=[endString substringFromIndex:5];
-            }
-            
-            if ([state isEqualToString:@"edit"]) {
-                notefiled.text=[dateDic objectForKey:@"note"];
-            }
-            if ([state isEqualToString:@"edit"]) {
-                textfiled.text =[dateDic objectForKey:@"title"];
-                localfiled.text=[dateDic objectForKey:@"loc"];
-            }
-            
-            
-            return cell1;
+                if (!isReadFlag) {
+                    startString=[dateDic objectForKey:@"start"];
+                    endString=[dateDic objectForKey:@"end"];
+                    startlabel.text=[startString substringFromIndex:5];
+                    endlabel.text=[endString substringFromIndex:5];
+                    notefiled.text=[dateDic objectForKey:@"note"];
+                    textfiled.text =[dateDic objectForKey:@"title"];
+                    localfiled.text=[dateDic objectForKey:@"loc"];
+                    
+                    //读取alerts数据
+                    NSArray *alertItemArr=[dateDic objectForKey:@"alerts"];
+                    self.alertCount=alertItemArr.count;
+                    peoplelabel.text=[NSString stringWithFormat:@"%ld Alerts",(long)self.alertCount];
+                    for (NSString *alertStr in alertItemArr) {
+                        for (UIButton *eachBtn in alertButtonArr) {
+                            if ([alertStr isEqualToString:[eachBtn currentTitle]]) {
+                                [eachBtn setBackgroundImage:[UIImage imageNamed:@"Event_time_red"] forState:UIControlStateNormal];
+                                [eachBtn setBackgroundColor:[UIColor clearColor]];
+                                [selectAlertArr addObject:[eachBtn currentTitle]];
+                                [eachBtn setSelected:YES];
+                            }
+                        }
+                        
+                    }
+                    
+                    //读取repeat数据
+                    NSArray *repeatItemArr=[dateDic objectForKey:@"repeat"];
+                    for (NSString *repeatStr in repeatItemArr) {
+                        for (UIButton *eachBtn in repeatButtonArr) {
+                            if ([repeatStr isEqualToString:[eachBtn currentTitle]]) {
+                                [eachBtn setBackgroundColor:[UIColor clearColor]];
+                                [selectRepeatArr addObject:[eachBtn currentTitle]];
+                                [eachBtn setSelected:YES];
+                            }
+                       }
+                    }
+                    [self getlocation:[dateDic objectForKey:@"loc"] coordinate:[dateDic objectForKey:@"coordinate"]];
+                    isReadFlag=YES;//默认只取一次值
+              }
+          }
+         return cell1;
 
 
 //     }
@@ -900,99 +950,55 @@
 }
 
 
-
+//事件重复按钮点击事件
 -(void)buttonPressed:(UIButton *)button
 {
     NSLog(@"buttonPressed %ld",(long)button.tag);
+    if(!button.selected) {
+        [button setBackgroundColor:[UIColor clearColor]];
+        [selectRepeatArr addObject:[button currentTitle]];
+        [button setSelected:YES];
+    }else{
+        [selectRepeatArr removeObject:[button currentTitle]];
+        [button setSelected:NO];
+    }
 }
 
 
 -(void)btnPressed:(UIButton *)btn
 {
-    NSLog(@"brnbrnbrnbnr %ld",(long)btn.tag);
-    switch (btn.tag)
-    {
-        case 10:
-            isUse = !isUse;
-                if (isUse){
-                    [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-                    isUse=YES;
-                }else{
-                    [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-                }
-            break;
-        case 11:
-            isUse = !isUse;
-            if (isUse){
-                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-                 isUse=YES;
-            }else{
-                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            }
-            break;
-        case 12:
-            if (isUse){
-                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-            }else{
-                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            }
-            break;
-        case 13:
-            if (isUse){
-                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-            }else{
-                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            }
-            break;
-        case 14:
-            if (isUse){
-                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-            }else{
-                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            }
-            break;
-        case 15:
-            if (isUse){
-                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-            }else{
-                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            }
-            break;
-        case 16:
-            if (isUse){
-                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-            }else{
-                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            }
-            break;
-        case 17:
-            if (isUse){
-                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-            }else{
-                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            }
-            break;
-        case 18:
-            if (isUse){
-                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-            }else{
-                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            }
-            break;
-        case 19:
-            if (isUse){
-                [btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-            }else{
-                [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-            }
-            break;
-        default:
-            break;
+  
+    [self publicAlertSeting:btn];
+     NSLog(@"按钮tag： %ld",(long)btn.tag);
+    for (UIButton *eachBtn in alertButtonArr) {
+        if(eachBtn.isSelected){
+            NSLog(@"%@",eachBtn.currentTitle);
+        }
     }
     
-    
-    
 }
+
+
+-(void)publicAlertSeting:(UIButton *) btn
+{
+   
+    if(!btn.selected) {
+        //[btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        [btn setBackgroundImage:[UIImage imageNamed:@"Event_time_red"] forState:UIControlStateNormal];
+        [btn setBackgroundColor:[UIColor clearColor]];
+        [selectAlertArr addObject:[btn currentTitle]];
+        self.alertCount++;
+        [btn setSelected:YES];
+    }else{
+        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [btn setBackgroundImage:nil forState:UIControlStateNormal];
+        [selectAlertArr removeObject:[btn currentTitle]];
+        self.alertCount--;
+        [btn setSelected:NO];
+    }
+    peoplelabel.text=[NSString stringWithFormat:@"%ld Alerts",(long)self.alertCount];
+}
+
 
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
@@ -1105,7 +1111,7 @@
 
 
 
-#pragma mark settimedelegate
+#pragma mark - viewController的代理方法 settimedelegate
 -(void)getstarttime:(NSString *)start getendtime:(NSString *)end{
     endlabel.frame=CGRectMake(0, 24, self.view.frame.size.width, 44);
     startlabel.frame=CGRectMake(0, 0, self.view.frame.size.width, 44);
@@ -1169,11 +1175,12 @@
 
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField{
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.3];
-    self.tableView.frame=CGRectMake(0, -150, self.tableView.frame.size.width, self.tableView.frame.size.height);
-    
-    [UIView commitAnimations];
+    if (!(3==textField.tag)) {
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationDuration:0.3];
+        self.tableView.frame=CGRectMake(0, -200, self.tableView.frame.size.width, self.tableView.frame.size.height);
+        [UIView commitAnimations];
+    }
     NSLog(@"%ld",textField.tag);
     if ([@"1" isEqualToString:[NSString stringWithFormat:@"%ld",textField.tag] ]) {
         LocationViewController *locationView=[[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
@@ -1325,91 +1332,126 @@
 
 
 - (void)postEvent{
-    //事件市场
-    EKEventStore *eventStore = [[EKEventStore alloc] init];
-    if ([eventStore respondsToSelector:@selector(requestAccessToEntityType:completion:)])
-    {
-        [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (error)
-                {
-                    //错误细心
-                    // display error message here
-                }
-                else if (!granted)
-                {
-                    //被用户拒绝，不允许访问日历
-                    // display access denied error message here
-                }
-                else
-                {
-                    // access granted
-                    // ***** do the important stuff here *****
-                    
-                    //事件保存到日历
-                    
-                    
-                    //创建事件
-                    EKEvent *event  = [EKEvent eventWithEventStore:eventStore];
-                    event.title =textfiled.text;
-                    event.location =localfiled.text;
-                    event.URL=[NSURL URLWithString:imagename];
-                    NSLog(@"%@-------%@",imagename,event.URL);
-                    NSRange range=[startString rangeOfString:@"日"];
-                    NSDateFormatter *tempFormatter = [[NSDateFormatter alloc]init];
-                    NSString* strs=[startString substringWithRange:NSMakeRange(range.location+1,startString.length-range.location-1)];
-                    if (strs.length<=0) {
-                        [tempFormatter setDateFormat:@"YYYY年 M月d日"];
-                    }
-                    else{
-                        [tempFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
-                    }
-                    event.startDate = [tempFormatter dateFromString:startString];
-                    NSLog(@"%@---------%@",[tempFormatter dateFromString:startString],event.eventIdentifier);
-                    NSRange ranges=[endString rangeOfString:@"日"];
-                    NSDateFormatter *tempFormatters = [[NSDateFormatter alloc]init];
-                    NSString* endstrs=[endString substringWithRange:NSMakeRange(ranges.location+1,endString.length-ranges.location-1)];
-                    if (endstrs.length<=0) {
-                        [tempFormatters setDateFormat:@"YYYY年 M月d日"];
-                    }
-                    else {
-                        [tempFormatters setDateFormat:@"YYYY年 M月d日HH:mm"];
-                    }
-                    
-                    event.endDate= [tempFormatter dateFromString:endString];
-                    event.location = localfiled.text;
-                    event.notes=notefiled.text;
-//                    event.allDay = YES;
-                    NSLog(@"%@",[tempFormatter dateFromString:startString]);
-                    //添加提醒
-
-                    NSLog(@"%@",seledayArr);
-
-                    [event addAlarm:[EKAlarm alarmWithRelativeOffset:60.0f]];
-                    [event addAlarm:[EKAlarm alarmWithAbsoluteDate:[tempFormatter dateFromString:startString]]];
-                    [seledayArr removeObjectAtIndex:0];
-                    for (NSString* str in seledayArr) {
-                        [event addAlarm:[EKAlarm alarmWithRelativeOffset:60.0f]];
-                        [event addAlarm:[EKAlarm alarmWithAbsoluteDate:[tempFormatter dateFromString:[NSString stringWithFormat:@"%@08:00",str]]]];
-                    }
-                    
-                    [event setCalendar:[eventStore defaultCalendarForNewEvents]];
-                    NSError *err;
-                    BOOL bSave = [eventStore saveEvent:event span:EKSpanThisEvent error:&err];
-                    NSLog(@"保存成功---%d",bSave);
-
-                    
-                    UIAlertView *alert = [[UIAlertView alloc]
-                                          initWithTitle:@"Event Created"
-                                          message:@"Yay!?"
-                                          delegate:nil
-                                          cancelButtonTitle:@"Okay"
-                                          otherButtonTitles:nil];
-                    [alert show];
-                }
-            });
-        }];
+    //事件存储库
+    NSString *plistPath=getSysDocumentsDir;
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+    NSRange strRange=  [startString rangeOfString:@"日"];
+    NSString *startDate=[startString substringWithRange:NSMakeRange(0, strRange.location+1)];
+    
+    if (!data) {
+         data=[NSMutableDictionary dictionaryWithCapacity:0];
+         NSMutableArray *calendarDataArr=[NSMutableArray arrayWithCapacity:0];
+         NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
+        [dataDic setObject:textfiled.text forKey:TITLE];
+        [dataDic setObject:localfiled.text forKey:LOCATION];
+        [dataDic setObject:startString forKey:STARTDATE];
+        [dataDic setObject:endString forKey:ENDDATE];
+        [dataDic setObject:notefiled.text forKey:NOTE];
+        if (coordinates) {
+            [dataDic setObject:coordinates forKey:COORDINATE];
+        }
+        [dataDic setObject:selectAlertArr forKey:ALERTS];
+      //[dataDic setObject:localfiled.text forKey:CACCOUNT];
+        [dataDic setObject:selectRepeatArr forKey:REPEAT];
+        [calendarDataArr addObject:dataDic];
+        [data setObject:calendarDataArr forKey:startDate];
+        
+    }else{
+        NSMutableArray *calendarDataArr=[data valueForKey:startDate];
+        if (!calendarDataArr) {
+            calendarDataArr=[[NSMutableArray alloc] initWithCapacity:0];
+            [data setObject:calendarDataArr forKey:startDate];
+        }
+        //用于存放要保存的数据
+        NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
+        [dataDic setObject:textfiled.text forKey:TITLE];
+        [dataDic setObject:localfiled.text forKey:LOCATION];
+        [dataDic setObject:startString forKey:STARTDATE];
+        [dataDic setObject:endString forKey:ENDDATE];
+        [dataDic setObject:notefiled.text forKey:NOTE];
+        if (coordinates) {
+            [dataDic setObject:coordinates forKey:COORDINATE];
+        }
+        [dataDic setObject:selectAlertArr forKey:ALERTS];
+//      [dataDic setObject:localfiled.text forKey:CACCOUNT];
+        [dataDic setObject:selectRepeatArr forKey:REPEAT];
+        
+        [calendarDataArr addObject:dataDic];
     }
+    [data writeToFile:plistPath atomically:NO];
+    
+//2014年9月18号屏蔽--------------start-----------yj
+//    EKEventStore *eventStore = [[EKEventStore alloc] init];
+//    if ([eventStore respondsToSelector:@selector(requestAccessToEntityType:completion:)])
+//    {
+//        [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                if (error)
+//                {
+//                    NSLog(@"error:%@",error);
+//                    //错误细心
+//                    // display error message here
+//                }
+//                else if (!granted)
+//                {
+//                    //被用户拒绝，不允许访问日历
+//                    // display access denied error message here
+//                }
+//                else
+//                {
+//                    // access granted
+//                    // ***** do the important stuff here *****
+//                    
+//                    //事件保存到日历
+//                    
+//                    
+//                    //创建事件
+//                    EKEvent *event  = [EKEvent eventWithEventStore:eventStore];
+//                    event.title =textfiled.text;
+//                    event.location =localfiled.text;
+//                    event.URL=[NSURL URLWithString:imagename];
+//                    NSLog(@"%@-------%@",imagename,event.URL);
+//                    NSDate *startDate= [self formatWithStringDate:startString];
+//                    event.startDate =startDate;
+//                    NSLog(@"%@---------%@",startDate,event.eventIdentifier);
+//                    NSDate *endDate=[self formatWithStringDate:endString];
+//                    event.endDate= endDate;
+//                    event.location = localfiled.text;
+//                    event.notes=notefiled.text;
+////                  event.allDay = YES;
+//                    //添加提醒
+//
+//                    NSLog(@"%@",seledayArr);
+//                    [event addAlarm:[EKAlarm alarmWithRelativeOffset:60.0f]];
+//                    [event addAlarm:[EKAlarm alarmWithAbsoluteDate:startDate]];
+//                    NSDateFormatter *tempFormatter = [[NSDateFormatter alloc]init];
+//                    [seledayArr removeObjectAtIndex:0];
+//                    for (NSString* str in seledayArr) {
+//                        [event addAlarm:[EKAlarm alarmWithRelativeOffset:60.0f]];
+//                        [event addAlarm:[EKAlarm alarmWithAbsoluteDate:[tempFormatter dateFromString:[NSString stringWithFormat:@"%@08:00",str]]]];
+//                    }
+//                    
+//                    [event setCalendar:[eventStore defaultCalendarForNewEvents]];
+//                    NSError *err;
+//                    BOOL bSave = [eventStore saveEvent:event span:EKSpanThisEvent error:&err];
+//                    NSLog(@"保存成功---%d",bSave);
+//
+//                    
+//                    UIAlertView *alert = [[UIAlertView alloc]
+//                                          initWithTitle:@"Event Created"
+//                                          message:@"Yay!?"
+//                                          delegate:nil
+//                                          cancelButtonTitle:@"Okay"
+//                                          otherButtonTitles:nil];
+//                    [alert show];
+//                }
+//            });
+//        }];
+//    }
+  
+// ----------------------end------------------------
+  
+    
 //    else
 //    {
 //        // this code runs in iOS 4 or iOS 5
@@ -1450,5 +1492,31 @@
 //    }
 }
 
+
+-(NSDate *) formatWithStringDate:(NSString *) stringDate
+{
+    NSRange range=[stringDate rangeOfString:@"日"];
+    NSDateFormatter *tempFormatter = [[NSDateFormatter alloc]init];
+    NSString* strs=[stringDate substringWithRange:NSMakeRange(range.location+1,stringDate.length-range.location-1)];
+    if (strs.length<=0) {
+        [tempFormatter setDateFormat:@"YYYY年 M月d日"];
+    }
+    else{
+        [tempFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
+    }
+    return [tempFormatter dateFromString:stringDate];
+}
+
+//生成唯一个eventId
++(NSString *) generateUniqueEventID
+{
+    NSString *prefix=@"event";
+    NSDate *newDate=[NSDate date];
+    NSDateFormatter *df=[[NSDateFormatter alloc] init];
+    [df setDateFormat:@"YYYYMdHHmmss"];
+    NSString *dateStr=[df stringFromDate:newDate];
+    NSInteger random= arc4random()*10000+1;
+    return [NSString stringWithFormat:@"%@%@%d",prefix,dateStr,random];
+}
 
 @end

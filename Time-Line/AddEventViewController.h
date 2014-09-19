@@ -14,9 +14,9 @@
 #import "NotesViewController.h"
 @interface AddEventViewController : UITableViewController<settimeDay,getlocationDelegate,getimagename,getNotesDelegate,UITextFieldDelegate>
 
-@property(retain,nonatomic)NSString* state;
-@property(retain,nonatomic)NSDictionary* dateDic;
-@property(retain,nonatomic)NSArray* dateArr;
+@property(retain,nonatomic)NSString *state;                         //state的值为edit表示编辑数据，
+@property(retain,nonatomic)NSDictionary *dateDic;                   //要编辑的事件数据
+@property(retain,nonatomic)NSArray *dateArr;                        //用户所有的事件数据
 @property (nonatomic, strong) NSMutableArray *arrGoogleCalendars;
 @property (nonatomic, strong) NSDictionary *dictCurrentCalendar;
 @property (nonatomic, strong) NSDate *dtEvent;

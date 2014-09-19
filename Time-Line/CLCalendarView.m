@@ -9,15 +9,21 @@
 #import "CLCalendarView.h"
 #import "EventCell.h"
 #import "AppDelegate.h"
-#define calendar_Table_Month_H  220   //只显示一周此处改为44
-#define calendar_Table_Week_H   110
+#define calendar_Table_Month_H  132   //只显示一周此处改为44
+#define calendar_Table_Week_H   90   //110
+
+//表行的高度 139.0f
+#define rowHeight 55
+
+//表头高度
+#define headHeight 25
 
 #define calendar_Table_Month_F CGRectMake(0, 20, self.bounds.size.width, calendar_Table_Month_H)
 #define calendar_Table_Week_F  CGRectMake(0, 20, self.bounds.size.width, calendar_Table_Week_H)
 
 #define event_Table_Month_F CGRectMake(0, 20+calendar_Table_Month_H, self.bounds.size.width, self.bounds.size.height - calendar_Table_Month_H-20 )
 
-#define event_Table_Week_F CGRectMake(0, calendar_Table_Week_H-46, self.bounds.size.width, self.bounds.size.height - calendar_Table_Week_H+46 )
+#define event_Table_Week_F CGRectMake(0, calendar_Table_Week_H-headHeight, self.bounds.size.width, self.bounds.size.height - calendar_Table_Week_H+headHeight )
 
 #define cellID @"CLCalendarCell"
 #define eventCellID @"eventCell"
@@ -58,7 +64,7 @@
 - (id)initByMode:(CLCalendarDisplayMode)mode
 {
     if (self) {
-        self.backgroundColor = [UIColor blackColor];
+        self.backgroundColor = [UIColor whiteColor];//原为黑色
         
         
         [self loadLable];
@@ -89,9 +95,10 @@
 
         lab.text = [array objectAtIndex:i];
         lab.textAlignment = NSTextAlignmentCenter; // 直线居中
-        UIView *lineview=[[UIView alloc]initWithFrame:CGRectMake(0, 237, self.frame.size.width, 1)];
-        lineview.backgroundColor=[UIColor whiteColor];
-        [self addSubview:lineview];
+        //暂时屏蔽 多余
+//        UIView *lineview=[[UIView alloc]initWithFrame:CGRectMake(0, 237, self.frame.size.width, 1)];
+//        lineview.backgroundColor=[UIColor whiteColor];
+//        [self addSubview:lineview];
         [self addSubview:lab];
     }
 }
@@ -112,7 +119,7 @@
         
         month=[[UILabel alloc]initWithFrame:calendar_tableView.frame];
         month.alpha=0.8f;
-        month.backgroundColor=[UIColor blackColor];
+        month.backgroundColor=[UIColor blackColor];//显示黑色的几月 如8月黑色背景
         month.textAlignment=NSTextAlignmentCenter;
         month.font=[UIFont boldSystemFontOfSize:17.0f];
         month.textColor=[UIColor whiteColor];
@@ -128,7 +135,7 @@
         event_tableView.dataSource = self;
         event_tableView.tag=1;
         
-        event_tableView.backgroundColor=[UIColor blackColor];
+        event_tableView.backgroundColor=[UIColor whiteColor];//设置事件表格背景为白色
         
         
         [self addSubview:event_tableView];
@@ -138,7 +145,7 @@
     
 }
 
-//到顶或到底剪头
+//到顶或到底箭头
 - (void)loadTodayBtn {
     goBackbtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [goBackbtn setBackgroundImage:[UIImage imageNamed:@"go_back_today.png"] forState:UIControlStateNormal];
@@ -241,7 +248,7 @@
         NSLog(@"----->%ld",(long)currentOffset);
         int row = section / 7;
         int index = section % 7;
-        UIView* headview=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, 46)];
+        UIView* headview=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, headHeight)];
         UILabel* titlelabel=[[UILabel alloc]initWithFrame:headview.frame];
         titlelabel.font=[UIFont boldSystemFontOfSize:20.0f];
         titlelabel.textAlignment=NSTextAlignmentCenter;
@@ -271,7 +278,7 @@
 //表头高
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     if (tableView == event_tableView) {
-        return 46;
+        return headHeight;//46
     }
     return 0;
 }
@@ -283,9 +290,7 @@
         return (dateArr) ? dateArr.count : 0;
     }
     else if (tableView == event_tableView) {
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0];
-        NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"addtime.plist"];
+        NSString *plistPath = getSysDocumentsDir;
         NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
         int row = section/ 7;
         int index = section % 7;
@@ -305,9 +310,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"addtime.plist"];
+ 
+    NSString *plistPath = getSysDocumentsDir;
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
     if (tableView == calendar_tableView) {   //日历表
         if (_time.length > 0) {
@@ -394,14 +398,16 @@
         for (NSString* temstr in [data allKeys]) {
             if ([str isEqualToString:temstr]) {
                 NSDictionary* dic=[[data objectForKey:temstr] objectAtIndex:indexPath.row];
-                NSString* strtime=[dic objectForKey:@"start"];
-                NSRange range=[strtime rangeOfString:@"日"];
-                NSString* strs=[strtime substringWithRange:NSMakeRange(range.location+1,strtime.length-range.location-1)];
+                NSString* starttime=[dic objectForKey:@"start"];
+                NSRange range=[starttime rangeOfString:@"日"];
+                NSString* startstrs=[starttime substringWithRange:NSMakeRange(range.location+1,starttime.length-range.location-1)];
                 NSString* endtime=[dic objectForKey:@"end"];
                 NSRange ranges=[endtime rangeOfString:@"日"];
                 NSString* endstrs=[endtime substringWithRange:NSMakeRange(ranges.location+1,endtime.length-ranges.location-1)];
                 cell.starttimelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
-                NSString* time=[[PublicMethodsViewController getPublicMethods]getseconde:strs];
+                
+                NSString* time=[[PublicMethodsViewController getPublicMethods]getseconde:endtime];
+                
                 cell.timelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
                 
                 
@@ -425,7 +431,7 @@
                 }else{
                     cell.timelabel.text=time;
                     
-                    NSLog(@"strtime->>>>%@",strtime);
+                    NSLog(@"strtime->>>>%@",starttime);
                     NSLog(@"%@  time",time);
                     
                 }
@@ -435,10 +441,10 @@
                     
                     cell.timelabel.hidden=YES;
                 }else{
-                    cell.starttimelabel.text=[NSString stringWithFormat:@"%@  -  %@",strs,endstrs];
+                    cell.starttimelabel.text=[NSString stringWithFormat:@"%@  -  %@",startstrs,endstrs];
                     
                     
-                    NSLog(@"%@   strs",strs);
+                    NSLog(@"%@   strs",startstrs);
                     NSLog(@"%@  endstrs",endstrs);
                     
                     
@@ -448,14 +454,13 @@
                 NSString* strtitle=[dic objectForKey:@"title"];
                 cell.content.text=[strtitle uppercaseString];
                 cell.content.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
+                cell.content.textColor=[UIColor blackColor];
 
                 if ([[dic objectForKey:@"url"] isEqualToString:@"photo.png"]) {
-                    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-                    NSString *documentsDirectory = [paths objectAtIndex:0];
-                    NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"photo.png"];
+                    NSString *plistPath =setSysDocumentsDir(@"photo.png");
                     cell.backImage.image=[UIImage imageWithContentsOfFile:plistPath];
                 }else{
-                cell.backImage.image=[UIImage imageNamed:[dic objectForKey:@"url"]];
+                   cell.backImage.image=[UIImage imageNamed:[dic objectForKey:@"url"]];
                 }
             }
         }
@@ -480,10 +485,12 @@
 #pragma mark - table delegate
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath*)indexPath {
     if (tableView == event_tableView) {
-        if (isshow) {
+        if (isshow) {//在滚动事件cell是默认显示周视图
             [self setDisplayMode:CLCalendarViewModeWeek];
-        }
-        int i = tableView.contentOffset.y / (46 + [tableView numberOfRowsInSection:indexPath.row]*139);
+        }/*else{
+            [self setDisplayMode:CLCalendarViewModeMonth];
+        }*/
+        int i = tableView.contentOffset.y / (headHeight + [tableView numberOfRowsInSection:indexPath.row]*rowHeight);
         int s = i /7;
         int index = i %7;
         if (needReload) {
@@ -540,10 +547,10 @@
         if (day.events) {
             event = [day.events objectAtIndex:indexPath.row];
         }
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0];
-        NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"addtime.plist"];
+        
+        NSString *plistPath = getSysDocumentsDir;
         NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+        NSLog(@"%@",[NSString stringWithFormat:@"%@",day]);
         NSArray* temarr=[data objectForKey:[NSString stringWithFormat:@"%@",day]];
         [self.delegate calendarSelectEvent:self day:day event:[temarr objectAtIndex:indexPath.row] AllEvent:temarr];
     }
@@ -562,7 +569,7 @@
 //            if ([str isEqualToString:temstr]) {
 //                return 139.0f;
 //            }        }
-          return 139.0f;
+          return rowHeight;
     }
 
     return 44.0f;

@@ -43,7 +43,7 @@
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.navigationController.navigationBarHidden = YES;
-    [self getCalendarEvemt];
+  //  [self getCalendarEvemt];   //2014Year 9 -moth 18  屏蔽
     dateArr = [NSMutableArray array];
     
     NSInteger cDay = [CalendarDateUtil getCurrentDay] + 6 *30;
@@ -54,7 +54,7 @@
     NSInteger startIndex = -(cDay - 1  + weekDay - 1);
     
     for (int i = startIndex; i < startIndex + (7* 4 * 12); i+=7) {
-        NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];
+        NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];//回到200天前
         
         NSArray *weekArr = [self switchWeekByDate:temp];
         for (int d = 0; d<7; d ++) {
@@ -80,15 +80,14 @@
 
 }
 
-//读取日历事件并写入到本地 --- 每次进入Home界面都会执行
+//读取日历事件并写入到本地 --- 每次进入Home界面都会执行（---该方法没有使用----2014 Year 9 moth 屏蔽）
 - (void)getCalendarEvemt {
     NSMutableDictionary* eventDic=[[NSMutableDictionary alloc]initWithCapacity:0];
-    NSArray *path = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectorys = [path objectAtIndex:0];
-    NSString *plistPaths = [documentsDirectorys stringByAppendingPathComponent:@"addtime.plist"];
-    NSFileManager *defaultManager;
-    defaultManager = [NSFileManager defaultManager];
-    [defaultManager removeItemAtPath:plistPaths error:nil];
+
+//    NSString *plistPaths =getSysDocumentsDir;
+//    NSFileManager *defaultManager;
+//    defaultManager = [NSFileManager defaultManager];
+//    [defaultManager removeItemAtPath:plistPaths error:nil];
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];

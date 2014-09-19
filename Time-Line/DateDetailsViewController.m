@@ -7,9 +7,10 @@
 //
 
 #import "DateDetailsViewController.h"
-#import "MapViewController.h"
+#import "GoogleMapViewController.h"
 @interface DateDetailsViewController ()
 
+@property (nonatomic,strong)  NSDictionary *coordinateDic;//地图坐标
 @end
 
 @implementation DateDetailsViewController
@@ -35,51 +36,12 @@
     
     
     [self initNavigationItem];
-    
-//    UIView* headview=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 140)];
-//    headview.backgroundColor=[UIColor grayColor];
-//    UIImageView* imageview=[[UIImageView alloc]initWithFrame:headview.frame];
-//    if ([[datedic objectForKey:@"url"] isEqualToString:@"photo.png"]) {
-//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//        NSString *documentsDirectory = [paths objectAtIndex:0];
-//        NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"photo.png"];
-//        imageview.image=[UIImage imageWithContentsOfFile:plistPath];
-//    }else{
-//    imageview.image=[UIImage imageNamed:[datedic objectForKey:@"url"]];
-//    }
-//    [headview addSubview:imageview];
-//    _detaileTableview.tableHeaderView=headview;
-    
-    
-    
-    
-    
-    
-    
 
     // Do any additional setup after loading the view from its nib.
 }
 
 - (void)initNavigationItem
 {
-//    self.navigationController.navigationBar.barTintColor = blueColor;
-    
-    /* 导航栏左
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow.png"] forState:UIControlStateNormal];
-    [leftBtn setFrame:CGRectMake(0, 2, 15, 20)];
-    leftBtn.backgroundColor = [UIColor redColor];
-    [leftBtn addTarget:self action:@selector(disviewcontroller) forControlEvents:UIControlEventTouchUpInside];
-    
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
-    
-    UIButton *rightBtn_add = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn_add setBackgroundImage:[UIImage imageNamed:@"Icon_Edit.png"] forState:UIControlStateNormal];
-    [rightBtn_add setFrame:CGRectMake(35, 10, 20, 20)];
-    [rightBtn_add addTarget:self action:@selector(editEvent) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn_add];
-    */
-    
     UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 66)];
     rview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
     [self.view addSubview:rview];
@@ -87,7 +49,6 @@
     //    左边的按钮
     _ZVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     _ZVbutton.frame = CGRectMake(20, 30, 21, 25);
-    //    _ZVbutton.backgroundColor = [UIColor redColor];
     [_ZVbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
     [_ZVbutton addTarget:self action:@selector(disviewcontroller) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:_ZVbutton];
@@ -96,14 +57,10 @@
     //    右边的按钮
     _YVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     _YVbutton.frame = CGRectMake(280, 30, 21, 25);
-    //_YVbutton.backgroundColor = [UIColor redColor];
     [_YVbutton setBackgroundImage:[UIImage imageNamed:@"Icon_Edit.png"] forState:UIControlStateNormal];
     [_YVbutton addTarget:self action:@selector(editEvent) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:_YVbutton];
 
-    
-    
-    
     /* 导航栏标题 */
     UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(100, 20, 110, 30)];
     UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 20, 110, 30)];
@@ -122,7 +79,7 @@
 
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-     static NSString* cellId=@"cell";
+     static NSString* cellId=@"cellIdentifierEven";
      UITableViewCell*  cell=[tableView dequeueReusableCellWithIdentifier:cellId];
     if (cell==nil) {
         cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
@@ -141,32 +98,14 @@
         
         UILabel* startlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 80, self.view.frame.size.width, 25)];
         startlabel.textAlignment=NSTextAlignmentCenter;
-        NSDateFormatter *formatter =[[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"YYYY年 M月dd日HH:mm"];
-        NSString* table_title=[datedic objectForKey:@"start"];
-        NSDate* date=[formatter dateFromString:table_title];
-        NSString* weakStr=[[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
-        
-        table_title=[table_title stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
-        table_title=[table_title stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
-        table_title=[table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
-        NSArray* array=[table_title componentsSeparatedByString:@"/"];
-        
-        startlabel.text=[NSString stringWithFormat:@"%@  %@/%@ %@",weakStr,[array objectAtIndex:2],[array objectAtIndex:1],[array objectAtIndex:3]];
+        NSString* start_title=[datedic objectForKey:@"start"];
+        startlabel.text=[self dateStringWithFormaterString:start_title];
 
+        
         UILabel* endlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 105, self.view.frame.size.width, 25)];
         endlabel.textAlignment=NSTextAlignmentCenter;
-        NSDateFormatter *formatters =[[NSDateFormatter alloc] init];
-        [formatters setDateFormat:@"YYYY年 M月dd日HH:mm"];
-        NSString* table_titles=[datedic objectForKey:@"end"];
-        NSDate* dates=[formatters dateFromString:table_titles
-                       ];
-        NSString* weakStrs=[[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:dates];
-        table_titles=[table_titles stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
-        table_titles=[table_titles stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
-        table_titles=[table_titles stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
-        NSArray* arrays=[table_titles componentsSeparatedByString:@"/"];
-        endlabel.text=[NSString stringWithFormat:@"%@  %@/%@ %@",weakStrs,[arrays objectAtIndex:2],[arrays objectAtIndex:1],[arrays objectAtIndex:3]];
+        NSString* end_titles=[datedic objectForKey:@"end"];
+        endlabel.text=[self dateStringWithFormaterString:end_titles];
 
         UILabel* notelabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 130, self.view.frame.size.width, 50)];
         notelabel.textAlignment=NSTextAlignmentCenter;
@@ -177,20 +116,34 @@
         [cell.contentView addSubview:notelabel];
         
     }
+    
     NSString* str=[datedic objectForKey:@"loc"];
     if (str.length>0) {
         if (indexPath.row==1) {
+            self.coordinateDic=[datedic objectForKey:@"coordinate"];
             cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
             UILabel* label=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
-            label.text=[datedic objectForKey:@"loc"];
+            label.text=str;
             label.textAlignment=NSTextAlignmentCenter;
             [cell.contentView addSubview:label];
         }
-
     }
     return cell;
 }
 
+
+-(NSString *)dateStringWithFormaterString:(NSString *) formateString
+{
+    NSDateFormatter *formatters =[[NSDateFormatter alloc] init];
+    [formatters setDateFormat:@"YYYY年 M月dd日HH:mm"];
+    NSDate* dates=[formatters dateFromString:formateString];
+    NSString* weakStrs=[[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:dates];
+    formateString=[formateString stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
+    formateString=[formateString stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
+    formateString=[formateString stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
+    NSArray* arrays=[formateString componentsSeparatedByString:@"/"];
+    return [NSString stringWithFormat:@"%@  %@/%@ %@",weakStrs,[arrays objectAtIndex:2],[arrays objectAtIndex:1],[arrays objectAtIndex:3]];
+}
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     NSString* str=[datedic objectForKey:@"loc"];
@@ -210,7 +163,11 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.row==1) {
-        MapViewController* map=[[MapViewController alloc]initWithNibName:@"MapViewController" bundle:nil];
+//        MapViewController* map=[[MapViewController alloc]initWithNibName:@"MapViewController" bundle:nil];
+//        [self.navigationController pushViewController:map animated:YES];
+        GoogleMapViewController *map=[[GoogleMapViewController alloc] init];
+        [map setCoordinateDictionary:self.coordinateDic];
+        self.navigationController.navigationBarHidden = NO;
         [self.navigationController pushViewController:map animated:YES];
     }
 

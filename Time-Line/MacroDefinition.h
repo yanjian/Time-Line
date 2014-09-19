@@ -290,16 +290,6 @@ return nil; \
 return self; \
 }
 
-//打印位置,大小
-#ifdef DEBUG
-#define DNSLogPoint(p) NSLog(@&quot;%f,%f&quot;, p.x, p.y);
-#define DNSLogSize(p) NSLog(@&quot;%f,%f&quot;, p.width, p.height);
-#define DNSLogRect(p) NSLog(@&quot;%f,%f,%f,%f&quot;, p.origin.x, p.origin.y, p.size.width, p.size.height,);
-#else
-#define DNSLogPoint(p);
-#define DNSLogSize(p);
-#define DNSLogRect(p);
-#endif
 
 //拨打电话
 #define canTel                 ([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tel:"]])
@@ -317,7 +307,23 @@ return self; \
 
 
 //System  剪贴板
-#define PasteString(string)   [[UIPasteboard generalPasteboard] setString:string];
-#define PasteImage(image)     [[UIPasteboard generalPasteboard] setImage:image];
+#define PasteString(string)   [[UIPasteboard generalPasteboard] setString:string]
+#define PasteImage(image)     [[UIPasteboard generalPasteboard] setImage:image]
 
 #endif
+
+#define g_AppDelegate          [AppDelegate getAppDelegate]
+
+//网络队列
+#define g_ASIQuent             g_AppDelegate.networkQueue
+
+//网络状态
+#define g_NetStatus            g_AppDelegate.netWorkStatus
+
+//默认读取该文件
+#define FILENAME @"addtime.plist"
+#define getSysDocumentsDir [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:FILENAME]
+
+#define setSysDocumentsDir(fileName)  [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:fileName]
+
+

@@ -25,7 +25,7 @@ typedef enum {
 
 @property (nonatomic, assign)  id<CLCalendarDataSource> dataSuorce;
 
-@property (retain,nonatomic) NSString* time;
+@property (copy,nonatomic) NSString* time;
 - (id)initByMode:(CLCalendarDisplayMode)mode;
 
 - (void)setToDayRow:(int)row Index:(int)index;

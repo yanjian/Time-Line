@@ -5,7 +5,7 @@
 //  Created by zhoulei on 14-4-19.
 //  Copyright (c) 2014年 connor. All rights reserved.
 //
-
+#include <math.h>
 #import "PublicMethodsViewController.h"
 
 @interface PublicMethodsViewController ()
@@ -149,7 +149,7 @@ static PublicMethodsViewController * PublicMethods = nil;
 
 -(NSString*)getseconde:(NSString*)endstart{
     NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"HH:mm"];
+    [dateFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
     NSDate *  senddate=[NSDate date];
     //结束时间
     NSDate *endDate = [dateFormatter dateFromString:endstart];
@@ -157,22 +157,22 @@ static PublicMethodsViewController * PublicMethods = nil;
     NSDate *senderDate = [dateFormatter dateFromString:[dateFormatter stringFromDate:senddate]];
     //得到相差秒数
     NSTimeInterval time=[endDate timeIntervalSinceDate:senderDate];
-    int hours = (int)time/3600;
-    int minute = time/60;
     
-    
-   
-    
-    NSLog(@"%f========%i",time,minute);
-    NSString* dateContent=@"";
-    if (hours<= 0&&minute<= 0){
-        dateContent=@"0小时0分钟";
-    }
-    else if(hours<=0){
+     int minute = time/60;
+     NSString* dateContent=@"";
+    if (minute<60&&minute>0) {
         dateContent=[[NSString alloc] initWithFormat:@"in %i min",minute];
+    }else if(minute<0&&minute>-60){
+        dateContent=[[NSString alloc] initWithFormat:@"out %i min",(int)fabs(minute)];
     }else{
-        dateContent=[[NSString alloc] initWithFormat:@"in %i hr",hours];
+        int hours = (int)time/3600;
+        if(hours<0&&hours>-24){
+            dateContent=[[NSString alloc] initWithFormat:@"out %i hr",(int)fabs(hours)];
+        }else if(hours>=0){
+            dateContent=[[NSString alloc] initWithFormat:@"in %i hr",hours];
+        }
     }
+    NSLog(@"%f========%i",time,minute);
     return dateContent;
 
 }

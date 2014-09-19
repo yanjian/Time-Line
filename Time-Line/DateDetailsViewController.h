@@ -14,8 +14,8 @@
     UIButton *_YVbutton;//滑动试图左边view上的右边按钮
 
 }
-@property(retain,nonatomic)NSDictionary* datedic;
+@property(retain,nonatomic)NSDictionary* datedic;//一个事件
 @property (weak, nonatomic) IBOutlet UITableView *detaileTableview;
 
-@property(retain,nonatomic)NSArray* dateArr;
+@property(retain,nonatomic)NSArray* dateArr;//所有数据
 @end
