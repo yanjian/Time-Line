@@ -16,11 +16,13 @@
 
 @property(retain,nonatomic)NSString *state;                         //state的值为edit表示编辑数据，
 @property(retain,nonatomic)NSDictionary *dateDic;                   //要编辑的事件数据
-@property(retain,nonatomic)NSArray *dateArr;                        //用户所有的事件数据
+@property(retain,nonatomic)NSMutableArray *dateArr;                        //用户所有的事件数据
 @property (nonatomic, strong) NSMutableArray *arrGoogleCalendars;
 @property (nonatomic, strong) NSDictionary *dictCurrentCalendar;
 @property (nonatomic, strong) NSDate *dtEvent;
 @property (nonatomic, strong) NSString *strEvent;
 @property (assign)BOOL isOpen;
 @property (nonatomic,retain)NSIndexPath *selectIndex;
+
++(NSString *) generateUniqueEventID;
 @end

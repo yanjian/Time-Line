@@ -263,10 +263,40 @@
 
 //删除事件
 -(void)deleteEvent{
+    NSString *plistPath=getSysDocumentsDir;
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+    NSString *eventID=[dateDic valueForKey:@"eventID"];
+    NSDictionary *eventDate=nil;
+    
+    for (NSString *eventdate in data) {
+        NSMutableArray *tmpDatas=[data valueForKey:eventdate];
+        for (NSMutableDictionary *eventdic in tmpDatas) {
+            NSString *eventDicID=[eventdic valueForKey:@"eventID"];
+            if ([eventID isEqualToString:eventDicID]) {
+                eventDate=eventdic;
+                break;
+            }
+            
+        }
+        if (eventDate) {
+            [tmpDatas removeObject:eventDate];
+            if ([tmpDatas count]<1) {
+                [data removeObjectForKey:eventdate];
+            }
+            break;
+        }
+    }
+
+    [data writeToFile:plistPath atomically:NO];
+    /**
+     *2014Year 9month21屏蔽
     EKEventStore* eventStore=[[EKEventStore alloc]init];
     EKEvent* event=[eventStore eventWithIdentifier:[dateDic objectForKey:@"timeid"]];
     NSError* error=nil;
     [eventStore removeEvent:event span:EKSpanThisEvent error:&error];
+     */
+    
+    
 //    AppDelegate* app=[[UIApplication sharedApplication] delegate];
 //    app.isread=YES;
 //    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -354,52 +384,7 @@
     if ([state isEqualToString:@"edit"]) {
         [self editEvent];
     }else{
-     [self postEvent];
-
-//        [self getLocalNotification:startlabel.text];
-//    NSString* destDateString=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"YYYY年 M月d日"];
-//    if ([seledayArr count]<=0) {
-//        [seledayArr addObject:destDateString];
-//    }
-//        NSInteger timeid = 0;
-//        if ([[NSUserDefaults standardUserDefaults]objectForKey:@"timeid"]) {
-//            timeid=[[NSUserDefaults standardUserDefaults] integerForKey:@"timeid"];
-//        }
-//        timeid++;
-//        if ([state isEqualToString:@"edit"]) {
-//            timeid=[[dateDic objectForKey:@"timeid"] integerValue];
-//        }
-//
-//     for (NSString* day in seledayArr) {
-//        NSMutableArray* array=[[NSMutableArray alloc]initWithCapacity:0];
-//        NSDictionary* dic=nil;
-//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//        NSString *documentsDirectory = [paths objectAtIndex:0];
-//        NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"addtime.plist"];
-//        NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
-//        NSLog(@"%@",plistPath);
-//        if ([data count]>0) {
-//            eventDic=data;
-//        }
-//        if ([day isEqualToString:[seledayArr objectAtIndex:0]]||[day isEqualToString:[seledayArr objectAtIndex:[seledayArr count]-1]]) {
-//            dic=[[NSDictionary alloc]initWithObjectsAndKeys:startlabel.text,@"start",endlabel.text,@"end",textfiled.text,@"title",[NSString stringWithFormat:@"%ld",(long)timeid],@"timeid",loclabel.text,@"loc",imagename,@"image",nil];
-//        }else{
-//            dic=[[NSDictionary alloc]initWithObjectsAndKeys:day,@"start",endlabel.text,@"end",textfiled.text,@"title",[NSString stringWithFormat:@"%ld",(long)timeid],@"timeid",loclabel.text,@"loc",imagename,@"image",nil];
-//        }
-//        for (NSString* str in [data allKeys]) {
-//            if ([str isEqualToString:day]) {
-//                for (NSDictionary* temdic in [data objectForKey:str]) {
-//                    [array addObject:temdic];
-//                }
-//            }
-//        }
-//        [array addObject:dic];
-//        [self getLocalNotification:day];
-//        [eventDic setObject:array forKey:day];
-//        [eventDic writeToFile:plistPath atomically:YES];
-//         NSLog(@"----%@",eventDic);
-//    }
-//         [[NSUserDefaults standardUserDefaults] setInteger:timeid forKey:@"timeid"];
+      [self postEvent];
     }
     [textfiled resignFirstResponder];
     if ([state isEqualToString:@"edit"]) {
@@ -424,142 +409,210 @@
     }
 }
 
+//修改事件数据
 -(void)editEvent{
-    EKEventStore* eventStore=[[EKEventStore alloc]init];
-    EKEvent* event=[eventStore eventWithIdentifier:[dateDic objectForKey:@"timeid"]];
-    if ([eventStore respondsToSelector:@selector(requestAccessToEntityType:completion:)])
-    {
-        [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (error)
-                {
-                    //错误细心
+    NSRange strRange=  [startString rangeOfString:@"日"];
+    NSString *startDate=[startString substringWithRange:NSMakeRange(0, strRange.location+1)];
+    NSString *plistPath=getSysDocumentsDir;
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+    
+    NSFileManager *defaultManager= [NSFileManager defaultManager];
+    [defaultManager removeItemAtPath:plistPath error:nil];
+    
+    NSMutableArray *tmpDataArr=[data valueForKey:startDate];
+    NSString *eventID=[dateDic valueForKey:@"eventID"];
+    NSDictionary *eventDate=nil;
+    if (tmpDataArr) {//根据开始时间查找存储的对应数据如查找到则修改
+        if ([[dateDic valueForKey:STARTDATE] isEqualToString:startString]) {
+            for (NSDictionary *eventDic in dateArr) {
+                NSString *eventDicID=[eventDic valueForKey:@"eventID"];
+                if ([eventID isEqualToString:eventDicID]) {
+                    eventDate=eventDic;
+                    break;
                 }
-                else if (!granted)
-                {
-                    //被用户拒绝，不允许访问日历
+            }
+            if (eventDate) {
+                [dateArr removeObject:eventDate];
+                NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
+                [dataDic setObject:[AddEventViewController generateUniqueEventID] forKey:@"eventID"];
+                [dataDic setObject:textfiled.text forKey:TITLE];
+                [dataDic setObject:localfiled.text forKey:LOCATION];
+                [dataDic setObject:startString forKey:STARTDATE];
+                [dataDic setObject:endString forKey:ENDDATE];
+                [dataDic setObject:notefiled.text forKey:NOTE];
+                if (coordinates) {
+                    [dataDic setObject:coordinates forKey:COORDINATE];
                 }
-                else
-                {
-                    // access granted
-                    // ***** do the important stuff here *****
-                    
-                    //事件保存到日历
-                    
-                    //创建事件
-                    NSLog(@"%@",imagename);
-                    event.title =textfiled.text;
-                    event.location =localfiled.text;
-                    event.URL=[NSURL URLWithString:imagename];
-                    NSRange range=[startString rangeOfString:@"日"];
-                    NSDateFormatter *tempFormatter = [[NSDateFormatter alloc]init];
-                    NSString* strs=[startString substringWithRange:NSMakeRange(range.location+1,startString.length-range.location-1)];
-                    if (strs.length<=0) {
-                        [tempFormatter setDateFormat:@"YYYY年 M月d日"];
-                    }else{
-                        [tempFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
+                [dataDic setObject:selectAlertArr forKey:ALERTS];
+                //      [dataDic setObject:localfiled.text forKey:CACCOUNT];
+                [dataDic setObject:selectRepeatArr forKey:REPEAT];
+                [dateArr addObject:dataDic];
+            }
+            [data setObject:dateArr forKey:startDate];
+
+        }else{
+            for (NSString *eventdate in data) {
+                NSMutableArray *tmpDatas=[data valueForKey:eventdate];
+                for (NSMutableDictionary *eventdic in tmpDatas) {
+                    NSString *eventDicID=[eventdic valueForKey:@"eventID"];
+                    if ([eventID isEqualToString:eventDicID]) {
+                        eventDate=eventdic;
+                        break;
                     }
-                    event.startDate = [tempFormatter dateFromString:startString];
-                    NSLog(@"%@---------%@",startString,strs);
-                    NSRange ranges=[endString rangeOfString:@"日"];
-                    NSDateFormatter *tempFormatters = [[NSDateFormatter alloc]init];
-                    NSString* endstrs=[endString substringWithRange:NSMakeRange(ranges.location+1,endString.length-ranges.location-1)];
-                    if (endstrs.length<=0) {
-                        [tempFormatters setDateFormat:@"YYYY年 M月d日"];
-                    }else{
-                        [tempFormatters setDateFormat:@"YYYY年 M月d日HH:mm"];
-                    }
-                    
-                    event.endDate   = [tempFormatter dateFromString:endString];
-                    event.location =localfiled.text;
-                    event.notes=notefiled.text;
-                    //                    event.allDay = YES;
-                    
-                    //添加提醒
-                    [event addAlarm:[EKAlarm alarmWithRelativeOffset:10.0f]];
-                    [event addAlarm:[EKAlarm alarmWithRelativeOffset:60.0f * -15.0f]];
-                    
-                    [event setCalendar:[eventStore defaultCalendarForNewEvents]];
-                    NSError *err;
-                    [eventStore saveEvent:event span:EKSpanThisEvent error:&err];
-                    
-                    UIAlertView *alert = [[UIAlertView alloc]
-                                          initWithTitle:@"Event Created"
-                                          message:@"Yay!?"
-                                          delegate:nil
-                                          cancelButtonTitle:@"Okay"
-                                          otherButtonTitles:nil];
-                    [alert show];
-                    
-                    NSLog(@"保存成功");
                     
                 }
-            });
-        }];
+                if (eventDate) {
+                    [tmpDatas removeObject:eventDate];
+                    if ([tmpDatas count]<1) {
+                        [data removeObjectForKey:eventdate];
+                    }
+                    break;
+                }
+            }
+            NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
+            [dataDic setObject:[AddEventViewController generateUniqueEventID] forKey:@"eventID"];
+            [dataDic setObject:textfiled.text forKey:TITLE];
+            [dataDic setObject:localfiled.text forKey:LOCATION];
+            [dataDic setObject:startString forKey:STARTDATE];
+            [dataDic setObject:endString forKey:ENDDATE];
+            [dataDic setObject:notefiled.text forKey:NOTE];
+            if (coordinates) {
+                [dataDic setObject:coordinates forKey:COORDINATE];
+            }
+            [dataDic setObject:selectAlertArr forKey:ALERTS];
+            //[dataDic setObject:localfiled.text forKey:CACCOUNT];
+            [dataDic setObject:selectRepeatArr forKey:REPEAT];
+            [tmpDataArr addObject:dataDic];
+
+
+        }
+       
+    }else{
+        for (NSString *eventdate in data) {
+            NSMutableArray *tmpDatas=[data valueForKey:eventdate];
+            for (NSMutableDictionary *eventdic in tmpDatas) {
+                NSString *eventDicID=[eventdic valueForKey:@"eventID"];
+                if ([eventID isEqualToString:eventDicID]) {
+                    eventDate=eventdic;
+                    break;
+                }
+                
+            }
+            if (eventDate) {
+                [tmpDatas removeObject:eventDate];
+                if ([tmpDatas count]<1) {
+                    [data removeObjectForKey:eventdate];
+                }
+                break;
+            }
+        }
+        if (!tmpDataArr) {
+            tmpDataArr=[[NSMutableArray alloc] initWithCapacity:0];
+            [data setObject:tmpDataArr forKey:startDate];
+        }
+        NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
+        [dataDic setObject:[AddEventViewController generateUniqueEventID] forKey:@"eventID"];
+        [dataDic setObject:textfiled.text forKey:TITLE];
+        [dataDic setObject:localfiled.text forKey:LOCATION];
+        [dataDic setObject:startString forKey:STARTDATE];
+        [dataDic setObject:endString forKey:ENDDATE];
+        [dataDic setObject:notefiled.text forKey:NOTE];
+        if (coordinates) {
+            [dataDic setObject:coordinates forKey:COORDINATE];
+        }
+        [dataDic setObject:selectAlertArr forKey:ALERTS];
+        //[dataDic setObject:localfiled.text forKey:CACCOUNT];
+        [dataDic setObject:selectRepeatArr forKey:REPEAT];
+        [tmpDataArr addObject:dataDic];
+
     }
-
-
-//    NSString* destDateString=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"YYYY年 M月d日"];
-//    if ([seledayArr count]<=0) {
-//        [seledayArr addObject:destDateString];
+    [data writeToFile:plistPath atomically:NO];
+    
+    
+//    [dataDic setObject:textfiled.text forKey:TITLE];
+//    [dataDic setObject:localfiled.text forKey:LOCATION];
+//    [dataDic setObject:startString forKey:STARTDATE];
+//    [dataDic setObject:endString forKey:ENDDATE];
+//    [dataDic setObject:notefiled.text forKey:NOTE];
+//    if (coordinates) {
+//        [dataDic setObject:coordinates forKey:COORDINATE];
 //    }
-//    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//    NSString *documentsDirectory = [paths objectAtIndex:0];
-//    NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"addtime.plist"];
-//    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
-//    NSMutableDictionary* deldic=[[NSMutableDictionary alloc]initWithCapacity:0];
-//    NSArray* valueArr=[data allValues];
-//    NSArray* keyarr=[data allKeys];
-//    for (int i=0; i<[valueArr count]; i++) {
-//        NSMutableArray* arr=[valueArr objectAtIndex:i];
-//        for (int j=0; j<[arr count]; j++) {
-//            NSDictionary* dic=[arr objectAtIndex:j];
-//            if ([[dic objectForKey:@"timeid"] isEqualToString:[dateDic objectForKey:@"timeid"]]) {
-//                [arr removeObjectAtIndex:j];
-//                if ([arr count]==0) {
-//                    [data removeObjectForKey:[keyarr objectAtIndex:i]];
-//                }else{
-//                    [deldic setObject:arr forKey:[keyarr objectAtIndex:i]];
+//    [dataDic setObject:selectAlertArr forKey:ALERTS];
+//    //      [dataDic setObject:localfiled.text forKey:CACCOUNT];
+//    [dataDic setObject:selectRepeatArr forKey:REPEAT];
+    
+//    EKEventStore* eventStore=[[EKEventStore alloc]init];
+//    EKEvent* event=[eventStore eventWithIdentifier:[dateDic objectForKey:@"timeid"]];
+//    if ([eventStore respondsToSelector:@selector(requestAccessToEntityType:completion:)])
+//    {
+//        [eventStore requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError *error) {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                if (error)
+//                {
+//                    //错误细心
+//                }
+//                else if (!granted)
+//                {
+//                    //被用户拒绝，不允许访问日历
+//                }
+//                else
+//                {
+//                    // access granted
+//                    // ***** do the important stuff here *****
+//                    
+//                    //事件保存到日历
+//                    
+//                    //创建事件
+//                    NSLog(@"%@",imagename);
+//                    event.title =textfiled.text;
+//                    event.location =localfiled.text;
+//                    event.URL=[NSURL URLWithString:imagename];
+//                    NSRange range=[startString rangeOfString:@"日"];
+//                    NSDateFormatter *tempFormatter = [[NSDateFormatter alloc]init];
+//                    NSString* strs=[startString substringWithRange:NSMakeRange(range.location+1,startString.length-range.location-1)];
+//                    if (strs.length<=0) {
+//                        [tempFormatter setDateFormat:@"YYYY年 M月d日"];
+//                    }else{
+//                        [tempFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
+//                    }
+//                    event.startDate = [tempFormatter dateFromString:startString];
+//                    NSLog(@"%@---------%@",startString,strs);
+//                    NSRange ranges=[endString rangeOfString:@"日"];
+//                    NSDateFormatter *tempFormatters = [[NSDateFormatter alloc]init];
+//                    NSString* endstrs=[endString substringWithRange:NSMakeRange(ranges.location+1,endString.length-ranges.location-1)];
+//                    if (endstrs.length<=0) {
+//                        [tempFormatters setDateFormat:@"YYYY年 M月d日"];
+//                    }else{
+//                        [tempFormatters setDateFormat:@"YYYY年 M月d日HH:mm"];
+//                    }
+//                    
+//                    event.endDate   = [tempFormatter dateFromString:endString];
+//                    event.location =localfiled.text;
+//                    event.notes=notefiled.text;
+//                    //                    event.allDay = YES;
+//                    
+//                    //添加提醒
+//                    [event addAlarm:[EKAlarm alarmWithRelativeOffset:10.0f]];
+//                    [event addAlarm:[EKAlarm alarmWithRelativeOffset:60.0f * -15.0f]];
+//                    
+//                    [event setCalendar:[eventStore defaultCalendarForNewEvents]];
+//                    NSError *err;
+//                    [eventStore saveEvent:event span:EKSpanThisEvent error:&err];
+//                    
+//                    UIAlertView *alert = [[UIAlertView alloc]
+//                                          initWithTitle:@"Event Created"
+//                                          message:@"Yay!?"
+//                                          delegate:nil
+//                                          cancelButtonTitle:@"Okay"
+//                                          otherButtonTitles:nil];
+//                    [alert show];
+//                    
+//                    NSLog(@"保存成功");
 //                    
 //                }
-//            }else{
-//                [deldic setObject:arr forKey:[[data allKeys] objectAtIndex:i]];
-//            }
-//        }
-//        [deldic writeToFile:plistPath atomically:YES];
+//            });
+//        }];
 //    }
-//    
-//    for (NSString* day in seledayArr) {
-//        NSMutableArray* array=[[NSMutableArray alloc]initWithCapacity:0];
-//        NSDictionary* dic=nil;
-//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//        NSString *documentsDirectory = [paths objectAtIndex:0];
-//        NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"addtime.plist"];
-//        NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
-//        NSLog(@"%@",plistPath);
-//        if ([data count]>0) {
-//            eventDic=data;
-//        }
-//        NSInteger timeid=[[dateDic objectForKey:@"timeid"] integerValue];
-//        if ([day isEqualToString:[seledayArr objectAtIndex:0]]||[day isEqualToString:[seledayArr objectAtIndex:[seledayArr count]-1]]) {
-//            dic=[[NSDictionary alloc]initWithObjectsAndKeys:startlabel.text,@"start",endlabel.text,@"end",textfiled.text,@"title",[NSString stringWithFormat:@"%ld",(long)timeid],@"timeid",loclabel.text,@"loc",nil];
-//        }else{
-//            dic=[[NSDictionary alloc]initWithObjectsAndKeys:day,@"start",endlabel.text,@"end",textfiled.text,@"title",[NSString stringWithFormat:@"%ld",(long)timeid],@"timeid",loclabel.text,@"loc",nil];
-//        }
-//        for (NSString* str in [data allKeys]) {
-//            if ([str isEqualToString:day]) {
-//                for (NSDictionary* temdic in [data objectForKey:str]) {
-//                    [array addObject:temdic];
-//                }
-//            }
-//        }
-//        [array addObject:dic];
-//        //        [self getLocalNotification:day];
-//        [eventDic setObject:array forKey:day];
-//        [eventDic writeToFile:plistPath atomically:YES];
-//        NSLog(@"----%@",eventDic);
-//    }
-
 
 }
 
@@ -1331,7 +1384,8 @@
 }
 
 
-- (void)postEvent{
+- (void)postEvent
+{
     //事件存储库
     NSString *plistPath=getSysDocumentsDir;
     NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
@@ -1342,6 +1396,7 @@
          data=[NSMutableDictionary dictionaryWithCapacity:0];
          NSMutableArray *calendarDataArr=[NSMutableArray arrayWithCapacity:0];
          NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
+        [dataDic setObject:[AddEventViewController generateUniqueEventID] forKey:@"eventID"];
         [dataDic setObject:textfiled.text forKey:TITLE];
         [dataDic setObject:localfiled.text forKey:LOCATION];
         [dataDic setObject:startString forKey:STARTDATE];
@@ -1364,6 +1419,7 @@
         }
         //用于存放要保存的数据
         NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
+        [dataDic setObject:[AddEventViewController generateUniqueEventID] forKey:@"eventID"];
         [dataDic setObject:textfiled.text forKey:TITLE];
         [dataDic setObject:localfiled.text forKey:LOCATION];
         [dataDic setObject:startString forKey:STARTDATE];
@@ -1515,7 +1571,7 @@
     NSDateFormatter *df=[[NSDateFormatter alloc] init];
     [df setDateFormat:@"YYYYMdHHmmss"];
     NSString *dateStr=[df stringFromDate:newDate];
-    NSInteger random= arc4random()*10000+1;
+    NSInteger random= arc4random()%10000+1;
     return [NSString stringWithFormat:@"%@%@%d",prefix,dateStr,random];
 }
 
