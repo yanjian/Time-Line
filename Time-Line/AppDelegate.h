@@ -38,4 +38,6 @@
 //隐藏提示框
 - (void)hideActivityView ;
 
+-(void)initMainView;
+
 @end

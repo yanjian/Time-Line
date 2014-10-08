@@ -10,6 +10,8 @@
 #import "CalendarDateUtil.h"
 #import "AddEventViewController.h"
 #import "SHRootController.h"
+#import "AddEventViewController.h"
+
 @interface HomeViewController () {
     UILabel *titleLabel;
     BOOL ison;
@@ -214,11 +216,11 @@
     [rview addSubview:_ZVbutton];
     
 
-//    右边的按钮
+//   导航： 右边的按钮
     _YVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     _YVbutton.frame = CGRectMake(280, 30, 21, 25);
     //_YVbutton.backgroundColor = [UIColor redColor];
-    [_YVbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow1"] forState:UIControlStateNormal];
+    [_YVbutton setBackgroundImage:[UIImage imageNamed:@"add_action"] forState:UIControlStateNormal];
     [_YVbutton addTarget:self action:@selector(setYVbutton) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:_YVbutton];
     
@@ -284,60 +286,6 @@
     [_rbutton addTarget:self action:@selector(setrbutton) forControlEvents:UIControlEventTouchUpInside];
     [zview addSubview:_rbutton];
     [_scrollview addSubview:zview];
-    
-
-    
-//    self.navigationController.navigationBar.barTintColor = blueColor;
-//    
-//    /* 导航栏左 */
-//    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [leftBtn setImage:[UIImage imageNamed:@"Icon_Menu"] forState:UIControlStateNormal];
-//    [leftBtn setFrame:CGRectMake(0, 2, 20, 18)];
-//    [leftBtn addTarget:self action:@selector(oClickMenu) forControlEvents:UIControlEventTouchUpInside];
-//    
-//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
-//    
-//    /* 导航栏右 */
-//    
-//    
-//     rightBtn_arrow = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [rightBtn_arrow setImage:[UIImage imageNamed:@"arrow_icon"] forState:UIControlStateNormal];
-//    [rightBtn_arrow setFrame:CGRectMake(0, 2, 30, 40)];
-//    [rightBtn_arrow addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
-//    
-//    UIButton *rightBtn_add = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [rightBtn_add setBackgroundImage:[UIImage imageNamed:@"Icon_Add"] forState:UIControlStateNormal];
-//    [rightBtn_add setFrame:CGRectMake(40, 10, 20, 20)];
-//    [rightBtn_add addTarget:self action:@selector(oClickAdd) forControlEvents:UIControlEventTouchUpInside];
-//    
-//    UIView *rightView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 60, 40)];
-//    [rightView addSubview:rightBtn_arrow];
-//    [rightView addSubview:rightBtn_add];
-//    
-//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightView];
-    
-    /* 导航栏标题 */
-//    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(0, 0, 140, 40)];
-//    [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
-//    
-//    titleView.backgroundColor = [UIColor redColor];
-//    
-//    
-//    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 140, 40)];
-//    titleLabel.textAlignment = NSTextAlignmentCenter;
-////    titleLabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
-//    titleLabel.font=[UIFont boldSystemFontOfSize:20.0f];
-//    titleLabel.textColor = [UIColor whiteColor];
-//    
-//    titleLabel.backgroundColor = [UIColor yellowColor];
-//    
-//    
-//    [titleView addSubview:titleLabel];
-//    
-//    self.navigationItem.titleView = titleView;
-    
-    
-  
 }
 #pragma mark -－－ 所有点击事件
 - (void)setrbutton
@@ -359,11 +307,13 @@
 }
 -(void)setYVbutton
 {
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:.2];
-    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-    _scrollview.contentOffset = CGPointMake(640, 0);
-    [UIView commitAnimations];
+//    [UIView beginAnimations:nil context:nil];
+//    [UIView setAnimationDuration:.2];
+//    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
+//    _scrollview.contentOffset = CGPointMake(640, 0);
+//    [UIView commitAnimations];
+    [self oClickAdd];
+    
 }
 
 
@@ -447,15 +397,15 @@
 
 #pragma mark - CLCalendar Delegate
 //点击事件tableview，添加或查询事件详细
-- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(NSDictionary*)event AllEvent:(NSArray *)events {
-    if ([event count] == 0) {  //没有事件添加
+- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AnyEvent*)event AllEvent:(NSArray *)events {
+    if (!event) {  //没有事件添加
         AddEventViewController* add=[[AddEventViewController alloc]initWithNibName:@"AddEventViewController" bundle:nil];
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:add];
         [self presentViewController:nav animated:YES completion:nil];
-    }
-    else {  //有事件查看详细
+    }else {  //有事件查看详细
+        NSLog(@"%@",event);
         DateDetailsViewController* dateDetails=[[DateDetailsViewController alloc]initWithNibName:@"DateDetailsViewController" bundle:nil];
-        dateDetails.datedic=event;
+        dateDetails.event=event;
         dateDetails.dateArr=events;
         [self.navigationController pushViewController:dateDetails animated:YES];
     }

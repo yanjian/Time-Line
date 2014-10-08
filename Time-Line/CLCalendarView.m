@@ -9,6 +9,7 @@
 #import "CLCalendarView.h"
 #import "EventCell.h"
 #import "AppDelegate.h"
+#import "AnyEvent.h"
 #define calendar_Table_Month_H  132   //只显示一周此处改为44
 #define calendar_Table_Week_H   90   //110
 
@@ -44,6 +45,7 @@
     BOOL         needReload;
     UILabel* month;
     BOOL isshow;
+    NSArray *eventArr;
 }
 
 @end
@@ -220,6 +222,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == event_tableView) {  //事件表
+        eventArr=[NSManagedObject getTable_sync:NSStringFromClass([AnyEvent class]) predicate:nil];
         dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
         return (dateArr) ? dateArr.count*7 : 1;
     }
@@ -267,13 +270,15 @@
 //        titlelabel.backgroundColor=[UIColor blackColor];
         
 //       区头的颜色
-        titlelabel.backgroundColor = [UIColor colorWithRed:244.0f/255.0f green:10.0f/255.0f blue:115.0f/255.0f alpha:1];
+        titlelabel.backgroundColor = purple;
         [headview addSubview:titlelabel];
         return headview;
     }
 
     return nil;
 }
+
+
 
 //表头高
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
@@ -288,22 +293,22 @@
     if (tableView == calendar_tableView) {
         dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
         return (dateArr) ? dateArr.count : 0;
-    }
-    else if (tableView == event_tableView) {
-        NSString *plistPath = getSysDocumentsDir;
-        NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+    }else if (tableView == event_tableView) {
+       
         int row = section/ 7;
         int index = section % 7;
         NSString* str=[[[dateArr objectAtIndex:row] objectAtIndex:index] description];
-        for (NSString* temstr in [data allKeys]) {
+        NSMutableArray *constArr=[NSMutableArray arrayWithCapacity:0];
+        for (AnyEvent *anyEvent in eventArr) {
+            NSString*  temstr=[[PublicMethodsViewController getPublicMethods] formatStringWithString:anyEvent.startDate];
             if ([str isEqualToString:temstr]) {
-                return [[data objectForKey:temstr] count];
+                [constArr addObject:anyEvent];
             }
         }
-        return 1;
         
-    }
-    else {
+        return constArr.count==0?1:constArr.count;
+        
+    }else {
         return 0;
     }
 }
@@ -311,8 +316,11 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
  
-    NSString *plistPath = getSysDocumentsDir;
-    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+//    for (AnyEvent *aevent in eventArr) {
+//        NSLog(@"%@",aevent.startDate);
+//    }
+//    NSString *plistPath = getSysDocumentsDir;
+//    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
     if (tableView == calendar_tableView) {   //日历表
         if (_time.length > 0) {
             CLCalendarCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
@@ -329,8 +337,10 @@
                 }
                 CLDay *day = [[dateArr objectAtIndex:i] objectAtIndex:0];
                 NSMutableArray* temarray=[[NSMutableArray alloc]initWithCapacity:0];
-                for (int i=0;i<[[data allKeys] count];i++) {
-                    NSString*  str=[[data allKeys]objectAtIndex:i];
+                
+                for (int i=0;i<[eventArr count];i++) {
+                    AnyEvent *anyEvent=[eventArr objectAtIndex:i];
+                    NSString*  str=[[PublicMethodsViewController getPublicMethods] formatStringWithString:anyEvent.startDate];
                     str=[str stringByReplacingOccurrencesOfString:@"年" withString:@"/"];
                     str=[str stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
                     str=[str stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
@@ -381,90 +391,69 @@
                 [tableView reloadData];
             }
             return cell;
-
         }
-  
-        
-    }
-    else {  //事件表
+    }else {  //事件表
         EventCell *cell = [tableView dequeueReusableCellWithIdentifier:eventCellID];
         if (!cell) {
             cell = (EventCell*)[[[NSBundle mainBundle] loadNibNamed:@"EventCell" owner:self options:nil] objectAtIndex:0];
         }
-
         int row = indexPath.section / 7;
         int index = indexPath.section % 7;
         NSString* str=[[[dateArr objectAtIndex:row] objectAtIndex:index] description];
-        for (NSString* temstr in [data allKeys]) {
+        NSMutableArray *dataEvent=[NSMutableArray arrayWithArray:0];
+        for (AnyEvent *anyEvent in eventArr) {
+             NSString*  temstr=[[PublicMethodsViewController getPublicMethods] formatStringWithString:anyEvent.startDate];
             if ([str isEqualToString:temstr]) {
-                NSDictionary* dic=[[data objectForKey:temstr] objectAtIndex:indexPath.row];
-                NSString* starttime=[dic objectForKey:@"start"];
-                NSRange range=[starttime rangeOfString:@"日"];
-                NSString* startstrs=[starttime substringWithRange:NSMakeRange(range.location+1,starttime.length-range.location-1)];
-                NSString* endtime=[dic objectForKey:@"end"];
-                NSRange ranges=[endtime rangeOfString:@"日"];
-                NSString* endstrs=[endtime substringWithRange:NSMakeRange(ranges.location+1,endtime.length-ranges.location-1)];
-                cell.starttimelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
-                
-                NSString* time=[[PublicMethodsViewController getPublicMethods]getseconde:endtime];
-                
-                cell.timelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
-                
-                
-                
-                NSDate *  senddate=[NSDate date];
-                NSDateFormatter  *dateformatter=[[NSDateFormatter alloc] init];
-                [dateformatter setDateFormat:@"HH:MM"];
-                NSString *  locationString=[dateformatter stringFromDate:senddate];
-                NSString* keyStr=[NSString stringWithFormat:@"%@%@",temstr,locationString];
-                
-                NSLog(@"%@temstr%@locationString",temstr,locationString);
-                
-                NSString* endStr=[[PublicMethodsViewController getPublicMethods] timeDifference:[dic objectForKey:@"end"] getStrart:keyStr];
-                
-                
-                NSLog(@"%@----1---1--%@",endStr,str);
-                
-
-                if ([time isEqualToString:@"0小时0分钟"]) {
-                    cell.timelabel.hidden=YES;
-                }else{
-                    cell.timelabel.text=time;
-                    
-                    NSLog(@"strtime->>>>%@",starttime);
-                    NSLog(@"%@  time",time);
-                    
-                }
-                
-                if ([[endStr substringWithRange:NSMakeRange(endStr.length-3, 3)] isEqualToString:@"day"]) {
-                    cell.starttimelabel.text=@"ALL DAY";
-                    
-                    cell.timelabel.hidden=YES;
-                }else{
-                    cell.starttimelabel.text=[NSString stringWithFormat:@"%@  -  %@",startstrs,endstrs];
-                    
-                    
-                    NSLog(@"%@   strs",startstrs);
-                    NSLog(@"%@  endstrs",endstrs);
-                    
-                    
-                    
-                }
-                
-                NSString* strtitle=[dic objectForKey:@"title"];
-                cell.content.text=[strtitle uppercaseString];
-                cell.content.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
-                cell.content.textColor=[UIColor blackColor];
-
-                if ([[dic objectForKey:@"url"] isEqualToString:@"photo.png"]) {
-                    NSString *plistPath =setSysDocumentsDir(@"photo.png");
-                    cell.backImage.image=[UIImage imageWithContentsOfFile:plistPath];
-                }else{
-                   cell.backImage.image=[UIImage imageNamed:[dic objectForKey:@"url"]];
-                }
-            }
+                [dataEvent addObject:anyEvent];
+             }
         }
-        
+        if (dataEvent.count>0) {
+            AnyEvent *anyEvent=[dataEvent objectAtIndex:indexPath.row];
+            NSString*  temstr=[[PublicMethodsViewController getPublicMethods] formatStringWithString:anyEvent.startDate];
+            
+            NSString* starttime=anyEvent.startDate;
+            NSRange range=[starttime rangeOfString:@"日"];
+            NSString* startstrs=[starttime substringWithRange:NSMakeRange(range.location+1,starttime.length-range.location-1)];
+            
+            NSString* endtime=anyEvent.endDate;
+            NSRange ranges=[endtime rangeOfString:@"日"];
+            NSString* endstrs=[endtime substringWithRange:NSMakeRange(ranges.location+1,endtime.length-ranges.location-1)];
+            cell.starttimelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
+            
+            NSString* time=[[PublicMethodsViewController getPublicMethods]getseconde:endtime];
+            
+            cell.timelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
+            
+            NSDate *  senddate=[NSDate date];
+            NSDateFormatter  *dateformatter=[[NSDateFormatter alloc] init];
+            [dateformatter setDateFormat:@"HH:MM"];
+            NSString *  locationString=[dateformatter stringFromDate:senddate];
+            NSString* keyStr=[NSString stringWithFormat:@"%@%@",temstr,locationString];
+            
+            NSString* endStr=[[PublicMethodsViewController getPublicMethods] timeDifference:anyEvent.endDate getStrart:keyStr];
+            NSLog(@"%@----1---1--%@",endStr,str);
+            if ([time isEqualToString:@"0小时0分钟"]) {
+                cell.timelabel.hidden=YES;
+            }else{
+                cell.timelabel.text=time;
+                NSLog(@"strtime->>>>%@",starttime);
+                NSLog(@"%@  time",time);
+                
+            }
+            if ([[endStr substringWithRange:NSMakeRange(endStr.length-3, 3)] isEqualToString:@"day"]) {
+                cell.starttimelabel.text=@"ALL DAY";
+                cell.timelabel.hidden=YES;
+            }else{
+                cell.starttimelabel.text=[NSString stringWithFormat:@"%@  -  %@",startstrs,endstrs];
+                NSLog(@"%@   strs",startstrs);
+                NSLog(@"%@  endstrs",endstrs);
+            }
+            
+            NSString* strtitle=anyEvent.eventTitle;
+            cell.content.text=[strtitle uppercaseString];
+            cell.content.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
+            cell.content.textColor=[UIColor blackColor];
+        }
         if ([cell.content.text isEqualToString:@""]) {
             cell.textLabel.text=@"FREE DAY";
             cell.textLabel.font=[UIFont boldSystemFontOfSize:17.0f];
@@ -476,8 +465,6 @@
             cell.backImage.hidden=YES;
             
         }
-
-
         return cell;
     }
 }
@@ -541,18 +528,31 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    NSLog(@"%li====%ld",(long)indexPath.row,(long)indexPath.section);
     if (event_tableView == tableView) {
-        CLDay *day = [[dateArr objectAtIndex:indexPath.section / 7] objectAtIndex:indexPath.section % 7];
+        
+        int row = indexPath.section / 7;
+        int index = indexPath.section % 7;
+        NSString* str=[[[dateArr objectAtIndex:row] objectAtIndex:index] description];
+        NSMutableArray *dataEvent=[NSMutableArray arrayWithArray:0];
+        for (AnyEvent *anyEvent in eventArr) {
+            NSString*  temstr=[[PublicMethodsViewController getPublicMethods] formatStringWithString:anyEvent.startDate];
+            if ([str isEqualToString:temstr]) {
+                [dataEvent addObject:anyEvent];
+            }
+        }
+        CLDay *day = [[dateArr objectAtIndex:row] objectAtIndex:index];
         CLEvent *event = nil;
         if (day.events) {
             event = [day.events objectAtIndex:indexPath.row];
         }
-        
-        NSString *plistPath = getSysDocumentsDir;
-        NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
-        NSLog(@"%@",[NSString stringWithFormat:@"%@",day]);
-        NSArray* temarr=[data objectForKey:[NSString stringWithFormat:@"%@",day]];
-        [self.delegate calendarSelectEvent:self day:day event:[temarr objectAtIndex:indexPath.row] AllEvent:temarr];
+
+        if (dataEvent.count>0) {
+            AnyEvent *anyEvent=[dataEvent objectAtIndex:indexPath.row];
+            [self.delegate calendarSelectEvent:self day:day event:anyEvent AllEvent:dataEvent];
+        }else{
+            [self.delegate calendarSelectEvent:self day:day event:nil AllEvent:nil];
+        }
     }
 }
 

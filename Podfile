@@ -10,3 +10,8 @@ pod 'MBProgressHUD', '~> 0.9'
 pod 'FXBlurView', '~> 1.6.2'
 pod 'EAIntroView', '~> 2.6.3'
 pod 'JSONKit-NoWarning', '~> 1.1'
+
+pod 'MSCollectionViewCalendarLayout'
+pod 'CupertinoYankee', '~> 0.1.0'
+pod 'UIColor-HexString', '~> 1.0.0'
+pod 'Masonry', '~> 0.4.0'

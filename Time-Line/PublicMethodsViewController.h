@@ -30,4 +30,9 @@
 
 -(NSString*)getseconde:(NSString*)endstart;
 
+-(NSDate *) formatWithStringDate:(NSString *) stringDate;
+
+-(NSString *) formatStringWithStringDate:(NSString *) dateString;
+
+-(NSString *) formatStringWithString:(NSString *) stringDate;
 @end

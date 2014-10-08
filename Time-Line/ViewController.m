@@ -8,6 +8,9 @@
 
 #import "ViewController.h"
 #import "CalendarDateUtil.h"
+//#import "DailyCalendarTableViewController.h"
+#import "DayViewController.h"
+#import "MAEvent.h"
 #define LineGroundColor [UIColor colorWithRed:201.0f/255.0f green:201.0f/255.0f blue:201.0f/255.0f alpha:1.0f]
 @interface ViewController (){
     UILabel* titleLabel;
@@ -76,13 +79,23 @@
 {
     [super viewDidLoad];
     
+    self.startEventButton.backgroundColor=purple;
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fileStartDownload:) name:@"day" object:nil];
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow.png"] forState:UIControlStateNormal];
-    
+   
     [leftBtn setFrame:CGRectMake(0, 2, 15, 20)];
     [leftBtn addTarget:self action:@selector(disviewcontroller) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
+   
+    UIButton *rightBtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    [rightBtn setBackgroundImage:[UIImage imageNamed:@"free.png"] forState:UIControlStateNormal];
+    [rightBtn setBackgroundImage:[UIImage imageNamed:@"occupied.png"] forState:UIControlStateHighlighted];
+    [rightBtn setFrame:CGRectMake(CGRectGetWidth(leftBtn.frame)-CGRectGetWidth(leftBtn.bounds), CGRectGetMinY(leftBtn.frame), CGRectGetWidth(leftBtn.bounds), CGRectGetHeight(leftBtn.bounds))];
+    [rightBtn addTarget:self action:@selector(chooseAllDay:) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
+    
     
     /* 导航栏标题 */
     UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(0, 0, 140, 40)];
@@ -262,6 +275,30 @@
 }
 
 
+
+-(void)chooseAllDay:(UIButton *) sender
+{
+    DayViewController *dailyCalController = [[DayViewController alloc] init];
+    if (isstate) {
+        endLabel.text=startLabel.text;
+    }
+    NSDateFormatter *df=[[NSDateFormatter alloc] init];
+    [df setDateFormat:@"YYYY年 M月d日HH:ss"];
+    NSDate *date1=[df dateFromString:[NSString stringWithFormat:@"%@%@",startLabel.text,startStr]];
+    NSDate *date2=[df dateFromString:[NSString stringWithFormat:@"%@%@",endLabel.text,endStr]];
+    
+    MAEvent *event=[[MAEvent alloc] init];
+    event.start=date1;
+    event.end=date2;
+    event.title=@"nihao";
+    event.displayDate=date1;
+    dailyCalController.event=event;
+    NSLog(@"%@",@"========>>>>>>转的事件");
+    [self.navigationController pushViewController:dailyCalController animated:YES];
+    
+}
+
+
 -(void)switchAction:(id)sender
 {
     UISwitch *switchButton = (UISwitch*)sender;
@@ -310,7 +347,7 @@
     return [NSArray arrayWithArray:dateArr];
 }
 
--(void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay *)day event:(NSDictionary *)event AllEvent:(NSArray *)events{
+-(void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay *)day event:(AnyEvent *)event AllEvent:(NSArray *)events{
 }
 
 
@@ -373,8 +410,8 @@
 - (IBAction)startevent:(id)sender {
     isstate=YES;
     datePicker.date=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"HH:mm"];
-    self.startEventButton.backgroundColor=yellow;
-    self.endbutton.backgroundColor=[UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0f];
+    self.startEventButton.backgroundColor=purple;
+    self.endbutton.backgroundColor=grayjcDatePicker;
     
 }
 
@@ -382,8 +419,8 @@
     datePicker.date=[[PublicMethodsViewController getPublicMethods] getonehourstime:@"HH:mm"];
     isstate=NO;
     endLabel.text=startLabel.text;
-    self.endbutton.backgroundColor=yellow;
-    self.startEventButton.backgroundColor=[UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0f];
+    self.endbutton.backgroundColor=purple;
+    self.startEventButton.backgroundColor=grayjcDatePicker;
     
 }
 @end

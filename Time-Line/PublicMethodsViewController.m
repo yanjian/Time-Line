@@ -52,6 +52,50 @@ static PublicMethodsViewController * PublicMethods = nil;
     return confromTimespStr;
 }
 
+
+-(NSDate *) formatWithStringDate:(NSString *) stringDate
+{
+    NSRange range=[stringDate rangeOfString:@"日"];
+    NSDateFormatter *tempFormatter = [[NSDateFormatter alloc]init];
+    NSString* strs=[stringDate substringWithRange:NSMakeRange(range.location+1,stringDate.length-range.location-1)];
+    if (strs.length<=0) {
+        [tempFormatter setDateFormat:@"YYYY年 M月d日"];
+    }
+    else{
+        [tempFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
+    }
+    return [tempFormatter dateFromString:stringDate];
+}
+
+
+-(NSString *) formatStringWithString:(NSString *) stringDate
+{
+    NSRange range=[stringDate rangeOfString:@"日"];
+    NSString* strs=[stringDate substringWithRange:NSMakeRange(range.location+1,stringDate.length-range.location-1)];
+    NSString *dateStr=nil;
+    if (strs.length>0) {
+        dateStr=[stringDate substringWithRange:NSMakeRange(0,range.location+1)];
+    }else{
+        dateStr=stringDate;
+    }
+    return dateStr;
+}
+
+
+-(NSString *) formatStringWithStringDate:(NSString *) dateString
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setLocale:[[NSLocale alloc]initWithLocaleIdentifier:@"en_US_POSIX"]];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+    NSDate *dateTime = nil;
+    [dateFormatter getObjectValue:&dateTime forString:dateString range:nil error:nil];
+    [dateFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
+    return [dateFormatter stringFromDate:dateTime];
+}
+
+
+
+
 -(NSMutableArray*)intervalSinceNow: (NSString *) theDate getStrart:(NSString*)startdate
 {
     NSMutableArray* seledayArr=[[NSMutableArray alloc]initWithCapacity:0];

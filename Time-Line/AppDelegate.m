@@ -10,6 +10,8 @@
 #import "HomeViewController.h"
 #import <GoogleMaps/GoogleMaps.h>
 #import "AddEventViewController.h"
+#import "LoginViewController.h"
+#import "CoreDataUtil.h"
 @interface AppDelegate ()
 
 @end
@@ -22,15 +24,9 @@
     self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor=[UIColor whiteColor];
     [GMSServices provideAPIKey:GOOGLE_API_KEY];
+    [CoreDataUtil launch];
    
-    HomeViewController *homeVC=[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
-    UINavigationController *nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
-    nav.navigationBarHidden=YES;
-    self.window.rootViewController=nav;
-    nav=nil;
-     //_flipNC=[[FlipBoardNavigationController alloc] initWithRootViewController:homeVC];
-     // self.window.rootViewController = _flipNC;
-    homeVC=nil;
+    [self initMainView];
     
      [self.window makeKeyAndVisible];
     
@@ -49,18 +45,18 @@
     
     _netWorkStatus = ReachableViaWiFi;
     
-    //初始化 MBProgressHUD控件
-    _HUD=[[MBProgressHUD alloc] initWithView:self.window];
-    [self.window addSubview:_HUD];
+//    //初始化 MBProgressHUD控件
+//    _HUD=[[MBProgressHUD alloc] initWithView:self.window];
+//    [self.window addSubview:_HUD];
     
     
     
-    UILocalNotification *localNotif =
-	[launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+    UILocalNotification *localNotif =[launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
     if (localNotif) {
 		NSLog(@"｀｀｀｀｀｀｀｀｀｀｀｀ %@",localNotif);
         
 	}
+    
     _isread=YES;
     NSArray *familyNames =[[NSArray alloc]initWithArray:[UIFont familyNames]];
     NSArray *fontNames;
@@ -80,10 +76,33 @@
         }
         
     }
+    
+    LoginViewController *loginVc = [[LoginViewController alloc] init];
+    [self.window.rootViewController presentViewController:loginVc animated:YES completion:nil];
     return YES;
 }
 
+//初始化mian界面
+-(void)initMainView
+{
+    HomeViewController *homeVC=[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
+    UINavigationController *nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
+    nav.navigationBarHidden=YES;
+    self.window.rootViewController=nav;
+}
 
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ALERT"
+                                                    message:notification.alertBody
+                                                   delegate:nil
+                                          cancelButtonTitle:@"确定"
+                                          otherButtonTitles:nil];
+    [alert show];
+    //这里，你就可以通过notification的useinfo，干一些你想做的事情了
+    application.applicationIconBadgeNumber-=1;
+}
 
 
 //网络状态发生变化

@@ -8,9 +8,10 @@
 #import "PublicMethodsViewController.h"
 #import <EventKit/EventKit.h>
 #import <EventKitUI/EventKitUI.h>
-#import "z_Network.h"
+#import "t_Network.h"
 #import "MacroDefinition.h"
 #import "InterfaceMrco.h"
+#import "NSManagedObject+Explain.h"
 #ifndef __IPHONE_3_0
 #warning "This project uses features only available in iOS SDK 3.0 and later."
 #endif
@@ -23,11 +24,6 @@
 //A better version of NSLog
 //#define NSLog(format, ...)  do {fprintf(stderr, "<%s : %d> %s\n", [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],__LINE__, __func__);  (NSLog)((format), ##__VA_ARGS__); fprintf(stderr, "-------------------\n"); \
    } while (0)
-
-
-#define blueColor  [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1]
-#define grayColors [UIColor colorWithRed:102.0f/255.0f green:102.0f/255.0f blue:102.0f/255.0f alpha:1]
-#define yellow  [UIColor colorWithRed:168.0f/255.0f green:166.0f/255.0f blue:72.0f/255.0f alpha:1]
 
 
 //版本号

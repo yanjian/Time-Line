@@ -327,3 +327,8 @@ return self; \
 #define setSysDocumentsDir(fileName)  [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:fileName]
 
 
+#define blueColor  [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1]
+#define grayColors [UIColor colorWithRed:102.0f/255.0f green:102.0f/255.0f blue:102.0f/255.0f alpha:1]
+#define yellow  [UIColor colorWithRed:168.0f/255.0f green:166.0f/255.0f blue:72.0f/255.0f alpha:1]
+#define purple [UIColor colorWithRed:244.0f/255.0f green:10.0f/255.0f blue:115.0f/255.0f alpha:1]
+#define grayjcDatePicker        [UIColor colorWithRed:175.0f/255.0f green:175.0f/255.0f blue:175.0f/255.0f alpha:1.0f]

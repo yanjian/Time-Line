@@ -14,8 +14,7 @@
 @end
 
 @implementation DateDetailsViewController
-@synthesize datedic;
-@synthesize dateArr;
+@synthesize datedic,dateArr,event;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -67,7 +66,7 @@
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.font = [UIFont boldSystemFontOfSize:22];
     titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.text =[datedic objectForKey:@"title"];
+    titleLabel.text =event.eventTitle;
     [rview addSubview:titleLabel];
     self.navigationItem.titleView = titleView;
     
@@ -88,7 +87,7 @@
     if (indexPath.row==0) {
         UILabel* titlelabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 80)];
         titlelabel.textAlignment=NSTextAlignmentCenter;
-        titlelabel.text=[datedic objectForKey:@"title"];
+        titlelabel.text=event.eventTitle;
         titlelabel.numberOfLines=2;
         titlelabel.lineBreakMode=NSLineBreakByWordWrapping;
         titlelabel.font=[UIFont boldSystemFontOfSize:17.0f];
@@ -98,18 +97,18 @@
         
         UILabel* startlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 80, self.view.frame.size.width, 25)];
         startlabel.textAlignment=NSTextAlignmentCenter;
-        NSString* start_title=[datedic objectForKey:@"start"];
+        NSString* start_title=event.startDate;
         startlabel.text=[self dateStringWithFormaterString:start_title];
 
         
         UILabel* endlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 105, self.view.frame.size.width, 25)];
         endlabel.textAlignment=NSTextAlignmentCenter;
-        NSString* end_titles=[datedic objectForKey:@"end"];
+        NSString* end_titles=event.endDate;
         endlabel.text=[self dateStringWithFormaterString:end_titles];
 
         UILabel* notelabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 130, self.view.frame.size.width, 50)];
         notelabel.textAlignment=NSTextAlignmentCenter;
-        notelabel.text=[datedic objectForKey:@"note"];
+        notelabel.text=event.note;
         [cell.contentView addSubview:titlelabel];
         [cell.contentView addSubview:startlabel];
         [cell.contentView addSubview:endlabel];
@@ -117,10 +116,18 @@
         
     }
     
-    NSString* str=[datedic objectForKey:@"loc"];
+    NSString* str=event.location;
     if (str.length>0) {
         if (indexPath.row==1) {
-            self.coordinateDic=[datedic objectForKey:@"coordinate"];
+            NSArray *coorArr=nil;
+            if (![event.coordinate isEqualToString:@""]&&event.coordinate) {
+                NSLog(@"%@",event.coordinate)
+               coorArr= [event.coordinate componentsSeparatedByString:@","];
+            }
+            if ([coorArr count]>0) {
+                NSLog(@"%@",coorArr)
+                self.coordinateDic=@{LATITUDE: [coorArr objectAtIndex:0],LONGITUDE:[coorArr objectAtIndex:1]};
+            }
             cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
             UILabel* label=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
             label.text=str;
@@ -146,7 +153,7 @@
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    NSString* str=[datedic objectForKey:@"loc"];
+    NSString* str=event.location;
     if (str.length>0) {
           return 2;
     }
@@ -177,8 +184,8 @@
     
     AddEventViewController* viewcon=[[AddEventViewController alloc]initWithNibName:@"AddEventViewController" bundle:nil];
     viewcon.state=@"edit";
-    viewcon.dateDic=datedic;
-    viewcon.dateArr=dateArr;
+    viewcon.event=event;
+    viewcon.dateArr=dateArr.mutableCopy;
     self.navigationController.navigationBarHidden = NO;
     [self.navigationController pushViewController:viewcon animated:YES];
 }

@@ -78,6 +78,12 @@
 #define COCOAPODS_VERSION_MINOR_ASIHTTPRequest_S3 8
 #define COCOAPODS_VERSION_PATCH_ASIHTTPRequest_S3 2
 
+// CupertinoYankee
+#define COCOAPODS_POD_AVAILABLE_CupertinoYankee
+#define COCOAPODS_VERSION_MAJOR_CupertinoYankee 0
+#define COCOAPODS_VERSION_MINOR_CupertinoYankee 1
+#define COCOAPODS_VERSION_PATCH_CupertinoYankee 1
+
 // EAIntroView
 #define COCOAPODS_POD_AVAILABLE_EAIntroView
 #define COCOAPODS_VERSION_MAJOR_EAIntroView 2
@@ -108,6 +114,18 @@
 #define COCOAPODS_VERSION_MINOR_MBProgressHUD 9
 #define COCOAPODS_VERSION_PATCH_MBProgressHUD 0
 
+// MSCollectionViewCalendarLayout
+#define COCOAPODS_POD_AVAILABLE_MSCollectionViewCalendarLayout
+#define COCOAPODS_VERSION_MAJOR_MSCollectionViewCalendarLayout 0
+#define COCOAPODS_VERSION_MINOR_MSCollectionViewCalendarLayout 1
+#define COCOAPODS_VERSION_PATCH_MSCollectionViewCalendarLayout 3
+
+// Masonry
+#define COCOAPODS_POD_AVAILABLE_Masonry
+#define COCOAPODS_VERSION_MAJOR_Masonry 0
+#define COCOAPODS_VERSION_MINOR_Masonry 4
+#define COCOAPODS_VERSION_PATCH_Masonry 0
+
 // PEPhotoCropEditor
 #define COCOAPODS_POD_AVAILABLE_PEPhotoCropEditor
 #define COCOAPODS_VERSION_MAJOR_PEPhotoCropEditor 1
@@ -137,4 +155,10 @@
 #define COCOAPODS_VERSION_MAJOR_TBXML 1
 #define COCOAPODS_VERSION_MINOR_TBXML 5
 #define COCOAPODS_VERSION_PATCH_TBXML 0
+
+// UIColor-HexString
+#define COCOAPODS_POD_AVAILABLE_UIColor_HexString
+#define COCOAPODS_VERSION_MAJOR_UIColor_HexString 1
+#define COCOAPODS_VERSION_MINOR_UIColor_HexString 0
+#define COCOAPODS_VERSION_PATCH_UIColor_HexString 1
 

@@ -79,7 +79,7 @@
                                             @"sensor":@"true",
                                             @"key":GOOGLE_API_KEY }.mutableCopy;
             //请求google地址坐标
-            ASIHTTPRequest *request=[z_Network httpGet:paramDic Url:GOOGLE_ADDRESS_LOCATION Delegate:self Tag:GOOGLE_ADDRESS_REQUEST_SEARCH_TAG];
+            ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:GOOGLE_ADDRESS_LOCATION Delegate:self Tag:GOOGLE_ADDRESS_REQUEST_SEARCH_TAG];
             [request startAsynchronous];
         }
     }

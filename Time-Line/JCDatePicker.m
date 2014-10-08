@@ -359,7 +359,7 @@ void drawLinearGradient(CGContextRef context, CGRect rect, CGColorRef startColor
     CGSize contentSize = self.frame.size;
     pickerBackgroundView.frame = (CGRect){.origin = CGPointMake(0, 0), .size = contentSize};
     pickerBackgroundView.backgroundColor = _bgColor;
-    pickerBackgroundView.bannerColor = _pickerColor;
+    pickerBackgroundView.bannerColor = purple;
     pickerBackgroundView.bannerHeight = _cellHeight;
     pickerBackgroundView.separatorLineColor = _separatorLineColor;
     pickerBackgroundView.dateFormat = _dateFormat;
@@ -749,7 +749,7 @@ void drawLinearGradient(CGContextRef context, CGRect rect, CGColorRef startColor
         }
         case SECOND_TAG: {
             if (selectedHour>12) {
-                cell.label.text=@"Pm";
+                cell.label.text=@"PM";
             }else{
                 cell.label.text =[_dayArray objectAtIndex:indexPath.row];
             }

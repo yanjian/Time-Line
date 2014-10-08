@@ -8,13 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "AddEventViewController.h"
+#import "AnyEvent.h"
 @interface DateDetailsViewController : UIViewController<UITableViewDataSource,UITableViewDelegate>
 {
     UIButton *_ZVbutton;//滑动试图左边view上的左边按钮
     UIButton *_YVbutton;//滑动试图左边view上的右边按钮
 
 }
-@property(retain,nonatomic)NSDictionary* datedic;//一个事件
+
+@property(nonatomic,retain) AnyEvent* event;
+@property(retain,nonatomic) NSDictionary* datedic;//一个事件
 @property (weak, nonatomic) IBOutlet UITableView *detaileTableview;
 
 @property(retain,nonatomic)NSArray* dateArr;//所有数据
