@@ -22,8 +22,9 @@
 
 
 @interface CLCalendarCell : UITableViewCell {
-    NSMutableArray *_btnArray;
+        NSMutableArray *_btnArray;
         NSMutableArray *_bgArray;
+    NSMutableArray *_pointArray;
 }
 
 

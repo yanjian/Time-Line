@@ -38,6 +38,7 @@
 		A890399E19D7AA1100521389 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A890399D19D7AA1100521389 /* icon@2x.png */; };
 		A891A75619D5949C004843D2 /* GoogleLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A891A75419D5949C004843D2 /* GoogleLoginViewController.m */; };
 		A891A75719D5949C004843D2 /* GoogleLoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A891A75519D5949C004843D2 /* GoogleLoginViewController.xib */; };
+		A8923EEC19E7E35B00B9B938 /* SetingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8923EEB19E7E35B00B9B938 /* SetingViewController.m */; };
 		A894D6CF19B56B200088E522 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6CE19B56B200088E522 /* HomeViewController.m */; };
 		A894D6D119B56B490088E522 /* HomeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A894D6D019B56B490088E522 /* HomeViewController.xib */; };
 		A894D6DF19B578270088E522 /* MMLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D6D319B578270088E522 /* MMLocationManager.m */; };
@@ -92,7 +93,7 @@
 		A894D8B019B5BB150088E522 /* TIme_Start.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A219B5BB150088E522 /* TIme_Start.png */; };
 		A894D8B119B5BB150088E522 /* go_back_today.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A319B5BB150088E522 /* go_back_today.png */; };
 		A894D8B219B5BB150088E522 /* adress_Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A419B5BB150088E522 /* adress_Icon.png */; };
-		A894D8B319B5BB150088E522 /* 當那一天有活動（顯示在日子下面).png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A519B5BB150088E522 /* 當那一天有活動（顯示在日子下面).png */; };
+		A894D8B319B5BB150088E522 /* Icon_HaveEvent.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A519B5BB150088E522 /* Icon_HaveEvent.png */; };
 		A894D8B419B5BB150088E522 /* add_action.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A619B5BB150088E522 /* add_action.png */; };
 		A894D8B519B5BB150088E522 /* 編輯活動.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A719B5BB150088E522 /* 編輯活動.png */; };
 		A894D8B619B5BB150088E522 /* 通知.png in Resources */ = {isa = PBXBuildFile; fileRef = A894D8A819B5BB150088E522 /* 通知.png */; };
@@ -120,6 +121,7 @@
 		A898C8FA19B4635900559F53 /* CLEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = A898C8F819B4635900559F53 /* CLEvent.m */; };
 		A898C8FF19B463E700559F53 /* CalendarDateUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = A898C8FE19B463E700559F53 /* CalendarDateUtil.m */; };
 		A898FA7D19D964D7008CD862 /* GoogleCalendarData.m in Sources */ = {isa = PBXBuildFile; fileRef = A898FA7C19D964D7008CD862 /* GoogleCalendarData.m */; };
+		A899275719E6356C000932C1 /* LocalCalendarData.m in Sources */ = {isa = PBXBuildFile; fileRef = A899275619E6356C000932C1 /* LocalCalendarData.m */; };
 		A89B676B19D980DA00415108 /* BaseMode.m in Sources */ = {isa = PBXBuildFile; fileRef = A89B676A19D980DA00415108 /* BaseMode.m */; };
 		A89B676E19D98A7000415108 /* CalendarListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A89B676D19D98A7000415108 /* CalendarListViewController.m */; };
 		A89DBAC419DAA31D006C8A3C /* GoogleEventMode.m in Sources */ = {isa = PBXBuildFile; fileRef = A89DBAC319DAA31D006C8A3C /* GoogleEventMode.m */; };
@@ -208,6 +210,8 @@
 		A891A75319D5949C004843D2 /* GoogleLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleLoginViewController.h; sourceTree = "<group>"; };
 		A891A75419D5949C004843D2 /* GoogleLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleLoginViewController.m; sourceTree = "<group>"; };
 		A891A75519D5949C004843D2 /* GoogleLoginViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GoogleLoginViewController.xib; sourceTree = "<group>"; };
+		A8923EEA19E7E35B00B9B938 /* SetingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetingViewController.h; sourceTree = "<group>"; };
+		A8923EEB19E7E35B00B9B938 /* SetingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetingViewController.m; sourceTree = "<group>"; };
 		A894D6CD19B56B200088E522 /* HomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HomeViewController.h; sourceTree = "<group>"; };
 		A894D6CE19B56B200088E522 /* HomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HomeViewController.m; sourceTree = "<group>"; };
 		A894D6D019B56B490088E522 /* HomeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HomeViewController.xib; sourceTree = "<group>"; };
@@ -280,7 +284,7 @@
 		A894D8A219B5BB150088E522 /* TIme_Start.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TIme_Start.png; sourceTree = "<group>"; };
 		A894D8A319B5BB150088E522 /* go_back_today.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = go_back_today.png; sourceTree = "<group>"; };
 		A894D8A419B5BB150088E522 /* adress_Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = adress_Icon.png; sourceTree = "<group>"; };
-		A894D8A519B5BB150088E522 /* 當那一天有活動（顯示在日子下面).png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "當那一天有活動（顯示在日子下面).png"; sourceTree = "<group>"; };
+		A894D8A519B5BB150088E522 /* Icon_HaveEvent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon_HaveEvent.png; sourceTree = "<group>"; };
 		A894D8A619B5BB150088E522 /* add_action.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = add_action.png; sourceTree = "<group>"; };
 		A894D8A719B5BB150088E522 /* 編輯活動.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "編輯活動.png"; sourceTree = "<group>"; };
 		A894D8A819B5BB150088E522 /* 通知.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "通知.png"; sourceTree = "<group>"; };
@@ -318,6 +322,8 @@
 		A898C8FE19B463E700559F53 /* CalendarDateUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalendarDateUtil.m; sourceTree = "<group>"; };
 		A898FA7B19D964D7008CD862 /* GoogleCalendarData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleCalendarData.h; sourceTree = "<group>"; };
 		A898FA7C19D964D7008CD862 /* GoogleCalendarData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleCalendarData.m; sourceTree = "<group>"; };
+		A899275519E6356C000932C1 /* LocalCalendarData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCalendarData.h; sourceTree = "<group>"; };
+		A899275619E6356C000932C1 /* LocalCalendarData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalCalendarData.m; sourceTree = "<group>"; };
 		A89B676919D980DA00415108 /* BaseMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseMode.h; sourceTree = "<group>"; };
 		A89B676A19D980DA00415108 /* BaseMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseMode.m; sourceTree = "<group>"; };
 		A89B676C19D98A7000415108 /* CalendarListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalendarListViewController.h; sourceTree = "<group>"; };
@@ -607,6 +613,15 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		A8923EE819E7E2DA00B9B938 /* Seting */ = {
+			isa = PBXGroup;
+			children = (
+				A8923EEA19E7E35B00B9B938 /* SetingViewController.h */,
+				A8923EEB19E7E35B00B9B938 /* SetingViewController.m */,
+			);
+			name = Seting;
+			sourceTree = "<group>";
+		};
 		A894D6E519B578580088E522 /* lib */ = {
 			isa = PBXGroup;
 			children = (
@@ -661,7 +676,7 @@
 				A894D8A219B5BB150088E522 /* TIme_Start.png */,
 				A894D8A319B5BB150088E522 /* go_back_today.png */,
 				A894D8A419B5BB150088E522 /* adress_Icon.png */,
-				A894D8A519B5BB150088E522 /* 當那一天有活動（顯示在日子下面).png */,
+				A894D8A519B5BB150088E522 /* Icon_HaveEvent.png */,
 				A894D8A619B5BB150088E522 /* add_action.png */,
 				A894D8A719B5BB150088E522 /* 編輯活動.png */,
 				A894D8A819B5BB150088E522 /* 通知.png */,
@@ -729,6 +744,8 @@
 				A89B676A19D980DA00415108 /* BaseMode.m */,
 				A89DBAC219DAA31D006C8A3C /* GoogleEventMode.h */,
 				A89DBAC319DAA31D006C8A3C /* GoogleEventMode.m */,
+				A899275519E6356C000932C1 /* LocalCalendarData.h */,
+				A899275619E6356C000932C1 /* LocalCalendarData.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -756,6 +773,7 @@
 		A898C8FC19B4638000559F53 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				A8923EE819E7E2DA00B9B938 /* Seting */,
 				A89514CC19D4F8CE00538486 /* LoginViewController */,
 				A895D4E919D1637A005371C4 /* Calendar24Hous */,
 				A86CEA1D19C7CE830015BB25 /* googleMapController */,
@@ -917,7 +935,7 @@
 				A8A8C27F19C1925F00362EE5 /* GoogleMaps.bundle in Resources */,
 				A8974F4F19D8524C006AD5C0 /* LoginRegisterViewController.xib in Resources */,
 				A894D72319B59ADB0088E522 /* LocationViewController.xib in Resources */,
-				A894D8B319B5BB150088E522 /* 當那一天有活動（顯示在日子下面).png in Resources */,
+				A894D8B319B5BB150088E522 /* Icon_HaveEvent.png in Resources */,
 				A891A75719D5949C004843D2 /* GoogleLoginViewController.xib in Resources */,
 				A894D85B19B5BACC0088E522 /* Icon_Edit.png in Resources */,
 				A894D8AF19B5BB150088E522 /* Time_End.png in Resources */,
@@ -1027,7 +1045,9 @@
 				A8B867E219E296E20004875F /* CoreDataUtil.m in Sources */,
 				A8974F4E19D8524C006AD5C0 /* LoginRegisterViewController.m in Sources */,
 				A896FFB719D5593D0056F4FF /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
+				A899275719E6356C000932C1 /* LocalCalendarData.m in Sources */,
 				A894D6E219B578270088E522 /* CLCalendarCell.m in Sources */,
+				A8923EEC19E7E35B00B9B938 /* SetingViewController.m in Sources */,
 				A898C8F919B4635900559F53 /* CLDay.m in Sources */,
 				A8A8C28919C1A9B000362EE5 /* t_Network.m in Sources */,
 				A894D6FB19B57F470088E522 /* SHRootController.m in Sources */,

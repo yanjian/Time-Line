@@ -19,8 +19,8 @@
 @interface NSManagedObject (Magic)
 
 /*获取表中所有数据*/
-+ (NSArray *)getAllObjets;
++ (NSArray *)getTable:(NSString *)tableName;
 /*清空表*/
-+ (void)cleanTable;
++ (void)cleanTable:(NSString *)tableName;
 
 @end

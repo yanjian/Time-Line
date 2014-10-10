@@ -76,9 +76,12 @@
         }
         
     }
-    
-    LoginViewController *loginVc = [[LoginViewController alloc] init];
-    [self.window.rootViewController presentViewController:loginVc animated:YES completion:nil];
+//    NSInteger loginStatus=[[NSUserDefaults standardUserDefaults] integerForKey:@"loginStatus"];
+//    //if (1!=loginStatus) {
+//        LoginViewController *loginVc = [[LoginViewController alloc] init];
+//        [self.window.rootViewController presentViewController:loginVc animated:YES completion:nil];
+//    //}
+//   
     return YES;
 }
 

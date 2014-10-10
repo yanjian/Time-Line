@@ -17,7 +17,7 @@
 #define rowHeight 55
 
 //表头高度
-#define headHeight 25
+#define headHeight 20
 
 #define calendar_Table_Month_F CGRectMake(0, 20, self.bounds.size.width, calendar_Table_Month_H)
 #define calendar_Table_Week_F  CGRectMake(0, 20, self.bounds.size.width, calendar_Table_Week_H)
@@ -87,7 +87,7 @@
     for (int i = 0; i < 7; i++) {
         UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(kScreen_Width/7*i, 5, kScreen_Width/6, 15)]; // x,y,w,h
         lab.font = [UIFont systemFontOfSize:13]; // label size = 13
-        lab.textColor = [UIColor whiteColor]; // color
+        lab.textColor = [UIColor whiteColor];
         lab.backgroundColor = [UIColor clearColor]; // 透明
         if (_time.length<=0) {
            lab.textColor=[UIColor blackColor];
@@ -120,7 +120,7 @@
         selectDate[0] = -1;
         
         month=[[UILabel alloc]initWithFrame:calendar_tableView.frame];
-        month.alpha=0.8f;
+        month.alpha=0.5f;
         month.backgroundColor=[UIColor blackColor];//显示黑色的几月 如8月黑色背景
         month.textAlignment=NSTextAlignmentCenter;
         month.font=[UIFont boldSystemFontOfSize:17.0f];
@@ -212,7 +212,7 @@
     }
     
     [event_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:toDayDate[0]*7 +toDayDate[1]] atScrollPosition:UITableViewScrollPositionTop animated:YES] ;
-    [_delegate calendartitle:[NSString stringWithFormat:@"Today  %@",[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"dd/M"]]];
+    [_delegate calendartitle:[NSString stringWithFormat:@"Today %@",[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"dd/M"]]];
 
     
 }
@@ -230,17 +230,6 @@
     return 1;
 }
 
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-//{
-//    if (tableView == event_tableView) {
-//        int row = section / 7;
-//        int index = section % 7;
-//        return [[[dateArr objectAtIndex:row] objectAtIndex:index] description];
-//    }
-//    else
-//        return nil;
-//}
-
 //表头
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     if (tableView == event_tableView) {
@@ -253,10 +242,11 @@
         int index = section % 7;
         UIView* headview=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, headHeight)];
         UILabel* titlelabel=[[UILabel alloc]initWithFrame:headview.frame];
-        titlelabel.font=[UIFont boldSystemFontOfSize:20.0f];
+        titlelabel.font=[UIFont boldSystemFontOfSize:15.0f];
         titlelabel.textAlignment=NSTextAlignmentCenter;
         titlelabel.textColor=[UIColor whiteColor];
-        NSString* table_title=[[[dateArr objectAtIndex:row] objectAtIndex:index] description];
+        CLDay *clDay=[[dateArr objectAtIndex:row] objectAtIndex:index] ;
+        NSString* table_title=[clDay description];
         NSDateFormatter *formatter =[[NSDateFormatter alloc] init];
         [formatter setDateFormat:@"YYYY年 M月dd日"];
         NSDate* date=[formatter dateFromString:table_title];
@@ -266,15 +256,18 @@
         table_title=[table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
         NSArray* array=[table_title componentsSeparatedByString:@"/"];
         titlelabel.text=[NSString stringWithFormat:@"%@  %@/%@",weakStr,[array objectAtIndex:2],[array objectAtIndex:1]];
-//        
-//        titlelabel.backgroundColor=[UIColor blackColor];
         
 //       区头的颜色
-        titlelabel.backgroundColor = purple;
+        if (clDay.isToday) {
+            titlelabel.backgroundColor =purple;
+            //titlelabel.alpha=0.8f;
+        }else{
+            titlelabel.backgroundColor = [UIColor lightGrayColor];
+           // titlelabel.alpha=0.3f;
+        }
         [headview addSubview:titlelabel];
         return headview;
     }
-
     return nil;
 }
 
@@ -315,12 +308,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
- 
-//    for (AnyEvent *aevent in eventArr) {
-//        NSLog(@"%@",aevent.startDate);
-//    }
-//    NSString *plistPath = getSysDocumentsDir;
-//    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
+
     if (tableView == calendar_tableView) {   //日历表
         if (_time.length > 0) {
             CLCalendarCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
@@ -350,7 +338,8 @@
                 
                 for (NSArray* arr in temarray ) {
                     if (day.month==[[arr objectAtIndex:1] integerValue]&&day.day==[[arr objectAtIndex:2] integerValue]) {
-                        cell.imageview.image=[UIImage imageNamed:@"Rectangle_13.png"];
+                        cell.imageview.image=[UIImage imageNamed:@"Icon_HaveEvent"];
+                       
                     NSLog(@"%lu---dsdsdsdsdsd-%lu",(unsigned long)day.month,(unsigned long)day.day);
                     }
                 }
@@ -359,14 +348,13 @@
                     month.text=[NSString stringWithFormat:@"%lu Month",(unsigned long)day.month];
                     [self.delegate calendarDidToMonth:day.month year:day.year CalendarView:self];
                 }
+                
                 cell.weekArr = [dateArr objectAtIndex:indexPath.row];
-            }
-            else {
+            }else {
                 [tableView reloadData];
             }
             return cell;
-        }
-        else{
+        }else{
             CalendarCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
             if (cell == nil) {
                 cell = [[CalendarCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
@@ -469,6 +457,14 @@
     }
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (tableView==calendar_tableView) {
+        
+    }
+}
+
+
 #pragma mark - table delegate
 - (void)tableView:(UITableView *)tableView didEndDisplayingCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath*)indexPath {
     if (tableView == event_tableView) {
@@ -520,8 +516,6 @@
         } else {
             [calendar_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:selectDate[0]-2 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
         }
-       
-        //        NSLog(@"section->%i", i);
     }
 }
 
@@ -551,27 +545,15 @@
             AnyEvent *anyEvent=[dataEvent objectAtIndex:indexPath.row];
             [self.delegate calendarSelectEvent:self day:day event:anyEvent AllEvent:dataEvent];
         }else{
-            [self.delegate calendarSelectEvent:self day:day event:nil AllEvent:nil];
+            [self.delegate calendarSelectEvent:self day:day event:nil AllEvent:dataEvent];
         }
     }
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (event_tableView==tableView) {
-//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//        NSString *documentsDirectory = [paths objectAtIndex:0];
-//        NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"addtime.plist"];
-//        NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
-//        int row = indexPath.section / 7;
-//        int index = indexPath.section % 7;
-//        NSString* str=[[[dateArr objectAtIndex:row] objectAtIndex:index] description];
-//        for (NSString* temstr in [data allKeys]) {
-//            if ([str isEqualToString:temstr]) {
-//                return 139.0f;
-//            }        }
-          return rowHeight;
+        return rowHeight;
     }
-
     return 44.0f;
 }
 
@@ -598,22 +580,19 @@
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView{
      if (calendar_tableView == scrollView) {
          [self addSubview:month];
+         [self setDisplayMode:CLCalendarViewModeMonth];
      }else{
          isshow=YES;
      }
-    
-    
     NSLog(@"开始拖拽图片");
-    
-    
 }
 
 
 - (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
 {
-     if (calendar_tableView == scrollView) {
-    [self addSubview:month];
-     }
+//     if (calendar_tableView == scrollView) {
+//        [self addSubview:month];
+//     }
     
 }
 
@@ -638,8 +617,6 @@
         NSArray* array=[table_title componentsSeparatedByString:@"/"];
         [_delegate calendartitle:[NSString stringWithFormat:@"%@   %@/%@",weakStr,[array objectAtIndex:2],[array objectAtIndex:1]]];
         [event_tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionTop animated:YES];
-
-
     }
 }
 
@@ -650,9 +627,9 @@
 - (void)selectDate:(CLCalendarCell*)cell weekDay:(NSInteger)index
 {
     
-    if (_time.length>0) {
-        [self setDisplayMode:CLCalendarViewModeWeek];
-    }
+//    if (_time.length>0) {
+//        [self setDisplayMode:CLCalendarViewModeWeek];
+//    }
     selectDate[0] = cell.tag;
     selectDate[1] = index;
     

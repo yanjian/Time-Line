@@ -15,7 +15,7 @@
 @property (nonatomic, strong) NSMutableArray *events;
 
 @property (nonatomic, readonly) BOOL isToday;
-
+@property (nonatomic,assign)    BOOL isExistData;
 @property (nonatomic, readonly) NSUInteger day;
 @property (nonatomic, readonly) NSUInteger month;
 @property (nonatomic, readonly) NSUInteger year;

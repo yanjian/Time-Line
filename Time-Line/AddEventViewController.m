@@ -92,7 +92,7 @@
 {
     [super viewDidLoad];
     
-    
+    self.navigationController.navigationBarHidden=NO;
     self.navigationController.navigationBar.barTintColor = blueColor;
     
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -294,11 +294,11 @@
 //取消返回
 - (void)onClickCancel
 {
-    if ([state isEqualToString:@"edit"]) {
+   // if ([state isEqualToString:@"edit"]) {
         [self.navigationController popViewControllerAnimated:YES];
-        return;
-    }
-    [self dismissViewControllerAnimated:YES completion:nil];
+        //return;
+  //  }
+    //[self dismissViewControllerAnimated:YES completion:nil];
 }
 
 //添加事件或保存修改
@@ -329,20 +329,19 @@
                 [self.navigationController popToViewController:obj animated:YES];
             }
         }
-    }
-    else {
-        [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(dissViewcontroller) userInfo:nil repeats:YES];
+    }else {
+        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(dissViewcontroller) userInfo:nil repeats:YES];
         
         //    [self dismissViewControllerAnimated:YES completion:nil];
     }
 }
 
 -(void)dissViewcontroller{
-    if ([state isEqualToString:@"edit"]) {
+    //if ([state isEqualToString:@"edit"]) {
         [self.navigationController popViewControllerAnimated:YES];
-    }else{
-       [self dismissViewControllerAnimated:YES completion:nil];
-    }
+   // }else{
+    //   [self dismissViewControllerAnimated:YES completion:nil];
+   // }
 }
 
 //修改事件数据

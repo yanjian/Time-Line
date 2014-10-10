@@ -12,7 +12,7 @@
 #import "LoginRegisterViewController.h"
 
 @interface LoginViewController ()<ASIHTTPRequestDelegate,UITextFieldDelegate>
-
+@property (nonatomic,assign) BOOL isGetUserInfo;
 @end
 
 @implementation LoginViewController
@@ -68,27 +68,38 @@
 
 - (void)requestFinished:(ASIHTTPRequest *)request
 {
-    NSString *responseStr=[request responseString];
-    if ([@"1" isEqualToString:responseStr]) {
-        GoogleLoginViewController *glvc=[[GoogleLoginViewController alloc] initWithNibName:@"GoogleLoginViewController" bundle:nil];
-        glvc.isBind=YES;
-        UINavigationController *googleNav=[[UINavigationController alloc] initWithRootViewController:glvc];
-        [self presentViewController:googleNav animated:YES completion:nil];
-
+    NSUserDefaults *userInfo=[NSUserDefaults standardUserDefaults];
+     NSString *responseStr=[request responseString];
+    if (!self.isGetUserInfo) {
+        if ([@"1" isEqualToString:responseStr]) {
+            ASIHTTPRequest *request= [t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
+            [request startAsynchronous];
+            
+            [userInfo setValue:self.username.text forKey:@"userName"];
+            [userInfo setValue:@(UserLoginStatus_YES) forKey:@"loginStatus"];
+            
+            GoogleLoginViewController *glvc=[[GoogleLoginViewController alloc] initWithNibName:@"GoogleLoginViewController" bundle:nil];
+            glvc.isBind=YES;
+            
+            UINavigationController *googleNav=[[UINavigationController alloc] initWithRootViewController:glvc];
+            [self presentViewController:googleNav animated:YES completion:nil];
+        }else{
+            self.ErrerMsg.text=@"account or password error!";
+        }
+        self.isGetUserInfo=YES;
     }else{
-        self.ErrerMsg.text=@"account or password error!";
+       id loginUser= [responseStr objectFromJSONString];
+        if ([loginUser isKindOfClass:[NSDictionary class]]) {
+           NSString *statusCode= [loginUser objectForKey:@"statusCode"];
+            if ([@"1" isEqualToString:statusCode]) {
+                NSDictionary *userInfoDic=[loginUser objectForKey:@"data"];
+                [userInfo setValue:[userInfoDic objectForKey:@"accountBinds"] forKey:@"accountBinds"];
+                [userInfo setValue:[loginUser objectForKey:@"email"] forKey:@"email"];
+            }
+        }
     }
+    [userInfo synchronize];
+    
 }
-
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

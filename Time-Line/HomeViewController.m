@@ -11,7 +11,8 @@
 #import "AddEventViewController.h"
 #import "SHRootController.h"
 #import "AddEventViewController.h"
-
+#import "AnyEvent.h"
+#import "SetingViewController.h"
 @interface HomeViewController () {
     UILabel *titleLabel;
     BOOL ison;
@@ -47,22 +48,29 @@
     self.navigationController.navigationBarHidden = YES;
   //  [self getCalendarEvemt];   //2014Year 9 -moth 18  屏蔽
     dateArr = [NSMutableArray array];
-    
+
     NSInteger cDay = [CalendarDateUtil getCurrentDay] + 6 *30;
     //    NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
     
     NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];
     
+    NSArray *anyeventArr=[NSManagedObject getTable:NSStringFromClass([AnyEvent class])];//得到数据库中所有的数据
+    
     NSInteger startIndex = -(cDay - 1  + weekDay - 1);
     
     for (int i = startIndex; i < startIndex + (7* 4 * 12); i+=7) {
         NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];//回到200天前
-        
         NSArray *weekArr = [self switchWeekByDate:temp];
         for (int d = 0; d<7; d ++) {
             CLDay *day = [weekArr objectAtIndex:d];
             if (day.isToday) {
                 [calendarView setToDayRow:(i-startIndex)/7 Index:d];
+            }
+            for (AnyEvent *event in anyeventArr) {
+                if ([event.startDate hasPrefix:[day description] ]) {
+                    day.isExistData=YES;
+                    break;
+                }
             }
         }
         [dateArr addObject:weekArr];
@@ -187,7 +195,6 @@
 {
     _scrollview = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
     _scrollview .contentSize = CGSizeMake(3*_scrollview.frame.size.width, 0);
-    //_scrollview.contentSize = CGSizeMake(3*kScreen_Width, 0);
     _scrollview.contentOffset = CGPointMake(kScreen_Width, 0);
     _scrollview.backgroundColor = [UIColor whiteColor];
     _scrollview.pagingEnabled = YES;
@@ -209,16 +216,15 @@
     rview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
 //    左边的按钮
     _ZVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    _ZVbutton.frame = CGRectMake(20, 30, 21, 25);
-//    _ZVbutton.backgroundColor = [UIColor redColor];
-    [_ZVbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
+    _ZVbutton.frame = CGRectMake(20, 30, 21, 21);
+    [_ZVbutton setBackgroundImage:[UIImage imageNamed:@"Icon_Menu"] forState:UIControlStateNormal];
     [_ZVbutton addTarget:self action:@selector(setZVbutton) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:_ZVbutton];
     
 
 //   导航： 右边的按钮
     _YVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    _YVbutton.frame = CGRectMake(280, 30, 21, 25);
+    _YVbutton.frame = CGRectMake(280, 30, 21, 21);
     //_YVbutton.backgroundColor = [UIColor redColor];
     [_YVbutton setBackgroundImage:[UIImage imageNamed:@"add_action"] forState:UIControlStateNormal];
     [_YVbutton addTarget:self action:@selector(setYVbutton) forControlEvents:UIControlEventTouchUpInside];
@@ -232,11 +238,11 @@
     [rightBtn_arrow addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:rightBtn_arrow];
 //  中间的标题
-    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(100, 20, 110, 30)];
+    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(90, 30, 130, 30)];
     [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:titleView];
     
-    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 110, 30)];
+    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 130, 30)];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     //    titleLabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
     titleLabel.font=[UIFont boldSystemFontOfSize:20.0f];
@@ -299,11 +305,15 @@
 }
 -(void)setZVbutton
 {
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:.2];
-    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-    _scrollview.contentOffset = CGPointMake(0, 0);
-    [UIView commitAnimations];
+//    [UIView beginAnimations:nil context:nil];
+//    [UIView setAnimationDuration:.2];
+//    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
+//    _scrollview.contentOffset = CGPointMake(0, 0);
+//    [UIView commitAnimations];
+    SetingViewController *setVC=[[SetingViewController alloc] init];
+    UINavigationController *nc=[[UINavigationController alloc] initWithRootViewController:setVC];
+    [self presentViewController:nc animated:YES completion:nil];
+    
 }
 -(void)setYVbutton
 {
@@ -312,6 +322,7 @@
 //    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 //    _scrollview.contentOffset = CGPointMake(640, 0);
 //    [UIView commitAnimations];
+    
     [self oClickAdd];
     
 }
@@ -329,8 +340,7 @@
         [UIView setAnimationDelegate:self];
         rightBtn_arrow.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 90.0f);
         [UIView commitAnimations];
-    }
-    else{
+    }else{
         ison=YES;
         [UIView beginAnimations:@"clockwiseAnimation" context:NULL];
         [UIView setAnimationDuration:1.0f];
@@ -348,8 +358,9 @@
 - (void)oClickAdd
 {
         AddEventViewController *addVC = [[AddEventViewController alloc] initWithNibName:@"AddEventViewController" bundle:nil];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:addVC];
-        [self presentViewController:nav animated:YES completion:nil];
+       // UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:addVC];
+        //[self presentViewController:nav animated:YES completion:nil];
+    [self.navigationController pushViewController:addVC animated:YES];
     
 }
 
@@ -400,8 +411,9 @@
 - (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AnyEvent*)event AllEvent:(NSArray *)events {
     if (!event) {  //没有事件添加
         AddEventViewController* add=[[AddEventViewController alloc]initWithNibName:@"AddEventViewController" bundle:nil];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:add];
-        [self presentViewController:nav animated:YES completion:nil];
+       // UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:add];
+       // [self presentViewController:nav animated:YES completion:nil];
+        [self.navigationController pushViewController:add animated:YES];
     }else {  //有事件查看详细
         NSLog(@"%@",event);
         DateDetailsViewController* dateDetails=[[DateDetailsViewController alloc]initWithNibName:@"DateDetailsViewController" bundle:nil];

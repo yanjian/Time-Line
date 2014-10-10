@@ -57,6 +57,11 @@ typedef NS_ENUM(NSInteger, UserLoginType) {
 };
 
 
+typedef NS_ENUM(NSInteger, UserLoginStatus) {
+    UserLoginStatus_NO=0,//表示没有登陆
+    UserLoginStatus_YES=1
+};
+
 //基本IP
 #define BASEURL_IP @"http://t2.oxozoom.com:8080/myCalendar/servlet"
 
@@ -86,7 +91,6 @@ typedef NS_ENUM(NSInteger, UserLoginType) {
 #define Get_Google_GetCalendarEvent [NSString stringWithFormat:@"%@/GetCalendarEventList",BASEURL_IP]
 #define Get_Google_GetCalendarEvent_Tag 7
 
-
 //日历帐号绑定
 #define Google_AccountBind [NSString stringWithFormat:@"%@/AccountBind",BASEURL_IP]
 #define Google_AccountBind_Tag 8
@@ -94,6 +98,18 @@ typedef NS_ENUM(NSInteger, UserLoginType) {
 //得到绑定列表 GetAccountBindList
 #define Google_GetAccountBindList [NSString stringWithFormat:@"%@/GetAccountBindList",BASEURL_IP]
 #define Google_GetAccountBindList_Tag 9
+
+//本地日历处理  CalendarOperation
+#define Local_CalendarOperation [NSString stringWithFormat:@"%@/CalendarOperation",BASEURL_IP]
+#define Local_CalendarOperation_Tag 10
+
+//本地事件处理  SingleEventOperation
+#define Local_SingleEventOperation [NSString stringWithFormat:@"%@/SingleEventOperation",BASEURL_IP]
+#define Local_SingleEventOperation_Tag 11
+
+//登陆用户的信息  GetUserInfo
+#define LoginUser_GetUserInfo [NSString stringWithFormat:@"%@/GetUserInfo",BASEURL_IP]
+#define LoginUser_GetUserInfo_Tag 12
 
 
 

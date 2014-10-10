@@ -14,23 +14,15 @@ extern NSManagedObjectModel *globalManagedObjectModel_util;
 
 @implementation NSManagedObject (Magic)
 
-+ (NSArray *)getAllObjets
++ (NSArray *)getTable:(NSString *)tableName
 {
-    NSString *tableName = NSStringFromClass([self class]);
-    if ([tableName isEqualToString:@"NSManagedObject"]) {
-        return @[];
-    }
     NSArray *resultArr = [NSManagedObject getTable_sync:tableName predicate:nil];
     return (resultArr && resultArr.count != 0)?resultArr:nil;
 }
 
-+ (void)cleanTable
++ (void)cleanTable:(NSString *)tableName
 {
-    NSString *tableName = NSStringFromClass([self class]);
-    if ([tableName isEqualToString:@"NSManagedObject"]) {
-        return;
-    }
-    NSArray *array = [self getTable_sync:NSStringFromClass([self class]) predicate:nil];
+    NSArray *array = [self getTable_sync:tableName predicate:nil];
     [self deleteObjects_sync:array];
 }
 

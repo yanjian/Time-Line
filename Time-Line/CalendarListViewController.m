@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 #import <QuartzCore/QuartzCore.h> 
 #import "AnyEvent.h"
+#import "LocalCalendarData.h"
 #define Google_Status @"statusCode"
 #define google_Data   @"data"
 #define Google_Items  @"items"
@@ -83,12 +84,13 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return self.googleCalendarDataArr.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.googleCalendarDataArr.count;
+    NSArray *dataArr=[self.googleCalendarDataArr objectAtIndex:section];
+    return dataArr.count;
 }
 
 
@@ -99,26 +101,26 @@
     if (!viewCell) {
         viewCell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault  reuseIdentifier:cellIdentifier];
     }
+    NSArray *calendarListArr=[self.googleCalendarDataArr objectAtIndex:indexPath.section];
     if (!self.isSelect) {
         viewCell.accessoryType=UITableViewCellAccessoryCheckmark;
+      
         [self.selectIndexPathArr addObject:indexPath];
-        if (indexPath.row==self.googleCalendarDataArr.count-1) {
-            self.isSelect=YES;
+        if (indexPath.section==self.googleCalendarDataArr.count-1) {
+            if(indexPath.row==calendarListArr.count-1){
+                  self.isSelect=YES;
+            }
         }
     }
-    GoogleCalendarData *data=(GoogleCalendarData*)[self.googleCalendarDataArr objectAtIndex:indexPath.row];
-    
-    viewCell.textLabel.text=data.summary;
-    
+    id tmpObj=[calendarListArr objectAtIndex:indexPath.row];
+    if ([tmpObj isKindOfClass:[GoogleCalendarData class]]) {
+        GoogleCalendarData *data=(GoogleCalendarData*)tmpObj;
+        viewCell.textLabel.text=data.summary;
+    }else if([tmpObj isKindOfClass:[LocalCalendarData class]]){
+        LocalCalendarData *data=(LocalCalendarData*)tmpObj;
+        viewCell.textLabel.text=data.calendarName;
+    }
     return viewCell;
-}
-
-
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
-{
-    GoogleCalendarData *data=(GoogleCalendarData*)[self.googleCalendarDataArr objectAtIndex:section];
-    return data.Id;
-
 }
 
 
@@ -135,17 +137,50 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    return 26;
+    return 20.f;
 }
-
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    NSArray *calendarListArr=[self.googleCalendarDataArr objectAtIndex:section];
+    id tmpObj=[calendarListArr objectAtIndex:0];
+    NSString *returnStr=@"";
+    if ([tmpObj isKindOfClass:[GoogleCalendarData class]]) {
+        GoogleCalendarData *data=(GoogleCalendarData*)tmpObj;
+        returnStr=[NSString stringWithFormat:@"GOOGLE(%@)",data.Id];
+    }else if([tmpObj isKindOfClass:[LocalCalendarData class]]){
+        NSUserDefaults *userInfo=[NSUserDefaults standardUserDefaults];
+        NSString *email=[userInfo valueForKey:@"email"];
+        returnStr=email;
+    }
+    
+    UILabel *label=[[UILabel alloc] init] ;
+    label.frame=CGRectMake(12, 0, 300, 22);
+    label.backgroundColor=[UIColor clearColor];
+    label.textColor=[UIColor grayColor];
+    label.text=returnStr;
+    
+    UIView *sectionView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 22)];
+    [sectionView setBackgroundColor:[UIColor clearColor]];
+    [sectionView addSubview:label];
+    return sectionView;
+}
 
 //同步google事件数据
 -(void)synchronizeGoogleData:(UIButton*) sender{
+    [NSManagedObject cleanTable:NSStringFromClass([AnyEvent class])];//用户每次同步都清空数据库中的数据
     for (NSIndexPath *indexPath in self.selectIndexPathArr) {
-        GoogleCalendarData *googleData=[self.googleCalendarDataArr objectAtIndex:indexPath.row];
-        NSLog(@"cid==========%@",googleData.Id);
-        ASIHTTPRequest *request=[t_Network httpPostValue:@{@"cid":googleData.Id}.mutableCopy Url:Get_Google_GetCalendarEvent Delegate:self Tag:Get_Google_GetCalendarEvent_Tag];
-        [request startSynchronous];
+        id dataObj=[[self.googleCalendarDataArr objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+        
+        if ([dataObj isKindOfClass:[GoogleCalendarData class]]) {
+            GoogleCalendarData *googleData=(GoogleCalendarData *)dataObj;
+            ASIHTTPRequest *request=[t_Network httpPostValue:@{@"cid":googleData.Id}.mutableCopy Url:Get_Google_GetCalendarEvent Delegate:self Tag:Get_Google_GetCalendarEvent_Tag];
+             [request startSynchronous];
+            
+        }else if ([dataObj isKindOfClass:[LocalCalendarData class]]){
+          LocalCalendarData *localData=(LocalCalendarData *)dataObj;
+          ASIHTTPRequest *request=[t_Network httpGet:@{@"cid":localData.Id}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag];
+            [request startSynchronous];
+
+        }
     }
     [[AppDelegate getAppDelegate] initMainView];
 }
@@ -154,10 +189,6 @@
 - (void)requestFinished:(ASIHTTPRequest *)request{
     NSString *reponseData=[request responseString];
     NSLog(@"event-data:%@",reponseData);
-    
-  //  NSString *plistPath=getSysDocumentsDir;
-    
-    
     NSDictionary *eventDic=[reponseData objectFromJSONString];
     NSString *status=[eventDic objectForKey:Google_Status];
     if ([@"1" isEqualToString:status]) {//状态成功
@@ -166,7 +197,6 @@
             NSDictionary *eventDataDic=(NSDictionary *)eventData;
             NSArray *eventArr=[eventDataDic objectForKey:Google_Items];
             for (NSDictionary *event in eventArr) {
-              //  NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
                 [self saveGoogleEventData:event];
             }
         }
@@ -297,15 +327,4 @@
     [dateFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
     return [dateFormatter stringFromDate:dateTime];
 }
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 @end

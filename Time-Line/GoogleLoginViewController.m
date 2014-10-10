@@ -10,12 +10,14 @@
 #import "GoogleCalendarData.h"
 #import "CalendarListViewController.h"
 #import "AppDelegate.h"
+#import "LocalCalendarData.h"
 @interface GoogleLoginViewController ()<UIWebViewDelegate,ASIHTTPRequestDelegate>
 
 
 @property (nonatomic,strong) NSMutableDictionary *oauthDic;
 @property (nonatomic,assign) BOOL isRegister;
 @property (nonatomic,assign) BOOL isShowCalendarList;
+@property (nonatomic,assign) BOOL isLocalClandarList;
 @property (nonatomic,strong) NSMutableArray *googleCalendar;
 
 @end
@@ -103,9 +105,7 @@
         if ([callback_Url hasPrefix:Google_Oauth2Callback_Url]) {
             NSRange rangeStr=[callback_Url rangeOfString:@"error"];//error=access_denied
             if (rangeStr.location==NSNotFound) {
-                if (!self.isLogin) {
-                        self.googleLoginView.hidden=YES;
-                }
+                 self.googleLoginView.hidden=YES;
             }else{
                 [self.googleLoginView reload];
             }
@@ -172,12 +172,10 @@
     NSLog(@"%@",responseStr);
     if (self.isBind) {
       if (responseStr) {
-           NSMutableDictionary *googleDataDic=[responseStr objectFromJSONString];
+          NSMutableDictionary *googleDataDic=[responseStr objectFromJSONString];
           if ([googleDataDic isKindOfClass:[NSDictionary class]]) {
               NSString *statusCode=[googleDataDic objectForKey:@"statusCode"];
               if ([@"1" isEqualToString:statusCode]) {//绑定成功
-//                  ASIHTTPRequest *request=[t_Network httpGet:nil Url:Google_GetAccountBindList Delegate:self Tag:Google_GetAccountBindList_Tag];
-//                  [request startAsynchronous];
                   if (!self.isShowCalendarList) {
                           ASIHTTPRequest *request=[t_Network httpGet:nil Url:Get_Google_GetCalendarList Delegate:self Tag:Get_Google_GetCalendarList_Tag];
                           [request startAsynchronous];
@@ -186,20 +184,42 @@
                   }
               }
               if (self.isShowCalendarList){
-                  NSArray *arr=[googleDataDic objectForKey:@"items"];
-                  for (NSDictionary *dic in arr) {
-                      NSLog(@"%@",dic)
-                      GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
-                      [gcd parseDictionary:dic];
-                      [self.googleCalendar addObject:gcd];
+                  if (!self.isLocalClandarList) { //与下面重复！需优化
+                      NSArray *arr=[googleDataDic objectForKey:@"items"];
+                      NSMutableArray *tmpArr=[NSMutableArray arrayWithCapacity:0];
+                      for (NSDictionary *dic in arr) {
+                          NSLog(@"%@",dic)
+                          GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
+                          [gcd parseDictionary:dic];
+                          [tmpArr addObject:gcd];
+                      }
+                      [self.googleCalendar addObject:tmpArr];
+                      
+                      ASIHTTPRequest *request=[t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
+                      [request startAsynchronous];
+                      self.isLocalClandarList=YES;
+                  }else{
+                      NSMutableDictionary *localDataDic=[responseStr objectFromJSONString];
+                      NSString *statusCode=[localDataDic objectForKey:@"statusCode"];
+                      if ([@"1" isEqualToString:statusCode]) {//成功取得本地日历列表
+                          
+                          NSArray *arr=[localDataDic objectForKey:@"data"];
+                          NSMutableArray *localArr=[NSMutableArray arrayWithCapacity:0];
+                          for (NSDictionary *dic in arr) {
+                              NSLog(@"%@",dic)
+                              LocalCalendarData *ld=[[LocalCalendarData alloc] init];
+                              [ld parseDictionary:dic];
+                              [localArr addObject:ld];
+                          }
+                          [self.googleCalendar addObject:localArr];
+                          
+                          [self.delegate setGoogleCalendarListData:self.googleCalendar];
+                          CalendarListViewController *ca=[[CalendarListViewController alloc] init];
+                          ca.googleCalendarDataArr=self.googleCalendar;
+                          [self.navigationController pushViewController:ca animated:YES];
+                      }
                   }
-                  [self.delegate setGoogleCalendarListData:self.googleCalendar];
-                  self.isShowCalendarList=NO;
-                  CalendarListViewController *ca=[[CalendarListViewController alloc] init];
-                  ca.googleCalendarDataArr=self.googleCalendar;
-                  [self.navigationController pushViewController:ca animated:YES];
-                  
-              }
+               }
           }
         }
     }else{
@@ -243,22 +263,43 @@
                          return;
                      }
                 }else{
-                    NSMutableDictionary *googleDataDic=[responseStr objectFromJSONString];
-                    NSArray *arr=[googleDataDic objectForKey:@"items"];
-                    for (NSDictionary *dic in arr) {
-                        NSLog(@"%@",dic)
-                        GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
-                        [gcd parseDictionary:dic];
-                        [self.googleCalendar addObject:gcd];
+                    if (!self.isLocalClandarList) {//取得本地日历集合
+                        NSMutableDictionary *googleDataDic=[responseStr objectFromJSONString];
+                        NSArray *arr=[googleDataDic objectForKey:@"items"];
+                        NSMutableArray *googleArr=[NSMutableArray arrayWithCapacity:0];
+                        for (NSDictionary *dic in arr) {
+                            NSLog(@"%@",dic)
+                            GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
+                            [gcd parseDictionary:dic];
+                            [googleArr addObject:gcd];
+                        }
+                        [self.googleCalendar addObject:googleArr];
+                        ASIHTTPRequest *request=[t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
+                        [request startAsynchronous];
+                        self.isLocalClandarList=YES;
+                    }else{
+                        NSMutableDictionary *localDataDic=[responseStr objectFromJSONString];
+                        NSString *statusCode=[localDataDic objectForKey:@"statusCode"];
+                        if ([@"1" isEqualToString:statusCode]) {//成功取得本地日历列表
+                            
+                            NSArray *arr=[localDataDic objectForKey:@"data"];
+                            NSMutableArray *localArr=[NSMutableArray arrayWithCapacity:0];
+                            for (NSDictionary *dic in arr) {
+                                NSLog(@"%@",dic)
+                                LocalCalendarData *ld=[[LocalCalendarData alloc] init];
+                                [ld parseDictionary:dic];
+                                [localArr addObject:ld];
+                            }
+                            [self.googleCalendar addObject:localArr];
+                            
+                            [self.delegate setGoogleCalendarListData:self.googleCalendar];
+                            CalendarListViewController *ca=[[CalendarListViewController alloc] init];
+                            ca.googleCalendarDataArr=self.googleCalendar;
+                            [self.navigationController pushViewController:ca animated:YES];
+                        }
                     }
-                    [self.delegate setGoogleCalendarListData:self.googleCalendar];
-                    self.isShowCalendarList=NO;
-                    CalendarListViewController *ca=[[CalendarListViewController alloc] init];
-                    ca.googleCalendarDataArr=self.googleCalendar;
-                    [self.navigationController pushViewController:ca animated:YES];
-
-                }
             }
+        }
     }
 }
 - (void)didReceiveMemoryWarning
