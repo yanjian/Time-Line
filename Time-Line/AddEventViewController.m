@@ -569,7 +569,8 @@
         if (cell1 == nil) {
             cell1 = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
         }
-    
+        //取消选中行的样式
+        cell1.selectionStyle=UITableViewCellSelectionStyleNone;
         //清除contentView中的所有视图
         NSArray *subviews = [[NSArray alloc]initWithArray:cell1.contentView.subviews];
         for (UIView *subview in subviews) {
@@ -711,7 +712,7 @@
                     }
                     NSArray *coorArr=nil;
                     if (![event.coordinate isEqualToString:@""]&&event.coordinate) {
-                        NSLog(@"%@",event.coordinate)
+                        NSLog(@"%@",event.coordinate);
                         coorArr= [event.coordinate componentsSeparatedByString:@","];
                     }
                     if ([coorArr count]>0) {

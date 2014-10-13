@@ -39,30 +39,57 @@
     [super viewDidLoad];
     self.navigationController.navigationBar.barTintColor = blueColor;
     self.googleCalendar=[[NSMutableArray alloc] initWithCapacity:0];
+    
+    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
+    UILabel* titlelabel=[[UILabel alloc]initWithFrame:titleView.frame];
+    titlelabel.textAlignment = NSTextAlignmentCenter;
+    titlelabel.font =[UIFont fontWithName:@"Helvetica Neue" size:20.0];
+    titlelabel.textColor = [UIColor whiteColor];
+    [titleView addSubview:titlelabel];
+    self.navigationItem.titleView =titleView;
+
     if (self.isBind) {
-        self.navigationItem.title=@"Sync with Google";
-        UIButton *rightBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-        [rightBtn setTitle:@"SKIP" forState:UIControlStateNormal];
-        [rightBtn setFrame:CGRectMake(260, 2, 60, 20)];
-        [rightBtn addTarget:self action:@selector(bindGoogleAccountSkip:) forControlEvents:UIControlEventTouchUpInside];
-        self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
-        
-    }else {
-        
-        if(self.isLogin){
-            self.navigationItem.title=@"Login with Google";
+        if (self.isSeting) {
+            titlelabel.text = @"Connect";
+            UIButton *leftBtn=[self createLeftButton];
+            self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:leftBtn];
         }else{
-            self.navigationItem.title=@"Sign up with Google";
+         titlelabel.text = @"Sync with Google";
+         UIButton *rightBtn= [self createRightBtn:@"SKIP"];
+         self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
         }
-        UIButton *leftBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-        [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-        [leftBtn setFrame:CGRectMake(0, 2, 20, 20)];
-        [leftBtn addTarget:self action:@selector(dimssGoogleView:) forControlEvents:UIControlEventTouchUpInside];
+    }else {
+        if(self.isLogin){
+           titlelabel.text=@"Login with Google";
+        }else{
+            titlelabel.text=@"Sign up with Google";
+        }
+        UIButton *leftBtn=[self createLeftButton];
         self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:leftBtn];
     }
     self.googleLoginView.scalesPageToFit=YES;
     self.googleLoginView.delegate=self;
 }
+
+
+-(UIButton *)createLeftButton{
+    UIButton *leftBtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
+    [leftBtn setFrame:CGRectMake(0, 2, 20, 20)];
+    [leftBtn addTarget:self action:@selector(dimssGoogleView:) forControlEvents:UIControlEventTouchUpInside];
+    return leftBtn;
+}
+
+-(UIButton *)createRightBtn:(NSString *) title{
+    UIButton *rightBtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    [rightBtn setTitle:title forState:UIControlStateNormal];
+    [rightBtn setFrame:CGRectMake(280, 2, 60, 20)];
+    [rightBtn addTarget:self action:@selector(bindGoogleAccountSkip:) forControlEvents:UIControlEventTouchUpInside];
+    return rightBtn;
+}
+
+
+
 
 -(void)viewWillAppear:(BOOL)animated{
     
@@ -140,7 +167,7 @@
             }else{
                 if (oauthDic) {
                     NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
-                    if (!self.isLogin) {//用google账号直接登陆不用注册
+                    if (!self.isLogin) {
                         [paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"email"];
                         [paramDic setObject:[oauthDic objectForKey:@"uName"] forKey:@"uName"];
                         [paramDic setObject:[oauthDic objectForKey:@"authCode"] forKey:@"authCode"];
@@ -151,7 +178,7 @@
                         ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_REGISTER_URL Delegate:self Tag:LOGIN_REGISTER_URL_TAG];
                         [request startAsynchronous];
                         self.isRegister=YES;
-                    }else{
+                    }else{//用google账号直接登陆不用注册
                         [paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"email"];
                         [paramDic setObject:[oauthDic objectForKey:@"authCode"] forKey:@"authCode"];
                         [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
@@ -175,8 +202,8 @@
           NSMutableDictionary *googleDataDic=[responseStr objectFromJSONString];
           if ([googleDataDic isKindOfClass:[NSDictionary class]]) {
               NSString *statusCode=[googleDataDic objectForKey:@"statusCode"];
-              if ([@"1" isEqualToString:statusCode]) {//绑定成功
-                  if (!self.isShowCalendarList) {
+              if (!self.isShowCalendarList) {
+                   if ([@"1" isEqualToString:statusCode]) {//绑定成功
                           ASIHTTPRequest *request=[t_Network httpGet:nil Url:Get_Google_GetCalendarList Delegate:self Tag:Get_Google_GetCalendarList_Tag];
                           [request startAsynchronous];
                           self.isShowCalendarList=YES;
@@ -184,21 +211,29 @@
                   }
               }
               if (self.isShowCalendarList){
-                  if (!self.isLocalClandarList) { //与下面重复！需优化
+                  if (!self.isLocalClandarList) { //取得google日历列表
                       NSArray *arr=[googleDataDic objectForKey:@"items"];
                       NSMutableArray *tmpArr=[NSMutableArray arrayWithCapacity:0];
                       for (NSDictionary *dic in arr) {
-                          NSLog(@"%@",dic)
+                          NSLog(@"%@",dic);
                           GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
                           [gcd parseDictionary:dic];
                           [tmpArr addObject:gcd];
                       }
                       [self.googleCalendar addObject:tmpArr];
                       
-                      ASIHTTPRequest *request=[t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
-                      [request startAsynchronous];
-                      self.isLocalClandarList=YES;
-                  }else{
+                      if (!self.isSeting) {//这里如果是设置页面传来的就不取得本地日历
+                          ASIHTTPRequest *request=[t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
+                          [request startAsynchronous];
+                          self.isLocalClandarList=YES;
+                       }else{
+                           [self.delegate setGoogleCalendarListData:self.googleCalendar];
+                           CalendarListViewController *ca=[[CalendarListViewController alloc] init];
+                           ca.googleCalendarDataArr=self.googleCalendar;
+                           [self.navigationController pushViewController:ca animated:YES];
+                       }
+                  }
+                  if (self.isLocalClandarList) {
                       NSMutableDictionary *localDataDic=[responseStr objectFromJSONString];
                       NSString *statusCode=[localDataDic objectForKey:@"statusCode"];
                       if ([@"1" isEqualToString:statusCode]) {//成功取得本地日历列表
@@ -206,7 +241,7 @@
                           NSArray *arr=[localDataDic objectForKey:@"data"];
                           NSMutableArray *localArr=[NSMutableArray arrayWithCapacity:0];
                           for (NSDictionary *dic in arr) {
-                              NSLog(@"%@",dic)
+                              NSLog(@"%@",dic);
                               LocalCalendarData *ld=[[LocalCalendarData alloc] init];
                               [ld parseDictionary:dic];
                               [localArr addObject:ld];
@@ -268,7 +303,7 @@
                         NSArray *arr=[googleDataDic objectForKey:@"items"];
                         NSMutableArray *googleArr=[NSMutableArray arrayWithCapacity:0];
                         for (NSDictionary *dic in arr) {
-                            NSLog(@"%@",dic)
+                            NSLog(@"%@",dic);
                             GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
                             [gcd parseDictionary:dic];
                             [googleArr addObject:gcd];
@@ -285,7 +320,7 @@
                             NSArray *arr=[localDataDic objectForKey:@"data"];
                             NSMutableArray *localArr=[NSMutableArray arrayWithCapacity:0];
                             for (NSDictionary *dic in arr) {
-                                NSLog(@"%@",dic)
+                                NSLog(@"%@",dic);
                                 LocalCalendarData *ld=[[LocalCalendarData alloc] init];
                                 [ld parseDictionary:dic];
                                 [localArr addObject:ld];
@@ -310,7 +345,11 @@
 
 -(void)dimssGoogleView:(UIButton *) sender
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if (!self.isSeting) {
+        [self dismissViewControllerAnimated:YES completion:nil];
+        return;
+    }
+    [self.navigationController popViewControllerAnimated:YES ];
 
 }
 

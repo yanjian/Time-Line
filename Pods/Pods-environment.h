@@ -88,7 +88,7 @@
 #define COCOAPODS_POD_AVAILABLE_EAIntroView
 #define COCOAPODS_VERSION_MAJOR_EAIntroView 2
 #define COCOAPODS_VERSION_MINOR_EAIntroView 6
-#define COCOAPODS_VERSION_PATCH_EAIntroView 3
+#define COCOAPODS_VERSION_PATCH_EAIntroView 4
 
 // EGOTableViewPullRefreshAndLoadMore
 #define COCOAPODS_POD_AVAILABLE_EGOTableViewPullRefreshAndLoadMore

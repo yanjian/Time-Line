@@ -121,11 +121,11 @@
         if (indexPath.row==1) {
             NSArray *coorArr=nil;
             if (![event.coordinate isEqualToString:@""]&&event.coordinate) {
-                NSLog(@"%@",event.coordinate)
+                NSLog(@"%@",event.coordinate);
                coorArr= [event.coordinate componentsSeparatedByString:@","];
             }
             if ([coorArr count]>0) {
-                NSLog(@"%@",coorArr)
+                NSLog(@"%@",coorArr);
                 self.coordinateDic=@{LATITUDE: [coorArr objectAtIndex:0],LONGITUDE:[coorArr objectAtIndex:1]};
             }
             cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;

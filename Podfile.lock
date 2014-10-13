@@ -34,7 +34,7 @@ PODS:
   - ASIHTTPRequest/S3 (1.8.2):
     - ASIHTTPRequest/Core
   - CupertinoYankee (0.1.1)
-  - EAIntroView (2.6.3)
+  - EAIntroView (2.6.4)
   - EGOTableViewPullRefreshAndLoadMore (1.0.4)
   - FXBlurView (1.6.2)
   - JSONKit-NoWarning (1.2)
@@ -70,7 +70,7 @@ SPEC CHECKSUMS:
   AFNetworking: 6d7b76aa5d04c8c37daad3eef4b7e3f2a7620da3
   ASIHTTPRequest: 2c8335b49410c0e2ad42829c438e74d454b77590
   CupertinoYankee: b07873e724c2c5c1a249c555a5bd3d508c04e0de
-  EAIntroView: 45924b81c153d1206ee24f4fa654e9d9dae79e93
+  EAIntroView: 8f66dc6b79f2d52db26af8fc5476a05ffc549d4c
   EGOTableViewPullRefreshAndLoadMore: 1dcd0f78d7aa8dee28adf64891b627904be8cd71
   FXBlurView: 47496afc9160097fa34af35fc4b310bd85d65dca
   JSONKit-NoWarning: fc8d6dd8ec65e303867d1bd274632fc60a4a8ab9

@@ -13,6 +13,9 @@
 #import "AddEventViewController.h"
 #import "AnyEvent.h"
 #import "SetingViewController.h"
+#import "SetingsNavigationViewController.h"
+
+
 @interface HomeViewController () {
     UILabel *titleLabel;
     BOOL ison;
@@ -311,7 +314,8 @@
 //    _scrollview.contentOffset = CGPointMake(0, 0);
 //    [UIView commitAnimations];
     SetingViewController *setVC=[[SetingViewController alloc] init];
-    UINavigationController *nc=[[UINavigationController alloc] initWithRootViewController:setVC];
+    SetingsNavigationViewController *nc=[[SetingsNavigationViewController alloc] initWithRootViewController:setVC];
+    nc.navigationBar.barTintColor=blueColor;
     [self presentViewController:nc animated:YES completion:nil];
     
 }

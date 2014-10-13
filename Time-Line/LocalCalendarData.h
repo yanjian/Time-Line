@@ -8,7 +8,7 @@
 
 #import "BaseMode.h"
 
-@interface LocalCalendarData : BaseMode
+@interface LocalCalendarData : BaseMode<NSCoding>
 @property (nonatomic,copy) NSString *Id;
 @property (nonatomic,copy) NSString *uid;
 @property (nonatomic,copy) NSString *calendarName;

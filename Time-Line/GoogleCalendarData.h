@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "BaseMode.h"
 
-@interface GoogleCalendarData : BaseMode
+@interface GoogleCalendarData : BaseMode<NSCoding> //<NSCopying,NSMutableCopying>
 @property (nonatomic,copy) NSString *Id;
 @property (nonatomic,copy) NSString *summary;
 @property (nonatomic,copy) NSString *timeZone;

@@ -8,7 +8,6 @@
 
 #import "CalendarListViewController.h"
 #import "GoogleCalendarData.h"
-#import "AppDelegate.h"
 #import <QuartzCore/QuartzCore.h> 
 #import "AnyEvent.h"
 #import "LocalCalendarData.h"
@@ -67,11 +66,16 @@
     [rightBtn addTarget:self action:@selector(synchronizeGoogleData:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
     [self.navigationItem setHidesBackButton:YES animated:YES];
-    self.navigationItem.title=@"Visible Calendars";
     
-    
+    UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
+    UILabel* titlelabel=[[UILabel alloc]initWithFrame:titleView.frame];
+    titlelabel.textAlignment = NSTextAlignmentCenter;
+    titlelabel.font =[UIFont fontWithName:@"Helvetica Neue" size:20.0];
+    titlelabel.text = @"Visible Calendars";
+    titlelabel.textColor = [UIColor whiteColor];
+    [titleView addSubview:titlelabel];
+    self.navigationItem.titleView =titleView;
     self.view=calendarview;
-    // Do any additional setup after loading the view.
 }
 
 
@@ -179,9 +183,18 @@
           LocalCalendarData *localData=(LocalCalendarData *)dataObj;
           ASIHTTPRequest *request=[t_Network httpGet:@{@"cid":localData.Id}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag];
             [request startSynchronous];
-
         }
     }
+    NSMutableArray *tmpArr=[g_AppDelegate loadDataFromFile:calendarList];
+    if (tmpArr&&tmpArr.count>0) {
+        for (id calendar in self.googleCalendarDataArr) {
+            [tmpArr addObject:calendar];
+        }
+        [g_AppDelegate saveFileWithArray:tmpArr fileName:calendarList];
+    }else{
+        [g_AppDelegate saveFileWithArray:[self.googleCalendarDataArr mutableCopy] fileName:calendarList];
+    }
+    
     [[AppDelegate getAppDelegate] initMainView];
 }
 

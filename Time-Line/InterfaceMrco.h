@@ -111,6 +111,9 @@ typedef NS_ENUM(NSInteger, UserLoginStatus) {
 #define LoginUser_GetUserInfo [NSString stringWithFormat:@"%@/GetUserInfo",BASEURL_IP]
 #define LoginUser_GetUserInfo_Tag 12
 
+//得到绑定列表  GetAccountBindList
+#define get_AccountBindList [NSString stringWithFormat:@"%@/GetAccountBindList",BASEURL_IP]
+#define get_AccountBindList_Tag 13
 
 
 

@@ -13,6 +13,7 @@
 @property (assign ,nonatomic) BOOL isLogin;
 @property (assign,nonatomic)  BOOL isBind;
 @property (strong,nonatomic) id<GoogleLoginViewControllerDelegate> delegate;
+@property (nonatomic,assign) BOOL isSeting;
 @end
 
 

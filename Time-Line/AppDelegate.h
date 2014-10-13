@@ -39,5 +39,8 @@
 - (void)hideActivityView ;
 
 -(void)initMainView;
-
+//文件归档
+- (void) saveFileWithArray: (NSMutableArray*)activityArray fileName:(NSString *) name;
+//文件解档
+- (NSMutableArray *)loadDataFromFile:(NSString *)fileName;
 @end

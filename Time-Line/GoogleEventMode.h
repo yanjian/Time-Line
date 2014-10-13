@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface GoogleEventMode : NSObject
+@interface GoogleEventMode : NSObject<NSCoding>
 @property (nonatomic,copy) NSString * Id;
 @property (nonatomic,retain) NSDate * created;
 @property (nonatomic,retain) NSDate * updated;

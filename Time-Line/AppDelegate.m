@@ -76,12 +76,12 @@
         }
         
     }
-//    NSInteger loginStatus=[[NSUserDefaults standardUserDefaults] integerForKey:@"loginStatus"];
-//    //if (1!=loginStatus) {
-//        LoginViewController *loginVc = [[LoginViewController alloc] init];
-//        [self.window.rootViewController presentViewController:loginVc animated:YES completion:nil];
-//    //}
-//   
+    NSInteger loginStatus=[[NSUserDefaults standardUserDefaults] integerForKey:@"loginStatus"];
+    //if (1!=loginStatus) {
+        LoginViewController *loginVc = [[LoginViewController alloc] init];
+        [self.window.rootViewController presentViewController:loginVc animated:YES completion:nil];
+    //}
+   
     return YES;
 }
 
@@ -226,4 +226,31 @@
     return (AppDelegate *) [[UIApplication sharedApplication] delegate];
 }
 
+
+
+- (void) saveFileWithArray: (NSMutableArray*)activityArray fileName:(NSString *) name{
+    NSData * data = [NSKeyedArchiver archivedDataWithRootObject:activityArray];
+    NSString *path =t_setSysDocumentsDir(name);
+    NSLog(@"-->%@",path);        // PATH OF YOUR PLIST FILE
+    BOOL didWriteSuccessfull = [data writeToFile:path atomically:YES];
+    if (didWriteSuccessfull) {
+        NSLog(@"store succsessfully");
+    }else {
+        NSLog(@"Error in Storing");
+    }
+}
+
+
+- (NSMutableArray *)loadDataFromFile:(NSString *)fileName {
+    NSArray *myArray=[[NSArray alloc]init];
+    NSString *path =t_setSysDocumentsDir(fileName);
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path]){
+        NSLog(@"exist");
+        myArray=[[NSArray alloc]initWithArray:[NSKeyedUnarchiver unarchiveObjectWithData:[NSData dataWithContentsOfFile:path]]];
+        return [NSMutableArray arrayWithArray:myArray];
+    } else{
+        NSLog(@"not exist");
+        return nil;
+    }
+}
 @end

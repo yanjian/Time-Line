@@ -315,16 +315,18 @@ return self; \
 #define g_AppDelegate          [AppDelegate getAppDelegate]
 
 //网络队列
-#define g_ASIQuent             g_AppDelegate.networkQueue
+#define g_ASIQuent             g_AppDelegate.netWorkQueue
 
 //网络状态
 #define g_NetStatus            g_AppDelegate.netWorkStatus
 
 //默认读取该文件
+#define calendarList @"calendarList.plist"
+
 #define FILENAME @"addtime.plist"
 #define getSysDocumentsDir [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:FILENAME]
 
-#define setSysDocumentsDir(fileName)  [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:fileName]
+#define t_setSysDocumentsDir(fileName)  [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:fileName]
 
 
 #define blueColor  [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1]
