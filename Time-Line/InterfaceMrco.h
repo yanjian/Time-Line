@@ -62,6 +62,13 @@ typedef NS_ENUM(NSInteger, UserLoginStatus) {
     UserLoginStatus_YES=1
 };
 
+
+typedef NS_ENUM(NSInteger , AccountType){
+    AccountTypeGoogle=0,
+    AccountTypeLocal=1
+
+};
+
 //基本IP
 #define BASEURL_IP @"http://t2.oxozoom.com:8080/myCalendar/servlet"
 
@@ -115,10 +122,17 @@ typedef NS_ENUM(NSInteger, UserLoginStatus) {
 #define get_AccountBindList [NSString stringWithFormat:@"%@/GetAccountBindList",BASEURL_IP]
 #define get_AccountBindList_Tag 13
 
+//注销  Logoff
+#define account_Logoff [NSString stringWithFormat:@"%@/Logoff",BASEURL_IP]
+#define account_Logoff_Tag 14
 
+//取消绑定  CancelAccountBind
+#define account_CancelAccountBind [NSString stringWithFormat:@"%@/CancelAccountBind",BASEURL_IP]
+#define account_CancelAccountBind_Tag 15
 
-
-
+//更新或删除google数据  GoogleCalendarEventOperation
+#define Google_CalendarEventOperation [NSString stringWithFormat:@"%@/GoogleCalendarEventOperation",BASEURL_IP]
+#define Google_CalendarEventOperation_tag 16
 
 
 

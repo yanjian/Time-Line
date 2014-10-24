@@ -16,6 +16,12 @@
 
 -(NSString*)getonehourstime:(NSString*)format;
 
+//时间格式化为rfc3339
+- (NSString *) rfc3339DateFormatter:(NSDate *) date;
+
+
+-(NSString *) dateWithStringDate:(NSString *) dateString;
+
 -(NSMutableArray*)intervalSinceNow: (NSString *) theDate getStrart:(NSString*)startdate;
 
 - (NSString *)timeDifference: (NSString *) theDate getStrart:(NSString*)startdate;

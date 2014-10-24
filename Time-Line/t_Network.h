@@ -15,8 +15,13 @@
 //GET方式请求
 + (ASIHTTPRequest *)httpGet:(NSMutableDictionary *)value Url:(NSString *)url Delegate:(id)delegate Tag:(NSInteger)tag;
 
++ (ASIHTTPRequest *)httpGet:(NSMutableDictionary *)value Url:(NSString *)url Delegate:(id)delegate Tag:(NSInteger)tag userInfo:(NSDictionary *) dictionary;
+
+
+
 //POST方式请求
 + (ASIFormDataRequest *)httpPostValue:(NSMutableDictionary *)value Url:(NSString *)url Delegate:(id)delegate Tag:(NSInteger)tag;
 
-
+//POST方式请求+userInfo信息
++ (ASIFormDataRequest *)httpPostValue:(NSMutableDictionary *)value Url:(NSString *)url Delegate:(id)delegate Tag:(NSInteger)tag userInfo:(NSDictionary *) dictionary;
 @end

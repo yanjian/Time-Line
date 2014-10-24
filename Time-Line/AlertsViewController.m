@@ -7,12 +7,16 @@
 //
 
 #import "AlertsViewController.h"
+#import "EventAlertsViewController.h"
+#import "AllDayEventsViewController.h"
 
-@interface AlertsViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface AlertsViewController ()<UITableViewDelegate,UITableViewDataSource,EventAlertsDelegate,AllDayEventsDelegate>
 @property (nonatomic,retain) UITableView *tableView;
 @property (nonatomic,retain) NSMutableArray *selectIndexPathArr;
 @property (nonatomic,assign) BOOL isSelect;
 @property (nonatomic,retain) NSArray *alertsArr;
+@property (nonatomic,strong) NSString *eventStr;
+@property (nonatomic ,strong) NSString *allDayEventStr;
 @end
 
 @implementation AlertsViewController
@@ -58,6 +62,10 @@
 }
 
 
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -84,6 +92,8 @@
     return 35.f;
 }
 
+
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *cellIdentifier=@"cellVisible";
@@ -91,6 +101,28 @@
     if (cell==nil) {
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
+    cell.tag=indexPath.row;
+    cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+   
+    UILabel *lab=[[UILabel alloc] initWithFrame:CGRectMake(140, 2, 150, 40)];
+    NSArray *viewArr=[cell.contentView subviews];
+    for (UIView *view in viewArr) {
+        if (view.tag==indexPath.row) {
+            [view removeFromSuperview];
+        }
+    }
+
+    [lab setTag:indexPath.row];
+    [lab setTextAlignment:NSTextAlignmentRight];
+    [lab setBackgroundColor:[UIColor clearColor]];
+    if (indexPath.row==0) {
+        [lab setText:self.eventStr];
+    }else if (indexPath.row==1){
+       [lab setText:self.allDayEventStr];
+    }
+    [cell.contentView addSubview:lab];
+   
+    
     
     //    if (!self.isSelect) {
     //        cell.accessoryType=UITableViewCellAccessoryCheckmark;
@@ -107,9 +139,19 @@
 }
 
 
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-//    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-//    UITableViewCell * cell=(UITableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    UITableViewCell * cell=(UITableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
+    if (indexPath.row==0) {//events
+        EventAlertsViewController *eventAlerts=[[EventAlertsViewController alloc] init];
+        eventAlerts.delegate=self;
+        [self.navigationController pushViewController:eventAlerts animated:YES];
+    }else if (indexPath.row==1){//all day
+        AllDayEventsViewController *allDayEvents=[[AllDayEventsViewController alloc] init];
+        allDayEvents.delegate=self;
+        [self.navigationController pushViewController:allDayEvents animated:YES];
+    }
+    
 //    if (cell.accessoryType==UITableViewCellAccessoryCheckmark) {
 //        cell.accessoryType=UITableViewCellAccessoryNone;
 //        [self.selectIndexPathArr removeObject:indexPath];
@@ -117,7 +159,17 @@
 //        cell.accessoryType=UITableViewCellAccessoryCheckmark;
 //        [self.selectIndexPathArr addObject:indexPath];
 //    }
-//}
+}
+
+-(void)eventsAlertTimeString:(NSString *) alertStr{
+    self.eventStr=  alertStr;
+    [self.tableView reloadData];
+}
+
+-(void)getAllDayEvent:(NSString *)timestr{
+    self.allDayEventStr=timestr;
+    [self.tableView reloadData];
+}
 
 -(void) visibleCaTobackSetingView{
     [self.navigationController popViewControllerAnimated:YES];

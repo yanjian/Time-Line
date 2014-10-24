@@ -44,6 +44,9 @@
     [encode encodeObject:self.foregroundColor forKey:@"foregroundColor"];
     [encode encodeObject:self.accessRole forKey:@"accessRole"];
     [encode encodeObject:self.defaultRemindersDic forKey:@"defaultRemindersDic"];
+    [encode encodeBool:self.isLocalAccount forKey:@"isLocalAccount"];
+    [encode encodeBool:self.account forKey:@"account"];
+
 }
 
 - (id)initWithCoder:(NSCoder *)decoder{
@@ -55,7 +58,24 @@
         self.foregroundColor =(NSString *)[decoder decodeObjectForKey:@"foregroundColor"];
         self.accessRole =(NSString *)[decoder decodeObjectForKey:@"accessRole"];
         self.defaultRemindersDic =(NSMutableDictionary *)[decoder decodeObjectForKey:@"defaultRemindersDic"];
+        self.isLocalAccount=[decoder decodeBoolForKey:@"isLocalAccount"];
+        self.account=(NSString *)[decoder decodeObjectForKey:@"account"];
     }
     return  self;
 }
+
+-(NSDictionary *) dictionaryFromObject{
+    NSMutableDictionary *dic=[NSMutableDictionary dictionaryWithCapacity:0];
+    [dic setObject:self.Id forKey:@"Id"];
+    [dic setObject:self.summary forKey:@"summary"];
+    [dic setObject:self.timeZone forKey:@"timeZone"];
+    [dic setObject:self.backgroundColor forKey:@"backgroundColor"];
+    [dic setObject:self.foregroundColor forKey:@"foregroundColor"];
+    [dic setObject:self.accessRole forKey:@"accessRole"];
+    [dic setObject:self.defaultRemindersDic forKey:@"defaultRemindersDic"];
+    [dic setObject:self.account forKey:@"account"];
+    return  dic;
+}
+
+
 @end

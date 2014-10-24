@@ -10,6 +10,7 @@
 #import "EventCell.h"
 #import "AppDelegate.h"
 #import "AnyEvent.h"
+#import "Calendar.h"
 #define calendar_Table_Month_H  132   //只显示一周此处改为44
 #define calendar_Table_Week_H   90   //110
 
@@ -222,11 +223,21 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == event_tableView) {  //事件表
-        eventArr=[NSManagedObject getTable_sync:NSStringFromClass([AnyEvent class]) predicate:nil];
+        NSArray *calendararr=[Calendar MR_findAll];
+        NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
+        for (Calendar *ca in calendararr) {
+            if ([ca.isVisible intValue]==1) {
+                NSPredicate *nspre=[NSPredicate predicateWithFormat:@"calendar==%@",ca];
+                NSArray *arr=[AnyEvent MR_findAllWithPredicate:nspre];
+                for (AnyEvent *event in arr) {
+                    [anyeventArr addObject:event];
+                }
+             }
+        }
+        eventArr=anyeventArr;
         dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
         return (dateArr) ? dateArr.count*7 : 1;
     }
-
     return 1;
 }
 

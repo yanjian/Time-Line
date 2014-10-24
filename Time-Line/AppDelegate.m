@@ -24,11 +24,9 @@
     self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor=[UIColor whiteColor];
     [GMSServices provideAPIKey:GOOGLE_API_KEY];
-    [CoreDataUtil launch];
-   
-    [self initMainView];
+    //[CoreDataUtil launch];
     
-     [self.window makeKeyAndVisible];
+    [MagicalRecord setupCoreDataStackWithStoreNamed:@"TimeLine.sqlite"];
     
     // 监测网络情况
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -45,9 +43,16 @@
     
     _netWorkStatus = ReachableViaWiFi;
     
-//    //初始化 MBProgressHUD控件
-//    _HUD=[[MBProgressHUD alloc] initWithView:self.window];
-//    [self.window addSubview:_HUD];
+    
+    [self initMainView];
+    
+    [self.window makeKeyAndVisible];
+
+    
+    
+    //初始化 MBProgressHUD控件
+    _HUD=[[MBProgressHUD alloc] initWithView:self.window];
+    [self.window addSubview:_HUD];
     
     
     
@@ -77,12 +82,16 @@
         
     }
     NSInteger loginStatus=[[NSUserDefaults standardUserDefaults] integerForKey:@"loginStatus"];
-    //if (1!=loginStatus) {
-        LoginViewController *loginVc = [[LoginViewController alloc] init];
-        [self.window.rootViewController presentViewController:loginVc animated:YES completion:nil];
-    //}
+    if (1!=loginStatus) {
+         //[self initLoginView];
+    }
    
     return YES;
+}
+
+-(void) initLoginView{
+    LoginViewController *loginVc = [[LoginViewController alloc] init];
+    [self.window.rootViewController presentViewController:loginVc animated:YES completion:nil];
 }
 
 //初始化mian界面
@@ -115,12 +124,10 @@
     NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
     NetworkStatus status = [curReach currentReachabilityStatus];
     self.netWorkStatus = status;
-    
     if([curReach isReachable]){
-        NSLog(@"yyyyyyyyyyyyyyyyyyyyyy");
+        NSLog(@"网络可用YES");
     }else{
-        
-        NSLog(@"nnnnnnnnnnnnnnnnnnnnnn");
+        NSLog(@"网络不可用NO");
         [self reachabilityChanged];
     }
 }
@@ -188,7 +195,7 @@
 //显示带时限的等待进度提示框
 - (void)push2LoginViewController
 {
-   // [self.window.rootViewController presentViewController:[LoginViewController new] animated:YES completion:nil];
+    [self.window.rootViewController presentViewController:[LoginViewController new] animated:YES completion:nil];
 }
 
 
@@ -221,6 +228,7 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+
 + (AppDelegate *)getAppDelegate
 {
     return (AppDelegate *) [[UIApplication sharedApplication] delegate];
@@ -230,7 +238,7 @@
 
 - (void) saveFileWithArray: (NSMutableArray*)activityArray fileName:(NSString *) name{
     NSData * data = [NSKeyedArchiver archivedDataWithRootObject:activityArray];
-    NSString *path =t_setSysDocumentsDir(name);
+    NSString *path =t_getSysDocumentsDir(name);
     NSLog(@"-->%@",path);        // PATH OF YOUR PLIST FILE
     BOOL didWriteSuccessfull = [data writeToFile:path atomically:YES];
     if (didWriteSuccessfull) {
@@ -243,7 +251,7 @@
 
 - (NSMutableArray *)loadDataFromFile:(NSString *)fileName {
     NSArray *myArray=[[NSArray alloc]init];
-    NSString *path =t_setSysDocumentsDir(fileName);
+    NSString *path =t_getSysDocumentsDir(fileName);
     if ([[NSFileManager defaultManager] fileExistsAtPath:path]){
         NSLog(@"exist");
         myArray=[[NSArray alloc]initWithArray:[NSKeyedUnarchiver unarchiveObjectWithData:[NSData dataWithContentsOfFile:path]]];

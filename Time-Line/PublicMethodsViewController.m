@@ -39,6 +39,43 @@ static PublicMethodsViewController * PublicMethods = nil;
     return loctime;
 }
 
+
+//时间格式化为rfc3339
+- (NSString *) rfc3339DateFormatter:(NSDate *) date{
+    NSDateFormatter *rfc3339DateFormatter = [[NSDateFormatter alloc] init];
+    NSLocale *enUSPOSIXLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
+    
+    [rfc3339DateFormatter setLocale:enUSPOSIXLocale];
+    [rfc3339DateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"];
+    [rfc3339DateFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
+    
+    return [rfc3339DateFormatter stringFromDate:date];
+}
+
+
+-(NSString *) formatStringWithStringDate:(NSString *) dateString
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setLocale:[[NSLocale alloc]initWithLocaleIdentifier:@"en_US_POSIX"]];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+    NSDate *dateTime = nil;
+    [dateFormatter getObjectValue:&dateTime forString:dateString range:nil error:nil];
+    [dateFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
+    return [dateFormatter stringFromDate:dateTime];
+}
+
+
+-(NSString *) dateWithStringDate:(NSString *) dateString
+{
+    NSDate *dateTime= [self formatWithStringDate:dateString];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setLocale:[[NSLocale alloc]initWithLocaleIdentifier:@"en_US_POSIX"]];
+    [dateFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
+    return [dateFormatter stringFromDate:dateTime];
+}
+
+
 -(NSString *)getonehourstime:(NSString*)format{
     NSDateFormatter *formatter =  [[NSDateFormatter alloc] init];
     [formatter setDateFormat:format];
@@ -80,20 +117,6 @@ static PublicMethodsViewController * PublicMethods = nil;
     }
     return dateStr;
 }
-
-
--(NSString *) formatStringWithStringDate:(NSString *) dateString
-{
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setLocale:[[NSLocale alloc]initWithLocaleIdentifier:@"en_US_POSIX"]];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
-    NSDate *dateTime = nil;
-    [dateFormatter getObjectValue:&dateTime forString:dateString range:nil error:nil];
-    [dateFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
-    return [dateFormatter stringFromDate:dateTime];
-}
-
-
 
 
 -(NSMutableArray*)intervalSinceNow: (NSString *) theDate getStrart:(NSString*)startdate

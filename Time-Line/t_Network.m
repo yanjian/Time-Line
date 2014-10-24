@@ -21,6 +21,11 @@
  */
 + (ASIHTTPRequest *)httpGet:(NSMutableDictionary *)value Url:(NSString *)url Delegate:(id)delegate Tag:(NSInteger)tag
 {
+    ASIHTTPRequest *request=[t_Network httpGet:value Url:url Delegate:delegate Tag:tag userInfo:nil];
+    return  request;
+}
+
++ (ASIHTTPRequest *)httpGet:(NSMutableDictionary *)value Url:(NSString *)url Delegate:(id)delegate Tag:(NSInteger)tag userInfo:(NSDictionary *) dictionary{
     NSEnumerator * enumeratorKey = [value keyEnumerator];
     NSRange rang=[url rangeOfString:@"?"];
     NSString *urlString=url ;
@@ -50,9 +55,15 @@
     [request addRequestHeader:@"Content-Type" value:@"*/*"];
     [request setValidatesSecureCertificate:NO];
     [request setTimeOutSeconds:20];
+    if (dictionary) {
+         [request setUserInfo:dictionary];
+    }
     [request setTag:tag];
     return  request;
+
+
 }
+
 
 /**
  *	@brief	HTTP协议POST方式请求数据
@@ -65,6 +76,21 @@
  */
 + (ASIFormDataRequest *)httpPostValue:(NSMutableDictionary *)value Url:(NSString *)url Delegate:(id)delegate Tag:(NSInteger)tag
 {
+    ASIFormDataRequest *request= [t_Network httpPostValue:value Url:url Delegate:delegate Tag:tag userInfo:nil];
+    return request;
+}
+
+
+/**
+ *	@brief	HTTP协议POST方式请求数据
+ *
+ *	@param 	value 	字典型传输数据
+ *	@param 	url 	访问地址
+ *	@param 	delegate 	代理
+ *  @param 	dictionary  附带信息
+ *	@return	返回ASI类型
+ */
++ (ASIFormDataRequest *)httpPostValue:(NSMutableDictionary *)value Url:(NSString *)url Delegate:(id)delegate Tag:(NSInteger)tag userInfo:(NSDictionary *) dictionary{
     NSArray  *allKeyArr;
     if (value) {
         allKeyArr=[value allKeys];
@@ -76,6 +102,9 @@
     [request setRequestMethod:@"POST"];
     [request setTimeOutSeconds:20];
     [request setTag:tag];
+    if (dictionary) {
+        [request setUserInfo:dictionary];
+    }
     if (value) {
         for (int i=0; i<allKeyArr.count; i++) {
             NSString *key=allKeyArr[i];
@@ -83,8 +112,9 @@
         }
     }
     NSLog(@"requestURL: %@",urlString);
-    NSLog(@"requestURL: %@",[request postBody]);
+    NSLog(@"requestBody: %@",[request postBody]);
     return request;
 }
+
 
 @end

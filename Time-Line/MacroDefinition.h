@@ -321,12 +321,11 @@ return self; \
 #define g_NetStatus            g_AppDelegate.netWorkStatus
 
 //默认读取该文件
-#define calendarList @"calendarList.plist"
 
 #define FILENAME @"addtime.plist"
-#define getSysDocumentsDir [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:FILENAME]
+#define t_getSysDocumentsDir(fileName) [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:fileName]
 
-#define t_setSysDocumentsDir(fileName)  [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:fileName]
+//#define t_setSysDocumentsDir(fileName)  [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] stringByAppendingPathComponent:fileName]
 
 
 #define blueColor  [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1]

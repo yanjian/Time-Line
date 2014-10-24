@@ -13,4 +13,6 @@
 @property (nonatomic,copy) NSString *uid;
 @property (nonatomic,copy) NSString *calendarName;
 @property (nonatomic,copy) NSString *color;
+@property (nonatomic,copy) NSString *emailAccount;
+@property (nonatomic,assign) BOOL isLocalAccount;
 @end

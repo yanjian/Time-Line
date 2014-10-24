@@ -7,12 +7,14 @@
 //
 
 #import "BackgroundRefreshViewController.h"
-
+#import "AT_Account.h"
+#import "Calendar.h"
 @interface BackgroundRefreshViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic,retain) UITableView *tableView;
 @property (nonatomic,retain) NSMutableArray *selectIndexPathArr;
 @property (nonatomic,assign) BOOL isSelect;
 @property (nonatomic,retain) NSArray *refreshArr;
+@property (nonatomic,strong) NSIndexPath *lastIndexPath;
 @end
 
 @implementation BackgroundRefreshViewController
@@ -92,32 +94,33 @@
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
-//    if (!self.isSelect) {
-//        cell.accessoryType=UITableViewCellAccessoryCheckmark;
-//        [self.selectIndexPathArr addObject:indexPath];
-//        if (indexPath.section==self.calendarArray.count-1) {
-//            if(indexPath.row==calendarListArr.count-1){
-//                self.isSelect=YES;
-//            }
-//        }
-//    }
+    if (!self.isSelect) {
+        cell.accessoryType=UITableViewCellAccessoryCheckmark;
+        Calendar *ca=[self.refreshArr objectAtIndex:indexPath.row];
+       
+            self.isSelect=YES;
+           
+    }
     
     cell.textLabel.text=self.refreshArr[indexPath.row];
     return cell;
 }
 
 
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-//    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-//    UITableViewCell * cell=(UITableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
-//    if (cell.accessoryType==UITableViewCellAccessoryCheckmark) {
-//        cell.accessoryType=UITableViewCellAccessoryNone;
-//        [self.selectIndexPathArr removeObject:indexPath];
-//    }else{
-//        cell.accessoryType=UITableViewCellAccessoryCheckmark;
-//        [self.selectIndexPathArr addObject:indexPath];
-//    }
-//}
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    int newRow = [indexPath row];
+    int oldRow = (self.lastIndexPath != nil) ? [self.lastIndexPath row] : -1;
+    
+    if (newRow != oldRow)
+    {
+        UITableViewCell *newCell = [tableView cellForRowAtIndexPath:indexPath];
+        newCell.accessoryType = UITableViewCellAccessoryCheckmark;
+        UITableViewCell *oldCell = [tableView cellForRowAtIndexPath: self.lastIndexPath];
+        oldCell.accessoryType = UITableViewCellAccessoryNone;
+        self.lastIndexPath = [indexPath copy];
+    }
+}
 
 -(void) visibleCaTobackSetingView{
     [self.navigationController popViewControllerAnimated:YES];

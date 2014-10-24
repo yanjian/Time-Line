@@ -24,6 +24,7 @@
     [encode encodeObject:self.startTime forKey:@"startTime"];
     [encode encodeObject:self.endTime forKey:@"endTime"];
     [encode encodeObject:self.reminders forKey:@"reminders"];
+    
 }
 - (id)initWithCoder:(NSCoder *)decoder{
     if (self=[super init]) {
@@ -38,6 +39,7 @@
         self.startTime =(NSDate *)[decoder decodeObjectForKey:@"startTime"];
         self.endTime =(NSDate *)[decoder decodeObjectForKey:@"endTime"];
         self.reminders =(NSDictionary *)[decoder decodeObjectForKey:@"reminders"];
+       
     }
     return  self;
 }

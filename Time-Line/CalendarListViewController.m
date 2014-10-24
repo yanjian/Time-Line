@@ -11,8 +11,11 @@
 #import <QuartzCore/QuartzCore.h> 
 #import "AnyEvent.h"
 #import "LocalCalendarData.h"
-#define Google_Status @"statusCode"
-#define google_Data   @"data"
+#import "Calendar.h"
+#import "AT_Account.h"
+
+#define Status @"statusCode"
+#define Data   @"data"
 #define Google_Items  @"items"
 #define PI 3.14159265358979323846 
 
@@ -29,7 +32,9 @@
 @interface CalendarListViewController ()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate>
 @property(strong,nonatomic) UITableView *tableView;
 @property(strong,nonatomic) NSMutableArray *selectIndexPathArr;
+@property(strong,nonatomic) NSMutableArray *allArr;
 @property(assign,nonatomic) BOOL isSelect;
+@property(nonatomic,strong) NSMutableArray *requestQueue;
 
 @end
 
@@ -51,7 +56,8 @@
     NSLog(@"日历列表：%@",self.googleCalendarDataArr);
     
     self.selectIndexPathArr=[[NSMutableArray alloc] initWithCapacity:0];
-    
+    self.allArr=[[NSMutableArray alloc] initWithCapacity:0];
+    _requestQueue = @[].mutableCopy;
     
     UIView *calendarview=[[UIView alloc] initWithFrame:[[UIScreen mainScreen] applicationFrame]];
     calendarview.backgroundColor=[UIColor grayColor];
@@ -76,6 +82,66 @@
     [titleView addSubview:titlelabel];
     self.navigationItem.titleView =titleView;
     self.view=calendarview;
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+}
+
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    
+    for (NSIndexPath *indexPath in self.allArr) {
+        id dataObj=[[self.googleCalendarDataArr objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+        
+        if ([dataObj isKindOfClass:[GoogleCalendarData class]]) {
+            GoogleCalendarData *googleData=(GoogleCalendarData *)dataObj;
+            NSDictionary *googleDic=@{@"cid": googleData.Id,@"account":googleData.account,@"summary":googleData.summary,@"timeZone":googleData.timeZone,@"backgroundColor":googleData.backgroundColor,@"type":@(AccountTypeGoogle),@"isVisible":@(0),@"isDefault":@(0),@"isNotification":@(0)};
+            
+            ASIHTTPRequest *googleRequest=[t_Network httpPostValue:@{@"cid":googleData.Id}.mutableCopy Url:Get_Google_GetCalendarEvent Delegate:self Tag:Get_Google_GetCalendarEvent_Tag userInfo:@{@"googleData":googleDic}];
+            [g_ASIQuent addOperation:googleRequest];
+            [self addRequestTAG:Get_Google_GetCalendarEvent_Tag];
+            
+        }else if ([dataObj isKindOfClass:[LocalCalendarData class]]){
+            LocalCalendarData *localData=(LocalCalendarData *)dataObj;
+            NSDictionary *localDic=@{@"cid": localData.Id,@"account":localData.emailAccount,@"summary":localData.calendarName,@"timeZone":[[NSTimeZone defaultTimeZone] name],@"backgroundColor":localData.color,@"type":@(AccountTypeLocal),@"isVisible":@(0),@"isDefault":@(0),@"isNotification":@(0)};
+            
+            ASIHTTPRequest *localRequest=[t_Network httpGet:@{@"cid":localData.Id}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"localData":localDic}];
+            [g_ASIQuent addOperation:localRequest];
+            [self addRequestTAG:Local_SingleEventOperation_Tag];
+        }
+    }
+    
+    [g_ASIQuent go];
+    
+
+}
+
+//取消网络请求队列
+-(void)cancelNetWorkrequestQueue{
+    for (ASIHTTPRequest *request in g_ASIQuent.operations) {
+        if (request) {
+            [_requestQueue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                int requestTag = [obj intValue];
+                if (request.tag == requestTag) {
+                    NSLog(@"取消网络请求队列.......%d",requestTag);
+                    [request clearDelegatesAndCancel];
+                }
+            }];
+        }
+    }
+}
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    [self cancelNetWorkrequestQueue];
+}
+
+-(void)addRequestTAG:(int) TAG
+{
+    [_requestQueue addObject:[[NSNumber numberWithInt:TAG] stringValue]];
 }
 
 
@@ -110,6 +176,7 @@
         viewCell.accessoryType=UITableViewCellAccessoryCheckmark;
       
         [self.selectIndexPathArr addObject:indexPath];
+        [self.allArr addObject:indexPath];
         if (indexPath.section==self.googleCalendarDataArr.count-1) {
             if(indexPath.row==calendarListArr.count-1){
                   self.isSelect=YES;
@@ -143,17 +210,17 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     return 20.f;
 }
+
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     NSArray *calendarListArr=[self.googleCalendarDataArr objectAtIndex:section];
     id tmpObj=[calendarListArr objectAtIndex:0];
     NSString *returnStr=@"";
     if ([tmpObj isKindOfClass:[GoogleCalendarData class]]) {
         GoogleCalendarData *data=(GoogleCalendarData*)tmpObj;
-        returnStr=[NSString stringWithFormat:@"GOOGLE(%@)",data.Id];
+        returnStr=[NSString stringWithFormat:@"GOOGLE(%@)",data.account];
     }else if([tmpObj isKindOfClass:[LocalCalendarData class]]){
-        NSUserDefaults *userInfo=[NSUserDefaults standardUserDefaults];
-        NSString *email=[userInfo valueForKey:@"email"];
-        returnStr=email;
+        LocalCalendarData *data=(LocalCalendarData*)tmpObj;
+        returnStr=[NSString stringWithFormat:@"LOCAL(%@)",data.emailAccount];
     }
     
     UILabel *label=[[UILabel alloc] init] ;
@@ -170,174 +237,165 @@
 
 //同步google事件数据
 -(void)synchronizeGoogleData:(UIButton*) sender{
-    [NSManagedObject cleanTable:NSStringFromClass([AnyEvent class])];//用户每次同步都清空数据库中的数据
-    for (NSIndexPath *indexPath in self.selectIndexPathArr) {
-        id dataObj=[[self.googleCalendarDataArr objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-        
-        if ([dataObj isKindOfClass:[GoogleCalendarData class]]) {
-            GoogleCalendarData *googleData=(GoogleCalendarData *)dataObj;
-            ASIHTTPRequest *request=[t_Network httpPostValue:@{@"cid":googleData.Id}.mutableCopy Url:Get_Google_GetCalendarEvent Delegate:self Tag:Get_Google_GetCalendarEvent_Tag];
-             [request startSynchronous];
-            
-        }else if ([dataObj isKindOfClass:[LocalCalendarData class]]){
-          LocalCalendarData *localData=(LocalCalendarData *)dataObj;
-          ASIHTTPRequest *request=[t_Network httpGet:@{@"cid":localData.Id}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag];
-            [request startSynchronous];
-        }
-    }
-    NSMutableArray *tmpArr=[g_AppDelegate loadDataFromFile:calendarList];
-    if (tmpArr&&tmpArr.count>0) {
-        for (id calendar in self.googleCalendarDataArr) {
-            [tmpArr addObject:calendar];
-        }
-        [g_AppDelegate saveFileWithArray:tmpArr fileName:calendarList];
-    }else{
-        [g_AppDelegate saveFileWithArray:[self.googleCalendarDataArr mutableCopy] fileName:calendarList];
-    }
     
     [[AppDelegate getAppDelegate] initMainView];
 }
 
 
 - (void)requestFinished:(ASIHTTPRequest *)request{
-    NSString *reponseData=[request responseString];
-    NSLog(@"event-data:%@",reponseData);
-    NSDictionary *eventDic=[reponseData objectFromJSONString];
-    NSString *status=[eventDic objectForKey:Google_Status];
-    if ([@"1" isEqualToString:status]) {//状态成功
-        id eventData=[eventDic objectForKey:google_Data];
-        if ([eventData isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *eventDataDic=(NSDictionary *)eventData;
-            NSArray *eventArr=[eventDataDic objectForKey:Google_Items];
-            for (NSDictionary *event in eventArr) {
-                [self saveGoogleEventData:event];
+    NSString *responseStr=[request responseString];
+    NSLog(@"%@",responseStr);
+    switch (request.tag) {
+        case Get_Google_GetCalendarEvent_Tag:{
+            NSDictionary *eventDic=[responseStr objectFromJSONString];
+            NSString *status=[eventDic objectForKey:Status];
+            if ([@"1" isEqualToString:status]) {//状态成功
+                NSMutableDictionary *userinfo= [[request.userInfo objectForKey:@"googleData"] mutableCopy];
+                id eventData=[eventDic objectForKey:Data];
+                NSMutableSet *googleSet=[NSMutableSet setWithCapacity:0];
+                Calendar *calendar=[Calendar MR_createEntity];
+                if (userinfo) {
+                    for (NSIndexPath *indexPath in self.selectIndexPathArr) {
+                        id dataObj=[[self.googleCalendarDataArr objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+                        if ([dataObj isKindOfClass:[GoogleCalendarData class]]) {
+                            GoogleCalendarData *gcd=(GoogleCalendarData *)dataObj;
+                            if ([[userinfo objectForKey:@"cid"] isEqualToString:gcd.Id]) {
+                                [userinfo setObject:@(1) forKey:@"isVisible"];
+                            }
+                        }
+                    }
+                }
+                
+                if ([eventData isKindOfClass:[NSDictionary class]]) {
+                    NSDictionary *eventDataDic=(NSDictionary *)eventData;
+                    NSArray *eventArr=[eventDataDic objectForKey:Google_Items];
+                    for (NSDictionary *event in eventArr) {
+                        NSMutableDictionary *eventDic=[event mutableCopy];
+                        [eventDic setObject:calendar forKey:@"calendar"];
+                        [googleSet addObject:[self paseEventData:eventDic] ];
+                    }
+                }
+                [self paseUserInfo:userinfo calendarData:calendar];
+                [calendar addAnyEvent:googleSet];
+                
+                for (AT_Account *at in self.calendarAccountArr) {
+                    if (at.accountType==[NSNumber numberWithInt:AccountTypeGoogle]) {
+                        [at addCaObject:calendar];
+                    }
+                }
+
+                [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
             }
+            break;
+         }
+        case Local_SingleEventOperation_Tag:{
+            NSDictionary *eventDic=[responseStr objectFromJSONString];
+            NSString *status=[eventDic objectForKey:Status];
+            if ([@"1" isEqualToString:status]) {//状态成功
+                NSMutableDictionary *userinfo= [[request.userInfo objectForKey:@"localData"] mutableCopy];
+                id eventData=[eventDic objectForKey:Data];
+                NSMutableSet *localSet=[NSMutableSet setWithCapacity:0];
+                Calendar *calendar=[Calendar MR_createEntity];
+                
+               if (userinfo) {
+                 for (NSIndexPath *indexPath in self.selectIndexPathArr) {
+                    id dataObj=[[self.googleCalendarDataArr objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+                    if ([dataObj isKindOfClass:[LocalCalendarData class]]) {
+                        LocalCalendarData *lcd=(LocalCalendarData *)dataObj;
+                        if ([[userinfo objectForKey:@"cid"] isEqualToString:lcd.Id]) {
+                            [userinfo setObject:@(1) forKey:@"isVisible"];
+                        }
+                    }
+                 }
+                
+                 if ([eventData isKindOfClass:[NSDictionary class]]) {
+                    NSDictionary *eventDataDic=(NSDictionary *)eventData;
+                    NSArray *eventArr=[eventDataDic objectForKey:Google_Items];
+                    for (NSMutableDictionary *event in eventArr) {
+                        [event setObject:calendar forKey:@"calendar"];
+                       // [localSet addObject:[self paseEventData:event] ];
+                    }
+                 }
+                [self paseUserInfo:userinfo calendarData:calendar];
+                [calendar addAnyEvent:localSet];
+                for (AT_Account *at in self.calendarAccountArr) {
+                       if (at.accountType== [NSNumber numberWithInt:AccountTypeLocal] ) {
+                           [at addCaObject:calendar];
+                       }
+                }
+                [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+             }
+            }
+            break;
         }
+        default:
+            break;
     }
 }
 
 
--(void)saveGoogleEventData:(NSDictionary *) dataDic
+-(void)paseUserInfo:(NSDictionary *) userInfo  calendarData:(Calendar *) calendar{
+    
+    calendar.account =[userInfo objectForKey:@"account"];
+    calendar.backgroundColor =[userInfo objectForKey:@"backgroundColor"];
+    calendar.cid =[userInfo objectForKey:@"cid"];
+    calendar.isDefault =[userInfo objectForKey:@"isDefault"];
+    calendar.isNotification= [userInfo objectForKey:@"isNotification"];
+    calendar.isVisible =[userInfo objectForKey:@"isVisible"];
+    calendar.summary= [userInfo objectForKey:@"summary"];
+    calendar.timeZone =[userInfo objectForKey:@"timeZone"];
+    calendar.type =[userInfo objectForKey:@"type"];
+    
+}
+
+
+//google
+-(AnyEvent *)paseEventData:(NSDictionary *) dataDic
 {
     NSLog(@"%@",dataDic);
     //事件存储库
     
+    AnyEvent *anyEvent=[AnyEvent MR_createEntity];
+    
     NSString *startTime= [[dataDic objectForKey:@"start"] objectForKey:@"dateTime"];
-    NSString *statrstring=[self formatWithStringDate: startTime];
-    NSMutableDictionary *googleDataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
-    [googleDataDic setObject:[dataDic objectForKey:@"summary"] forKey:TITLE];
+    NSString *statrstring=[[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:startTime];
+
+    anyEvent.eventTitle=[dataDic objectForKey:@"summary"];
+    
     if ([dataDic objectForKey:@"location"]) {
-        [googleDataDic setObject:[dataDic objectForKey:@"location"] forKey:LOCATION];
+        anyEvent.location= [dataDic objectForKey:@"location"];
     }
     
-    [googleDataDic setObject:statrstring forKey:STARTDATE];
-    [googleDataDic setObject:[self formatWithStringDate:[[dataDic objectForKey:@"end"] objectForKey:@"dateTime"]] forKey:ENDDATE];
+    anyEvent.eId=[dataDic objectForKey:@"id"];
+    
+    anyEvent.created=[dataDic objectForKey:@"created"];
+    anyEvent.updated=[dataDic objectForKey:@"updated"];
+    
+    anyEvent.startDate= statrstring;
+    anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:[[dataDic objectForKey:@"end"] objectForKey:@"dateTime"]];
     
     if ([dataDic objectForKey:@"description"]) {
-        [googleDataDic setObject:[dataDic objectForKey:@"description"] forKey:NOTE];
+        anyEvent.note= [dataDic objectForKey:@"description"];
+    }
+    if ([dataDic objectForKey:@"calendar"]) {
+        anyEvent.calendar=[dataDic objectForKey:@"calendar"];
     }
     
-  
-//    NSString *coor=@"";
-//    if (coordinates) {
-//        coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
-//    }
-//    [googleDataDic setObject:coor forKey:COORDINATE];
-//    
-//    NSString * alertStr=@"";
-//    if( selectAlertArr) {
-//        alertStr=[selectAlertArr componentsJoinedByString:@","];
-//    }
-//    [googleDataDic setObject:alertStr forKey:ALERTS];
-//    [googleDataDic setObject:localfiled.text forKey:CACCOUNT];
-//    
-//    
-//    NSString * repeatStr=@"";
-//    if(selectRepeatArr) {
-//        repeatStr=[selectRepeatArr componentsJoinedByString:@","];
-//    }
-//    [googleDataDic setObject:repeatStr forKey:REPEAT];
+    NSDictionary *creatordic=[dataDic objectForKey:@"creator"];//创建者
+    if (creatordic) {
+        anyEvent.creator=[creatordic objectForKey:@"email"];
+        anyEvent.creatorDisplayName=[creatordic objectForKey:@"displayName"];
+    }
+     NSDictionary *orgdic=[dataDic objectForKey:@"organizer"];//组织者
+    if (orgdic) {
+        anyEvent.organizer =[orgdic objectForKey:@"email"];
+        anyEvent.orgDisplayName=[orgdic objectForKey:@"displayName"];
+    }
     
-    [NSManagedObject addObject_sync:googleDataDic toTable:NSStringFromClass([AnyEvent class])];
-    
-    
-    
-    
-    
-//    NSString *startTime= [[dataDic objectForKey:@"start"] objectForKey:@"dateTime"];
-//    NSString *statrstring=[self formatWithStringDate: startTime];
-//    
-//    NSRange strRange=  [statrstring rangeOfString:@"日"];
-//    NSString *startDate=[statrstring substringWithRange:NSMakeRange(0, strRange.location+1)];
-//    if (!data) {
-//        data=[NSMutableDictionary dictionaryWithCapacity:0];
-//        NSMutableArray *calendarDataArr=[NSMutableArray arrayWithCapacity:0];
-//        NSMutableDictionary *dic=[[NSMutableDictionary alloc] initWithCapacity:0];
-//        [dic setObject:[dataDic objectForKey:@"id"] forKey:@"eventID"];
-//        
-//        [dic setObject:[dataDic objectForKey:@"summary"] forKey:TITLE];
-//        
-//        [dic setObject:[dataDic objectForKey:@"location"] forKey:LOCATION];
-//        
-//        [dic setObject:statrstring forKey:STARTDATE];
-//        
-//        [dic setObject: [self formatWithStringDate:[[dataDic objectForKey:@"end"] objectForKey:@"dateTime"]]
-//                    forKey:ENDDATE];
-//        
-//        if ([dataDic objectForKey:@"description"]) {
-//            [dic setObject:[dataDic objectForKey:@"description"] forKey:NOTE];
-//        }
-//        
-////        if (coordinates) {
-////            [dataDic setObject:[dataDic objectForKey:@"id"] forKey:COORDINATE];
-////        }
-//        //[dataDic setObject:[dataDic objectForKey:@"id"] forKey:ALERTS];
-//        //[dataDic setObject:localfiled.text forKey:CACCOUNT];
-//        //[dataDic setObject:[dataDic objectForKey:@"id"] forKey:REPEAT];
-//        [calendarDataArr addObject:dic];
-//        [data setObject:calendarDataArr forKey:startDate];
-//        
-//    }else{
-//        NSMutableArray *calendarDataArr=[data valueForKey:startDate];
-//        if (!calendarDataArr) {
-//            calendarDataArr=[[NSMutableArray alloc] initWithCapacity:0];
-//            [data setObject:calendarDataArr forKey:startDate];
-//        }
-//        //用于存放要保存的数据
-//        NSMutableDictionary *arrdic=[[NSMutableDictionary alloc] initWithCapacity:0];
-//        [arrdic setObject:[dataDic objectForKey:@"id"] forKey:@"eventID"];
-//        
-//        [arrdic setObject:[dataDic objectForKey:@"summary"] forKey:TITLE];
-//        
-//        if ([dataDic objectForKey:@"location"]) {
-//            [arrdic setObject:[dataDic objectForKey:@"location"] forKey:LOCATION];
-//        }
-//
-//        [arrdic setObject:statrstring forKey:STARTDATE];
-//        
-//        [arrdic setObject: [self formatWithStringDate:[[dataDic objectForKey:@"end"] objectForKey:@"dateTime"]]
-//                    forKey:ENDDATE];
-//        
-//        if ([dataDic objectForKey:@"description"]) {
-//            [arrdic setObject:[dataDic objectForKey:@"description"] forKey:NOTE];
-//        }
-//        
-//        [calendarDataArr addObject:arrdic];
-//    }
-//    [data writeToFile:getSysDocumentsDir atomically:NO];
-
+    anyEvent.isSync=@(isSyncData_YES);//表示已经是同步的数据
+    return anyEvent;
 
 }
 
 
--(NSString *) formatWithStringDate:(NSString *) dateString
-{
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setLocale:[[NSLocale alloc]initWithLocaleIdentifier:@"en_US_POSIX"]];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
-    NSDate *dateTime = nil;
-    [dateFormatter getObjectValue:&dateTime forString:dateString range:nil error:nil];
-    [dateFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
-    return [dateFormatter stringFromDate:dateTime];
-}
 @end

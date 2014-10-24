@@ -1,18 +1,20 @@
 //
-//  AccountViewController.m
+//  EventAlertsViewController.m
 //  Time-Line
 //
-//  Created by IF on 14-10-13.
+//  Created by IF on 14-10-15.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
 //
 
-#import "AccountViewController.h"
+#import "EventAlertsViewController.h"
 
-@interface AccountViewController ()<UITableViewDataSource,UITableViewDelegate>
+@interface EventAlertsViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic,retain) UITableView *tableView;
+@property (nonatomic,retain) NSArray *eventAlertsArr;
 @end
 
-@implementation AccountViewController
+@implementation EventAlertsViewController
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -27,6 +29,8 @@
 {
     [super viewDidLoad];
     [self.navigationItem setHidesBackButton:YES animated:YES];
+    self.eventAlertsArr=[NSArray arrayWithObjects:@"never",@"5 minutes before",@"15 minutes before",@"30 minutes before",@"1 hour before",@"2 hour before", nil];
+    
     
     self.tableView=[[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
     self.tableView.dataSource=self;
@@ -37,7 +41,7 @@
     UILabel* titlelabel=[[UILabel alloc]initWithFrame:titleView.frame];
     titlelabel.textAlignment = NSTextAlignmentCenter;
     titlelabel.font =[UIFont fontWithName:@"Helvetica Neue" size:20.0];
-    titlelabel.text = @"Disconnect";
+    titlelabel.text = @"Events";
     titlelabel.textColor = [UIColor whiteColor];
     [titleView addSubview:titlelabel];
     self.navigationItem.titleView =titleView;
@@ -66,12 +70,12 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     
-    return self.accountArr.count;
+    return self.eventAlertsArr.count;
 }
 
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
-    return @"INFO";
+    return @"Alert";
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
@@ -80,21 +84,25 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *cellIdentifier=@"cellDisconnect";
+    NSString *cellIdentifier=@"cellEventsAlert";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (cell==nil) {
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    cell.textLabel.text=self.accountArr[indexPath.row];
+    cell.textLabel.text=self.eventAlertsArr[indexPath.row];
     return cell;
 }
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    [self.delegate eventsAlertTimeString:cell.textLabel.text];
+    [self visibleCaTobackSetingView];
 }
 
 -(void) visibleCaTobackSetingView{
     [self.navigationController popViewControllerAnimated:YES];
 }
+
 @end

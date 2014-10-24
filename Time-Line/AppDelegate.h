@@ -20,8 +20,8 @@
 @property (nonatomic,strong) FlipBoardNavigationController *flipNC;
 
 @property (nonatomic,strong) MBProgressHUD *HUD;
-@property (nonatomic,assign) NetworkStatus netWorkStatus; //g_NetStatus
 @property (nonatomic,retain) ASINetworkQueue *netWorkQueue; //g_ASIQueue
+@property (nonatomic,assign) NetworkStatus netWorkStatus; //g_NetStatus
 
 +(AppDelegate *)getAppDelegate;
 
@@ -37,6 +37,8 @@
 
 //隐藏提示框
 - (void)hideActivityView ;
+
+-(void) initLoginView;
 
 -(void)initMainView;
 //文件归档

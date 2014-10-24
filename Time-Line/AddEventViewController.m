@@ -16,7 +16,7 @@
 #import <CoreLocation/CLPlacemark.h>
 #import "GoogleMapViewController.h"
 #import "AnyEvent.h"
-
+#import "CalendarAccountViewController.h"
 
 #define TITLE     @"eventTitle"
 #define LOCATION  @"location"
@@ -28,7 +28,7 @@
 #define COORDINATE @"coordinate"
 #define  REPEAT    @"repeat"
 
-@interface AddEventViewController () <ASIHTTPRequestDelegate>
+@interface AddEventViewController () <ASIHTTPRequestDelegate,CalendarAccountDelegate>
 {
     UITextField* textfiled;
     UILabel *_textlable;
@@ -64,10 +64,12 @@
     UILabel *_CAlable;
     BOOL isUse;
     BOOL isReadFlag;//编辑是取数据只执行一次！
+    UILabel *_calendarLab;
     
 }
 @property (nonatomic,assign) BOOL isShowMap;//地图是否显示
 @property (nonatomic,assign) NSInteger alertCount;//设置的闹钟数
+@property (nonatomic,strong) Calendar *calendarObj;
 
 @end
 
@@ -164,27 +166,20 @@
     
     [self InitUI];
     
-//    //批注：这个没有什么用，放后删除
-//    if ([state isEqualToString:@"edit"]) {
-//        if ([[dateDic objectForKey:@"url"] isEqualToString:@"photo.png"]) {
-//            NSString *plistPath = setSysDocumentsDir(@"photo.png");
-//            UIImage* image=[UIImage imageWithContentsOfFile:plistPath];
-//            [addImage setBackgroundImage:image forState:UIControlStateNormal];
-//            imagename=@"photo.png";
-//        }else{
-//            [addImage setBackgroundImage:[UIImage imageNamed:[dateDic objectForKey:@"url"]] forState:UIControlStateNormal];
-//            imagename=[dateDic objectForKey:@"url"];
-//        }
-//        [addImage setTitle:@"CHANGE A PICTURE" forState:UIControlStateNormal];
-//    }else{
-//        [addImage setTitle:@"CHOOSE A PICTURE" forState:UIControlStateNormal];
-//    }
-    
     addImage.titleLabel.textColor=[UIColor whiteColor];
     addImage.titleLabel.textAlignment=NSTextAlignmentCenter;
     addImage.titleLabel.font=[UIFont boldSystemFontOfSize:17.0f];
     [addImage addTarget:self action:@selector(handleSingleTapFrom) forControlEvents:UIControlEventTouchUpInside];
-  }
+    
+    
+    if (event) {
+         self.calendarObj= event.calendar;
+    }else{
+        //查询默认日历
+        NSPredicate *pre=[NSPredicate predicateWithFormat:@"isDefault==1"];
+        self.calendarObj=[[Calendar MR_findAllWithPredicate:pre] lastObject];
+    }
+}
 
 -(void)InitUI{
     _textlable = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, self.view.frame.size.width, 20)];
@@ -242,7 +237,14 @@
     }
     
     _CAlable = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, self.view.frame.size.width, 20)];
+   
+    _calendarLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 22, self.view.frame.size.width, 62)];
+    _calendarLab.textAlignment=NSTextAlignmentCenter;
+    _calendarLab.font=[UIFont boldSystemFontOfSize:15.0f];
+    _calendarLab.textColor=[UIColor blackColor];
 
+    
+    
     notefiled=[[UITextField alloc]initWithFrame:CGRectMake(0,20,self.view.frame.size.width, 64)];
     notefiled.tag=2;
     notefiled.delegate=self;
@@ -265,9 +267,11 @@
 
 //删除事件
 -(void)deleteEvent{
+    NSPredicate *pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and calendarAccount==%@ and startDate==%@",event.eventTitle,event.calendarAccount,event.startDate];
+    AnyEvent *anyEvent=[[AnyEvent MR_findAllWithPredicate:pre] lastObject];
     
-    NSArray *eventArr=[[NSArray alloc] initWithObjects:event, nil];
-    [NSManagedObject deleteObjects_sync:eventArr];
+    [anyEvent MR_deleteEntity];
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     for (UIViewController* obj in [self.navigationController viewControllers]) {
         if ([obj isKindOfClass:[HomeViewController class]]) {
             [self.navigationController popToViewController:obj animated:YES];
@@ -347,33 +351,43 @@
 //修改事件数据
 -(void)editEvent{
     
-    NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
-    [dataDic setObject:textfiled.text forKey:TITLE];
-    [dataDic setObject:localfiled.text forKey:LOCATION];
-    [dataDic setObject:startString forKey:STARTDATE];
-    [dataDic setObject:endString forKey:ENDDATE];
-    [dataDic setObject:notefiled.text forKey:NOTE];
+    NSPredicate *pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and startDate==%@ and location==%@",event.eventTitle,event.startDate,event.location];
+    AnyEvent *anyEvent= [[AnyEvent MR_findAllWithPredicate:pre ] lastObject];
+    anyEvent.eventTitle= textfiled.text;
+    anyEvent.location= localfiled.text ;
+    anyEvent.startDate= startString ;
+    anyEvent.endDate= endString ;
+    anyEvent.note= notefiled.text;
+    anyEvent.calendarAccount=_calendarLab.text;
     NSString *coor=@"";
     if (coordinates) {
         coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
     }
-    [dataDic setObject:coor forKey:COORDINATE];
+    anyEvent.coordinate= coor;
     
     NSString * alertStr=@"";
     if( selectAlertArr) {
         alertStr=[selectAlertArr componentsJoinedByString:@","];
     }
-    [dataDic setObject:alertStr forKey:ALERTS];
-    [dataDic setObject:localfiled.text forKey:CACCOUNT];
+    anyEvent.alerts= alertStr;
+    
+    anyEvent.calendarAccount= localfiled.text;
     
     
     NSString * repeatStr=@"";
     if(selectRepeatArr) {
         repeatStr=[selectRepeatArr componentsJoinedByString:@","];
     }
-    [dataDic setObject:repeatStr forKey:REPEAT];
+    anyEvent.repeat= repeatStr;
+    anyEvent.isSync=@(isSyncData_NO);
+    anyEvent.calendar=self.calendarObj;
     
-    [NSManagedObject updateObject_sync:event params:dataDic];
+    NSString * nowDate=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+    anyEvent.updated=nowDate;
+    
+    [self.calendarObj addAnyEventObject:anyEvent];
+    
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
@@ -611,6 +625,8 @@
         if (indexPath.section==3){
             if (indexPath.row==0) {
                 [cell1.contentView addSubview:_CAlable];
+                _calendarLab.text=self.calendarObj.summary;
+                [cell1.contentView addSubview:_calendarLab];
                 [cell1 viewWithTag:0];
             }
         }
@@ -834,40 +850,28 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-    if (indexPath.section==1||indexPath.section==3) {
+    if (indexPath.section==1) {
         ViewController* controler=[[ViewController alloc]initWithNibName:@"ViewController" bundle:nil];
         controler.detelegate=self;
         [self.navigationController pushViewController:controler animated:YES];
+    }else if(indexPath.section==3){
+        CalendarAccountViewController *caVC=[[CalendarAccountViewController alloc] init];
+        caVC.delegate=self;
+        [self.navigationController pushViewController:caVC animated:YES];
+    
     }
-//    if (indexPath.row == 0) {
-//        if ([indexPath isEqual:self.selectIndex]) {
-//            self.isOpen = NO;
-//            [self didSelectCellRowFirstDo:NO nextDo:NO];
-//            self.selectIndex = nil;
-//            
-//        }else
-//        {
-//            if (!self.selectIndex) {
-//                self.selectIndex = indexPath;
-//                [self didSelectCellRowFirstDo:YES nextDo:NO];
-//                
-//            }else
-//            {
-//                
-//                [self didSelectCellRowFirstDo:NO nextDo:YES];
-//            }
-//        }
-//        
-//    }else
-//    {
-////        NSDictionary *dic = [_dataList objectAtIndex:indexPath.section];
-////        NSArray *list = [dic objectForKey:@"list"];
-////        NSString *item = [list objectAtIndex:indexPath.row-1];
-////        UIAlertView *alert = [[[UIAlertView alloc] initWithTitle:item message:nil delegate:nil cancelButtonTitle:@"取消" otherButtonTitles: nil] autorelease];
-////        [alert show];
-//    }
-    //[tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
 }
+
+# pragma - calendar account view 的代理 取得选择的日历列表
+-(void)calendarAccountWithAccont:(Calendar *)ca{
+    NSLog(@"%@",ca);
+    self.calendarObj=ca;
+    _calendarLab.text=ca.summary;
+}
+
+
+
 
 //没有使用到
 - (void)didSelectCellRowFirstDo:(BOOL)firstDoInsert nextDo:(BOOL)nextDoInsert
@@ -1172,88 +1176,45 @@
 
 - (void)postEvent
 {
-    NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
-    //[dataDic setObject:[AddEventViewController generateUniqueEventID] forKey:@"eventID"];
-    [dataDic setObject:textfiled.text forKey:TITLE];
-    [dataDic setObject:localfiled.text forKey:LOCATION];
-    [dataDic setObject:startString forKey:STARTDATE];
-    [dataDic setObject:endString forKey:ENDDATE];
-    [dataDic setObject:notefiled.text forKey:NOTE];
+    AnyEvent *anyEvent=[AnyEvent MR_createEntity];
+    anyEvent.eventTitle=textfiled.text;
+    anyEvent.location= localfiled.text;
+    anyEvent.startDate= startString;
+    anyEvent.endDate= endString;
+    anyEvent.note= notefiled.text;
+    anyEvent.calendarAccount=_calendarLab.text;
     NSString *coor=@"";
     if (coordinates) {
         coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
     }
-    [dataDic setObject:coor forKey:COORDINATE];
+    anyEvent.coordinate= coor;
 
     NSString * alertStr=@"";
     if( selectAlertArr) {
         alertStr=[selectAlertArr componentsJoinedByString:@","];
     }
-    [dataDic setObject:alertStr forKey:ALERTS];
-    [dataDic setObject:localfiled.text forKey:CACCOUNT];
+    anyEvent.alerts= alertStr;
+    anyEvent.calendarAccount =  localfiled.text ;
     
     
     NSString * repeatStr=@"";
     if(selectRepeatArr) {
         repeatStr=[selectRepeatArr componentsJoinedByString:@","];
     }
-    [dataDic setObject:repeatStr forKey:REPEAT];
+    anyEvent.repeat= repeatStr;
+    anyEvent.calendar=self.calendarObj;
+    anyEvent.isSync=@(isSyncData_NO);
+    NSString * nowDate=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+    anyEvent.updated=nowDate;
+    anyEvent.created=nowDate;
+    anyEvent.creator= [USER_DEFAULT objectForKey:@"email"];
+    anyEvent.organizer= [USER_DEFAULT objectForKey:@"email"];
     
-    [NSManagedObject addObject_sync:dataDic toTable:NSStringFromClass([AnyEvent class])];
     
     
+    [self.calendarObj addAnyEventObject:anyEvent];
     
-//    
-//    //事件存储库
-//    NSString *plistPath=getSysDocumentsDir;
-//    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
-//    NSRange strRange=  [startString rangeOfString:@"日"];
-//    NSString *startDate=[startString substringWithRange:NSMakeRange(0, strRange.location+1)];
-//    
-//    if (!data) {
-//         data=[NSMutableDictionary dictionaryWithCapacity:0];
-//         NSMutableArray *calendarDataArr=[NSMutableArray arrayWithCapacity:0];
-//         NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
-//        [dataDic setObject:[AddEventViewController generateUniqueEventID] forKey:@"eventID"];
-//        [dataDic setObject:textfiled.text forKey:TITLE];
-//        [dataDic setObject:localfiled.text forKey:LOCATION];
-//        [dataDic setObject:startString forKey:STARTDATE];
-//        [dataDic setObject:endString forKey:ENDDATE];
-//        [dataDic setObject:notefiled.text forKey:NOTE];
-//        if (coordinates) {
-//            [dataDic setObject:coordinates forKey:COORDINATE];
-//        }
-//        [dataDic setObject:selectAlertArr forKey:ALERTS];
-//      //[dataDic setObject:localfiled.text forKey:CACCOUNT];
-//        [dataDic setObject:selectRepeatArr forKey:REPEAT];
-//        [calendarDataArr addObject:dataDic];
-//         [self getLocationNotification:dataDic];
-//        [data setObject:calendarDataArr forKey:startDate];
-//        
-//    }else{
-//        NSMutableArray *calendarDataArr=[data valueForKey:startDate];
-//        if (!calendarDataArr) {
-//            calendarDataArr=[[NSMutableArray alloc] initWithCapacity:0];
-//            [data setObject:calendarDataArr forKey:startDate];
-//        }
-//        //用于存放要保存的数据
-//        NSMutableDictionary *dataDic=[[NSMutableDictionary alloc] initWithCapacity:0];
-//        [dataDic setObject:[AddEventViewController generateUniqueEventID] forKey:@"eventID"];
-//        [dataDic setObject:textfiled.text forKey:TITLE];
-//        [dataDic setObject:localfiled.text forKey:LOCATION];
-//        [dataDic setObject:startString forKey:STARTDATE];
-//        [dataDic setObject:endString forKey:ENDDATE];
-//        [dataDic setObject:notefiled.text forKey:NOTE];
-//        if (coordinates) {
-//            [dataDic setObject:coordinates forKey:COORDINATE];
-//        }
-//        [dataDic setObject:selectAlertArr forKey:ALERTS];
-////      [dataDic setObject:localfiled.text forKey:CACCOUNT];
-//        [dataDic setObject:selectRepeatArr forKey:REPEAT];
-//        [self getLocationNotification:dataDic];
-//        [calendarDataArr addObject:dataDic];
-//    }
-//    [data writeToFile:plistPath atomically:NO];
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
     
 //2014年9月18号屏蔽--------------start-----------yj
 //    EKEventStore *eventStore = [[EKEventStore alloc] init];

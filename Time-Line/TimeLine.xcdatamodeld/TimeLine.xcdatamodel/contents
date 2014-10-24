@@ -1,17 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="13F34" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="5064" systemVersion="14A389" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="AnyEvent" representedClassName="AnyEvent" syncable="YES">
         <attribute name="alerts" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="calendarAccount" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="coordinate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="created" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="creator" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="creatorDisplayName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="eId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="endDate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="eventTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isSync" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="organizer" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="orgDisplayName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="repeat" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="startDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="updated" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="calendar" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Calendar" inverseName="anyEvent" inverseEntity="Calendar" syncable="YES"/>
+    </entity>
+    <entity name="AT_Account" representedClassName="AT_Account" syncable="YES">
+        <attribute name="account" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="accountType" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="ca" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Calendar" inverseName="atAccount" inverseEntity="Calendar" syncable="YES"/>
+    </entity>
+    <entity name="Calendar" representedClassName="Calendar" syncable="YES">
+        <attribute name="account" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="backgroundColor" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isDefault" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="isNotification" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="isVisible" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="summary" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timeZone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <relationship name="anyEvent" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AnyEvent" inverseName="calendar" inverseEntity="AnyEvent" syncable="YES"/>
+        <relationship name="atAccount" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AT_Account" inverseName="ca" inverseEntity="AT_Account" syncable="YES"/>
     </entity>
     <elements>
-        <element name="AnyEvent" positionX="-63" positionY="-18" width="128" height="178"/>
+        <element name="AnyEvent" positionX="-306" positionY="-124" width="128" height="313"/>
+        <element name="AT_Account" positionX="-497" positionY="-136" width="128" height="88"/>
+        <element name="Calendar" positionX="-54" positionY="68" width="128" height="210"/>
     </elements>
 </model>

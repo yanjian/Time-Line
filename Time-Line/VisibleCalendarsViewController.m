@@ -9,10 +9,13 @@
 #import "VisibleCalendarsViewController.h"
 #import "GoogleCalendarData.h"
 #import "LocalCalendarData.h"
+#import "Calendar.h"
+#import "AT_Account.h"
 @interface VisibleCalendarsViewController ()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIGestureRecognizerDelegate>
 @property (nonatomic,retain) UITableView *tableView;
 @property (nonatomic,retain) NSMutableArray *selectIndexPathArr;
 @property (nonatomic,assign) BOOL isSelect;
+@property (nonatomic,retain) NSMutableArray *calendarLs;
 @end
 
 @implementation VisibleCalendarsViewController
@@ -32,6 +35,7 @@
     [super viewDidLoad];
     [self.navigationItem setHidesBackButton:YES animated:YES];
     self.selectIndexPathArr=[NSMutableArray arrayWithCapacity:0];
+    self.calendarArray=[NSMutableArray arrayWithCapacity:0];
     
     self.tableView=[[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
     self.tableView.dataSource=self;
@@ -56,12 +60,41 @@
     
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [self.calendarArray removeAllObjects];
+    
+    NSArray *atAccountLs= [AT_Account MR_findAll];
+    for (AT_Account *atAccount in atAccountLs) {
+        NSPredicate *pre=[NSPredicate predicateWithFormat:@"atAccount==%@",atAccount];
+        NSArray * caArr= [Calendar MR_findAllWithPredicate:pre];
+        [self.calendarArray addObject:caArr];
+    }
+    self.calendarLs=[[Calendar MR_findAll] mutableCopy];
+
+}
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+
+    
 }
 
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    for (Calendar *calendar in self.calendarLs) {
+        calendar.isVisible=@(0);
+        for (NSIndexPath *indexPath in self.selectIndexPathArr) {
+            Calendar *ca= [[self.calendarArray objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+            if ([calendar.cid isEqualToString:ca.cid]) {
+                calendar.isVisible=@(1);
+            }
+        }
+        [[NSManagedObjectContext MR_defaultContext ] MR_saveToPersistentStoreAndWait];
+    }
+}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -75,10 +108,30 @@
 }
 
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
-    NSArray *arr=self.calendarArray[section];
-    GoogleCalendarData *tmpData= (GoogleCalendarData *)arr[0];
-    return tmpData.Id;
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 40.f;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    NSArray *calendarListArr=self.calendarArray[section];
+    Calendar *caObj=calendarListArr[0];
+    NSString *returnStr=@"";
+    
+    if ([caObj.type intValue]==AccountTypeLocal) {
+         returnStr=[NSString stringWithFormat:@"  IF(%@)",caObj.account];
+    }else if ([caObj.type intValue]==AccountTypeGoogle){
+       returnStr=[NSString stringWithFormat:@"  GOOGLE(%@)",caObj.account];
+    }
+    UILabel *label=[[UILabel alloc] init] ;
+    label.frame=CGRectMake(2, 20, 300, 22);
+    label.backgroundColor=[UIColor clearColor];
+    label.textColor=[UIColor grayColor];
+    label.text=returnStr;
+    
+    UIView *sectionView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 22)];
+    [sectionView setBackgroundColor:[UIColor clearColor]];
+    [sectionView addSubview:label];
+    return sectionView;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -90,23 +143,20 @@
     }
     NSArray *calendarListArr=[self.calendarArray objectAtIndex:indexPath.section];
     if (!self.isSelect) {
-        cell.accessoryType=UITableViewCellAccessoryCheckmark;
-        [self.selectIndexPathArr addObject:indexPath];
-        if (indexPath.section==self.calendarArray.count-1) {
-            if(indexPath.row==calendarListArr.count-1){
-                self.isSelect=YES;
+         Calendar *caObj=[calendarListArr objectAtIndex:indexPath.row];
+        if ([caObj.isVisible intValue]==1) {
+            cell.accessoryType=UITableViewCellAccessoryCheckmark;
+            [self.selectIndexPathArr addObject:indexPath];
+            if (indexPath.section==self.calendarArray.count-1) {
+                if(indexPath.row==calendarListArr.count-1){
+                    self.isSelect=YES;
+                }
             }
         }
     }
-    id tmpObj=[calendarListArr objectAtIndex:indexPath.row];
-    if ([tmpObj isKindOfClass:[GoogleCalendarData class]]) {
-        GoogleCalendarData *data=(GoogleCalendarData*)tmpObj;
-        cell.textLabel.text=data.summary;
-    }else if([tmpObj isKindOfClass:[LocalCalendarData class]]){
-        LocalCalendarData *data=(LocalCalendarData*)tmpObj;
-        cell.textLabel.text=data.calendarName;
-    }
-    return cell;
+    Calendar *caObj=[calendarListArr objectAtIndex:indexPath.row];
+    cell.textLabel.text=caObj.summary;
+       return cell;
 }
 
 

@@ -2,22 +2,35 @@
 //  AnyEvent.m
 //  Time-Line
 //
-//  Created by IF on 14-10-6.
+//  Created by IF on 14/10/21.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
 //
 
 #import "AnyEvent.h"
+#import "Calendar.h"
 
 
 @implementation AnyEvent
 
-@dynamic eventTitle;
-@dynamic startDate;
-@dynamic endDate;
-@dynamic location;
-@dynamic calendarAccount;
 @dynamic alerts;
+@dynamic calendarAccount;
+@dynamic coordinate;
+@dynamic endDate;
+@dynamic eventTitle;
+@dynamic location;
 @dynamic note;
 @dynamic repeat;
-@dynamic coordinate;
+@dynamic startDate;
+@dynamic isSync;
+@dynamic eId;
+@dynamic updated;
+@dynamic created;
+@dynamic orgDisplayName;
+@dynamic creatorDisplayName;
+@dynamic creator;
+@dynamic organizer;
+@dynamic calendar;
+
+
+
 @end

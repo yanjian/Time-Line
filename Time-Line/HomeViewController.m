@@ -12,16 +12,17 @@
 #import "SHRootController.h"
 #import "AddEventViewController.h"
 #import "AnyEvent.h"
+#import "Calendar.h"
 #import "SetingViewController.h"
 #import "SetingsNavigationViewController.h"
 
 
-@interface HomeViewController () {
+@interface HomeViewController () <ASIHTTPRequestDelegate>{
     UILabel *titleLabel;
     BOOL ison;
     UIButton* rightBtn_arrow;
 }
-
+@property(nonatomic,strong) NSMutableArray *requestQueue;
 @end
 
 @implementation HomeViewController
@@ -38,7 +39,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+     _requestQueue = @[].mutableCopy;
     [self initNavigationItem];
     
 }
@@ -57,7 +58,18 @@
     
     NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];
     
-    NSArray *anyeventArr=[NSManagedObject getTable:NSStringFromClass([AnyEvent class])];//得到数据库中所有的数据
+    
+    NSArray *calendararr=[Calendar MR_findAll];
+    NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
+    for (Calendar *ca in calendararr) {
+        if ([ca.isVisible intValue]==1) {
+            NSPredicate *nspre=[NSPredicate predicateWithFormat:@"calendar==%@",ca];
+            NSArray *arr=[AnyEvent MR_findAllWithPredicate:nspre];
+            if (arr) {
+                [anyeventArr addObject:arr];
+            }
+        }
+    }
     
     NSInteger startIndex = -(cDay - 1  + weekDay - 1);
     
@@ -69,13 +81,14 @@
             if (day.isToday) {
                 [calendarView setToDayRow:(i-startIndex)/7 Index:d];
             }
-            for (AnyEvent *event in anyeventArr) {
-                if ([event.startDate hasPrefix:[day description] ]) {
-                    day.isExistData=YES;
-                    break;
+            for (int j=0; j<anyeventArr.count; j++) {
+                for (AnyEvent *event in anyeventArr[j]) {
+                    if ([event.startDate hasPrefix:[day description] ]) {
+                        day.isExistData=YES;
+                    }
                 }
             }
-        }
+         }
         [dateArr addObject:weekArr];
     }
     //刷新事件表
@@ -87,7 +100,8 @@
             }
         }
     }
-
+    
+   [calendarView goBackToday];//回到今天
 
 //    [[NSNotificationCenter defaultCenter] postNotificationName:@"calander" object:nil];
 
@@ -181,8 +195,211 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    [_requestQueue removeAllObjects];
+    //同步事件数据
+    if (g_NetStatus!=NotReachable) {
+        NSPredicate *pre=[NSPredicate predicateWithFormat:@"isSync==%d",isSyncData_NO];//这里只查询没有同步的数据同步
+        NSArray *anyEventArr=[AnyEvent MR_findAllWithPredicate:pre];
+        for (AnyEvent *anyEvent in anyEventArr) {
+            Calendar *ca= anyEvent.calendar;
+            if (ca) {
+                if ([ca.type intValue]==AccountTypeGoogle) {//是google日历就同步到google上
+                    NSString *jsonEvent= [self assemblyStringWithGoogleAnyEvent:anyEvent];
+                    NSLog(@"%@",jsonEvent);
+                    NSMutableDictionary *paramDic;
+                    if (anyEvent.eId&&![anyEvent.eId isEqualToString:@""]) {//更新
+                          paramDic=@{@"cid":anyEvent.calendar.cid,@"eid":anyEvent.eId,@"type":@2,@"text":jsonEvent}.mutableCopy;
+                    }else{//新增
+                          paramDic=@{@"cid":anyEvent.calendar.cid,@"type":@1,@"text":jsonEvent}.mutableCopy;
+                    }
+                    ASIHTTPRequest *googleRequest= [t_Network httpPostValue:paramDic  Url:Google_CalendarEventOperation Delegate:self Tag:Google_CalendarEventOperation_tag userInfo:@{@"anyEvent":anyEvent}];
+                    [g_ASIQuent addOperation:googleRequest];
+                    [self addRequestTAG:Google_CalendarEventOperation_tag ];
+                }else if([ca.type intValue]==AccountTypeLocal) {//是local日历同步到本地服务器上
+                    NSString *jsonEvent= [self assemblyStringWithLocalAnyEvent:anyEvent];
+                    NSLog(@"%@",jsonEvent);
+                    NSMutableDictionary *paramDic;
+                    if (anyEvent.eId) {//更新
+                        paramDic=@{@"cid":anyEvent.calendar.cid,@"id":anyEvent.eId,@"type":@2,@"text":jsonEvent}.mutableCopy;
+                    }else{//新增
+                        paramDic=@{@"cid":anyEvent.calendar.cid,@"type":@1,@"text":jsonEvent}.mutableCopy;
+                    }
+                    ASIHTTPRequest *googleRequest= [t_Network httpPostValue:paramDic  Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"anyEvent":anyEvent}];
+                    [g_ASIQuent addOperation:googleRequest];
+                    [self addRequestTAG:Local_SingleEventOperation_Tag ];
+                }
+            }
+        }
+        [g_ASIQuent go];
+    }else{
+        NSLog(@"《《《《《《《《网络异常：没有网络》》》》》》》");
+    }
+}
+//将anyEvent 转换为json
+-(NSString *)assemblyStringWithGoogleAnyEvent:(AnyEvent *)anyEvent{
     
-    [calendarView goBackToday];
+  NSString *startEventDate=  [[PublicMethodsViewController getPublicMethods] dateWithStringDate:anyEvent.startDate];//开始事件的时间
+  NSString *endEventDate=  [[PublicMethodsViewController getPublicMethods] dateWithStringDate:anyEvent.endDate];//开始事件的时间
+    NSDictionary *anyEventDic=[NSMutableDictionary dictionaryWithCapacity:0];
+    [anyEventDic setValue:@"calendar#event" forKey:@"kind"];
+    
+//    if (anyEvent.eId) {
+//        [anyEventDic setValue:anyEvent.eId forKey:@"id"];
+//    }
+    
+    [anyEventDic setValue:anyEvent.created forKey:@"created"];
+    [anyEventDic setValue:anyEvent.updated forKey:@"updated"];
+    [anyEventDic setValue:anyEvent.eventTitle forKey:@"summary"];
+    
+    if(anyEvent.note){
+      [anyEventDic setValue:anyEvent.note forKey:@"description"];
+    }
+   
+    if (anyEvent.location) {
+         [anyEventDic setValue:anyEvent.location forKey:@"location"];
+    }
+    
+    [anyEventDic setValue:@{@"email": anyEvent.creator==nil?@"":anyEvent.creator,@"displayName":anyEvent.creatorDisplayName==nil?@"":anyEvent.creatorDisplayName} forKey:@"creator"];
+    [anyEventDic setValue:@{@"email": anyEvent.organizer==nil?@"":anyEvent.organizer,@"displayName":anyEvent.orgDisplayName==nil?@"":anyEvent.orgDisplayName} forKey:@"organizer"];
+    [anyEventDic setValue:@{@"dateTime":startEventDate,@"timeZone":anyEvent.calendar.timeZone} forKey:@"start"];
+    [anyEventDic setValue:@{@"dateTime":endEventDate,@"timeZone":anyEvent.calendar.timeZone} forKey:@"end"];
+    return [anyEventDic JSONString];
+}
+
+//
+-(NSString *)assemblyStringWithLocalAnyEvent:(AnyEvent *)anyEvent{
+
+    NSString *startEventDate=  [[PublicMethodsViewController getPublicMethods] dateWithStringDate:anyEvent.startDate];//开始事件的时间
+    NSString *endEventDate=  [[PublicMethodsViewController getPublicMethods] dateWithStringDate:anyEvent.endDate];//开始事件的时间
+    NSDictionary *anyEventDic=[NSMutableDictionary dictionaryWithCapacity:0];
+   // {"startTime":"2014-10-23 16:00:00","title":"summary","recurrence":["RRULE:FREQ=DAILY"],"status":0,"allDay":0,"location":"locatio","sequence":0,"timeZone":"Asia\/Taipei","endTime":"2014-10-23 17:00:00","cid":"23","note":"note"}
+    
+    
+   // [anyEventDic setValue:anyEvent.calendar.cid forKey:@"calendarId"];
+    [anyEventDic setValue:anyEvent.eventTitle forKey:@"title"];
+    [anyEventDic setValue:anyEvent.location forKey:@"location"];
+    [anyEventDic setValue:anyEvent.coordinate forKey:@"coordinates"];
+    [anyEventDic setValue:startEventDate forKey:@"startTime"];
+    [anyEventDic setValue:endEventDate forKey:@"endTime"];
+    
+    [anyEventDic setValue:@"" forKey:@"recurrence"];
+    [anyEventDic setValue:0 forKey:@"status"];
+    
+    [anyEventDic setValue:anyEvent.calendar.timeZone forKey:@"timeZone"];
+    [anyEventDic setValue:anyEvent.note forKey:@"note"];
+    [anyEventDic setValue:0 forKey:@"allDay"];
+    [anyEventDic setValue:0 forKey:@"sequence"];
+    return [anyEventDic JSONString];
+}
+
+- (void)requestFinished:(ASIHTTPRequest *)request{
+    NSString *responseStr=[request responseString];
+    NSLog(@"json ==== %@",responseStr);
+    switch (request.tag) {
+        case Google_CalendarEventOperation_tag:{
+            id responseObj=[responseStr objectFromJSONString];
+            if ([responseObj isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *responseDic=(NSDictionary *)responseObj;
+                NSString *statusCode=[responseDic objectForKey:@"statusCode"];
+                if ([statusCode isEqualToString:@"-3"]||[statusCode isEqualToString:@"-2"]||[statusCode isEqualToString:@"-1"]) {
+                    NSLog(@"message ======== %@",[responseDic objectForKey:@"message"]);
+                    return;
+                }
+                if ([statusCode isEqualToString:@"0"]) {
+                    NSLog(@"message ======== 失败");
+                    return;
+                }
+                if ([statusCode isEqualToString:@"1"]) {
+                    NSDictionary *dataDic= [responseDic objectForKey:@"data"];
+                    
+                    AnyEvent *anyEvent=[request.userInfo objectForKey:@"anyEvent"];
+                    anyEvent.isSync=@(isSyncData_YES);
+                    if ([dataDic objectForKey:@"location"]) {
+                        anyEvent.location= [dataDic objectForKey:@"location"];
+                    }
+                    
+                    anyEvent.eId=[dataDic objectForKey:@"id"];
+                    anyEvent.updated=[dataDic objectForKey:@"updated"];
+                    
+                    NSDictionary *creatordic=[dataDic objectForKey:@"creator"];//创建者
+                    if (creatordic) {
+                        anyEvent.creator=[creatordic objectForKey:@"email"];
+                        anyEvent.creatorDisplayName=[creatordic objectForKey:@"displayName"];
+                    }
+                    NSDictionary *orgdic=[dataDic objectForKey:@"organizer"];//组织者
+                    if (orgdic) {
+                        anyEvent.organizer =[orgdic objectForKey:@"email"];
+                        anyEvent.orgDisplayName=[orgdic objectForKey:@"displayName"];
+                    }
+                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                }
+            }
+            break;
+        }
+        case Local_SingleEventOperation_Tag:{
+            id responseObj=[responseStr objectFromJSONString];
+            if ([responseObj isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *responseDic=(NSDictionary *)responseObj;
+                NSString *statusCode=[responseDic objectForKey:@"statusCode"];
+                if ([statusCode isEqualToString:@"1"]) {
+                    NSDictionary *dataDic= [responseDic objectForKey:@"data"];
+                    
+                    AnyEvent *anyEvent=[request.userInfo objectForKey:@"anyEvent"];
+                    anyEvent.isSync=@(isSyncData_YES);
+                    if ([dataDic objectForKey:@"location"]) {
+                        anyEvent.location= [dataDic objectForKey:@"location"];
+                    }
+                    anyEvent.eId=[dataDic objectForKey:@"id"];
+                    anyEvent.updated=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+                    
+//                    NSDictionary *creatordic=[dataDic objectForKey:@"creator"];//创建者
+//                    if (creatordic) {
+//                        anyEvent.creator=[creatordic objectForKey:@"email"];
+//                        anyEvent.creatorDisplayName=[creatordic objectForKey:@"displayName"];
+//                    }
+//                    NSDictionary *orgdic=[dataDic objectForKey:@"organizer"];//组织者
+//                    if (orgdic) {
+//                        anyEvent.organizer =[orgdic objectForKey:@"email"];
+//                        anyEvent.orgDisplayName=[orgdic objectForKey:@"displayName"];
+//                    }
+                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                }else{
+                    NSLog(@"message ======== %@",[responseDic objectForKey:@"message"]);
+                }
+            }
+
+            break;
+        }
+        default:
+            break;
+    }
+
+}
+
+-(void)addRequestTAG:(int) TAG
+{
+    [_requestQueue addObject:[[NSNumber numberWithInt:TAG] stringValue]];
+}
+
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    [self cancelNetWorkrequestQueue];
+}
+
+//取消网络请求队列
+-(void)cancelNetWorkrequestQueue{
+    for (ASIHTTPRequest *request in g_ASIQuent.operations) {
+        if (request) {
+            [_requestQueue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                int requestTag = [obj intValue];
+                if (request.tag == requestTag) {
+                    NSLog(@"取消网络请求队列.......%d",requestTag);
+                    [request clearDelegatesAndCancel];
+                }
+            }];
+        }
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -419,7 +636,6 @@
        // [self presentViewController:nav animated:YES completion:nil];
         [self.navigationController pushViewController:add animated:YES];
     }else {  //有事件查看详细
-        NSLog(@"%@",event);
         DateDetailsViewController* dateDetails=[[DateDetailsViewController alloc]initWithNibName:@"DateDetailsViewController" bundle:nil];
         dateDetails.event=event;
         dateDetails.dateArr=events;

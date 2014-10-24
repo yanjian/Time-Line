@@ -11,8 +11,9 @@
 #import "t_Network.h"
 #import "MacroDefinition.h"
 #import "InterfaceMrco.h"
-#import "CoreDataUtil.h"
+#import "CoreData+MagicalRecord.h"
 #import "AppDelegate.h"
+//#import "CoreDataUtil.h"
 #ifndef __IPHONE_3_0
 #warning "This project uses features only available in iOS SDK 3.0 and later."
 #endif
