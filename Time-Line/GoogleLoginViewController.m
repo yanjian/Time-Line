@@ -183,14 +183,14 @@
                         [paramDic setObject:@"refreshToken" forKey:@"refreshToken"];
                         [paramDic setObject:[oauthDic objectForKey:@"tokenTime"] forKey:@"tokenTime"];
                         [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
-                        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_REGISTER_URL Delegate:self Tag:LOGIN_REGISTER_URL_TAG];
+                        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_REGISTER_URL Delegate:self Tag:LOGIN_REGISTER_URL_TAG userInfo:oauthDic];
                         [request startAsynchronous];
                         self.isRegister=YES;
                     }else{//用google账号直接登陆不用注册
                         [paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"email"];
                         [paramDic setObject:[oauthDic objectForKey:@"authCode"] forKey:@"authCode"];
                         [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
-                        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+                        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG userInfo:oauthDic];
                         [request startAsynchronous];
                     }
                 }
@@ -227,26 +227,20 @@
                       
                       AT_Account *ac=[AT_Account MR_createEntity];
                       
-                      for (NSDictionary *dic in arr) {
-                          NSString *str=[dic objectForKey:@"id"];
-                          if ([str hasSuffix:@"@gmail.com"]) {
-                              ac.account=str;
-                              ac.accountType=@(AccountTypeGoogle);
-                             
-                              break;
-                          }
-                      }
                       [self.accountArr addObject:ac];
                       for (NSDictionary *dic in arr) {
                           NSLog(@"%@",dic);
                           GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
                           [gcd parseDictionary:dic];
+                          if ([dic objectForKey:@"primary"]) {
+                              gcd.isPrimary=YES;
+                              ac.account=[dic objectForKey:@"summary"];
+                              ac.accountType=@(AccountTypeGoogle);
+                          }
                           [gcd setAccount:ac.account];
                           [tmpArr addObject:gcd];
                       }
                       [self.googleCalendar addObject:tmpArr];
-                      
-                     // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                       
                       if (!self.isSeting) {//这里如果是设置页面传来的就不取得本地日历
                           ASIHTTPRequest *request=[t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
@@ -300,11 +294,11 @@
           }
         }
     }else{
+            oauthDic= [request.userInfo mutableCopy];//[[responseStr objectFromJSONString] mutableCopy]  ;
             if (!self.isLogin) {
                 if (!self.isRegister) {
                     if (responseStr) {
                         self.oauthDic=nil;
-                        oauthDic=[[responseStr objectFromJSONString] mutableCopy]  ;
                         if (oauthDic) {
                             NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
                             [paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"email"];
@@ -336,43 +330,41 @@
                      if ([@"1" isEqualToString:responseStr]) {
                          ASIHTTPRequest *request=[t_Network httpGet:nil Url:Get_Google_GetCalendarList Delegate:self Tag:Get_Google_GetCalendarList_Tag];
                          [request startAsynchronous];
+                         [userInfo setValue:[oauthDic objectForKey:@"authCode"] forKey:@"authCode"];
                          self.isShowCalendarList=YES;
-                         return;
                      }
                 }else{
                     if (!self.isLocalClandarList) {//取得google日历集合
                         NSMutableDictionary *googleDataDic=[responseStr objectFromJSONString];
-                        NSArray *arr=[googleDataDic objectForKey:@"items"];
-                        NSMutableArray *googleArr=[NSMutableArray arrayWithCapacity:0];
-                        
-                        AT_Account *ac=[AT_Account MR_createEntity];
-                        
-                       
-                        for (NSDictionary *dic in arr) {
-                            NSString *str=[dic objectForKey:@"id"];
-                            if ([str hasSuffix:@"@gmail.com"]) {
-                                ac.account=str;
-                                ac.accountType=@(AccountTypeGoogle);
-                                break;
+                        NSDictionary  *dataDic=[googleDataDic objectForKey:@"data"];
+                        if ([dataDic isKindOfClass:[NSDictionary class]]) {
+                            NSArray *arr=[dataDic objectForKey:@"items"];
+                            NSMutableArray *googleArr=[NSMutableArray arrayWithCapacity:0];
+                            
+                            AT_Account *ac=[AT_Account MR_createEntity];
+                            
+                            [self.accountArr addObject:ac];
+                            
+                            for (NSDictionary *dic in arr) {
+                                NSLog(@"%@",dic);
+                                GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
+                                [gcd parseDictionary:dic];
+                                if ([dic objectForKey:@"primary"]) {
+                                    gcd.isPrimary=YES;
+                                    ac.account=[dic objectForKey:@"summary"];
+                                    ac.accountType=@(AccountTypeGoogle);
+                                }
+                                [gcd setAccount:ac.account];
+                                [googleArr addObject:gcd];
                             }
+                            
+                            [self.googleCalendar addObject:googleArr];
+                            ASIHTTPRequest *request=[t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
+                            [request startAsynchronous];
+                            self.isLocalClandarList=YES;
+
                         }
                         
-                        [self.accountArr addObject:ac];
-                        
-                        for (NSDictionary *dic in arr) {
-                            NSLog(@"%@",dic);
-                            GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
-                            [gcd parseDictionary:dic];
-                            [gcd setAccount:ac.account];
-                            [googleArr addObject:gcd];
-                        }
-                        
-                        [self.googleCalendar addObject:googleArr];
-                        ASIHTTPRequest *request=[t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
-                        [request startAsynchronous];
-                        self.isLocalClandarList=YES;
-                        
-                        //[[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                     }else{
                         NSMutableDictionary *localDataDic=[responseStr objectFromJSONString];
                         NSString *statusCode=[localDataDic objectForKey:@"statusCode"];

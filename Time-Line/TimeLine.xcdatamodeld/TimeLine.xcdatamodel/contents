@@ -16,7 +16,9 @@
         <attribute name="organizer" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="orgDisplayName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="repeat" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sequence" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="startDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="updated" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="calendar" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Calendar" inverseName="anyEvent" inverseEntity="Calendar" syncable="YES"/>
     </entity>
@@ -39,7 +41,7 @@
         <relationship name="atAccount" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AT_Account" inverseName="ca" inverseEntity="AT_Account" syncable="YES"/>
     </entity>
     <elements>
-        <element name="AnyEvent" positionX="-306" positionY="-124" width="128" height="313"/>
+        <element name="AnyEvent" positionX="-306" positionY="-124" width="128" height="345"/>
         <element name="AT_Account" positionX="-497" positionY="-136" width="128" height="88"/>
         <element name="Calendar" positionX="-54" positionY="68" width="128" height="210"/>
     </elements>

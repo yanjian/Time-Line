@@ -9,6 +9,7 @@
 #import "VisibleCalendarsViewController.h"
 #import "GoogleCalendarData.h"
 #import "LocalCalendarData.h"
+#import "CircleDrawView.h"
 #import "Calendar.h"
 #import "AT_Account.h"
 @interface VisibleCalendarsViewController ()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,UIGestureRecognizerDelegate>
@@ -122,6 +123,7 @@
     }else if ([caObj.type intValue]==AccountTypeGoogle){
        returnStr=[NSString stringWithFormat:@"  GOOGLE(%@)",caObj.account];
     }
+    
     UILabel *label=[[UILabel alloc] init] ;
     label.frame=CGRectMake(2, 20, 300, 22);
     label.backgroundColor=[UIColor clearColor];
@@ -141,6 +143,12 @@
     if (cell==nil) {
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
+    
+    NSArray *viewarr=[cell.contentView subviews];
+    for (UIView *view in viewarr) {
+        [view removeFromSuperview];
+    }
+
     NSArray *calendarListArr=[self.calendarArray objectAtIndex:indexPath.section];
     if (!self.isSelect) {
          Calendar *caObj=[calendarListArr objectAtIndex:indexPath.row];
@@ -155,8 +163,16 @@
         }
     }
     Calendar *caObj=[calendarListArr objectAtIndex:indexPath.row];
-    cell.textLabel.text=caObj.summary;
-       return cell;
+    
+    CircleDrawView *cd=[[CircleDrawView alloc] initWithFrame:CGRectMake(0, 2, 40, 40)];
+    cd.hexString=caObj.backgroundColor;
+    [cell.contentView addSubview: cd];
+    
+    UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(cd.frame.size.width, 2, 215, 40)];
+    [contextLab setBackgroundColor:[UIColor clearColor]];
+    [contextLab setText:caObj.summary];
+    [cell.contentView addSubview:contextLab];
+    return cell;
 }
 
 

@@ -21,8 +21,8 @@
     UILabel *titleLabel;
     BOOL ison;
     UIButton* rightBtn_arrow;
+    BOOL isSuccess;
 }
-@property(nonatomic,strong) NSMutableArray *requestQueue;
 @end
 
 @implementation HomeViewController
@@ -39,7 +39,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-     _requestQueue = @[].mutableCopy;
     [self initNavigationItem];
     
 }
@@ -91,6 +90,15 @@
          }
         [dateArr addObject:weekArr];
     }
+   [self refreshUI];
+   [calendarView goBackToday];//回到今天
+
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"calander" object:nil];
+
+}
+
+
+-(void)refreshUI{
     //刷新事件表
     for (NSObject* obj in [calendarView subviews]) {
         if ([obj isKindOfClass:[UITableView class]]) {
@@ -100,10 +108,6 @@
             }
         }
     }
-    
-   [calendarView goBackToday];//回到今天
-
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"calander" object:nil];
 
 }
 
@@ -195,7 +199,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    [_requestQueue removeAllObjects];
     //同步事件数据
     if (g_NetStatus!=NotReachable) {
         NSPredicate *pre=[NSPredicate predicateWithFormat:@"isSync==%d",isSyncData_NO];//这里只查询没有同步的数据同步
@@ -213,8 +216,7 @@
                           paramDic=@{@"cid":anyEvent.calendar.cid,@"type":@1,@"text":jsonEvent}.mutableCopy;
                     }
                     ASIHTTPRequest *googleRequest= [t_Network httpPostValue:paramDic  Url:Google_CalendarEventOperation Delegate:self Tag:Google_CalendarEventOperation_tag userInfo:@{@"anyEvent":anyEvent}];
-                    [g_ASIQuent addOperation:googleRequest];
-                    [self addRequestTAG:Google_CalendarEventOperation_tag ];
+                    [googleRequest startAsynchronous];
                 }else if([ca.type intValue]==AccountTypeLocal) {//是local日历同步到本地服务器上
                     NSString *jsonEvent= [self assemblyStringWithLocalAnyEvent:anyEvent];
                     NSLog(@"%@",jsonEvent);
@@ -224,9 +226,8 @@
                     }else{//新增
                         paramDic=@{@"cid":anyEvent.calendar.cid,@"type":@1,@"text":jsonEvent}.mutableCopy;
                     }
-                    ASIHTTPRequest *googleRequest= [t_Network httpPostValue:paramDic  Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"anyEvent":anyEvent}];
-                    [g_ASIQuent addOperation:googleRequest];
-                    [self addRequestTAG:Local_SingleEventOperation_Tag ];
+                    ASIHTTPRequest *localRequest= [t_Network httpPostValue:paramDic  Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"anyEvent":anyEvent}];
+                    [localRequest startAsynchronous];
                 }
             }
         }
@@ -250,7 +251,9 @@
     [anyEventDic setValue:anyEvent.created forKey:@"created"];
     [anyEventDic setValue:anyEvent.updated forKey:@"updated"];
     [anyEventDic setValue:anyEvent.eventTitle forKey:@"summary"];
-    
+//    if (anyEvent.eId) {
+//        [anyEventDic setValue:anyEvent.eId forKey:@"id"];
+//    }
     if(anyEvent.note){
       [anyEventDic setValue:anyEvent.note forKey:@"description"];
     }
@@ -258,7 +261,9 @@
     if (anyEvent.location) {
          [anyEventDic setValue:anyEvent.location forKey:@"location"];
     }
-    
+    if (anyEvent.sequence) {
+        [anyEventDic setValue:anyEvent.sequence forKey:@"sequence"];
+    }
     [anyEventDic setValue:@{@"email": anyEvent.creator==nil?@"":anyEvent.creator,@"displayName":anyEvent.creatorDisplayName==nil?@"":anyEvent.creatorDisplayName} forKey:@"creator"];
     [anyEventDic setValue:@{@"email": anyEvent.organizer==nil?@"":anyEvent.organizer,@"displayName":anyEvent.orgDisplayName==nil?@"":anyEvent.orgDisplayName} forKey:@"organizer"];
     [anyEventDic setValue:@{@"dateTime":startEventDate,@"timeZone":anyEvent.calendar.timeZone} forKey:@"start"];
@@ -269,26 +274,34 @@
 //
 -(NSString *)assemblyStringWithLocalAnyEvent:(AnyEvent *)anyEvent{
 
-    NSString *startEventDate=  [[PublicMethodsViewController getPublicMethods] dateWithStringDate:anyEvent.startDate];//开始事件的时间
-    NSString *endEventDate=  [[PublicMethodsViewController getPublicMethods] dateWithStringDate:anyEvent.endDate];//开始事件的时间
+    NSString *startEventDate=  [[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"yyyy-MM-dd HH:mm:ss" dateString:anyEvent.startDate];//开始事件的时间
+    NSString *endEventDate=  [[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"yyyy-MM-dd HH:mm:ss" dateString:anyEvent.endDate];//开始事件的时间
     NSDictionary *anyEventDic=[NSMutableDictionary dictionaryWithCapacity:0];
-   // {"startTime":"2014-10-23 16:00:00","title":"summary","recurrence":["RRULE:FREQ=DAILY"],"status":0,"allDay":0,"location":"locatio","sequence":0,"timeZone":"Asia\/Taipei","endTime":"2014-10-23 17:00:00","cid":"23","note":"note"}
+    // {"title":"标题","location":"地点","coordinates":"坐标","startTime":"开始时间","endTime":"结束时间","timeZone":"时区","note":"备注说明","allDay":"","recurrence":"","recurringEventId":"","status":"","originalStartTime":""}
     
     
    // [anyEventDic setValue:anyEvent.calendar.cid forKey:@"calendarId"];
+    //{"calendarId":"日历id","title":"标题","location":"地点","coordinates":"坐标","startTime":"开始时间","endTime":"结束时间","timeZone":"时区","note":"备注说明","allDay":"",   "recurrence":"","recurringEventId":"","status":"", "originalStartTime":""}
     [anyEventDic setValue:anyEvent.eventTitle forKey:@"title"];
     [anyEventDic setValue:anyEvent.location forKey:@"location"];
     [anyEventDic setValue:anyEvent.coordinate forKey:@"coordinates"];
     [anyEventDic setValue:startEventDate forKey:@"startTime"];
     [anyEventDic setValue:endEventDate forKey:@"endTime"];
-    
+    Calendar *ca=anyEvent.calendar;
+    if (ca.cid) {
+        [anyEventDic setValue:ca.cid forKey:@"cid"];
+    }
+    if (anyEvent.eId) {
+        [anyEventDic setValue:anyEvent.eId forKey:@"id"];
+    }
     [anyEventDic setValue:@"" forKey:@"recurrence"];
-    [anyEventDic setValue:0 forKey:@"status"];
-    
+    [anyEventDic setValue:@(0) forKey:@"status"];
+    [anyEventDic setValue:@"" forKey:@"recurringEventId"];
+    [anyEventDic setValue:@"" forKey:@"originalStartTime"];
     [anyEventDic setValue:anyEvent.calendar.timeZone forKey:@"timeZone"];
     [anyEventDic setValue:anyEvent.note forKey:@"note"];
-    [anyEventDic setValue:0 forKey:@"allDay"];
-    [anyEventDic setValue:0 forKey:@"sequence"];
+    [anyEventDic setValue:@(0) forKey:@"allDay"];
+    [anyEventDic setValue:@(0) forKey:@"sequence"];
     return [anyEventDic JSONString];
 }
 
@@ -320,7 +333,7 @@
                     
                     anyEvent.eId=[dataDic objectForKey:@"id"];
                     anyEvent.updated=[dataDic objectForKey:@"updated"];
-                    
+                    anyEvent.sequence=[dataDic objectForKey:@"sequence"];
                     NSDictionary *creatordic=[dataDic objectForKey:@"creator"];//创建者
                     if (creatordic) {
                         anyEvent.creator=[creatordic objectForKey:@"email"];
@@ -350,24 +363,53 @@
                         anyEvent.location= [dataDic objectForKey:@"location"];
                     }
                     anyEvent.eId=[dataDic objectForKey:@"id"];
-                    anyEvent.updated=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
                     
-//                    NSDictionary *creatordic=[dataDic objectForKey:@"creator"];//创建者
-//                    if (creatordic) {
-//                        anyEvent.creator=[creatordic objectForKey:@"email"];
-//                        anyEvent.creatorDisplayName=[creatordic objectForKey:@"displayName"];
-//                    }
-//                    NSDictionary *orgdic=[dataDic objectForKey:@"organizer"];//组织者
-//                    if (orgdic) {
-//                        anyEvent.organizer =[orgdic objectForKey:@"email"];
-//                        anyEvent.orgDisplayName=[orgdic objectForKey:@"displayName"];
-//                    }
+                    NSString *statrstring=[[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"startTime"]];
+                    anyEvent.sequence=[dataDic objectForKey:@"sequence"];
+                    anyEvent.created=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+                    anyEvent.updated=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+                    anyEvent.status=[dataDic objectForKey:@"status"];
+                    anyEvent.startDate= statrstring;
+                    anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"endTime"]];
+                    if ([dataDic objectForKey:@"calendar"]) {
+                        Calendar *ca=[dataDic objectForKey:@"calendar"];
+                        anyEvent.calendar=ca;
+                        anyEvent.creator=ca.account;
+                        anyEvent.creatorDisplayName=ca.summary;
+                        anyEvent.organizer =ca.account;
+                        anyEvent.orgDisplayName=ca.summary;
+                    }
                     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                 }else{
                     NSLog(@"message ======== %@",[responseDic objectForKey:@"message"]);
                 }
             }
-
+            break;
+        }
+        case Get_Google_GetCalendarEvent_Tag:{
+             NSDictionary *eventDic=[responseStr objectFromJSONString];
+            
+            NSString *status=[eventDic objectForKey:@"statusCode"];
+            if ([@"1" isEqualToString:status]) {//状态成功
+                
+                 id eventData=[eventDic objectForKey:@"data"];
+                 if ([eventData isKindOfClass:[NSDictionary class]]) {
+                     NSMutableSet *googleSet=[NSMutableSet setWithCapacity:0];
+                     NSDictionary *eventDataDic=(NSDictionary *)eventData;
+                     NSArray *eventArr=[eventDataDic objectForKey:@"items"];
+                     Calendar *calendar=[request.userInfo objectForKey:@"calendar"];
+                     for (NSDictionary *event in eventArr) {
+                         NSMutableDictionary *eventDic=[event mutableCopy];
+                         [eventDic setObject:calendar forKey:@"calendar"];
+                         [googleSet addObject:[self paseEventData:eventDic] ];
+                     }
+                     [calendar addAnyEvent:googleSet];
+                 }
+            }
+            break;
+        }
+        case Local_SingleEventOperation_fetch_Tag:{
+            
             break;
         }
         default:
@@ -376,30 +418,114 @@
 
 }
 
--(void)addRequestTAG:(int) TAG
-{
-    [_requestQueue addObject:[[NSNumber numberWithInt:TAG] stringValue]];
-}
 
-
--(void)viewDidDisappear:(BOOL)animated{
-    [super viewDidDisappear:animated];
-    [self cancelNetWorkrequestQueue];
-}
-
-//取消网络请求队列
--(void)cancelNetWorkrequestQueue{
-    for (ASIHTTPRequest *request in g_ASIQuent.operations) {
-        if (request) {
-            [_requestQueue enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-                int requestTag = [obj intValue];
-                if (request.tag == requestTag) {
-                    NSLog(@"取消网络请求队列.......%d",requestTag);
-                    [request clearDelegatesAndCancel];
+-(void)fetchDataResult:(void (^)(UIBackgroundFetchResult result))completionHandler{
+    NSArray * calendarArr=[Calendar MR_findAll];
+    for (Calendar *calendar in calendarArr) {
+        if ([calendar.type intValue]==AccountTypeGoogle) {
+            ASIHTTPRequest *googleRequest=[t_Network httpPostValue:@{@"cid":calendar.cid}.mutableCopy Url:Get_Google_GetCalendarEvent Delegate:self Tag:Get_Google_GetCalendarEvent_Tag userInfo:@{@"calendar":calendar}];
+            [googleRequest startSynchronous];
+            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
+                if (error) {
+                    completionHandler(UIBackgroundFetchResultFailed);
                 }
+                if(contextDidSave){
+                    completionHandler(UIBackgroundFetchResultNewData);
+                }else{
+                    completionHandler(UIBackgroundFetchResultNoData);
+                }
+                
+            }];
+        }else if([calendar.type intValue]==AccountTypeLocal){
+            ASIHTTPRequest *localRequest=[t_Network httpGet:@{@"cid":calendar.cid}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_fetch_Tag userInfo:@{@"calendar":calendar}];
+            [localRequest startSynchronous];
+            [self successFetchDataResult:completionHandler];
+            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
+                if (error) {
+                    completionHandler(UIBackgroundFetchResultFailed);
+                }
+                if(contextDidSave){
+                    completionHandler(UIBackgroundFetchResultNewData);
+                }else{
+                    completionHandler(UIBackgroundFetchResultNoData);
+                }
+                
             }];
         }
     }
+     [self refreshUI];
+}
+
+
+-(void)successFetchDataResult:(void (^)(UIBackgroundFetchResult result))completionHandler{
+
+
+}
+
+
+- (void)requestFailed:(ASIHTTPRequest *)request{
+
+    switch (request.tag) {
+        case Get_Google_GetCalendarEvent_Tag:{
+            
+            break;
+        }
+        case Local_SingleEventOperation_fetch_Tag:{
+            
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+
+//google
+-(AnyEvent *)paseEventData:(NSDictionary *) dataDic
+{
+    NSLog(@"%@",dataDic);
+    //事件存储库
+    
+    AnyEvent *anyEvent=[AnyEvent MR_createEntity];
+    
+    NSString *startTime= [[dataDic objectForKey:@"start"] objectForKey:@"dateTime"];
+    NSString *statrstring=[[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:startTime];
+    
+    anyEvent.eventTitle=[dataDic objectForKey:@"summary"];
+    
+    if ([dataDic objectForKey:@"location"]) {
+        anyEvent.location= [dataDic objectForKey:@"location"];
+    }
+    
+    anyEvent.eId=[dataDic objectForKey:@"id"];
+    anyEvent.sequence=[dataDic objectForKey:@"sequence"];
+    
+    anyEvent.created=[dataDic objectForKey:@"created"];
+    anyEvent.updated=[dataDic objectForKey:@"updated"];
+    
+    anyEvent.startDate= statrstring;
+    anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:[[dataDic objectForKey:@"end"] objectForKey:@"dateTime"]];
+    
+    if ([dataDic objectForKey:@"description"]) {
+        anyEvent.note= [dataDic objectForKey:@"description"];
+    }
+    if ([dataDic objectForKey:@"calendar"]) {
+        anyEvent.calendar=[dataDic objectForKey:@"calendar"];
+    }
+    
+    NSDictionary *creatordic=[dataDic objectForKey:@"creator"];//创建者
+    if (creatordic) {
+        anyEvent.creator=[creatordic objectForKey:@"email"];
+        anyEvent.creatorDisplayName=[creatordic objectForKey:@"displayName"];
+    }
+    NSDictionary *orgdic=[dataDic objectForKey:@"organizer"];//组织者
+    if (orgdic) {
+        anyEvent.organizer =[orgdic objectForKey:@"email"];
+        anyEvent.orgDisplayName=[orgdic objectForKey:@"displayName"];
+    }
+    anyEvent.isSync=@(isSyncData_YES);//表示已经是同步的数据
+    return anyEvent;
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -414,14 +540,16 @@
 - (void)initNavigationItem
 {
     _scrollview = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
-    _scrollview .contentSize = CGSizeMake(3*_scrollview.frame.size.width, 0);
-    _scrollview.contentOffset = CGPointMake(kScreen_Width, 0);
+    //_scrollview .contentSize = CGSizeMake(3*_scrollview.frame.size.width, 0);
+    
+  //  _scrollview.contentOffset = CGPointMake(kScreen_Width, 0);
     _scrollview.backgroundColor = [UIColor whiteColor];
     _scrollview.pagingEnabled = YES;
     _scrollview.bounces = NO;//最后一页滑不动
     [self.view addSubview:_scrollview];
     calendarView = [[CLCalendarView alloc] init];
-    calendarView.frame = CGRectMake (kScreen_Width, 40, kScreen_Width, kScreen_Height);
+    //calendarView.frame = CGRectMake (kScreen_Width, 40, kScreen_Width, kScreen_Height);
+    calendarView.frame = CGRectMake (0, 40, kScreen_Width, kScreen_Height);
     calendarView.dataSuorce = self;
     calendarView.delegate = self;
     calendarView.time=@"time";
@@ -432,7 +560,8 @@
     
     
 //    中间view
-    UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(kScreen_Width, -20, kScreen_Width, 66)];
+ //   UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(kScreen_Width, -20, kScreen_Width, 66)];
+    UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, -20, kScreen_Width, 66)];
     rview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
 //    左边的按钮
     _ZVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -473,45 +602,45 @@
     
     
     
-    //    右边view
-    UIView *xview = [[UIView alloc] initWithFrame:CGRectMake(640, -20, kScreen_Width, kScreen_Height)];
-    xview.backgroundColor = [UIColor orangeColor];
-    
-    float topHeight = (200.0f/480.0f)*kScreen_Height;
-    //    上
-    UIButton *Sbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [Sbutton setTitle:@"Porsonal Event" forState:UIControlStateNormal];
-    [Sbutton addTarget:self action:@selector(oClickAdd) forControlEvents:UIControlEventTouchUpInside];
-    Sbutton.frame = CGRectMake(0, 0, kScreen_Width, topHeight);
-    Sbutton.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
-    [xview addSubview:Sbutton];
-    //    中
-    UIButton *Zbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [Zbutton setTitle:@"Concel" forState:UIControlStateNormal];
-    [Zbutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    Zbutton.frame = CGRectMake(0, topHeight, kScreen_Width, kScreen_Height - 2*topHeight);
-    Zbutton.backgroundColor = [UIColor whiteColor];
-    [xview addSubview:Zbutton];
-    //    下
-    UIButton *Xbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [Xbutton setTitle:@"Social Event" forState:UIControlStateNormal];
-    Xbutton.frame = CGRectMake(0, kScreen_Height - topHeight, kScreen_Width, topHeight);
-    Xbutton.backgroundColor = [UIColor colorWithRed:244.0f/255.0f green:10.0f/255.0f blue:115.0f/255.0f alpha:1];
-    [xview addSubview:Xbutton];
-    [_scrollview addSubview:xview];
-
-    //    左间view
-    UIView *zview = [[UIView alloc] initWithFrame:CGRectMake(0, -20, kScreen_Width, 66)];
-    zview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
-    
-    //   右边xiew上返回button
-    _rbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    _rbutton.frame = CGRectMake(280, 30, 21, 25);
-    //_rbutton.backgroundColor = [UIColor redColor];
-    [_rbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow1"] forState:UIControlStateNormal];
-    [_rbutton addTarget:self action:@selector(setrbutton) forControlEvents:UIControlEventTouchUpInside];
-    [zview addSubview:_rbutton];
-    [_scrollview addSubview:zview];
+//    //    右边view
+//    UIView *xview = [[UIView alloc] initWithFrame:CGRectMake(640, -20, kScreen_Width, kScreen_Height)];
+//    xview.backgroundColor = [UIColor orangeColor];
+//    
+//    float topHeight = (200.0f/480.0f)*kScreen_Height;
+//    //    上
+//    UIButton *Sbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+//    [Sbutton setTitle:@"Porsonal Event" forState:UIControlStateNormal];
+//    [Sbutton addTarget:self action:@selector(oClickAdd) forControlEvents:UIControlEventTouchUpInside];
+//    Sbutton.frame = CGRectMake(0, 0, kScreen_Width, topHeight);
+//    Sbutton.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
+//    [xview addSubview:Sbutton];
+//    //    中
+//    UIButton *Zbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+//    [Zbutton setTitle:@"Concel" forState:UIControlStateNormal];
+//    [Zbutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//    Zbutton.frame = CGRectMake(0, topHeight, kScreen_Width, kScreen_Height - 2*topHeight);
+//    Zbutton.backgroundColor = [UIColor whiteColor];
+//    [xview addSubview:Zbutton];
+//    //    下
+//    UIButton *Xbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+//    [Xbutton setTitle:@"Social Event" forState:UIControlStateNormal];
+//    Xbutton.frame = CGRectMake(0, kScreen_Height - topHeight, kScreen_Width, topHeight);
+//    Xbutton.backgroundColor = [UIColor colorWithRed:244.0f/255.0f green:10.0f/255.0f blue:115.0f/255.0f alpha:1];
+//    [xview addSubview:Xbutton];
+//    [_scrollview addSubview:xview];
+//
+//    //    左间view
+//    UIView *zview = [[UIView alloc] initWithFrame:CGRectMake(0, -20, kScreen_Width, 66)];
+//    zview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
+//    
+//    //   右边xiew上返回button
+//    _rbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+//    _rbutton.frame = CGRectMake(280, 30, 21, 25);
+//    //_rbutton.backgroundColor = [UIColor redColor];
+//    [_rbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow1"] forState:UIControlStateNormal];
+//    [_rbutton addTarget:self action:@selector(setrbutton) forControlEvents:UIControlEventTouchUpInside];
+//    [zview addSubview:_rbutton];
+//    [_scrollview addSubview:zview];
 }
 #pragma mark -－－ 所有点击事件
 - (void)setrbutton

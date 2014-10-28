@@ -29,6 +29,8 @@
 @dynamic creatorDisplayName;
 @dynamic creator;
 @dynamic organizer;
+@dynamic sequence;
+@dynamic status;
 @dynamic calendar;
 
 

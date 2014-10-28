@@ -38,7 +38,6 @@
 		A88EF52E19ECC00400AB15B5 /* IBActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = A88EF52D19ECC00400AB15B5 /* IBActionSheet.m */; };
 		A88F0BBA19D2C53F002D0C4C /* t_Sandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = A88F0BB919D2C53F002D0C4C /* t_Sandbox.m */; };
 		A89018CE19E911AE00CAE3E8 /* VisibleCalendarsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A89018CD19E911AE00CAE3E8 /* VisibleCalendarsViewController.m */; };
-		A89018D119E9296D00CAE3E8 /* SetingsNavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A89018D019E9296D00CAE3E8 /* SetingsNavigationViewController.m */; };
 		A890399C19D7A9C500521389 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A890399B19D7A9C500521389 /* icon.png */; };
 		A890399E19D7AA1100521389 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A890399D19D7AA1100521389 /* icon@2x.png */; };
 		A890BA2D19E8CCDE0052C10F /* SetingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A890BA2C19E8CCDE0052C10F /* SetingViewController.m */; };
@@ -153,6 +152,8 @@
 		A8A8C27D19C1924300362EE5 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C27C19C1924300362EE5 /* GoogleMaps.framework */; };
 		A8A8C27F19C1925F00362EE5 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A8A8C27E19C1925F00362EE5 /* GoogleMaps.bundle */; };
 		A8A8C28919C1A9B000362EE5 /* t_Network.m in Sources */ = {isa = PBXBuildFile; fileRef = A8A8C28819C1A9B000362EE5 /* t_Network.m */; };
+		A8B3638619FB4B85001CE37F /* MJSecondDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B3638419FB4B85001CE37F /* MJSecondDetailViewController.m */; };
+		A8B3638719FB4B85001CE37F /* MJSecondDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8B3638519FB4B85001CE37F /* MJSecondDetailViewController.xib */; };
 		A8B5297419F5EE1B009286AA /* AnyEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B5297319F5EE1B009286AA /* AnyEvent.m */; };
 		A8B529B619F635B9009286AA /* MagicalImportFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B5297C19F635B9009286AA /* MagicalImportFunctions.m */; };
 		A8B529B719F635B9009286AA /* NSAttributeDescription+MagicalDataImport.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B5297E19F635B9009286AA /* NSAttributeDescription+MagicalDataImport.m */; };
@@ -183,6 +184,10 @@
 		A8B5461719F894AA00C73A24 /* CalendarAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B5461619F894AA00C73A24 /* CalendarAccountViewController.m */; };
 		A8B6533519F6B5D5007E8A26 /* Calendar.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B6533419F6B5D5007E8A26 /* Calendar.m */; };
 		A8B6533819F6B5D6007E8A26 /* AT_Account.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B6533719F6B5D6007E8A26 /* AT_Account.m */; };
+		A8B67C9819FA9A630068E107 /* SetingsNavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B67C9719FA9A630068E107 /* SetingsNavigationViewController.m */; };
+		A8B67C9D19FAA80A0068E107 /* MJPopupBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B67C9A19FAA80A0068E107 /* MJPopupBackgroundView.m */; };
+		A8B67C9E19FAA80A0068E107 /* UIViewController+MJPopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B67C9C19FAA80A0068E107 /* UIViewController+MJPopupViewController.m */; };
+		A8B7E73019FF2F1B0097ABE3 /* CircleDrawView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B7E72F19FF2F1B0097ABE3 /* CircleDrawView.m */; };
 		A8B867E219E296E20004875F /* CoreDataUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B867DD19E296E20004875F /* CoreDataUtil.m */; };
 		A8B867E319E296E20004875F /* NSManagedObject+Explain.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B867DF19E296E20004875F /* NSManagedObject+Explain.m */; };
 		A8B867E419E296E20004875F /* NSManagedObject+Magic.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B867E119E296E20004875F /* NSManagedObject+Magic.m */; };
@@ -253,8 +258,6 @@
 		A88F0BBB19D2C56F002D0C4C /* t_Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = t_Singleton.h; sourceTree = "<group>"; };
 		A89018CC19E911AE00CAE3E8 /* VisibleCalendarsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleCalendarsViewController.h; sourceTree = "<group>"; };
 		A89018CD19E911AE00CAE3E8 /* VisibleCalendarsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VisibleCalendarsViewController.m; sourceTree = "<group>"; };
-		A89018CF19E9296D00CAE3E8 /* SetingsNavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetingsNavigationViewController.h; sourceTree = "<group>"; };
-		A89018D019E9296D00CAE3E8 /* SetingsNavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetingsNavigationViewController.m; sourceTree = "<group>"; };
 		A890399B19D7A9C500521389 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		A890399D19D7AA1100521389 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
 		A890BA2B19E8CCDE0052C10F /* SetingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetingViewController.h; sourceTree = "<group>"; };
@@ -415,6 +418,9 @@
 		A8A8C27E19C1925F00362EE5 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle; sourceTree = "<group>"; };
 		A8A8C28719C1A9B000362EE5 /* t_Network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = t_Network.h; sourceTree = "<group>"; };
 		A8A8C28819C1A9B000362EE5 /* t_Network.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = t_Network.m; sourceTree = "<group>"; };
+		A8B3638319FB4B85001CE37F /* MJSecondDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJSecondDetailViewController.h; sourceTree = "<group>"; };
+		A8B3638419FB4B85001CE37F /* MJSecondDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJSecondDetailViewController.m; sourceTree = "<group>"; };
+		A8B3638519FB4B85001CE37F /* MJSecondDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MJSecondDetailViewController.xib; sourceTree = "<group>"; };
 		A8B5297219F5EE1B009286AA /* AnyEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnyEvent.h; sourceTree = "<group>"; };
 		A8B5297319F5EE1B009286AA /* AnyEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AnyEvent.m; sourceTree = "<group>"; };
 		A8B5297B19F635B9009286AA /* MagicalImportFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicalImportFunctions.h; sourceTree = "<group>"; };
@@ -479,6 +485,14 @@
 		A8B6533419F6B5D5007E8A26 /* Calendar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Calendar.m; sourceTree = "<group>"; };
 		A8B6533619F6B5D6007E8A26 /* AT_Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AT_Account.h; sourceTree = "<group>"; };
 		A8B6533719F6B5D6007E8A26 /* AT_Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AT_Account.m; sourceTree = "<group>"; };
+		A8B67C9619FA9A630068E107 /* SetingsNavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetingsNavigationViewController.h; sourceTree = "<group>"; };
+		A8B67C9719FA9A630068E107 /* SetingsNavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetingsNavigationViewController.m; sourceTree = "<group>"; };
+		A8B67C9919FAA80A0068E107 /* MJPopupBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJPopupBackgroundView.h; sourceTree = "<group>"; };
+		A8B67C9A19FAA80A0068E107 /* MJPopupBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJPopupBackgroundView.m; sourceTree = "<group>"; };
+		A8B67C9B19FAA80A0068E107 /* UIViewController+MJPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+MJPopupViewController.h"; sourceTree = "<group>"; };
+		A8B67C9C19FAA80A0068E107 /* UIViewController+MJPopupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+MJPopupViewController.m"; sourceTree = "<group>"; };
+		A8B7E72E19FF2F1B0097ABE3 /* CircleDrawView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleDrawView.h; sourceTree = "<group>"; };
+		A8B7E72F19FF2F1B0097ABE3 /* CircleDrawView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleDrawView.m; sourceTree = "<group>"; };
 		A8B867DC19E296E20004875F /* CoreDataUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataUtil.h; sourceTree = "<group>"; };
 		A8B867DD19E296E20004875F /* CoreDataUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataUtil.m; sourceTree = "<group>"; };
 		A8B867DE19E296E20004875F /* NSManagedObject+Explain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+Explain.h"; sourceTree = "<group>"; };
@@ -693,6 +707,13 @@
 		A886548E19D3E5E700EEC0A8 /* WeekAndDayController */ = {
 			isa = PBXGroup;
 			children = (
+				A8B3638319FB4B85001CE37F /* MJSecondDetailViewController.h */,
+				A8B3638419FB4B85001CE37F /* MJSecondDetailViewController.m */,
+				A8B3638519FB4B85001CE37F /* MJSecondDetailViewController.xib */,
+				A8B67C9919FAA80A0068E107 /* MJPopupBackgroundView.h */,
+				A8B67C9A19FAA80A0068E107 /* MJPopupBackgroundView.m */,
+				A8B67C9B19FAA80A0068E107 /* UIViewController+MJPopupViewController.h */,
+				A8B67C9C19FAA80A0068E107 /* UIViewController+MJPopupViewController.m */,
 				A886548F19D3E61700EEC0A8 /* WeekViewController.h */,
 				A886549019D3E61700EEC0A8 /* WeekViewController.m */,
 				A886549119D3E61700EEC0A8 /* DayViewController.h */,
@@ -732,9 +753,11 @@
 		A88F0BB719D2C4FD002D0C4C /* public */ = {
 			isa = PBXGroup;
 			children = (
-				A8B5297819F635B9009286AA /* MagicalRecord */,
-				A8B867DB19E296C30004875F /* CoreData */,
 				A8A8C28019C1A67F00362EE5 /* NetWork */,
+				A8B867DB19E296C30004875F /* CoreData */,
+				A8B5297819F635B9009286AA /* MagicalRecord */,
+				A894D6EE19B5786A0088E522 /* PublicMethodsViewController.h */,
+				A894D6EF19B5786A0088E522 /* PublicMethodsViewController.m */,
 				A898C8FD19B463E700559F53 /* CalendarDateUtil.h */,
 				A898C8FE19B463E700559F53 /* CalendarDateUtil.m */,
 				A88F0BBB19D2C56F002D0C4C /* t_Singleton.h */,
@@ -757,9 +780,9 @@
 		A8923EE819E7E2DA00B9B938 /* Seting */ = {
 			isa = PBXGroup;
 			children = (
+				A8B67C9619FA9A630068E107 /* SetingsNavigationViewController.h */,
+				A8B67C9719FA9A630068E107 /* SetingsNavigationViewController.m */,
 				A8975B6A19EA8922006DFDC3 /* Preference */,
-				A89018CF19E9296D00CAE3E8 /* SetingsNavigationViewController.h */,
-				A89018D019E9296D00CAE3E8 /* SetingsNavigationViewController.m */,
 				A890BA2B19E8CCDE0052C10F /* SetingViewController.h */,
 				A890BA2C19E8CCDE0052C10F /* SetingViewController.m */,
 				A89018CC19E911AE00CAE3E8 /* VisibleCalendarsViewController.h */,
@@ -770,15 +793,6 @@
 				A8956F2419EC222F0016674E /* AccountViewController.m */,
 			);
 			name = Seting;
-			sourceTree = "<group>";
-		};
-		A894D6E519B578580088E522 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				A894D6EE19B5786A0088E522 /* PublicMethodsViewController.h */,
-				A894D6EF19B5786A0088E522 /* PublicMethodsViewController.m */,
-			);
-			name = lib;
 			sourceTree = "<group>";
 		};
 		A894D83419B5B9D00088E522 /* Image */ = {
@@ -930,7 +944,6 @@
 		A898C8FB19B4636600559F53 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				A894D6E519B578580088E522 /* lib */,
 				A894D6D419B578270088E522 /* JCDatePicker.h */,
 				A894D6D519B578270088E522 /* JCDatePicker.m */,
 				A894D6D619B578270088E522 /* CLCalendarView.h */,
@@ -943,6 +956,8 @@
 				A894D6DD19B578270088E522 /* EventCell.h */,
 				A894D6DE19B578270088E522 /* EventCell.m */,
 				A894D6F719B579560088E522 /* EventCell.xib */,
+				A8B7E72E19FF2F1B0097ABE3 /* CircleDrawView.h */,
+				A8B7E72F19FF2F1B0097ABE3 /* CircleDrawView.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -1200,6 +1215,7 @@
 				A894D85E19B5BACC0088E522 /* daybackgrd2@2x.png in Resources */,
 				A877C96219B450C50075D9E8 /* Images.xcassets in Resources */,
 				A89514D119D4F90B00538486 /* LoginViewController.xib in Resources */,
+				A8B3638719FB4B85001CE37F /* MJSecondDetailViewController.xib in Resources */,
 				A894D86119B5BACC0088E522 /* arrow_icon@2x.png in Resources */,
 				A894D85119B5BACC0088E522 /* Rectangle_13.png in Resources */,
 				A894D8AE19B5BB150088E522 /* Tick.png in Resources */,
@@ -1296,6 +1312,7 @@
 			files = (
 				A8B529B919F635B9009286AA /* NSNumber+MagicalDataImport.m in Sources */,
 				A8B529BC19F635B9009286AA /* NSString+MagicalDataImport.m in Sources */,
+				A8B3638619FB4B85001CE37F /* MJSecondDetailViewController.m in Sources */,
 				A8B6533519F6B5D5007E8A26 /* Calendar.m in Sources */,
 				A8B529C819F635B9009286AA /* NSPersistentStoreCoordinator+MagicalRecord.m in Sources */,
 				A8B867F519E2A1840004875F /* TimeLine.xcdatamodeld in Sources */,
@@ -1308,7 +1325,6 @@
 				A8B529BD19F635B9009286AA /* NSManagedObject+MagicalAggregation.m in Sources */,
 				A877C95A19B450C50075D9E8 /* AppDelegate.m in Sources */,
 				A894D71019B57F9C0088E522 /* NotesViewController.m in Sources */,
-				A89018D119E9296D00CAE3E8 /* SetingsNavigationViewController.m in Sources */,
 				A886548D19D3E5C800EEC0A8 /* MAWeekView.m in Sources */,
 				A8B529B819F635B9009286AA /* NSEntityDescription+MagicalDataImport.m in Sources */,
 				A8975B7319EA8D33006DFDC3 /* AlertsViewController.m in Sources */,
@@ -1329,7 +1345,9 @@
 				A894D6E419B578270088E522 /* EventCell.m in Sources */,
 				A894D6FE19B57F510088E522 /* EventCountView.m in Sources */,
 				A89018CE19E911AE00CAE3E8 /* VisibleCalendarsViewController.m in Sources */,
+				A8B67C9D19FAA80A0068E107 /* MJPopupBackgroundView.m in Sources */,
 				A8B5297419F5EE1B009286AA /* AnyEvent.m in Sources */,
+				A8B7E73019FF2F1B0097ABE3 /* CircleDrawView.m in Sources */,
 				A894D70419B57F690088E522 /* BackGroundViewController.m in Sources */,
 				A8B529B619F635B9009286AA /* MagicalImportFunctions.m in Sources */,
 				A894D6E319B578270088E522 /* CalendarCell.m in Sources */,
@@ -1338,11 +1356,13 @@
 				A886549419D3E61700EEC0A8 /* DayViewController.m in Sources */,
 				A88EF52E19ECC00400AB15B5 /* IBActionSheet.m in Sources */,
 				A8116A2419B9B7EF003EB3ED /* FlipBoardNavigationController.m in Sources */,
+				A8B67C9E19FAA80A0068E107 /* UIViewController+MJPopupViewController.m in Sources */,
 				A894D70D19B57F920088E522 /* LocationViewController.m in Sources */,
 				A8975B7619EA8D47006DFDC3 /* DirectionsViewController.m in Sources */,
 				A88E35A619E979180025CAFB /* PreferenceViewController.m in Sources */,
 				A8B529BA19F635B9009286AA /* NSObject+MagicalDataImport.m in Sources */,
 				A894D70719B57F7F0088E522 /* DateDetailsViewController.m in Sources */,
+				A8B67C9819FA9A630068E107 /* SetingsNavigationViewController.m in Sources */,
 				A89F91DB19C5D73A00CB7FAE /* AutocompletionTableView.m in Sources */,
 				A89B676B19D980DA00415108 /* BaseMode.m in Sources */,
 				A894D6F419B5786A0088E522 /* PublicMethodsViewController.m in Sources */,

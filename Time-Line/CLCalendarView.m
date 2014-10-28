@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 #import "AnyEvent.h"
 #import "Calendar.h"
+#import "CircleDrawView.h"
 #define calendar_Table_Month_H  132   //只显示一周此处改为44
 #define calendar_Table_Week_H   90   //110
 
@@ -408,50 +409,36 @@
         }
         if (dataEvent.count>0) {
             AnyEvent *anyEvent=[dataEvent objectAtIndex:indexPath.row];
-            NSString*  temstr=[[PublicMethodsViewController getPublicMethods] formatStringWithString:anyEvent.startDate];
-            
             NSString* starttime=anyEvent.startDate;
             NSRange range=[starttime rangeOfString:@"日"];
             NSString* startstrs=[starttime substringWithRange:NSMakeRange(range.location+1,starttime.length-range.location-1)];
             
-            NSString* endtime=anyEvent.endDate;
-            NSRange ranges=[endtime rangeOfString:@"日"];
-            NSString* endstrs=[endtime substringWithRange:NSMakeRange(ranges.location+1,endtime.length-ranges.location-1)];
             cell.starttimelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
             
-            NSString* time=[[PublicMethodsViewController getPublicMethods]getseconde:endtime];
+            NSString *intervalTime=[[PublicMethodsViewController getPublicMethods]  timeDifference:anyEvent.endDate getStrart:anyEvent.startDate];//得到开始时间和结束时间的差值
             
-            cell.timelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
+            cell.timelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:8.0];
             
-            NSDate *  senddate=[NSDate date];
+//            NSDate *  senddate=[NSDate date];
             NSDateFormatter  *dateformatter=[[NSDateFormatter alloc] init];
             [dateformatter setDateFormat:@"HH:MM"];
-            NSString *  locationString=[dateformatter stringFromDate:senddate];
-            NSString* keyStr=[NSString stringWithFormat:@"%@%@",temstr,locationString];
-            
-            NSString* endStr=[[PublicMethodsViewController getPublicMethods] timeDifference:anyEvent.endDate getStrart:keyStr];
-            NSLog(@"%@----1---1--%@",endStr,str);
-            if ([time isEqualToString:@"0小时0分钟"]) {
-                cell.timelabel.hidden=YES;
-            }else{
-                cell.timelabel.text=time;
-                NSLog(@"strtime->>>>%@",starttime);
-                NSLog(@"%@  time",time);
-                
-            }
-            if ([[endStr substringWithRange:NSMakeRange(endStr.length-3, 3)] isEqualToString:@"day"]) {
-                cell.starttimelabel.text=@"ALL DAY";
-                cell.timelabel.hidden=YES;
-            }else{
-                cell.starttimelabel.text=[NSString stringWithFormat:@"%@  -  %@",startstrs,endstrs];
-                NSLog(@"%@   strs",startstrs);
-                NSLog(@"%@  endstrs",endstrs);
-            }
-            
+//            NSString *  locationString=[dateformatter stringFromDate:senddate];
+//            NSString* keyStr=[NSString stringWithFormat:@"%@%@",temstr,locationString];
+            cell.timelabel.text=intervalTime;
+            NSLog(@"strtime->>>>%@",starttime);
+            cell.starttimelabel.text=[NSString stringWithFormat:@"%@",startstrs];
+
             NSString* strtitle=anyEvent.eventTitle;
             cell.content.text=[strtitle uppercaseString];
             cell.content.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
             cell.content.textColor=[UIColor blackColor];
+            
+            Calendar *caObj=anyEvent.calendar;
+            
+            CircleDrawView *cd=[[CircleDrawView alloc] init];
+            cd.frame=cell.cirPoint.frame;
+            cd.hexString=caObj.backgroundColor;
+            [cell.cirPoint addSubview: cd];
         }
         if ([cell.content.text isEqualToString:@""]) {
             cell.textLabel.text=@"FREE DAY";

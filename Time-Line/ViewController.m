@@ -9,10 +9,13 @@
 #import "ViewController.h"
 #import "CalendarDateUtil.h"
 //#import "DailyCalendarTableViewController.h"
+#import "UIViewController+MJPopupViewController.h"
 #import "DayViewController.h"
 #import "MAEvent.h"
+#import "MJSecondDetailViewController.h"
+
 #define LineGroundColor [UIColor colorWithRed:201.0f/255.0f green:201.0f/255.0f blue:201.0f/255.0f alpha:1.0f]
-@interface ViewController (){
+@interface ViewController ()<MJSecondPopupDelegate>{
     UILabel* titleLabel;
     NSMutableArray* houresArray;
     NSMutableArray* minArray;
@@ -72,8 +75,9 @@
         }
         [dateArr addObject:weekArr];
     }
-    //    NSLog(@"dateArr->%@",dateArr);
 }
+
+
 
 - (void)viewDidLoad
 {
@@ -181,6 +185,16 @@
     // Do any additional setup after loading the view from its nib.
 }
 
+
+//弹出视图的代理方法
+- (void)leveyPopListView:(UIView *)popListView didSelectedIndex:(NSInteger)anIndex{
+
+
+}
+- (void)leveyPopListViewDidCancel{
+
+}
+
 -(void)disviewcontroller{
     [self sureEvent];
     [self.navigationController popViewControllerAnimated:YES];
@@ -206,6 +220,8 @@
             break;
         case NSOrderedDescending:
         {
+           
+            
             UIAlertView* alert=[[UIAlertView alloc]initWithTitle:@"提示" message:@"结束时间必须大于开始时间" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
             [alert show];
             return;
@@ -278,7 +294,9 @@
 
 -(void)chooseAllDay:(UIButton *) sender
 {
-    DayViewController *dailyCalController = [[DayViewController alloc] init];
+//    DayViewController *dailyCalController = [[DayViewController alloc] init];
+//    [self.navigationController pushViewController:dailyCalController animated:YES];
+    MJSecondDetailViewController *secondDetailViewController = [[MJSecondDetailViewController alloc] initWithNibName:@"MJSecondDetailViewController" bundle:nil];
     if (isstate) {
         endLabel.text=startLabel.text;
     }
@@ -292,10 +310,11 @@
     event.end=date2;
     event.title=@"nihao";
     event.displayDate=date1;
-    dailyCalController.event=event;
+    secondDetailViewController.event=event;
     NSLog(@"%@",@"========>>>>>>转的事件");
-    [self.navigationController pushViewController:dailyCalController animated:YES];
-    
+
+    secondDetailViewController.mjdelegate = self;
+    [self presentPopupViewController:secondDetailViewController animationType:MJPopupViewAnimationFade];
 }
 
 

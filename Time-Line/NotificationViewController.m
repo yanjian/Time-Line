@@ -9,6 +9,7 @@
 #import "NotificationViewController.h"
 #import "Calendar.h"
 #import "AT_Account.h"
+#import "CircleDrawView.h"
 
 @interface NotificationViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic,retain) UITableView *tableView;
@@ -144,6 +145,12 @@
     if (cell==nil) {
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
+    
+    NSArray *viewarr=[cell.contentView subviews];
+    for (UIView *view in viewarr) {
+        [view removeFromSuperview];
+    }
+    
     NSArray *calendarListArr=[self.calendarArr objectAtIndex:indexPath.section];
     Calendar *ca=[calendarListArr objectAtIndex:indexPath.row];
     if (!self.isSelect) {
@@ -157,11 +164,20 @@
             }
         }
      }
+    
+    CircleDrawView *cd=[[CircleDrawView alloc] initWithFrame:CGRectMake(0, 2, 40, 40)];
+    cd.hexString=ca.backgroundColor;
+    [cell.contentView addSubview: cd];
+    
+    UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(cd.frame.size.width, 2, 215, 40)];
+    [contextLab setBackgroundColor:[UIColor clearColor]];
+
     if ([ca.type intValue ]==AccountTypeGoogle) {
-        cell.textLabel.text=ca.summary;
+        [contextLab setText:ca.summary];
     }else if([ca.type intValue ]==AccountTypeLocal){
-        cell.textLabel.text=ca.summary;
+        [contextLab setText:ca.summary];
     }
+    [cell.contentView addSubview:contextLab];
     return cell;
 }
 

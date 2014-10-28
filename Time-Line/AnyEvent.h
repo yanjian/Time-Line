@@ -35,6 +35,8 @@ isSyncData_YES=1
 @property (nonatomic, retain) NSString * creatorDisplayName;//创建者的日历的名字
 @property (nonatomic, retain) NSString * creator;//创建者
 @property (nonatomic, retain) NSString * organizer;//组织者
+@property (nonatomic, retain) NSNumber * sequence;
+@property (nonatomic, retain) NSString * status;
 @property (nonatomic, retain) Calendar *calendar;
 
 @end

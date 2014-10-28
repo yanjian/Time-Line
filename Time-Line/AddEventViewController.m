@@ -17,6 +17,7 @@
 #import "GoogleMapViewController.h"
 #import "AnyEvent.h"
 #import "CalendarAccountViewController.h"
+#import "CircleDrawView.h"
 
 #define TITLE     @"eventTitle"
 #define LOCATION  @"location"
@@ -267,11 +268,24 @@
 
 //删除事件
 -(void)deleteEvent{
-    NSPredicate *pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and calendarAccount==%@ and startDate==%@",event.eventTitle,event.calendarAccount,event.startDate];
+    NSPredicate *pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and calendarAccount==%@ and startDate==%@ and eId==%@",event.eventTitle,event.calendarAccount,event.startDate,event.eId];
     AnyEvent *anyEvent=[[AnyEvent MR_findAllWithPredicate:pre] lastObject];
-    
-    [anyEvent MR_deleteEntity];
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    Calendar *ca=anyEvent.calendar;
+    if (ca) {
+        if ([ca.type intValue]==AccountTypeGoogle) {
+            if (anyEvent.eId) {
+                ASIHTTPRequest *deleteGoogleRequest= [t_Network httpPostValue:@{@"cid":ca.cid,@"eid":anyEvent.eId}.mutableCopy Url:Google_DeleteCalendarEvent Delegate:self Tag:Google_DeleteCalendarEvent_tag userInfo:@{@"anyEvent": anyEvent}];
+                [deleteGoogleRequest startAsynchronous];
+            }
+        }else if([ca.type intValue]==AccountTypeLocal){
+            if (anyEvent.eId) {
+                ASIHTTPRequest *deleteGoogleRequest= [t_Network httpPostValue:@{@"id":anyEvent.eId,@"type":@(3)}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"anyEvent": anyEvent}];
+                [deleteGoogleRequest startAsynchronous];
+             }
+         }
+        [anyEvent MR_deleteEntity];
+        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    }
     for (UIViewController* obj in [self.navigationController viewControllers]) {
         if ([obj isKindOfClass:[HomeViewController class]]) {
             [self.navigationController popToViewController:obj animated:YES];
@@ -380,7 +394,14 @@
     }
     anyEvent.repeat= repeatStr;
     anyEvent.isSync=@(isSyncData_NO);
+    
+    NSLog(@"[anyEvent.calendar.type ===%d",[anyEvent.calendar.type intValue]);
+    NSLog(@"self.calendarObj.type  ===%d",[self.calendarObj.type intValue]);
+    if ([anyEvent.calendar.type intValue]!=[self.calendarObj.type intValue]) {//如歌
+        anyEvent.eId=nil;
+    }
     anyEvent.calendar=self.calendarObj;
+  
     
     NSString * nowDate=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
     anyEvent.updated=nowDate;
@@ -408,124 +429,6 @@
 //    }
 //    return YES;
 //}
-
-
--(void)textFieldDidEndEditing:(UITextField *)textField{
-//    if (textField.tag==1||textField.tag==2) {
-//        self.tableView.frame=CGRectMake(0, 0, self.tableView.frame.size.width, self.tableView.frame.size.height);
-//        
-//    }
-    
-    self.tableView.frame=CGRectMake(0, 0, self.tableView.frame.size.width, self.tableView.frame.size.height);
-
-    
-    
-    if (textField.text.length>0) {
-    NSArray* random=[[NSArray alloc]initWithObjects:@"Random_02.jpg",@"Random_04.jpg",@"Random_06.jpg",@"Random_11.jpg",@"Random_12.jpg", nil];
-    NSInteger randoms=[self getRandomNumber:0 to:[random count]-1];
-    [addImage setBackgroundImage:[UIImage imageNamed:[random objectAtIndex:randoms]] forState:UIControlStateNormal];
-    imagename=[random objectAtIndex:randoms];
-    NSArray* friendArray=[[NSArray alloc]initWithObjects:@"hangout",@"gathering",@"adventure",@"Hangout",@"Gathering",@"Adventure",nil];
-    NSArray* concertarray=[[NSArray alloc]initWithObjects:@"concert",@"music",@"Concert",@"Music",nil];
-    NSArray* cyclingArray=[[NSArray alloc]initWithObjects:@"cycling",@"Cycling", nil];
-    NSArray* exhibitionarray=[[NSArray alloc]initWithObjects:@"exhibition",@"art",@"Exhibition",@"Art",nil];
-    NSArray* hikingArray=[[NSArray alloc]initWithObjects:@"hiking",@"Hiking", nil];
-    NSArray* callArray=[[NSArray alloc]initWithObjects:@"call",@"Call", nil];
-    NSArray* lectureArray=[[NSArray alloc]initWithObjects:@"lecture",@"Lecture", nil];
-    NSArray* movieArray=[[NSArray alloc]initWithObjects:@"birthday",@"Birthday", nil];
-    
-    NSArray* friendArray1=[[NSArray alloc]initWithObjects:@"Friends_01.jpg",@"Friends_02.jpg",@"Friends_03.jpg",nil];
-    NSArray* concertarray1=[[NSArray alloc]initWithObjects:@"Concert_01.jpg",nil];
-    NSArray* cyclingArray1=[[NSArray alloc]initWithObjects:@"Cycling_01.jpg", nil];
-    NSArray* exhibitionarray1=[[NSArray alloc]initWithObjects:@"Exhibition_01.jpg",nil];
-    NSArray* hikingArray1=[[NSArray alloc]initWithObjects:@"Hiking_02.jpg",@"Hiking_04.jpg", nil];
-    NSArray* callArray1=[[NSArray alloc]initWithObjects:@"Call_01.jpg", nil];
-    NSArray* lectureArray1=[[NSArray alloc]initWithObjects:@"Lecture_01.jpg", nil];
-    NSArray* movieArray1=[[NSArray alloc]initWithObjects:@"Movie_01.jpg", nil];
-    for (NSString* str in friendArray) {
-        NSRange range=[textField.text rangeOfString:str];
-        if(range.location!=NSNotFound){
-            NSInteger random=[self getRandomNumber:0 to:[friendArray1 count]-1];
-            [addImage setBackgroundImage:[UIImage imageNamed:[friendArray1 objectAtIndex:random]] forState:UIControlStateNormal];
-            imagename=[friendArray1 objectAtIndex:random];
-            return;
-        }
-    }
-    for (NSString* str in concertarray) {
-        NSRange range=[textField.text rangeOfString:str];
-        if(range.location!=NSNotFound){
-            NSInteger random=[self getRandomNumber:0 to:[concertarray1 count]-1];
-            [addImage setBackgroundImage:[UIImage imageNamed:[concertarray1 objectAtIndex:random]] forState:UIControlStateNormal];
-            imagename=[concertarray1 objectAtIndex:random];
-            return;
-
-        }
-        
-    }
-    for (NSString* str in cyclingArray) {
-        NSRange range=[textField.text rangeOfString:str];
-        if(range.location!=NSNotFound){
-            NSInteger random=[self getRandomNumber:0 to:[cyclingArray1 count]-1];
-            [addImage setBackgroundImage:[UIImage imageNamed:[cyclingArray1 objectAtIndex:random]] forState:UIControlStateNormal];
-            imagename=[cyclingArray1 objectAtIndex:random];
-            return;
-        }
-    }
-    
-    for (NSString* str in exhibitionarray) {
-        NSRange range=[textField.text rangeOfString:str];
-        if(range.location!=NSNotFound){
-            NSInteger random=[self getRandomNumber:0 to:[exhibitionarray1 count]-1];
-            [addImage setBackgroundImage:[UIImage imageNamed:[exhibitionarray1 objectAtIndex:random]] forState:UIControlStateNormal];
-             imagename=[exhibitionarray1 objectAtIndex:random];
-            return;
-        }
-    }
-    
-    for (NSString* str in hikingArray) {
-        NSRange range=[textField.text rangeOfString:str];
-        if(range.location!=NSNotFound){
-            NSInteger random=[self getRandomNumber:0 to:[hikingArray1 count]-1];
-            [addImage setBackgroundImage:[UIImage imageNamed:[hikingArray1 objectAtIndex:random]] forState:UIControlStateNormal];
-            imagename=[hikingArray1 objectAtIndex:random];
-            return;
-        }
-    }
-    
-    for (NSString* str in callArray) {
-        NSRange range=[textField.text rangeOfString:str];
-        if(range.location!=NSNotFound){
-            NSInteger random=[self getRandomNumber:0 to:[callArray1 count]-1];
-            [addImage setBackgroundImage:[UIImage imageNamed:[callArray1 objectAtIndex:random]] forState:UIControlStateNormal];
-             imagename=[callArray1 objectAtIndex:random];
-            return;
-        }
-    }
-    
-    for (NSString* str in lectureArray) {
-        NSRange range=[textField.text rangeOfString:str];
-        if(range.location!=NSNotFound){
-            NSInteger random=[self getRandomNumber:0 to:[lectureArray1 count]-1];
-            [addImage setBackgroundImage:[UIImage imageNamed:[lectureArray1 objectAtIndex:random]] forState:UIControlStateNormal];
-              imagename=[lectureArray1 objectAtIndex:random];
-            return;
-        }
-    }
-    
-    for (NSString* str in movieArray) {
-        NSRange range=[textField.text rangeOfString:str];
-        if(range.location!=NSNotFound){
-            NSInteger random=[self getRandomNumber:0 to:[movieArray1 count]-1];
-            [addImage setBackgroundImage:[UIImage imageNamed:[movieArray1 objectAtIndex:random]] forState:UIControlStateNormal];
-              imagename=[movieArray1 objectAtIndex:random];
-            return;
-        }
-    }
-      [addImage setTitle:@"CHANGE A PICTURE" forState:UIControlStateNormal];
-    }
-}
-
-
 
 -(int)getRandomNumber:(int)from to:(int)to
 
@@ -615,7 +518,7 @@
                     //计算文本的宽度
                     NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:15]};
                     CGSize size = [str boundingRectWithSize:CGSizeMake(320, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
-                    addressIcon.frame=CGRectMake( (self.view.bounds.size.width/2-size.width/2)-17,25, 12, 15);
+                    addressIcon.frame=CGRectMake( (self.view.bounds.size.width/2-size.width/2)-17,25, 10, 15);
                     [localfiled addSubview:addressIcon ];
                 }
             }else if (indexPath.row==1){
@@ -625,7 +528,13 @@
         if (indexPath.section==3){
             if (indexPath.row==0) {
                 [cell1.contentView addSubview:_CAlable];
+                
+                NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:15]};
+                CGSize size = [self.calendarObj.summary boundingRectWithSize:CGSizeMake(320, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+                CircleDrawView *cd =[[CircleDrawView alloc] initWithFrame:CGRectMake((self.view.bounds.size.width/2-size.width/2)-27, 43, 20, 20)];
+                cd.hexString=self.calendarObj.backgroundColor;
                 _calendarLab.text=self.calendarObj.summary;
+                [cell1.contentView addSubview:cd];
                 [cell1.contentView addSubview:_calendarLab];
                 [cell1 viewWithTag:0];
             }
@@ -947,17 +856,32 @@
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request
-{    NSError * error=[request error];
-    if (error) {
-        NSLog(@"请求数据出错：%@",error.debugDescription);
-        return;
+{
+    NSLog(@"%@", [request responseString]);
+    switch (request.tag) {
+        case GOOGLE_ADDRESS_PIC_TAG:{
+            NSError * error=[request error];
+            if (error) {
+                NSLog(@"请求数据出错：%@",error.debugDescription);
+                return;
+            }
+            if (request.responseString||![@"" isEqualToString:request.responseString]) {
+                [_localtionBtn setBackgroundImage:[UIImage imageWithData:[request responseData]] forState:UIControlStateNormal];
+            }else{
+                NSLog(@"图片空。。。。。！");
+            }
+            break;
+        }
+        case Google_DeleteCalendarEvent_tag:
+        case Local_SingleEventOperation_Tag:{
+           
+            break;
+        }
+        default:
+            break;
     }
-    if (request.responseString||![@"" isEqualToString:request.responseString]) {
-         [_localtionBtn setBackgroundImage:[UIImage imageWithData:[request responseData]] forState:UIControlStateNormal];
-    }else{
-        NSLog(@"图片空。。。。。！");
-    }
-}
+    
+   }
 
 
 #pragma mark getnotesdelegate

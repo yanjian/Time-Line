@@ -13,5 +13,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *starttimelabel;
 @property (weak, nonatomic) IBOutlet UILabel *timelabel;
 @property (weak, nonatomic) IBOutlet UILabel *content;
+@property (weak, nonatomic) IBOutlet UIView *contxtView;
+@property (weak, nonatomic) IBOutlet UILabel *cirPoint;
 @property (weak, nonatomic) IBOutlet UIImageView *backImage;
 @end

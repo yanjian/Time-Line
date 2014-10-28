@@ -7,7 +7,7 @@
 //
 
 #import "CalendarAccountViewController.h"
-
+#import "CircleDrawView.h"
 @interface CalendarAccountViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,retain) UITableView *tableView;
 @property (nonatomic,assign) BOOL isSelect;
@@ -140,7 +140,15 @@
             
         }
     }
-    cell.textLabel.text=caObj.summary;
+    
+    CircleDrawView *cd=[[CircleDrawView alloc] initWithFrame:CGRectMake(0, 2, 40, 40)];
+    cd.hexString=caObj.backgroundColor;
+    [cell.contentView addSubview: cd];
+    
+    UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(cd.frame.size.width, 2, 215, 40)];
+    [contextLab setBackgroundColor:[UIColor clearColor]];
+    [contextLab setText:caObj.summary];
+    [cell.contentView addSubview:contextLab];
     return cell;
 }
 

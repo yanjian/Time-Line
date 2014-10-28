@@ -231,10 +231,12 @@
         [userInfo removeObjectForKey:@"loginStatus"];
         [userInfo removeObjectForKey:@"accountBinds"];
         [userInfo removeObjectForKey:@"email"];
+        [userInfo removeObjectForKey:@"authCode"];
         [userInfo synchronize];
     
         LoginViewController *loginVc = [[LoginViewController alloc] init];
         [self presentViewController:loginVc animated:YES completion:nil];
+        [self closeNavigation];
     }
 }
 

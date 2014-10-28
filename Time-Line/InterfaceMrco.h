@@ -16,6 +16,7 @@
 #define LATITUDE  @"lat"
 #define LONGITUDE @"lng"
 
+#define RefTime @"refTime"
 
 //google的apikey
 #define GOOGLE_API_KEY @"AIzaSyAKtISyJ4m99OHW4r_aerSkNgMEQGYzPtM"
@@ -113,6 +114,7 @@ typedef NS_ENUM(NSInteger , AccountType){
 //本地事件处理  SingleEventOperation
 #define Local_SingleEventOperation [NSString stringWithFormat:@"%@/SingleEventOperation",BASEURL_IP]
 #define Local_SingleEventOperation_Tag 11
+#define Local_SingleEventOperation_fetch_Tag 18
 
 //登陆用户的信息  GetUserInfo
 #define LoginUser_GetUserInfo [NSString stringWithFormat:@"%@/GetUserInfo",BASEURL_IP]
@@ -130,12 +132,13 @@ typedef NS_ENUM(NSInteger , AccountType){
 #define account_CancelAccountBind [NSString stringWithFormat:@"%@/CancelAccountBind",BASEURL_IP]
 #define account_CancelAccountBind_Tag 15
 
-//更新或删除google数据  GoogleCalendarEventOperation
+//更新或新增google数据  GoogleCalendarEventOperation
 #define Google_CalendarEventOperation [NSString stringWithFormat:@"%@/GoogleCalendarEventOperation",BASEURL_IP]
 #define Google_CalendarEventOperation_tag 16
 
-
-
+// 删除google数据事件
+#define Google_DeleteCalendarEvent [NSString stringWithFormat:@"%@/DeleteCalendarEvent",BASEURL_IP]
+#define Google_DeleteCalendarEvent_tag 17
 
 
 

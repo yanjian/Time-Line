@@ -19,10 +19,14 @@
 //时间格式化为rfc3339
 - (NSString *) rfc3339DateFormatter:(NSDate *) date;
 
+-(NSString*)formaterStringfromDate:(NSString*)format dateString:(NSString *) dateString;
+
+-(NSString*)stringFormaterDate:(NSString*)format dateString:(NSString *) dateString;
 
 -(NSString *) dateWithStringDate:(NSString *) dateString;
 
 -(NSMutableArray*)intervalSinceNow: (NSString *) theDate getStrart:(NSString*)startdate;
+- (NSString *)intervalSinceNow: (NSString *) theDate;
 
 - (NSString *)timeDifference: (NSString *) theDate getStrart:(NSString*)startdate;
 

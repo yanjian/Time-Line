@@ -12,7 +12,7 @@
 #import "AddEventViewController.h"
 #import "LoginViewController.h"
 #import "CoreDataUtil.h"
-@interface AppDelegate ()
+@interface AppDelegate ()<ASIHTTPRequestDelegate>
 
 @end
 
@@ -54,8 +54,6 @@
     _HUD=[[MBProgressHUD alloc] initWithView:self.window];
     [self.window addSubview:_HUD];
     
-    
-    
     UILocalNotification *localNotif =[launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
     if (localNotif) {
 		NSLog(@"｀｀｀｀｀｀｀｀｀｀｀｀ %@",localNotif);
@@ -81,12 +79,40 @@
         }
         
     }
-    NSInteger loginStatus=[[NSUserDefaults standardUserDefaults] integerForKey:@"loginStatus"];
+    NSInteger loginStatus=[USER_DEFAULT integerForKey:@"loginStatus"];
     if (1!=loginStatus) {
-         //[self initLoginView];
+         [self initLoginView];
+    }else{
+        NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
+        [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
+        [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
+        [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
+        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+        [request startSynchronous];
     }
-   
+    NSTimeInterval timeInterval= [self getRefreshFetchTimetimeInterval];
+    if (timeInterval==0) {
+       timeInterval= UIApplicationBackgroundFetchIntervalNever;
+    }
+    [application setMinimumBackgroundFetchInterval:timeInterval];
     return YES;
+}
+
+
+-(NSTimeInterval)getRefreshFetchTimetimeInterval{
+    //@"15 minutes",@"30 minutes",@"1 hour",@"2 hour",@"never"
+   NSString *timeStr= [USER_DEFAULT objectForKey:@"refTime"];
+    double timeMs=0;
+    if ([@"15 minutes" isEqualToString:timeStr]) {
+        timeMs=15*60*1000;
+    }else if([@"30 minutes" isEqualToString:timeStr]){
+         timeMs=30*60*1000;
+    }else if([@"1 hour" isEqualToString:timeStr]){
+        timeMs=60*60*1000;
+    }else if([@"2 hour" isEqualToString:timeStr]){
+        timeMs=120*60*1000;
+    }
+    return timeMs;
 }
 
 -(void) initLoginView{
@@ -94,6 +120,17 @@
     [self.window.rootViewController presentViewController:loginVc animated:YES completion:nil];
 }
 
+- (void)requestFinished:(ASIHTTPRequest *)request{
+    NSString *str=[request responseString];
+    if ([@"1" isEqualToString:str]) {
+        NSLog(@"登陆成功");
+    }else if ([@"2" isEqualToString:str]){
+         NSLog(@"已经登陆");
+    }else {
+        NSLog(@"登陆错误");
+    }
+
+}
 //初始化mian界面
 -(void)initMainView
 {
@@ -113,7 +150,7 @@
                                           otherButtonTitles:nil];
     [alert show];
     //这里，你就可以通过notification的useinfo，干一些你想做的事情了
-    application.applicationIconBadgeNumber-=1;
+   // application.applicationIconBadgeNumber-=1;
 }
 
 
@@ -140,8 +177,18 @@
     [alert show];
 }
 
-
-
+- (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
+{
+    
+    UINavigationController *nav=(UINavigationController *)self.window.rootViewController;
+    id fetchViewControl=nav.topViewController;
+    if ([fetchViewControl respondsToSelector:@selector(fetchDataResult:)]) {
+        if ([fetchViewControl isKindOfClass:[HomeViewController class]]) {
+            HomeViewController *home=(HomeViewController *) fetchViewControl;
+            [home fetchDataResult:completionHandler];
+        }
+    }
+}
 
 #pragma mark - MBProgressHuD Method
 //显示带时限的等待进度提示框

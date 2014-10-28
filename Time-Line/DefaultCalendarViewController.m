@@ -9,6 +9,7 @@
 #import "DefaultCalendarViewController.h"
 #import "AT_Account.h"
 #import "Calendar.h"
+#import "CircleDrawView.h"
 @interface DefaultCalendarViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic,retain) UITableView *tableView;
 @property (nonatomic,assign) BOOL isSelect;
@@ -138,6 +139,11 @@
     if (cell==nil) {
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
+    NSArray *viewarr=[cell.contentView subviews];
+    for (UIView *view in viewarr) {
+        [view removeFromSuperview];
+    }
+    
     NSArray *calendarListArr=[self.calendarArray objectAtIndex:indexPath.section];
     Calendar *caObj=[calendarListArr objectAtIndex:indexPath.row];
     if (!self.isSelect) {
@@ -148,7 +154,16 @@
 
         }
     }
-    cell.textLabel.text=caObj.summary;
+    
+    
+    CircleDrawView *cd=[[CircleDrawView alloc] initWithFrame:CGRectMake(0, 2, 40, 40)];
+    cd.hexString=caObj.backgroundColor;
+    [cell.contentView addSubview: cd];
+    
+    UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(cd.frame.size.width, 2, 215, 40)];
+    [contextLab setBackgroundColor:[UIColor clearColor]];
+    [contextLab setText:caObj.summary];
+    [cell.contentView addSubview:contextLab];
     return cell;
 }
 

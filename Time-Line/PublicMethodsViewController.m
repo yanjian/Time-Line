@@ -28,6 +28,7 @@ static PublicMethodsViewController * PublicMethods = nil;
     return self;
 }
 
+#pragma -根据指定格式得到当前时间字符串
 -(NSString*)getcurrentTime:(NSString*)format{
     NSDate *dates = [NSDate date];
     NSDateFormatter *formatter =  [[NSDateFormatter alloc] init];
@@ -39,6 +40,30 @@ static PublicMethodsViewController * PublicMethods = nil;
     return loctime;
 }
 
+#pragma -将时间yyyyy年m月d日 hh:mm:sss--->格式化为指定的格式
+-(NSString*)formaterStringfromDate:(NSString*)format dateString:(NSString *) dateString{
+    NSDateFormatter *formatter =  [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:format];
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE];
+    [formatter setTimeZone:timeZone];
+     NSDate *dateTime= [self formatWithStringDate:dateString];
+    return [formatter stringFromDate:dateTime];
+}
+
+#pragma -格式化事件为string 将yyyy-MM-DD hh:mm---> yyyyy年m月d日 hh:mm
+-(NSString*)stringFormaterDate:(NSString*)format dateString:(NSString *) dateString{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setLocale:[[NSLocale alloc]initWithLocaleIdentifier:@"en_US_POSIX"]];
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE];
+    [dateFormatter setTimeZone:timeZone];
+    
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:sss"];
+    NSDate *dateTime = nil;
+    [dateFormatter getObjectValue:&dateTime forString:dateString range:nil error:nil];
+    [dateFormatter setDateFormat:format];
+    return [dateFormatter stringFromDate:dateTime];
+}
+
 
 //时间格式化为rfc3339
 - (NSString *) rfc3339DateFormatter:(NSDate *) date{
@@ -47,7 +72,8 @@ static PublicMethodsViewController * PublicMethods = nil;
     
     [rfc3339DateFormatter setLocale:enUSPOSIXLocale];
     [rfc3339DateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"];
-    [rfc3339DateFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE];
+    [rfc3339DateFormatter setTimeZone:timeZone];
     
     return [rfc3339DateFormatter stringFromDate:date];
 }
@@ -57,6 +83,9 @@ static PublicMethodsViewController * PublicMethods = nil;
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setLocale:[[NSLocale alloc]initWithLocaleIdentifier:@"en_US_POSIX"]];
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE];
+   [dateFormatter setTimeZone:timeZone];
+
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZ"];
     NSDate *dateTime = nil;
     [dateFormatter getObjectValue:&dateTime forString:dateString range:nil error:nil];
@@ -94,6 +123,7 @@ static PublicMethodsViewController * PublicMethods = nil;
 {
     NSRange range=[stringDate rangeOfString:@"日"];
     NSDateFormatter *tempFormatter = [[NSDateFormatter alloc]init];
+    [tempFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
     NSString* strs=[stringDate substringWithRange:NSMakeRange(range.location+1,stringDate.length-range.location-1)];
     if (strs.length<=0) {
         [tempFormatter setDateFormat:@"YYYY年 M月d日"];
@@ -123,6 +153,7 @@ static PublicMethodsViewController * PublicMethods = nil;
 {
     NSMutableArray* seledayArr=[[NSMutableArray alloc]initWithCapacity:0];
     NSDateFormatter *date=[[NSDateFormatter alloc] init];
+    [date setTimeZone:[NSTimeZone defaultTimeZone]];
     [date setDateFormat:@"YYYY年 M月dd日"];
     NSDate *d=[date dateFromString:theDate];
     
@@ -177,11 +208,50 @@ static PublicMethodsViewController * PublicMethods = nil;
     
 }
 
+
+
+- (NSString *)intervalSinceNow: (NSString *) theDate
+{
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    [formatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];// ----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
+    
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:@"Asia/Beijing"];
+    [formatter setTimeZone:timeZone];
+    
+    NSDate *datenow = [NSDate date];
+    
+    long dd = (long)[datenow timeIntervalSince1970] - [theDate longLongValue]/1000;
+    NSString *timeString=@"";
+    if (dd/3600<1)
+    {
+        timeString = [NSString stringWithFormat:@"%ld", dd/60];
+        timeString=[NSString stringWithFormat:@"%@分钟前", timeString];
+    }
+    if (dd/3600>1&&dd/86400<1)
+    {
+        timeString = [NSString stringWithFormat:@"%ld", dd/3600];
+        
+        timeString=[NSString stringWithFormat:@"%@小时前", timeString];
+    }
+    if (dd/86400>1)
+    {
+        timeString = [NSString stringWithFormat:@"%ld", dd/86400];
+        timeString=[NSString stringWithFormat:@"%@天前", timeString];
+        
+    }
+    return timeString;
+}
+
+
 - (NSString *)timeDifference: (NSString *) theDate getStrart:(NSString*)startdate
 {
     
     NSDateFormatter *date=[[NSDateFormatter alloc] init];
     [date setDateFormat:@"YYYY年 M月dd日HH:mm"];
+    [date setTimeZone: [NSTimeZone defaultTimeZone]];
     NSDate *d=[date dateFromString:theDate];
     
     NSTimeInterval late=[d timeIntervalSince1970]*1;
@@ -199,12 +269,12 @@ static PublicMethodsViewController * PublicMethods = nil;
         timeString=[NSString stringWithFormat:@"%@ min", timeString];
         
     }
-    if (cha/3600>1&&cha/86400<1) {
+    if (cha/3600>=1&&cha/86400<1) {
         timeString = [NSString stringWithFormat:@"%f", cha/3600];
         timeString = [timeString substringToIndex:timeString.length-7];
         timeString=[NSString stringWithFormat:@"%@ hr", timeString];
     }
-    if (cha/86400>1)
+    if (cha/86400>=1)
     {
         timeString = [NSString stringWithFormat:@"%f", cha/86400];
         timeString = [timeString substringToIndex:timeString.length-7];
@@ -216,6 +286,7 @@ static PublicMethodsViewController * PublicMethods = nil;
 
 -(NSString*)getseconde:(NSString*)endstart{
     NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
+    [dateFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
     [dateFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
     NSDate *  senddate=[NSDate date];
     //结束时间
@@ -241,7 +312,6 @@ static PublicMethodsViewController * PublicMethods = nil;
     }
     NSLog(@"%f========%i",time,minute);
     return dateContent;
-
 }
 
 - (NSString*)getWeekdayFromDate:(NSDate*)date

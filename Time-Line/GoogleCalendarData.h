@@ -17,6 +17,7 @@
 @property (nonatomic,copy) NSString *foregroundColor;
 @property (nonatomic,copy) NSString *accessRole;
 @property (nonatomic,retain) NSMutableDictionary *defaultRemindersDic;
+@property (nonatomic,assign) BOOL isPrimary;
 @property (nonatomic,assign) BOOL isLocalAccount;
 @property (nonatomic,copy) NSString *account;
 -(NSDictionary *) dictionaryFromObject;

@@ -33,7 +33,10 @@
     [super viewDidLoad];
     [self.navigationItem setHidesBackButton:YES animated:YES];
     self.refreshArr=[NSArray arrayWithObjects:@"15 minutes",@"30 minutes",@"1 hour",@"2 hour",@"never", nil];
-    
+    if (![USER_DEFAULT objectForKey:RefTime]) {
+        [USER_DEFAULT setObject:@"15 minutes"  forKey:RefTime];
+        [USER_DEFAULT synchronize];
+    } 
     self.selectIndexPathArr=[NSMutableArray arrayWithCapacity:0];
     
     self.tableView=[[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
@@ -66,6 +69,14 @@
 }
 
 
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    [USER_DEFAULT removeObjectForKey:RefTime];
+    NSString *strTime=[self.refreshArr objectAtIndex:self.lastIndexPath.row];
+    [USER_DEFAULT setObject:strTime  forKey:RefTime];
+    [USER_DEFAULT synchronize];
+}
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
@@ -94,15 +105,16 @@
         cell=[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
+    NSString *refTime=[self.refreshArr objectAtIndex:indexPath.row];
+    NSString *timeStr= [USER_DEFAULT objectForKey:RefTime];
     if (!self.isSelect) {
-        cell.accessoryType=UITableViewCellAccessoryCheckmark;
-        Calendar *ca=[self.refreshArr objectAtIndex:indexPath.row];
-       
+        if ([refTime isEqualToString:timeStr]) {
+            cell.accessoryType=UITableViewCellAccessoryCheckmark;
+            self.lastIndexPath=indexPath;
             self.isSelect=YES;
-           
+        }
     }
-    
-    cell.textLabel.text=self.refreshArr[indexPath.row];
+    cell.textLabel.text=refTime;
     return cell;
 }
 
@@ -111,7 +123,6 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     int newRow = [indexPath row];
     int oldRow = (self.lastIndexPath != nil) ? [self.lastIndexPath row] : -1;
-    
     if (newRow != oldRow)
     {
         UITableViewCell *newCell = [tableView cellForRowAtIndexPath:indexPath];

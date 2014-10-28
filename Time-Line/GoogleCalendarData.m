@@ -44,6 +44,7 @@
     [encode encodeObject:self.foregroundColor forKey:@"foregroundColor"];
     [encode encodeObject:self.accessRole forKey:@"accessRole"];
     [encode encodeObject:self.defaultRemindersDic forKey:@"defaultRemindersDic"];
+    [encode encodeBool:self.isPrimary forKey:@"primary"];
     [encode encodeBool:self.isLocalAccount forKey:@"isLocalAccount"];
     [encode encodeBool:self.account forKey:@"account"];
 
@@ -58,6 +59,7 @@
         self.foregroundColor =(NSString *)[decoder decodeObjectForKey:@"foregroundColor"];
         self.accessRole =(NSString *)[decoder decodeObjectForKey:@"accessRole"];
         self.defaultRemindersDic =(NSMutableDictionary *)[decoder decodeObjectForKey:@"defaultRemindersDic"];
+        self.isPrimary=[decoder decodeBoolForKey:@"primary"];
         self.isLocalAccount=[decoder decodeBoolForKey:@"isLocalAccount"];
         self.account=(NSString *)[decoder decodeObjectForKey:@"account"];
     }
