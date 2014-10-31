@@ -21,6 +21,9 @@
 //google的apikey
 #define GOOGLE_API_KEY @"AIzaSyAKtISyJ4m99OHW4r_aerSkNgMEQGYzPtM"
 
+//事件本地通知的标记 (取消事件通知，添加通知用)
+#define anyEventLocalNot_Flag @"anyEventLocalNot"
+
 //googel搜索地址自动补全
 #define GOOGLE_ADDRESS_REQUEST_SEARCH  @"https://maps.googleapis.com/maps/api/place/autocomplete/json"
 #define GOOGLE_ADDRESS_REQUEST_SEARCH_TAG  1

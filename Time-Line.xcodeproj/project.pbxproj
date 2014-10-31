@@ -38,8 +38,6 @@
 		A88EF52E19ECC00400AB15B5 /* IBActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = A88EF52D19ECC00400AB15B5 /* IBActionSheet.m */; };
 		A88F0BBA19D2C53F002D0C4C /* t_Sandbox.m in Sources */ = {isa = PBXBuildFile; fileRef = A88F0BB919D2C53F002D0C4C /* t_Sandbox.m */; };
 		A89018CE19E911AE00CAE3E8 /* VisibleCalendarsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A89018CD19E911AE00CAE3E8 /* VisibleCalendarsViewController.m */; };
-		A890399C19D7A9C500521389 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A890399B19D7A9C500521389 /* icon.png */; };
-		A890399E19D7AA1100521389 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A890399D19D7AA1100521389 /* icon@2x.png */; };
 		A890BA2D19E8CCDE0052C10F /* SetingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A890BA2C19E8CCDE0052C10F /* SetingViewController.m */; };
 		A891A75619D5949C004843D2 /* GoogleLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A891A75419D5949C004843D2 /* GoogleLoginViewController.m */; };
 		A891A75719D5949C004843D2 /* GoogleLoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A891A75519D5949C004843D2 /* GoogleLoginViewController.xib */; };
@@ -258,8 +256,6 @@
 		A88F0BBB19D2C56F002D0C4C /* t_Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = t_Singleton.h; sourceTree = "<group>"; };
 		A89018CC19E911AE00CAE3E8 /* VisibleCalendarsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleCalendarsViewController.h; sourceTree = "<group>"; };
 		A89018CD19E911AE00CAE3E8 /* VisibleCalendarsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VisibleCalendarsViewController.m; sourceTree = "<group>"; };
-		A890399B19D7A9C500521389 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
-		A890399D19D7AA1100521389 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
 		A890BA2B19E8CCDE0052C10F /* SetingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetingViewController.h; sourceTree = "<group>"; };
 		A890BA2C19E8CCDE0052C10F /* SetingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetingViewController.m; sourceTree = "<group>"; };
 		A89117F919C1F03D00A0960B /* MacroDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroDefinition.h; sourceTree = "<group>"; };
@@ -493,6 +489,8 @@
 		A8B67C9C19FAA80A0068E107 /* UIViewController+MJPopupViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+MJPopupViewController.m"; sourceTree = "<group>"; };
 		A8B7E72E19FF2F1B0097ABE3 /* CircleDrawView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CircleDrawView.h; sourceTree = "<group>"; };
 		A8B7E72F19FF2F1B0097ABE3 /* CircleDrawView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CircleDrawView.m; sourceTree = "<group>"; };
+		A8B839631A00DC0900F378E5 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		A8B839651A00DC5500F378E5 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		A8B867DC19E296E20004875F /* CoreDataUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreDataUtil.h; sourceTree = "<group>"; };
 		A8B867DD19E296E20004875F /* CoreDataUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoreDataUtil.m; sourceTree = "<group>"; };
 		A8B867DE19E296E20004875F /* NSManagedObject+Explain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+Explain.h"; sourceTree = "<group>"; };
@@ -798,8 +796,8 @@
 		A894D83419B5B9D00088E522 /* Image */ = {
 			isa = PBXGroup;
 			children = (
-				A890399D19D7AA1100521389 /* icon@2x.png */,
-				A890399B19D7A9C500521389 /* icon.png */,
+				A8B839651A00DC5500F378E5 /* Icon.png */,
+				A8B839631A00DC0900F378E5 /* Icon@2x.png */,
 				A89514D219D50F4600538486 /* Default.png */,
 				A89F91D719C5D18D00CB7FAE /* powered-by-google-on-white@2x.png */,
 				A894D89A19B5BAF00088E522 /* Stage */,
@@ -1244,7 +1242,6 @@
 				A89514D319D50F4600538486 /* Default.png in Resources */,
 				A894D85C19B5BACC0088E522 /* Icon_BackArrow.png in Resources */,
 				A894D86319B5BACC0088E522 /* Icon_Add.png in Resources */,
-				A890399C19D7A9C500521389 /* icon.png in Resources */,
 				A894D84E19B5BACC0088E522 /* PEPhotoCropEditor.bundle in Resources */,
 				A894D84D19B5BACC0088E522 /* Icon_BackArrow1.png in Resources */,
 				A877C95D19B450C50075D9E8 /* Main.storyboard in Resources */,
@@ -1258,7 +1255,6 @@
 				A894D8B219B5BB150088E522 /* adress_Icon.png in Resources */,
 				A82B72B719C133ED00D89816 /* day_today.png in Resources */,
 				A894D8AA19B5BB150088E522 /* Alert_Hour.png in Resources */,
-				A890399E19D7AA1100521389 /* icon@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1563,6 +1559,7 @@
 				GCC_PREFIX_HEADER = "Time-Line/Time-Line-Prefix.pch";
 				INFOPLIST_FILE = "Time-Line/Time-Line-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "9590aebe-196b-40fc-b19d-35b1b984f8dd";
 				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/**";
 				WRAPPER_EXTENSION = app;
 			};

@@ -19,6 +19,8 @@
 //时间格式化为rfc3339
 - (NSString *) rfc3339DateFormatter:(NSDate *) date;
 
+-(NSString *) stringformatWithDate:(NSDate *) date;
+
 -(NSString*)formaterStringfromDate:(NSString*)format dateString:(NSString *) dateString;
 
 -(NSString*)stringFormaterDate:(NSString*)format dateString:(NSString *) dateString;

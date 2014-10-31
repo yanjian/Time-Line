@@ -101,12 +101,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     self.accountArr=[[NSMutableArray alloc] initWithCapacity:0];
-    if (self.isLogin) {
-        
-         [self loadWebPageWithString:Google_OAuth_URL];
-    }else{
-        [self loadWebPageWithString:Google_OAuth_URL];
-    }
+    [self loadWebPageWithString:Google_OAuth_URL];
 }
 
 
@@ -114,7 +109,6 @@
 {
     NSLog(@"%@",uilString);
     NSURL *url=[NSURL URLWithString:uilString];
- //   if (!self.isLogin) {
         NSArray *cookieArr=[[NSHTTPCookieStorage sharedHTTPCookieStorage] cookiesForURL:[NSURL URLWithString:uilString]];
         NSHTTPCookie *cookie;
         for (id cook in cookieArr) {
@@ -124,7 +118,6 @@
                 [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
             }
         }
-  //  }
     [self.googleLoginView loadRequest:[NSURLRequest requestWithURL:url]];
 
 }
@@ -140,7 +133,9 @@
         if ([callback_Url hasPrefix:Google_Oauth2Callback_Url]) {
             NSRange rangeStr=[callback_Url rangeOfString:@"error"];//error=access_denied
             if (rangeStr.location==NSNotFound) {
-                 self.googleLoginView.hidden=YES;
+                ASIHTTPRequest *googleRequest= [t_Network httpGet:nil Url:callback_Url Delegate:self Tag:1000];
+                [googleRequest startSynchronous];
+                return NO;
             }else{
                 [self.googleLoginView reload];
             }
@@ -156,57 +151,61 @@
 }
 
 
-- (void)webViewDidFinishLoad:(UIWebView *)webView
-{
-    NSString *content=[self.googleLoginView stringByEvaluatingJavaScriptFromString:@"document.documentElement.innerText"];
-    if(content){
-        id tmpObj=[content objectFromJSONString];
-        if ([tmpObj isKindOfClass:[NSDictionary class]]) {
-            oauthDic=[[content objectFromJSONString] mutableCopy]  ;
-            if (self.isBind) {//本地账号绑定google账号
-                NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
-                [paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"bindAccout"];
-                [paramDic setObject:[oauthDic objectForKey:@"token"] forKey:@"token"];
-                [paramDic setObject:@"refreshToken" forKey:@"refreshToken"];
-                [paramDic setObject:[oauthDic objectForKey:@"tokenTime"] forKey:@"tokenTime"];
-                
-                ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:Google_AccountBind Delegate:self Tag:Google_AccountBind_Tag];
-                [request startAsynchronous];
-            }else{
-                if (oauthDic) {
-                    NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
-                    if (!self.isLogin) {
-                        [paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"email"];
-                        [paramDic setObject:[oauthDic objectForKey:@"uName"] forKey:@"uName"];
-                        [paramDic setObject:[oauthDic objectForKey:@"authCode"] forKey:@"authCode"];
-                        [paramDic setObject:[oauthDic objectForKey:@"token"] forKey:@"token"];
-                        [paramDic setObject:@"refreshToken" forKey:@"refreshToken"];
-                        [paramDic setObject:[oauthDic objectForKey:@"tokenTime"] forKey:@"tokenTime"];
-                        [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
-                        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_REGISTER_URL Delegate:self Tag:LOGIN_REGISTER_URL_TAG userInfo:oauthDic];
-                        [request startAsynchronous];
-                        self.isRegister=YES;
-                    }else{//用google账号直接登陆不用注册
-                        [paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"email"];
-                        [paramDic setObject:[oauthDic objectForKey:@"authCode"] forKey:@"authCode"];
-                        [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
-                        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG userInfo:oauthDic];
-                        [request startAsynchronous];
-                    }
-                }
-            }
-
-        }
-    }
-}
-
 
 - (void)requestFinished:(ASIHTTPRequest *)request{
     
     NSString *responseStr=[request responseString];
     NSUserDefaults *userInfo=[NSUserDefaults standardUserDefaults];
     NSLog(@"%@",responseStr);
-    if (self.isBind) {
+    switch (request.tag) {
+        case 1000:{
+            id tmpObj=[responseStr objectFromJSONString];
+            if ([tmpObj isKindOfClass:[NSDictionary class]]) {
+                    oauthDic=(NSMutableDictionary *)tmpObj  ;
+                    if (self.isBind) {//本地账号绑定google账号
+                        NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
+                        [paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"bindAccout"];
+                        [paramDic setObject:[oauthDic objectForKey:@"token"] forKey:@"token"];
+                        [paramDic setObject:@"refreshToken" forKey:@"refreshToken"];
+                        [paramDic setObject:[oauthDic objectForKey:@"tokenTime"] forKey:@"tokenTime"];
+                        
+                        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:Google_AccountBind Delegate:self Tag:Google_AccountBind_Tag];
+                        [request startAsynchronous];
+                    }else{
+                        if (oauthDic) {
+                            NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
+                            if (!self.isLogin) {
+                                [paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"email"];
+                                [paramDic setObject:[oauthDic objectForKey:@"uName"] forKey:@"uName"];
+                                [paramDic setObject:[oauthDic objectForKey:@"authCode"] forKey:@"authCode"];
+                                [paramDic setObject:[oauthDic objectForKey:@"token"] forKey:@"token"];
+                                [paramDic setObject:@"refreshToken" forKey:@"refreshToken"];
+                                [paramDic setObject:[oauthDic objectForKey:@"tokenTime"] forKey:@"tokenTime"];
+                                [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
+                                ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_REGISTER_URL Delegate:self Tag:LOGIN_REGISTER_URL_TAG userInfo:oauthDic];
+                                [request startAsynchronous];
+                                self.isRegister=YES;
+                            }else{//用google账号直接登陆不用注册
+                                [paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"email"];
+                                [paramDic setObject:[oauthDic objectForKey:@"authCode"] forKey:@"authCode"];
+                                [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
+                                ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG userInfo:oauthDic];
+                                [request startAsynchronous];
+                        }
+                    }
+                }
+
+            }
+          break;
+        }
+        default:
+            break;
+    }
+    if (request.tag==1000) {
+        return;
+    }
+    
+    if (self.isBind) {//暂时就这样处理，后续优化！哎..!太烂了
       if (responseStr) {
           NSMutableDictionary *googleDataDic=[responseStr objectFromJSONString];
           if ([googleDataDic isKindOfClass:[NSDictionary class]]) {
@@ -280,9 +279,6 @@
                               [localArr addObject:ld];
                           }
                           [self.googleCalendar addObject:localArr];
-                          
-                         // [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-                          
                           [self.delegate setGoogleCalendarListData:self.googleCalendar];
                           CalendarListViewController *ca=[[CalendarListViewController alloc] init];
                           ca.googleCalendarDataArr=self.googleCalendar;
@@ -394,8 +390,6 @@
                                 [localArr addObject:ld];
                             }
                             [self.googleCalendar addObject:localArr];
-                            
-                          //  [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                             
                             [self.delegate setGoogleCalendarListData:self.googleCalendar];
                             CalendarListViewController *ca=[[CalendarListViewController alloc] init];

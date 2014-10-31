@@ -170,6 +170,7 @@
     
     UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(cd.frame.size.width, 2, 215, 40)];
     [contextLab setBackgroundColor:[UIColor clearColor]];
+    contextLab.lineBreakMode=NSLineBreakByTruncatingTail;
     [contextLab setText:caObj.summary];
     [cell.contentView addSubview:contextLab];
     return cell;

@@ -419,16 +419,12 @@
             
             cell.timelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:8.0];
             
-//            NSDate *  senddate=[NSDate date];
-            NSDateFormatter  *dateformatter=[[NSDateFormatter alloc] init];
-            [dateformatter setDateFormat:@"HH:MM"];
-//            NSString *  locationString=[dateformatter stringFromDate:senddate];
-//            NSString* keyStr=[NSString stringWithFormat:@"%@%@",temstr,locationString];
             cell.timelabel.text=intervalTime;
             NSLog(@"strtime->>>>%@",starttime);
             cell.starttimelabel.text=[NSString stringWithFormat:@"%@",startstrs];
 
             NSString* strtitle=anyEvent.eventTitle;
+            cell.content.lineBreakMode=NSLineBreakByWordWrapping;
             cell.content.text=[strtitle uppercaseString];
             cell.content.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
             cell.content.textColor=[UIColor blackColor];

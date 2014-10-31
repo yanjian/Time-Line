@@ -127,12 +127,20 @@ static PublicMethodsViewController * PublicMethods = nil;
     NSString* strs=[stringDate substringWithRange:NSMakeRange(range.location+1,stringDate.length-range.location-1)];
     if (strs.length<=0) {
         [tempFormatter setDateFormat:@"YYYY年 M月d日"];
-    }
-    else{
+    }else{
         [tempFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
     }
     return [tempFormatter dateFromString:stringDate];
 }
+
+-(NSString *) stringformatWithDate:(NSDate *) date
+{
+    NSDateFormatter *tempFormatter = [[NSDateFormatter alloc]init];
+    [tempFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
+    [tempFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
+    return [tempFormatter stringFromDate:date];
+}
+
 
 
 -(NSString *) formatStringWithString:(NSString *) stringDate
@@ -218,7 +226,7 @@ static PublicMethodsViewController * PublicMethods = nil;
     [formatter setTimeStyle:NSDateFormatterShortStyle];
     [formatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];// ----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
     
-    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:@"Asia/Beijing"];
+    NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
     [formatter setTimeZone:timeZone];
     
     NSDate *datenow = [NSDate date];
@@ -263,22 +271,23 @@ static PublicMethodsViewController * PublicMethods = nil;
     
     NSTimeInterval cha=late-now;
     
+    NSNumberFormatter *nFormat = [[NSNumberFormatter alloc] init];
+    [nFormat setNumberStyle:NSNumberFormatterDecimalStyle];
+    [nFormat setMaximumFractionDigits:1];
+    
     if (cha/3600<1) {
-        timeString = [NSString stringWithFormat:@"%f", cha/60];
-        timeString = [timeString substringToIndex:timeString.length-7];
-        timeString=[NSString stringWithFormat:@"%@ min", timeString];
+        timeString = [nFormat stringFromNumber: @(cha/60)];
+        timeString=[NSString stringWithFormat:@"%@m", timeString];
         
     }
     if (cha/3600>=1&&cha/86400<1) {
-        timeString = [NSString stringWithFormat:@"%f", cha/3600];
-        timeString = [timeString substringToIndex:timeString.length-7];
-        timeString=[NSString stringWithFormat:@"%@ hr", timeString];
+        timeString = [nFormat stringFromNumber:@(cha/3600)];
+        timeString=[NSString stringWithFormat:@"%@h", timeString];
     }
     if (cha/86400>=1)
     {
-        timeString = [NSString stringWithFormat:@"%f", cha/86400];
-        timeString = [timeString substringToIndex:timeString.length-7];
-        timeString=[NSString stringWithFormat:@"%@ day", timeString];
+        timeString = [nFormat stringFromNumber:@( cha/86400)];
+        timeString = [NSString stringWithFormat:@"%@d", timeString];
         
     }
     return timeString;

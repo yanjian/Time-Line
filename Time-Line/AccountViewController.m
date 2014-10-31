@@ -100,6 +100,7 @@
         UILabel *lab=[self createUILabe];
         UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(lab.bounds.size.width, 2, 215, 40)];
         [contextLab setBackgroundColor:[UIColor clearColor]];
+        contextLab.lineBreakMode=NSLineBreakByTruncatingTail;
         lab.text=@"账号";
         [contextLab setText:account.account];
         [cell.contentView addSubview:lab];

@@ -56,8 +56,13 @@
     
     UILocalNotification *localNotif =[launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
     if (localNotif) {
-		NSLog(@"｀｀｀｀｀｀｀｀｀｀｀｀ %@",localNotif);
-        
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ALERT"
+                                                        message:localNotif.alertBody
+                                                       delegate:nil
+                                              cancelButtonTitle:@"确定"
+                                              otherButtonTitles:nil];
+        [alert show];
+        application.applicationIconBadgeNumber = 0;
 	}
     
     _isread=YES;
@@ -79,24 +84,31 @@
         }
         
     }
+    
+    NSTimeInterval timeInterval= [self getRefreshFetchTimetimeInterval];
+    if (timeInterval==0) {
+        timeInterval= UIApplicationBackgroundFetchIntervalNever;
+    }
+    [application setMinimumBackgroundFetchInterval:timeInterval];
+    
+    
     NSInteger loginStatus=[USER_DEFAULT integerForKey:@"loginStatus"];
     if (1!=loginStatus) {
          [self initLoginView];
     }else{
         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
         [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
-        [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
-        [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
-        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
-        [request startSynchronous];
+        if ([USER_DEFAULT objectForKey:@"authCode"]) {
+            [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
+            [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
+            ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+            [request startSynchronous];
+        }
     }
-    NSTimeInterval timeInterval= [self getRefreshFetchTimetimeInterval];
-    if (timeInterval==0) {
-       timeInterval= UIApplicationBackgroundFetchIntervalNever;
-    }
-    [application setMinimumBackgroundFetchInterval:timeInterval];
+   
     return YES;
 }
+
 
 
 -(NSTimeInterval)getRefreshFetchTimetimeInterval{
@@ -117,7 +129,7 @@
 
 -(void) initLoginView{
     LoginViewController *loginVc = [[LoginViewController alloc] init];
-    [self.window.rootViewController presentViewController:loginVc animated:YES completion:nil];
+    self.window.rootViewController =loginVc;
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request{
@@ -143,14 +155,41 @@
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ALERT"
-                                                    message:notification.alertBody
-                                                   delegate:nil
-                                          cancelButtonTitle:@"确定"
-                                          otherButtonTitles:nil];
-    [alert show];
-    //这里，你就可以通过notification的useinfo，干一些你想做的事情了
-   // application.applicationIconBadgeNumber-=1;
+    
+    if (notification)
+    {
+        UIApplicationState state = application.applicationState;
+        
+        if (state == UIApplicationStateActive) {
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ALERT"
+                                                            message:notification.alertBody
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"确定"
+                                                  otherButtonTitles:nil];
+            [alert show];
+        }
+       
+        
+        application.applicationIconBadgeNumber=0;
+        int count =[[[UIApplication sharedApplication] scheduledLocalNotifications] count];
+        if(count>0)
+        {
+            NSMutableArray *newarry= [NSMutableArray arrayWithCapacity:0];
+            for (int i=0; i<count; i++) {
+                UILocalNotification *notif=[[[UIApplication sharedApplication] scheduledLocalNotifications] objectAtIndex:i];
+                notif.applicationIconBadgeNumber=i+1;
+                [newarry addObject:notif];
+            }
+            [[UIApplication sharedApplication] cancelAllLocalNotifications];
+            if (newarry.count>0) {
+                for (int i=0; i<newarry.count; i++) {
+                    UILocalNotification *notif = [newarry objectAtIndex:i];
+                    [[UIApplication sharedApplication] scheduleLocalNotification:notif];
+                }
+            }
+        }
+    }
 }
 
 
@@ -268,6 +307,26 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    application.applicationIconBadgeNumber=0;
+    int count =[[[UIApplication sharedApplication] scheduledLocalNotifications] count];
+    if(count>0)
+    {
+        NSMutableArray *newarry= [NSMutableArray arrayWithCapacity:0];
+        for (int i=0; i<count; i++) {
+            UILocalNotification *notif=[[[UIApplication sharedApplication] scheduledLocalNotifications] objectAtIndex:i];
+            notif.applicationIconBadgeNumber=i+1;
+            [newarry addObject:notif];
+        }
+        [[UIApplication sharedApplication] cancelAllLocalNotifications];
+        if (newarry.count>0) {
+            for (int i=0; i<newarry.count; i++) {
+                UILocalNotification *notif = [newarry objectAtIndex:i];
+                [[UIApplication sharedApplication] scheduleLocalNotification:notif];
+            }
+        }
+    }
+    
+    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

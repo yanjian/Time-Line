@@ -23,6 +23,7 @@
 @property (nonatomic, strong) NSDictionary *dictCurrentCalendar;
 @property (nonatomic, strong) NSDate *dtEvent;
 @property (nonatomic, strong) NSString *strEvent;
+@property (nonatomic,strong) CLDay *nowTimeDay;
 @property (assign)BOOL isOpen;
 @property (nonatomic,retain)NSIndexPath *selectIndex;
 @property (nonatomic,retain) AnyEvent *event;

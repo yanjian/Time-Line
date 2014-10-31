@@ -171,7 +171,7 @@
     
     UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(cd.frame.size.width, 2, 215, 40)];
     [contextLab setBackgroundColor:[UIColor clearColor]];
-
+    contextLab.lineBreakMode=NSLineBreakByTruncatingTail;
     if ([ca.type intValue ]==AccountTypeGoogle) {
         [contextLab setText:ca.summary];
     }else if([ca.type intValue ]==AccountTypeLocal){

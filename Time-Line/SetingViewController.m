@@ -149,6 +149,7 @@
         AT_Account *atAccount=(AT_Account *)tmpObj;
         UILabel *lab=[self createUILabe];
         UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(lab.bounds.size.width, 2, 215, 40)];
+        contextLab.lineBreakMode=NSLineBreakByTruncatingTail;
         [contextLab setBackgroundColor:[UIColor clearColor]];
         if ([atAccount.accountType intValue]==AccountTypeGoogle) {
             lab.text=@"G";

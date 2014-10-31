@@ -8,7 +8,11 @@
 
 #import "DateDetailsViewController.h"
 #import "GoogleMapViewController.h"
-@interface DateDetailsViewController ()
+#import "Calendar.h"
+#import "CircleDrawView.h"
+@interface DateDetailsViewController (){
+   UIImageView *addressIcon;
+}
 
 @property (nonatomic,strong)  NSDictionary *coordinateDic;//地图坐标
 @end
@@ -61,12 +65,28 @@
     [rview addSubview:_YVbutton];
 
     /* 导航栏标题 */
-    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(100, 20, 110, 30)];
-    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 20, 110, 30)];
+    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(90, 20, 200, 30)];
+    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 25, 200, 20)];
     titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.font = [UIFont boldSystemFontOfSize:22];
+    titleLabel.font = [UIFont boldSystemFontOfSize:18];
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.text =event.eventTitle;
+ 
+    UILabel* accountLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 45, 200, 15)];
+    accountLabel.textAlignment = NSTextAlignmentCenter;
+    accountLabel.font = [UIFont boldSystemFontOfSize:12];
+    accountLabel.textColor = [UIColor whiteColor];
+    NSString *summarystr=[event.calendar summary];
+    
+//    NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:15]};
+//    CGSize size = [summarystr boundingRectWithSize:CGSizeMake(320, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+//    
+//    CircleDrawView *cd=[[CircleDrawView alloc] initWithFrame:CGRectMake(0,0, 10, 15)];
+//    cd.hexString=event.calendar.backgroundColor;
+//    [accountLabel addSubview: cd];
+    accountLabel.text =summarystr ;
+    
+    [rview addSubview:accountLabel];
     [rview addSubview:titleLabel];
     self.navigationItem.titleView = titleView;
     
@@ -84,55 +104,74 @@
         cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
          tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     }
-    if (indexPath.row==0) {
+    if (indexPath.section==0&& indexPath.row==0) {
+         NSString *intervalTime=[[PublicMethodsViewController getPublicMethods]  timeDifference:event.endDate getStrart:event.startDate];
+        UIButton *btn=[UIButton buttonWithType:UIButtonTypeCustom];
+        btn.frame=CGRectMake(76, 85, 40, 40);
+        [btn setBackgroundImage:[UIImage imageNamed:@"Event_time_red"] forState:UIControlStateNormal];
+        btn.titleLabel.font=[UIFont systemFontOfSize:12.f];
+        [btn setTitle:intervalTime forState:UIControlStateNormal];
+        [cell.contentView addSubview:btn];
         UILabel* titlelabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 80)];
         titlelabel.textAlignment=NSTextAlignmentCenter;
         titlelabel.text=event.eventTitle;
         titlelabel.numberOfLines=2;
-        titlelabel.lineBreakMode=NSLineBreakByWordWrapping;
         titlelabel.font=[UIFont boldSystemFontOfSize:17.0f];
         titlelabel.textColor=[UIColor blackColor];
         
         
         
-        UILabel* startlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 80, self.view.frame.size.width, 25)];
+        UILabel* startlabel=[[UILabel alloc]initWithFrame:CGRectMake(90, 80, self.view.frame.size.width-90, 25)];
         startlabel.textAlignment=NSTextAlignmentCenter;
         NSString* start_title=event.startDate;
         startlabel.text=[self dateStringWithFormaterString:start_title];
 
         
-        UILabel* endlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 105, self.view.frame.size.width, 25)];
+        UILabel* endlabel=[[UILabel alloc]initWithFrame:CGRectMake(90, 105, self.view.frame.size.width-90, 25)];
         endlabel.textAlignment=NSTextAlignmentCenter;
         NSString* end_titles=event.endDate;
         endlabel.text=[self dateStringWithFormaterString:end_titles];
 
-        UILabel* notelabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 130, self.view.frame.size.width, 50)];
-        notelabel.textAlignment=NSTextAlignmentCenter;
-        notelabel.text=event.note;
         [cell.contentView addSubview:titlelabel];
         [cell.contentView addSubview:startlabel];
         [cell.contentView addSubview:endlabel];
-        [cell.contentView addSubview:notelabel];
-        
-    }
-    
-    NSString* str=event.location;
-    if (str.length>0) {
-        if (indexPath.row==1) {
-            NSArray *coorArr=nil;
-            if (![event.coordinate isEqualToString:@""]&&event.coordinate) {
-                NSLog(@"%@",event.coordinate);
-               coorArr= [event.coordinate componentsSeparatedByString:@","];
+    }else if(indexPath.section==1&&indexPath.row==0){
+        NSString* str=event.location;
+        NSString *noteStr=event.note;
+        if ((str.length>0&&noteStr.length<=0)||(str.length>0&&noteStr.length>0)) {
+            if (indexPath.row==0) {
+                NSArray *coorArr=nil;
+                if (![event.coordinate isEqualToString:@""]&&event.coordinate) {
+                    NSLog(@"%@",event.coordinate);
+                    coorArr= [event.coordinate componentsSeparatedByString:@","];
+                }
+                if ([coorArr count]>0) {
+                    NSLog(@"%@",coorArr);
+                    self.coordinateDic=@{LATITUDE: [coorArr objectAtIndex:0],LONGITUDE:[coorArr objectAtIndex:1]};
+                }
+                addressIcon=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"adress_Icon"]];
+                NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:15]};
+                CGSize size = [str boundingRectWithSize:CGSizeMake(320, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+                addressIcon.frame=CGRectMake( (self.view.bounds.size.width/2-size.width/2)-23,15, 10, 15);
+                cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+                UILabel* label=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+                label.text=str;
+                label.textAlignment=NSTextAlignmentCenter;
+                [cell.contentView addSubview:label];
+                [cell.contentView addSubview:addressIcon];
             }
-            if ([coorArr count]>0) {
-                NSLog(@"%@",coorArr);
-                self.coordinateDic=@{LATITUDE: [coorArr objectAtIndex:0],LONGITUDE:[coorArr objectAtIndex:1]};
-            }
-            cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
-            UILabel* label=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
-            label.text=str;
-            label.textAlignment=NSTextAlignmentCenter;
-            [cell.contentView addSubview:label];
+        }else if (str.length<=0&&noteStr.length>0){
+            UILabel* notelabel=[[UILabel alloc]initWithFrame:CGRectMake(0,0, self.view.frame.size.width, 50)];
+            notelabel.textAlignment=NSTextAlignmentCenter;
+            notelabel.text=event.note;
+            [cell.contentView addSubview:notelabel];
+        }
+    }else if(indexPath.section==2&&indexPath.row==0){
+        if (event.note) {
+            UILabel* notelabel=[[UILabel alloc]initWithFrame:CGRectMake(0,0, self.view.frame.size.width, 50)];
+            notelabel.textAlignment=NSTextAlignmentCenter;
+            notelabel.text=event.note;
+            [cell.contentView addSubview:notelabel];
         }
     }
     return cell;
@@ -149,19 +188,35 @@
     formateString=[formateString stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
     formateString=[formateString stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
     NSArray* arrays=[formateString componentsSeparatedByString:@"/"];
-    return [NSString stringWithFormat:@"%@  %@/%@ %@",weakStrs,[arrays objectAtIndex:2],[arrays objectAtIndex:1],[arrays objectAtIndex:3]];
+    return [NSString stringWithFormat:@"%@  %@/%@        %@",weakStrs,[arrays objectAtIndex:2],[arrays objectAtIndex:1],[arrays objectAtIndex:3]];
 }
 
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    NSString* str=event.location;
-    if (str.length>0) {
-          return 2;
+
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    NSLog(@"%@=====%@",event.location,event.note);
+    if (![@"" isEqualToString:event.location]) {
+        if (![@"" isEqualToString:event.note]) {
+            return 3;
+        }else{
+            return 2;
+        }
+        
+    }else{
+        if (![@"" isEqualToString:event.note]) {
+            return 2;
+        }else{
+            return 1;
+        }
     }
     return 1;
 }
 
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 1;
+}
+
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.row==0) {
+    if (indexPath.section==0&& indexPath.row==0) {
         return 175;
     }
     return 44;

@@ -35,7 +35,8 @@
     [super viewDidLoad];
     [self.navigationItem setHidesBackButton:YES animated:YES];
     self.alertsArr=[NSArray arrayWithObjects:@"Events",@"All Day Events", nil];
-    
+    self.allDayEventStr=[USER_DEFAULT objectForKey:@"allDay"];
+    self.eventStr=[USER_DEFAULT objectForKey:@"eventTime"];
     self.selectIndexPathArr=[NSMutableArray arrayWithCapacity:0];
     
     self.tableView=[[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
@@ -121,18 +122,6 @@
        [lab setText:self.allDayEventStr];
     }
     [cell.contentView addSubview:lab];
-   
-    
-    
-    //    if (!self.isSelect) {
-    //        cell.accessoryType=UITableViewCellAccessoryCheckmark;
-    //        [self.selectIndexPathArr addObject:indexPath];
-    //        if (indexPath.section==self.calendarArray.count-1) {
-    //            if(indexPath.row==calendarListArr.count-1){
-    //                self.isSelect=YES;
-    //            }
-    //        }
-    //    }
     
     cell.textLabel.text=self.alertsArr[indexPath.row];
     return cell;
@@ -141,7 +130,6 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    UITableViewCell * cell=(UITableViewCell*)[tableView cellForRowAtIndexPath:indexPath];
     if (indexPath.row==0) {//events
         EventAlertsViewController *eventAlerts=[[EventAlertsViewController alloc] init];
         eventAlerts.delegate=self;
@@ -152,13 +140,14 @@
         [self.navigationController pushViewController:allDayEvents animated:YES];
     }
     
-//    if (cell.accessoryType==UITableViewCellAccessoryCheckmark) {
-//        cell.accessoryType=UITableViewCellAccessoryNone;
-//        [self.selectIndexPathArr removeObject:indexPath];
-//    }else{
-//        cell.accessoryType=UITableViewCellAccessoryCheckmark;
-//        [self.selectIndexPathArr addObject:indexPath];
-//    }
+}
+
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    [USER_DEFAULT setObject:self.allDayEventStr forKey:@"allDay"];
+    [USER_DEFAULT setObject:self.eventStr forKey:@"eventTime"];
+    [USER_DEFAULT synchronize];
 }
 
 -(void)eventsAlertTimeString:(NSString *) alertStr{

@@ -29,7 +29,7 @@
 {
     [super viewDidLoad];
     [self.navigationItem setHidesBackButton:YES animated:YES];
-    self.eventAlertsArr=[NSArray arrayWithObjects:@"never",@"5 minutes before",@"15 minutes before",@"30 minutes before",@"1 hour before",@"2 hour before", nil];
+    self.eventAlertsArr=[NSArray arrayWithObjects:@"never",@"At time of event",@"5 minutes before",@"15 minutes before",@"30 minutes before",@"1 hour before",@"2 hour before", nil];
     
     
     self.tableView=[[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];

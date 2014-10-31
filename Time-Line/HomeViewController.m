@@ -761,6 +761,7 @@
 - (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AnyEvent*)event AllEvent:(NSArray *)events {
     if (!event) {  //没有事件添加
         AddEventViewController* add=[[AddEventViewController alloc]initWithNibName:@"AddEventViewController" bundle:nil];
+        add.nowTimeDay=day;
        // UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:add];
        // [self presentViewController:nav animated:YES completion:nil];
         [self.navigationController pushViewController:add animated:YES];

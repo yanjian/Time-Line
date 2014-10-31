@@ -36,6 +36,16 @@
         [self presentViewController:loginView animated:YES completion:nil];
     }else if (sender.tag==11){
         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
+        if (self.userNameTextField.text) {
+            [g_AppDelegate showActivityView:@"userName empty" interval:5];
+            return;
+        }if (self.passwordTextField.text) {
+            [g_AppDelegate showActivityView:@"password empty" interval:5];
+            return;
+        }if (self.emailTextField.text) {
+            [g_AppDelegate showActivityView:@"email empty" interval:5];
+            return;
+        }
         [paramDic setObject:self.userNameTextField.text forKey:@"uName"];
         [paramDic setObject:self.passwordTextField.text forKey:@"uPw"];
         [paramDic setObject:self.emailTextField.text forKey:@"email"];

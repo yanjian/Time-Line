@@ -19,6 +19,9 @@
 @property (nonatomic, readonly) NSUInteger day;
 @property (nonatomic, readonly) NSUInteger month;
 @property (nonatomic, readonly) NSUInteger year;
+@property (nonatomic,readonly) NSUInteger week;
+
+
 
 - (id)initWithDate:(NSDate*)date;
 
@@ -26,4 +29,9 @@
 
 - (BOOL)removeEventByIndex:(int)index;
 
+-(NSString *)weekDayMotch;
+-(NSString *)monthFulfillEn;
+-(NSString *)weekDayFulfillEn;
+-(NSString *)abbreviationWeekDay;
+-(NSString *)abbreviationWeekDayMotch;
 @end
