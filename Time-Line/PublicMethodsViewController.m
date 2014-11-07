@@ -293,6 +293,39 @@ static PublicMethodsViewController * PublicMethods = nil;
     return timeString;
 }
 
+//根据开始时间和结束时间得到多少天，小于1天返回 0
+- (NSUInteger)timeIntegerDifference: (NSString *) theDate getStrart:(NSString*)startdate
+{
+    
+    NSDateFormatter *date=[[NSDateFormatter alloc] init];
+    [date setDateFormat:@"YYYY年 M月dd日HH:mm"];
+    [date setTimeZone: [NSTimeZone defaultTimeZone]];
+    NSDate *d=[date dateFromString:theDate];
+    
+    NSTimeInterval late=[d timeIntervalSince1970]*1;
+    
+    
+    NSDate* dat = [date dateFromString:startdate];
+    NSTimeInterval now=[dat timeIntervalSince1970]*1;
+    NSUInteger time = 0;
+    NSTimeInterval cha=late-now;
+    
+    
+//    if (cha/3600<1) {
+//        time=cha/60;
+//    }
+//    if (cha/3600>=1&&cha/86400<1) {
+//        time=cha/3600;
+//    }
+    if (cha/86400>=1)
+    {
+       time=cha/86400;
+    }
+    return time;
+}
+
+
+
 -(NSString*)getseconde:(NSString*)endstart{
     NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
     [dateFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
@@ -339,25 +372,25 @@ static PublicMethodsViewController * PublicMethods = nil;
     NSString* weakStr=@"";
     switch (weekday-1) {
         case 0:
-            weakStr=@"Sun";
+            weakStr=@"Sunday";
             break;
         case 1:
-            weakStr=@"Mon";
+            weakStr=@"Monday";
             break;
         case 2:
-            weakStr=@"Tue";
+            weakStr=@"Tuesday";
             break;
         case 3:
-            weakStr=@"Wed";
+            weakStr=@"Wednesday";
             break;
         case 4:
-            weakStr=@"Thu";
+            weakStr=@"Thursday";
             break;
         case 5:
-            weakStr=@"Fri";
+            weakStr=@"Friday";
             break;
         case 6:
-            weakStr=@"Sat";
+            weakStr=@"Saturday";
             break;
         default:
             break;

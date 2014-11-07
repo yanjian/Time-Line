@@ -26,7 +26,7 @@
     self.options = options;
     
     // frame must align to the textfield 
-    CGRect frame = CGRectMake(textField.frame.origin.x, textField.frame.origin.y+textField.frame.size.height, textField.frame.size.width,300);
+    CGRect frame = CGRectMake(textField.frame.origin.x, textField.frame.origin.y+textField.frame.size.height, kScreen_Width,kScreen_Height);
     
     // save the font info to reuse in cells
     self.cellLabelFont = textField.font;

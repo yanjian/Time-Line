@@ -34,7 +34,7 @@
 }
 
 - (void)viewDidLoad {
-    MADayView *dayView = [[MADayView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), self.view.bounds.size.height)];
+    MADayView *dayView = [[MADayView alloc] initWithFrame:CGRectMake(0, 0, 300, self.view.bounds.size.height-57)];
     dayView.delegate=self;
     dayView.dataSource=self;
 	dayView.autoScrollToFirstEvent = YES;

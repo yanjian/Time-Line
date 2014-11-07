@@ -20,7 +20,7 @@
 @property (nonatomic, readonly) NSUInteger month;
 @property (nonatomic, readonly) NSUInteger year;
 @property (nonatomic,readonly) NSUInteger week;
-
+@property (nonatomic, assign) BOOL isSelectDay;
 
 
 - (id)initWithDate:(NSDate*)date;

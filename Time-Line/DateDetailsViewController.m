@@ -45,11 +45,17 @@
 
 - (void)initNavigationItem
 {
+    _detaileTableview=[[UITableView alloc] initWithFrame:CGRectMake(0, 60, kScreen_Width, kScreen_Height) style:UITableViewStyleGrouped];
+    _detaileTableview.delegate=self;
+    _detaileTableview.dataSource=self;
+    [self.view addSubview:_detaileTableview];
+    
+    
     UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 66)];
     rview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
     [self.view addSubview:rview];
-
-    //    左边的按钮
+    
+        //    左边的按钮
     _ZVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     _ZVbutton.frame = CGRectMake(20, 30, 21, 25);
     [_ZVbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
@@ -107,7 +113,7 @@
     if (indexPath.section==0&& indexPath.row==0) {
          NSString *intervalTime=[[PublicMethodsViewController getPublicMethods]  timeDifference:event.endDate getStrart:event.startDate];
         UIButton *btn=[UIButton buttonWithType:UIButtonTypeCustom];
-        btn.frame=CGRectMake(76, 85, 40, 40);
+        btn.frame=CGRectMake(30, 65, 40, 40);
         [btn setBackgroundImage:[UIImage imageNamed:@"Event_time_red"] forState:UIControlStateNormal];
         btn.titleLabel.font=[UIFont systemFontOfSize:12.f];
         [btn setTitle:intervalTime forState:UIControlStateNormal];
@@ -121,20 +127,33 @@
         
         
         
-        UILabel* startlabel=[[UILabel alloc]initWithFrame:CGRectMake(90, 80, self.view.frame.size.width-90, 25)];
-        startlabel.textAlignment=NSTextAlignmentCenter;
+        UILabel* startlabel=[[UILabel alloc]initWithFrame:CGRectMake(65, 60, self.view.frame.size.width-170, 25)];
+        startlabel.textAlignment=NSTextAlignmentRight;
         NSString* start_title=event.startDate;
-        startlabel.text=[self dateStringWithFormaterString:start_title];
+        NSArray *startArr=[self dateStringWithFormaterString:start_title];
+        startlabel.text=[NSString stringWithFormat:@"%@  %@/%@",startArr[4],startArr[2],startArr[1]];
 
+        UILabel* timeStartlabel=[[UILabel alloc]initWithFrame:CGRectMake(self.view.frame.size.width-70, 60, 60, 25)];
+        timeStartlabel.textAlignment=NSTextAlignmentCenter;
+        timeStartlabel.text=startArr[3];
         
-        UILabel* endlabel=[[UILabel alloc]initWithFrame:CGRectMake(90, 105, self.view.frame.size.width-90, 25)];
-        endlabel.textAlignment=NSTextAlignmentCenter;
+        
+        UILabel* endlabel=[[UILabel alloc]initWithFrame:CGRectMake(65, 85, self.view.frame.size.width-170, 25)];
+        endlabel.textAlignment=NSTextAlignmentRight;
         NSString* end_titles=event.endDate;
-        endlabel.text=[self dateStringWithFormaterString:end_titles];
-
+        NSArray *endArr=[self dateStringWithFormaterString:end_titles];
+        endlabel.text=[NSString stringWithFormat:@"%@  %@/%@",endArr[4],endArr[2],endArr[1]];
+        
+        UILabel* timeEndlabel=[[UILabel alloc]initWithFrame:CGRectMake(self.view.frame.size.width-70,85, 60, 25)];
+        timeEndlabel.textAlignment=NSTextAlignmentCenter;
+        timeEndlabel.text=startArr[3];
+        timeEndlabel.text=endArr[3];
+        
         [cell.contentView addSubview:titlelabel];
         [cell.contentView addSubview:startlabel];
+        [cell.contentView addSubview:timeStartlabel];
         [cell.contentView addSubview:endlabel];
+        [cell.contentView addSubview:timeEndlabel];
     }else if(indexPath.section==1&&indexPath.row==0){
         NSString* str=event.location;
         NSString *noteStr=event.note;
@@ -178,7 +197,7 @@
 }
 
 
--(NSString *)dateStringWithFormaterString:(NSString *) formateString
+-(NSMutableArray *)dateStringWithFormaterString:(NSString *) formateString
 {
     NSDateFormatter *formatters =[[NSDateFormatter alloc] init];
     [formatters setDateFormat:@"YYYY年 M月dd日HH:mm"];
@@ -187,8 +206,9 @@
     formateString=[formateString stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
     formateString=[formateString stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
     formateString=[formateString stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
-    NSArray* arrays=[formateString componentsSeparatedByString:@"/"];
-    return [NSString stringWithFormat:@"%@  %@/%@        %@",weakStrs,[arrays objectAtIndex:2],[arrays objectAtIndex:1],[arrays objectAtIndex:3]];
+    NSMutableArray* arrays=[[formateString componentsSeparatedByString:@"/"] mutableCopy];
+    [arrays insertObject:weakStrs atIndex:arrays.count];
+    return arrays;
 }
 
 
@@ -217,7 +237,7 @@
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section==0&& indexPath.row==0) {
-        return 175;
+        return 130;
     }
     return 44;
 }

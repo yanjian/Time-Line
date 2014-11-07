@@ -233,6 +233,8 @@
         [userInfo removeObjectForKey:@"accountBinds"];
         [userInfo removeObjectForKey:@"email"];
         [userInfo removeObjectForKey:@"authCode"];
+        [userInfo removeObjectForKey:@"pwd"];
+        [userInfo removeObjectForKey:@"accountType"];
         [userInfo synchronize];
     
         LoginViewController *loginVc = [[LoginViewController alloc] init];

@@ -12,6 +12,7 @@
 #import "LoginRegisterViewController.h"
 #import "LocalCalendarData.h"
 #import "GoogleCalendarData.h"
+#import "NSString+StringManageMd5.h"
 #import "AT_Account.h"
 #import "Calendar.h"
 
@@ -73,12 +74,6 @@
 }
 
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
-    self.ErrerMsg.text=@"";
-    return YES;
-
-}
-
 //登陆页上按钮事件
 - (IBAction)commonButtonEvent:(UIButton *)sender {
     
@@ -91,13 +86,28 @@
     }else if (sender.tag==11){//Login button
         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
         if ([@"" isEqualToString:self.username.text]) {
+            [ShowHUD showTextOnly:@"Please enter your user name" configParameter:^(ShowHUD *config) {
+                config.animationStyle=MBProgressHUDAnimationFade;
+                config.margin          = 20.f;    // 边缘留白
+                config.opacity         = 0.7f;    // 设定透明度
+                config.cornerRadius    = 10.f;     // 设定圆角
+                config.textFont        = [UIFont systemFontOfSize:14.f];
+            } duration:2 inView:self.view];
             return;
         }
         if ([@"" isEqualToString:self.passwordBtn.text]) {
+            [ShowHUD showTextOnly:@"Please enter the password" configParameter:^(ShowHUD *config) {
+                config.animationStyle=MBProgressHUDAnimationZoomOut;
+                config.margin          = 20.f;    // 边缘留白
+                config.opacity         = 0.7f;    // 设定透明度
+                config.cornerRadius    = 10.f;     // 设定圆角
+                config.textFont        = [UIFont systemFontOfSize:14.f];
+            } duration:2 inView:self.view];
             return;
         }
         [paramDic setObject:self.username.text forKey:@"uName"];
-        [paramDic setObject:self.passwordBtn.text forKey:@"uPw"];
+        NSString *md5Pw= [[NSString stringWithString:self.passwordBtn.text] md5];
+        [paramDic setObject:md5Pw forKey:@"uPw"];
         [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
         [self addNetWorkRequest:paramDic];
         
@@ -134,7 +144,9 @@
                 [g_ASIQuent addOperation:userInfoRequest];
                 [self addRequestTAG:LoginUser_GetUserInfo_Tag];
                 [userInfo setValue:self.username.text forKey:@"userName"];
+                [userInfo setValue:[[NSString stringWithString:self.passwordBtn.text] md5] forKey:@"pwd"];
                 [userInfo setValue:@(UserLoginStatus_YES) forKey:@"loginStatus"];
+                [userInfo setValue:@(AccountTypeLocal) forKey:@"accountType"];
                 GoogleLoginViewController *glvc=[[GoogleLoginViewController alloc] initWithNibName:@"GoogleLoginViewController" bundle:nil];
                 glvc.isBind=YES;
                 glvc.isSync=YES;
@@ -142,7 +154,13 @@
                 UINavigationController *googleNav=[[UINavigationController alloc] initWithRootViewController:glvc];
                 [self presentViewController:googleNav animated:YES completion:nil];
             }else{
-                 self.ErrerMsg.text=@"account or password error!";
+                [ShowHUD showTextOnly:@"account or password error!" configParameter:^(ShowHUD *config) {
+                    config.animationStyle=MBProgressHUDAnimationZoomOut;
+                    config.margin          = 20.f;    // 边缘留白
+                    config.opacity         = 0.7f;    // 设定透明度
+                    config.cornerRadius    = 10.f;     // 设定圆角
+                    config.textFont        = [UIFont systemFontOfSize:14.f];
+                } duration:2 inView:self.view];
             }
             break;
         }
@@ -154,7 +172,7 @@
                     ASIHTTPRequest *bindListRequest= [t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
                    
                     [g_ASIQuent addOperation:bindListRequest];
-                     [self addRequestTAG:Local_CalendarOperation_Tag];
+                    [self addRequestTAG:Local_CalendarOperation_Tag];
                     NSDictionary *userInfoDic=[loginUser objectForKey:@"data"];
                     //accountBinds =     ({account = "yanjaya5201314@gmail.com";type = 1;uid = 76;})
                     NSArray *accountBinds=[userInfoDic objectForKey:@"accountBinds"] ;

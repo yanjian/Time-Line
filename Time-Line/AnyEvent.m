@@ -31,6 +31,7 @@
 @dynamic organizer;
 @dynamic sequence;
 @dynamic status;
+@dynamic isAllDay;
 @dynamic calendar;
 
 

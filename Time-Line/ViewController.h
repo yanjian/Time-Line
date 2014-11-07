@@ -10,19 +10,19 @@
 #import "CLCalendarView.h"
 #import "JCDatePicker.h"
 @protocol settimeDay <NSObject>
-- (void)getstarttime:(NSString*)start getendtime:(NSString*)end;
+- (void)getstarttime:(NSString*)start getendtime:(NSString*)end isAllDay:(BOOL) isAll;
 @end
+
 @interface ViewController : UIViewController<CLCalendarDataSource, CLCalendarDelegate,JCDatePickerDelegate>{
     CLCalendarView *calendarView;
     NSMutableArray     *dateArr;
     JCDatePicker* datePicker;
 }
 @property (nonatomic, weak) id<settimeDay> detelegate;
-@property (weak, nonatomic) IBOutlet UILabel *startlabelshow;
-@property (weak, nonatomic) IBOutlet UILabel *endlabelshow;
 
 @property (weak, nonatomic) IBOutlet UIButton *startEventButton;
 @property (weak, nonatomic) IBOutlet UIButton *endbutton;
 - (IBAction)startevent:(id)sender;
 - (IBAction)endEvent:(id)sender;
+-(void)addEventViewControler:(UITableViewController *)view anyEvent:(AnyEvent *)anyEvent;
 @end

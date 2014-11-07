@@ -18,7 +18,7 @@
 
 @property(nonatomic,retain) AnyEvent* event;
 @property(retain,nonatomic) NSDictionary* datedic;//一个事件
-@property (weak, nonatomic) IBOutlet UITableView *detaileTableview;
+@property (strong, nonatomic) IBOutlet UITableView *detaileTableview;
 
 @property(retain,nonatomic)NSArray* dateArr;//所有数据
 @end

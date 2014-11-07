@@ -21,6 +21,7 @@
 @property (nonatomic,assign) BOOL isLocalClandarList;
 @property (nonatomic,strong) NSMutableArray *googleCalendar;
 @property (nonatomic,strong) NSMutableArray *accountArr;
+@property (nonatomic,strong) UIActivityIndicatorView* activityIndicatorView;
 @end
 
 @implementation GoogleLoginViewController
@@ -49,12 +50,15 @@
     titlelabel.textColor = [UIColor whiteColor];
     [titleView addSubview:titlelabel];
     self.navigationItem.titleView =titleView;
-
+    _activityIndicatorView = [ [ UIActivityIndicatorView  alloc ] initWithFrame:CGRectMake(192.0,13.0,20,20.0)];
+    _activityIndicatorView.hidesWhenStopped=NO;
+    _activityIndicatorView.activityIndicatorViewStyle= UIActivityIndicatorViewStyleWhite;
+    [titleView addSubview:_activityIndicatorView];
     if (self.isBind) {
         if (self.isSeting) {
             if (self.isSync) {
                 titlelabel.text = @"Sync with Google";
-                UIButton *rightBtn= [self createRightBtn:@"SKIP"];
+                UIButton *rightBtn= [self createRightBtn:@" SKIP"];
                 self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
             }else{
                 titlelabel.text = @"Connect";
@@ -63,7 +67,7 @@
             }
         }else{
          titlelabel.text = @"Sync with Google";
-         UIButton *rightBtn= [self createRightBtn:@"SKIP"];
+         UIButton *rightBtn= [self createRightBtn:@" SKIP"];
          self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
         }
     }else {
@@ -91,7 +95,7 @@
 -(UIButton *)createRightBtn:(NSString *) title{
     UIButton *rightBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     [rightBtn setTitle:title forState:UIControlStateNormal];
-    [rightBtn setFrame:CGRectMake(280, 2, 60, 20)];
+    [rightBtn setFrame:CGRectMake(290, 4, 60, 20)];
     [rightBtn addTarget:self action:@selector(bindGoogleAccountSkip:) forControlEvents:UIControlEventTouchUpInside];
     return rightBtn;
 }
@@ -101,6 +105,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     self.accountArr=[[NSMutableArray alloc] initWithCapacity:0];
+    [ _activityIndicatorView startAnimating ];//启动活动图标
     [self loadWebPageWithString:Google_OAuth_URL];
 }
 
@@ -129,10 +134,12 @@
     if (UIWebViewNavigationTypeFormSubmitted==navigationType) {
         NSString *callback_Url=[[request URL] absoluteString];
          NSLog(@"%@=====%d",[[request URL] absoluteString],navigationType);
-        
+         [_activityIndicatorView setHidden:NO];
+         [ _activityIndicatorView startAnimating ];
         if ([callback_Url hasPrefix:Google_Oauth2Callback_Url]) {
             NSRange rangeStr=[callback_Url rangeOfString:@"error"];//error=access_denied
             if (rangeStr.location==NSNotFound) {
+                
                 ASIHTTPRequest *googleRequest= [t_Network httpGet:nil Url:callback_Url Delegate:self Tag:1000];
                 [googleRequest startSynchronous];
                 return NO;
@@ -144,6 +151,11 @@
     return YES;
 }
 
+- (void)webViewDidFinishLoad:(UIWebView *)webView{
+    
+   [ _activityIndicatorView stopAnimating ];//停止活动图标
+    [_activityIndicatorView setHidden:YES];
+}
 
 -(void)bindGoogleAccountSkip:(UIButton *)sender
 {
@@ -194,14 +206,35 @@
                         }
                     }
                 }
-
+                
             }
           break;
+        }
+        case Google_AccountBind_Tag:{
+            id tmpObj=[responseStr objectFromJSONString];
+            if ([tmpObj isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *dic=(NSMutableDictionary *)tmpObj;
+                NSString *param= dic[@"statusCode"];
+                if ([@"-3" isEqualToString:param]) {
+                    [ShowHUD showTextOnly:@"This email has been registered or binding" configParameter:^(ShowHUD *config) {
+                        config.animationStyle=MBProgressHUDAnimationZoomOut;
+                        config.margin          = 20.f;    // 边缘留白
+                        config.opacity         = 0.7f;    // 设定透明度
+                        config.cornerRadius    = 10.f;     // 设定圆角
+                        config.textFont        = [UIFont systemFontOfSize:14.f];
+                    } duration:3 inView:self.view];
+                    [self.googleLoginView reload];
+                }
+            }
+            
+            break;
         }
         default:
             break;
     }
     if (request.tag==1000) {
+        [_activityIndicatorView stopAnimating];
+        [_activityIndicatorView setHidden:YES];
         return;
     }
     
@@ -264,7 +297,7 @@
                           ac.account=gcd.account;
                           ac.accountType=@(AccountTypeLocal);
 
-                          
+                          [userInfo setValue:@(AccountTypeGoogle) forKey:@"accountType"];
                           [userInfo setValue:gcd.account forKey:@"email"];
                           [userInfo setValue:gcd.account forKey:@"userName"];
                           [userInfo setValue:@(UserLoginStatus_YES) forKey:@"loginStatus"];
@@ -374,7 +407,7 @@
                             [userInfo setValue:gcd.account forKey:@"email"];
                             [userInfo setValue:gcd.account forKey:@"userName"];
                             [userInfo setValue:@(UserLoginStatus_YES) forKey:@"loginStatus"];
-                            
+                            [userInfo setValue:@(AccountTypeGoogle) forKey:@"accountType"];
                             
                             [self.accountArr addObject:ac];
                             

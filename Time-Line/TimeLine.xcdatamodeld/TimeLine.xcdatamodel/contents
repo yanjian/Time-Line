@@ -10,6 +10,7 @@
         <attribute name="eId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="endDate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="eventTitle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isAllDay" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="isSync" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
@@ -41,7 +42,7 @@
         <relationship name="atAccount" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AT_Account" inverseName="ca" inverseEntity="AT_Account" syncable="YES"/>
     </entity>
     <elements>
-        <element name="AnyEvent" positionX="-306" positionY="-124" width="128" height="345"/>
+        <element name="AnyEvent" positionX="-306" positionY="-124" width="128" height="360"/>
         <element name="AT_Account" positionX="-497" positionY="-136" width="128" height="88"/>
         <element name="Calendar" positionX="-54" positionY="68" width="128" height="210"/>
     </elements>

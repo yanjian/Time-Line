@@ -78,6 +78,12 @@
 #define COCOAPODS_VERSION_MINOR_ASIHTTPRequest_S3 8
 #define COCOAPODS_VERSION_PATCH_ASIHTTPRequest_S3 2
 
+// CNPPopupController
+#define COCOAPODS_POD_AVAILABLE_CNPPopupController
+#define COCOAPODS_VERSION_MAJOR_CNPPopupController 0
+#define COCOAPODS_VERSION_MINOR_CNPPopupController 1
+#define COCOAPODS_VERSION_PATCH_CNPPopupController 2
+
 // CupertinoYankee
 #define COCOAPODS_POD_AVAILABLE_CupertinoYankee
 #define COCOAPODS_VERSION_MAJOR_CupertinoYankee 0
@@ -100,7 +106,13 @@
 #define COCOAPODS_POD_AVAILABLE_FXBlurView
 #define COCOAPODS_VERSION_MAJOR_FXBlurView 1
 #define COCOAPODS_VERSION_MINOR_FXBlurView 6
-#define COCOAPODS_VERSION_PATCH_FXBlurView 2
+#define COCOAPODS_VERSION_PATCH_FXBlurView 3
+
+// Fingertips
+#define COCOAPODS_POD_AVAILABLE_Fingertips
+#define COCOAPODS_VERSION_MAJOR_Fingertips 0
+#define COCOAPODS_VERSION_MINOR_Fingertips 3
+#define COCOAPODS_VERSION_PATCH_Fingertips 0
 
 // JSONKit-NoWarning
 #define COCOAPODS_POD_AVAILABLE_JSONKit_NoWarning
@@ -161,4 +173,10 @@
 #define COCOAPODS_VERSION_MAJOR_UIColor_HexString 1
 #define COCOAPODS_VERSION_MINOR_UIColor_HexString 0
 #define COCOAPODS_VERSION_PATCH_UIColor_HexString 1
+
+// pop
+#define COCOAPODS_POD_AVAILABLE_pop
+#define COCOAPODS_VERSION_MAJOR_pop 1
+#define COCOAPODS_VERSION_MINOR_pop 0
+#define COCOAPODS_VERSION_PATCH_pop 7
 

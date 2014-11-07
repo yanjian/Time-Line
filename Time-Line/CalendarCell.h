@@ -21,12 +21,15 @@
 @interface CalendarCell : UITableViewCell{
     NSMutableArray *_btnArray;
     NSMutableArray *_bgArray;
+    NSMutableArray *_pointArray;
 }
 
 
 @property (nonatomic, weak) id<CalendarCellDelegate> detelegate;
 @property (nonatomic, strong) NSArray *weekArr;
 @property (nonatomic,copy)NSString* time;
-
+@property (nonatomic,strong) UIImageView * pointImage;
+@property (nonatomic,retain)UIImageView* imageview;
+@property (nonatomic,strong) NSArray *AllWeekArr;
 
 @end

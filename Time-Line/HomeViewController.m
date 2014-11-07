@@ -14,7 +14,7 @@
 #import "AnyEvent.h"
 #import "Calendar.h"
 #import "SetingViewController.h"
-#import "SetingsNavigationViewController.h"
+#import "SetingsNavigationController.h"
 
 
 @interface HomeViewController () <ASIHTTPRequestDelegate>{
@@ -300,7 +300,7 @@
     [anyEventDic setValue:@"" forKey:@"originalStartTime"];
     [anyEventDic setValue:anyEvent.calendar.timeZone forKey:@"timeZone"];
     [anyEventDic setValue:anyEvent.note forKey:@"note"];
-    [anyEventDic setValue:@(0) forKey:@"allDay"];
+    [anyEventDic setValue:anyEvent.isAllDay forKey:@"allDay"];
     [anyEventDic setValue:@(0) forKey:@"sequence"];
     return [anyEventDic JSONString];
 }
@@ -565,7 +565,7 @@
     rview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
 //    左边的按钮
     _ZVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    _ZVbutton.frame = CGRectMake(20, 30, 21, 21);
+    _ZVbutton.frame = CGRectMake(10, 32, 27, 25);
     [_ZVbutton setBackgroundImage:[UIImage imageNamed:@"Icon_Menu"] forState:UIControlStateNormal];
     [_ZVbutton addTarget:self action:@selector(setZVbutton) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:_ZVbutton];
@@ -573,8 +573,7 @@
 
 //   导航： 右边的按钮
     _YVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    _YVbutton.frame = CGRectMake(280, 30, 21, 21);
-    //_YVbutton.backgroundColor = [UIColor redColor];
+    _YVbutton.frame = CGRectMake(280, 32, 27, 25);
     [_YVbutton setBackgroundImage:[UIImage imageNamed:@"add_action"] forState:UIControlStateNormal];
     [_YVbutton addTarget:self action:@selector(setYVbutton) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:_YVbutton];
@@ -587,11 +586,11 @@
     [rightBtn_arrow addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:rightBtn_arrow];
 //  中间的标题
-    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(90, 30, 130, 30)];
+    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(80, 30, 180, 30)];
     [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:titleView];
     
-    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 130, 30)];
+    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 30)];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     //    titleLabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
     titleLabel.font=[UIFont boldSystemFontOfSize:20.0f];
@@ -660,7 +659,7 @@
 //    _scrollview.contentOffset = CGPointMake(0, 0);
 //    [UIView commitAnimations];
     SetingViewController *setVC=[[SetingViewController alloc] init];
-    SetingsNavigationViewController *nc=[[SetingsNavigationViewController alloc] initWithRootViewController:setVC];
+    SetingsNavigationController *nc=[[SetingsNavigationController alloc] initWithRootViewController:setVC];
     nc.navigationBar.barTintColor=blueColor;
     [self presentViewController:nc animated:YES completion:nil];
     
@@ -760,13 +759,11 @@
 //点击事件tableview，添加或查询事件详细
 - (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AnyEvent*)event AllEvent:(NSArray *)events {
     if (!event) {  //没有事件添加
-        AddEventViewController* add=[[AddEventViewController alloc]initWithNibName:@"AddEventViewController" bundle:nil];
+        AddEventViewController* add=[[AddEventViewController alloc] init];
         add.nowTimeDay=day;
-       // UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:add];
-       // [self presentViewController:nav animated:YES completion:nil];
         [self.navigationController pushViewController:add animated:YES];
     }else {  //有事件查看详细
-        DateDetailsViewController* dateDetails=[[DateDetailsViewController alloc]initWithNibName:@"DateDetailsViewController" bundle:nil];
+        DateDetailsViewController* dateDetails=[[DateDetailsViewController alloc] init];
         dateDetails.event=event;
         dateDetails.dateArr=events;
         [self.navigationController pushViewController:dateDetails animated:YES];
@@ -823,7 +820,12 @@
         default:
             break;
     }
-    titleLabel.text = title;
+    if ([CalendarDateUtil getCurrentYear]==year) {
+        titleLabel.text = title;
+    }else{
+        titleLabel.text=[[NSString alloc] initWithFormat:@"%@ %d",title,year];
+    }
+    
 }
 
 

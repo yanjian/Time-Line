@@ -8,13 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "MADayView.h"
+#import "YQViewController.h"
 @protocol MJSecondPopupDelegate;
 @protocol popListViewDelegate;
 @class MAEventKitDataSource;
 @class MAEvent;
 
 
-@interface MJSecondDetailViewController : UIViewController<MADayViewDataSource,MADayViewDelegate> {
+@interface MJSecondDetailViewController : YQViewController<MADayViewDataSource,MADayViewDelegate> {
     MAEventKitDataSource *_eventKitDataSource;
     MAEvent *_event;
 }

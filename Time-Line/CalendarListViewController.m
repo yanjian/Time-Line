@@ -432,6 +432,7 @@
     anyEvent.updated=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
     anyEvent.status=[dataDic objectForKey:@"status"];
     anyEvent.startDate= statrstring;
+    anyEvent.isAllDay=@([[dataDic objectForKey:@"allDay"] intValue]);//是否是全天事件
     anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"endTime"]];
     
     if ([dataDic objectForKey:@"note"]) {

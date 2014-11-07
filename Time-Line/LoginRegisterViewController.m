@@ -8,6 +8,7 @@
 
 #import "LoginRegisterViewController.h"
 #import "LoginViewController.h"
+#import "NSString+StringManageMd5.h"
 #import "GoogleLoginViewController.h"
 @interface LoginRegisterViewController ()<ASIHTTPRequestDelegate>
 
@@ -35,19 +36,42 @@
         LoginViewController *loginView=[[LoginViewController alloc] init];
         [self presentViewController:loginView animated:YES completion:nil];
     }else if (sender.tag==11){
-        NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
-        if (self.userNameTextField.text) {
-            [g_AppDelegate showActivityView:@"userName empty" interval:5];
-            return;
-        }if (self.passwordTextField.text) {
-            [g_AppDelegate showActivityView:@"password empty" interval:5];
-            return;
-        }if (self.emailTextField.text) {
-            [g_AppDelegate showActivityView:@"email empty" interval:5];
+       
+        if ([@"" isEqualToString:self.userNameTextField.text ]) {
+            [ShowHUD showTextOnly:@"userName empty" configParameter:^(ShowHUD *config) {
+                config.animationStyle=MBProgressHUDAnimationFade;
+                config.margin          = 20.f;    // 边缘留白
+                config.opacity         = 0.7f;    // 设定透明度
+                config.cornerRadius    = 10.f;     // 设定圆角
+                config.textFont        = [UIFont systemFontOfSize:14.f];
+            } duration:2 inView:self.view];
             return;
         }
+        if ([@"" isEqualToString:self.emailTextField.text ]) {
+            [ShowHUD showTextOnly:@"email empty" configParameter:^(ShowHUD *config) {
+                config.animationStyle=MBProgressHUDAnimationFade;
+                config.margin          = 20.f;    // 边缘留白
+                config.opacity         = 0.7f;    // 设定透明度
+                config.cornerRadius    = 10.f;     // 设定圆角
+                config.textFont        = [UIFont systemFontOfSize:14.f];
+            } duration:2 inView:self.view];
+            return;
+        }
+        if ([ @"" isEqualToString:self.passwordTextField.text ]) {
+            [ShowHUD showTextOnly:@"password empty" configParameter:^(ShowHUD *config) {
+                config.animationStyle=MBProgressHUDAnimationFade;
+                config.margin          = 20.f;    // 边缘留白
+                config.opacity         = 0.7f;    // 设定透明度
+                config.cornerRadius    = 10.f;     // 设定圆角
+                config.textFont        = [UIFont systemFontOfSize:14.f];
+            } duration:2 inView:self.view];
+            return;
+        }
+        NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
         [paramDic setObject:self.userNameTextField.text forKey:@"uName"];
-        [paramDic setObject:self.passwordTextField.text forKey:@"uPw"];
+        NSString *md5Pw=[[NSString stringWithString:self.passwordTextField.text] md5];
+        NSLog(@"%@",md5Pw);
+        [paramDic setObject:md5Pw forKey:@"uPw"];
         [paramDic setObject:self.emailTextField.text forKey:@"email"];
         [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
        ASIHTTPRequest *request= [t_Network httpGet:paramDic Url:LOGIN_REGISTER_URL Delegate:self Tag:LOGIN_REGISTER_URL_TAG];

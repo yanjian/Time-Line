@@ -22,6 +22,7 @@
 -(NSString *) stringformatWithDate:(NSDate *) date;
 
 -(NSString*)formaterStringfromDate:(NSString*)format dateString:(NSString *) dateString;
+- (NSUInteger)timeIntegerDifference: (NSString *) theDate getStrart:(NSString*)startdate;
 
 -(NSString*)stringFormaterDate:(NSString*)format dateString:(NSString *) dateString;
 

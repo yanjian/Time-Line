@@ -13,6 +13,7 @@
 #import "DayViewController.h"
 #import "MAEvent.h"
 #import "MJSecondDetailViewController.h"
+#import "YQNavigationController.h"
 
 #define LineGroundColor [UIColor colorWithRed:201.0f/255.0f green:201.0f/255.0f blue:201.0f/255.0f alpha:1.0f]
 @interface ViewController ()<MJSecondPopupDelegate>{
@@ -21,9 +22,24 @@
     NSMutableArray* minArray;
     UILabel* startLabel;
     UILabel* endLabel;
+    
+    
+    UILabel * startTimeLable;
+    UILabel * endTimeLabel;
+    UILabel * tStartLable;
+    UILabel * tEndLable;
+    UILabel *flagLab;
+    
+    UILabel * sameDayLable;
+    UILabel * sameTimeLable;
+    UILabel * allDayLable;
+    
     BOOL isstate;
     NSString* startStr;
     NSString* endStr;
+    AnyEvent * anyEventObj;
+    
+    BOOL isButtonOn;
 }
 
 @end
@@ -42,7 +58,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
     dateArr = [NSMutableArray array];
     houresArray=[[NSMutableArray alloc]initWithCapacity:0];
     minArray=[[NSMutableArray alloc]initWithCapacity:0];
@@ -57,7 +72,7 @@
         [minArray addObject:str];
     }
     NSInteger cDay = [CalendarDateUtil getCurrentDay] + 6 *30;
-    //    NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
+   // NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
     
     NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];
     
@@ -72,9 +87,11 @@
             if (day.isToday) {
                 [calendarView setToDayRow:(i-startIndex)/7 Index:d];
             }
-        }
+         }
         [dateArr addObject:weekArr];
     }
+    [calendarView goBackToday];
+
 }
 
 
@@ -89,7 +106,7 @@
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow.png"] forState:UIControlStateNormal];
    
-    [leftBtn setFrame:CGRectMake(0, 2, 15, 20)];
+    [leftBtn setFrame:CGRectMake(0, 2, 21, 25)];
     [leftBtn addTarget:self action:@selector(disviewcontroller) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
    
@@ -102,25 +119,77 @@
     
     
     /* 导航栏标题 */
-    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(0, 0, 140, 40)];
+    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(0, 0, 260, 40)];
     
     
+//    
+//    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 120, 40)];
+//    titleLabel.textAlignment = NSTextAlignmentCenter;
+//    titleLabel.font = [UIFont boldSystemFontOfSize:22];
+//    titleLabel.textColor = [UIColor whiteColor];
+//    [titleView addSubview:titleLabel];
     
-    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 140, 40)];
-    //titleLabel.backgroundColor = [UIColor redColor];
-    titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.font = [UIFont boldSystemFontOfSize:22];
-    titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.text = @"January 2014";
+    allDayLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 230, 40)];
+    allDayLable.textAlignment = NSTextAlignmentCenter;
+    allDayLable.font = [UIFont boldSystemFontOfSize:17];
+    allDayLable.textColor = [UIColor whiteColor];
+    [titleView addSubview:allDayLable];
+
     
     
+    startTimeLable = [[UILabel alloc] initWithFrame:CGRectMake(5, 0, 110, 20)];
+    startTimeLable.textAlignment = NSTextAlignmentCenter;
+    startTimeLable.font = [UIFont boldSystemFontOfSize:17];
+   // [startTimeLable setBackgroundColor:[UIColor redColor]];
+    startTimeLable.textColor = [UIColor whiteColor];
     
+    tStartLable = [[UILabel alloc] initWithFrame:CGRectMake(5, 20, 110, 20)];
+    tStartLable.textAlignment = NSTextAlignmentCenter;
+    tStartLable.font = [UIFont boldSystemFontOfSize:17];
+   // [tStartLable setBackgroundColor:[UIColor redColor]];
+    tStartLable.textColor = [UIColor whiteColor];
+    [titleView addSubview:tStartLable];
+    [titleView addSubview:startTimeLable];
     
-    [titleView addSubview:titleLabel];
+    endTimeLabel = [[UILabel alloc] initWithFrame:CGRectMake(120, 0, 110, 20)];
+    endTimeLabel.textAlignment = NSTextAlignmentCenter;
+   // [startTimeLable setBackgroundColor:[UIColor greenColor]];
+    endTimeLabel.font = [UIFont boldSystemFontOfSize:17];
+    endTimeLabel.textColor = [UIColor whiteColor];
+    
+    tEndLable = [[UILabel alloc] initWithFrame:CGRectMake(120, 20, 110, 20)];
+    tEndLable.textAlignment = NSTextAlignmentCenter;
+    tEndLable.font = [UIFont boldSystemFontOfSize:17];
+    tEndLable.textColor = [UIColor whiteColor];
+   // [tEndLable setBackgroundColor:purple];
+
+    flagLab=[[UILabel alloc] initWithFrame:CGRectMake(110, 20, 20, 20)];
+    flagLab.textColor=[UIColor whiteColor];
+    flagLab.text=@"→";
+    
+    [titleView addSubview:flagLab];
+    [titleView addSubview:tEndLable];
+    [titleView addSubview:endTimeLabel];
+    
+    sameDayLable=[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 240, 20)];
+    sameDayLable.textAlignment = NSTextAlignmentCenter;
+    sameDayLable.font = [UIFont boldSystemFontOfSize:17];
+    sameDayLable.textColor = [UIColor whiteColor];
+    
+    sameTimeLable=[[UILabel alloc] initWithFrame:CGRectMake(0, 20, 240, 20)];
+    sameTimeLable.textAlignment = NSTextAlignmentCenter;
+    sameTimeLable.font = [UIFont boldSystemFontOfSize:17];
+    sameTimeLable.textColor = [UIColor whiteColor];
+   
+    
+    [titleView addSubview:sameDayLable];
+    [titleView addSubview:sameTimeLable];
     
     self.navigationItem.titleView = titleView;
     
-    calendarView = [[CLCalendarView alloc] initWithFrame:CGRectMake(0, 103, self.view.frame.size.width, 155)];
+    [self createTitleViewShowDataStartDate:anyEventObj.startDate endDate:anyEventObj.endDate];
+    
+    calendarView = [[CLCalendarView alloc] initWithFrame:CGRectMake(0, 103, self.view.frame.size.width, 220)];
     calendarView.dataSuorce = self;
     calendarView.delegate = self;
     calendarView.backgroundColor=[UIColor whiteColor];
@@ -146,7 +215,7 @@
     daylabel.textColor=[UIColor whiteColor];
     daylabel.text=@"ALL DAY EVENT";
     UISwitch* switchButton=[[UISwitch alloc]initWithFrame:CGRectMake(260, 5, 60, 30)];
-    [switchButton setOn:NO];
+   
     [switchButton addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
     [dayview addSubview:switchButton];
     [dayview addSubview:daylabel];
@@ -160,31 +229,108 @@
     datePicker.font = [UIFont boldSystemFontOfSize:17.0f];
     datePicker.date =[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"HH:mm"];
     datePicker.dateFormat = JCDateFormatClock;
-    NSArray* array=[NSArray arrayWithObjects:@"Am", nil];
+    NSArray* array=[NSArray arrayWithObjects:@"AM", nil];
     datePicker.dayArray=array;
     
     [self.view addSubview:datePicker];
     startLabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 0, 0)];
-    startLabel.text=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyy年 M月d日"];
-    startStr=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"HH:mm"];
-    endLabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 0, 0)];
+    startLabel.text=anyEventObj.startDate;
+    startStr=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: anyEventObj.startDate];
     
-    endStr=[[PublicMethodsViewController getPublicMethods] getonehourstime:@"HH:mm"];
+    endLabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 0, 0)];
+    endLabel.text=anyEventObj.endDate;
+    endStr=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: anyEventObj.endDate];
     isstate=YES;
-    NSDateFormatter *formatter =[[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYYY年 M月d日"];
-    NSDate* date=[formatter dateFromString:startLabel.text];
-    NSString* weakStr=[[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
-    NSString* str=startLabel.text;
-    str=[str stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
-    str=[str stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
-    str=[str stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
-    NSArray* arrays=[str componentsSeparatedByString:@"/"];
-    self.startlabelshow.text=[NSString stringWithFormat:@"%@ %@/%@",weakStr,[arrays objectAtIndex:2],[arrays objectAtIndex:1]];
-    self.endlabelshow.text=[NSString stringWithFormat:@"%@ %@/%@",weakStr,[arrays objectAtIndex:2],[arrays objectAtIndex:1]];
-    // Do any additional setup after loading the view from its nib.
+    
+    if ([anyEventObj.isAllDay boolValue]) {
+        [switchButton setOn:YES];
+        isButtonOn=YES;
+        [datePicker setHidden:YES];
+        [self createAllDayEventDate:anyEventObj.startDate endDate:anyEventObj.endDate];
+    }else{
+        [switchButton setOn:NO];
+        isButtonOn=NO;
+        [datePicker setHidden:NO];
+
+    }
 }
 
+
+
+-(void)createAllDayEventDate:(NSString *) startDatStr endDate:(NSString *) enddateStr{
+    [flagLab setHidden:YES];
+    [sameTimeLable setHidden:YES];
+    [sameDayLable setHidden:YES];
+    
+    [startTimeLable setHidden:YES];
+    [tStartLable setHidden:YES];
+    [endTimeLabel setHidden:YES];
+    [tEndLable setHidden:YES];
+
+    CLDay *startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:startDatStr]];
+    CLDay *endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:enddateStr]];
+    if ([[startday description] isEqualToString:[endday description]]) {
+        allDayLable.text=[[startday abbreviationWeekDayMotch] stringByAppendingString:@" (ALL DAY)"];
+    }else{
+        allDayLable.text=[NSString stringWithFormat:@"%@ → %@",[startday abbreviationWeekDayMotch],[endday abbreviationWeekDayMotch]];
+    }
+}
+
+
+-(void)createTitleViewShowDataStartDate:(NSString *) startDateStr endDate:(NSString *) endDateStr{
+    CLDay *startday;
+    CLDay *endday;
+    NSString *startTime;
+    NSString *endTime;
+    
+    if (isstate) {
+        startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:startDateStr]];
+        endday=startday;
+        
+        startTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: startDateStr];
+        endTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: endDateStr];
+        startLabel.text=startDateStr;
+        endLabel.text=[NSString stringWithFormat:@"%@%@",[endday description],endTime];
+    }else{
+    
+        startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:startDateStr]];
+        endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:endDateStr]];
+    
+        startTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: startDateStr];
+        endTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: endDateStr];
+    }
+    
+    if ([[startday description] isEqualToString:[endday description]]) {
+        [flagLab setHidden:YES];
+        [sameTimeLable setHidden:NO];
+        [sameDayLable setHidden:NO];
+        
+        [startTimeLable setHidden:YES];
+        [tStartLable setHidden:YES];
+        [endTimeLabel setHidden:YES];
+        [tEndLable setHidden:YES];
+        
+        //设置数据
+        sameDayLable.text=[startday abbreviationWeekDayMotch];
+        sameTimeLable.text=[NSString stringWithFormat:@"%@ → %@",startTime,endTime];
+    }else{
+        [flagLab setHidden:NO];
+        [startTimeLable setHidden:NO];
+        [tStartLable setHidden:NO];
+        [endTimeLabel setHidden:NO];
+        [tEndLable setHidden:NO];
+        [sameTimeLable setHidden:YES];
+        [sameDayLable setHidden:YES];
+        
+        //设置数据
+        startTimeLable.text=[startday abbreviationWeekDayMotch];
+        tStartLable.text=startTime;
+        endTimeLabel.text=[endday abbreviationWeekDayMotch];
+        tEndLable.text=endTime;
+        
+    }
+
+}
 
 //弹出视图的代理方法
 - (void)leveyPopListView:(UIView *)popListView didSelectedIndex:(NSInteger)anIndex{
@@ -202,15 +348,11 @@
 
 
 -(void)sureEvent{
-    if (isstate) {
-        endLabel.text=startLabel.text;
-    }
     NSDateFormatter *df=[[NSDateFormatter alloc] init];
     [df setDateFormat:@"YYYY年 M月d日HH:ss"];
-    NSDate *date1=[df dateFromString:[NSString stringWithFormat:@"%@%@",startLabel.text,startStr]];
-    NSDate *date2=[df dateFromString:[NSString stringWithFormat:@"%@%@",endLabel.text,endStr]];
+    NSDate *date1=[df dateFromString:startLabel.text];
+    NSDate *date2=[df dateFromString:endLabel.text];
     int a = [date1 timeIntervalSinceDate:date2];
-    
     
     switch ([date1 compare:date2]) {
         case NSOrderedSame:
@@ -220,9 +362,7 @@
             break;
         case NSOrderedDescending:
         {
-           
-            
-            UIAlertView* alert=[[UIAlertView alloc]initWithTitle:@"提示" message:@"结束时间必须大于开始时间" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+           UIAlertView* alert=[[UIAlertView alloc]initWithTitle:@"提示" message:@"结束时间必须大于开始时间" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
             [alert show];
             return;
         }
@@ -235,58 +375,99 @@
         }
             break;
     }
-    startLabel.text=[NSString stringWithFormat:@"%@%@",startLabel.text,startStr];
-    endLabel.text=[NSString stringWithFormat:@"%@%@",endLabel.text,endStr];
     NSLog(@"%@--------%@",endLabel.text,startLabel.text);
     
     NSLog(@"%@<><><><><>%@",startStr,endStr);
     NSLog(@"date1%@---qweqwe----date2%@",date1,date2);
     NSLog(@">>>>>>>>>%d",a);
-    [self.detelegate getstarttime:startLabel.text getendtime:endLabel.text];
+    [self.detelegate getstarttime:startLabel.text getendtime:endLabel.text isAllDay:isButtonOn];
 }
 
 -(void)fileStartDownload:(id)sender
 {
     NSNotification *tmp = (NSNotification *)sender;
-    
+    NSString *timeStr=[NSString stringWithFormat:@"%@",[tmp object]];
+
     if (isstate) {
-        startLabel.text=[NSString stringWithFormat:@"%@",[tmp object]];
-        self.startlabelshow.text=startLabel.text;
-        self.endlabelshow.text=startLabel.text;
-        NSDateFormatter *formatter =[[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"YYYY年 M月dd日"];
-        NSDate* date=[formatter dateFromString:startLabel.text];
-        NSString* weakStr=[[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
-        NSString* str=startLabel.text;
-        str=[str stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
-        str=[str stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
-        str=[str stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
-        NSArray* array=[str componentsSeparatedByString:@"/"];
-        self.startlabelshow.text=[NSString stringWithFormat:@"%@ %@/%@",weakStr,[array objectAtIndex:2],[array objectAtIndex:1]];
-        self.endlabelshow.text=[NSString stringWithFormat:@"%@ %@/%@",weakStr,[array objectAtIndex:2],[array objectAtIndex:1]];
+        NSString *tmpStart=[NSString stringWithFormat:@"%@%@",timeStr,startStr];
+        NSString *tmpEnd=@"";
+        if (!endLabel.text||[@"" isEqualToString:endLabel.text]){
+            tmpEnd=[NSString stringWithFormat:@"%@%@",timeStr,endStr];
+        }else{
+            tmpEnd=endLabel.text;
+        }
+        startLabel.text=tmpStart;//yyyy年M月d日 HH:mm
+        endLabel.text=tmpEnd;
+        if (isButtonOn) {//开全天事件
+            NSString *start=[NSString stringWithFormat:@"%@%@",timeStr,@"00:00"];
+            startLabel.text=start;
+            endLabel.text=[NSString stringWithFormat:@"%@%@",timeStr,@"23:59"];
+            CLDay * startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:tmpStart]];
+            allDayLable.text=[NSString stringWithFormat:@"%@ (ALL DAY)",[startday abbreviationWeekDayMotch]];
+        }else{
+            [self createTitleViewShowDataStartDate:tmpStart endDate:tmpEnd];
+        }
+      
     }else{
-        endLabel.text=[NSString stringWithFormat:@"%@",[tmp object]];
-        NSDateFormatter *formatter =[[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"YYYY年 M月dd日"];
-        NSDate* date=[formatter dateFromString:endLabel.text];
-        NSString* weakStr=[[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
-        NSString* str=endLabel.text;
-        str=[str stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
-        str=[str stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
-        str=[str stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
-        NSArray* array=[str componentsSeparatedByString:@"/"];
-        self.endlabelshow.text=[NSString stringWithFormat:@"%@ %@/%@",weakStr,[array objectAtIndex:2],[array objectAtIndex:1]];
+        NSString *tmpEnd=[NSString stringWithFormat:@"%@%@",timeStr,endStr];
+        NSString *tmpStart=startLabel.text;
+        endLabel.text=tmpEnd;
+        if (!isButtonOn) {
+            [self createTitleViewShowDataStartDate:tmpStart endDate:tmpEnd];
+        }else{
+            CLDay * startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:tmpStart]];
+            CLDay * endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:tmpEnd]];
+            if ([[startday description] isEqualToString:[endday description]]) {
+                 allDayLable.text=[[startday abbreviationWeekDayMotch] stringByAppendingString:@" (ALL DAY)"];
+            }else{
+             allDayLable.text=[NSString stringWithFormat:@"%@ → %@",[startday abbreviationWeekDayMotch],[endday abbreviationWeekDayMotch]];
+            }
+        }
     }
     
 }
 
 
+-(void)addEventViewControler:(UITableViewController *)view anyEvent:(AnyEvent *)anyEvent{
+    
+    anyEventObj=anyEvent;
+    NSLog(@"%@",anyEvent.startDate);
+
+}
+
 - (void)datePicker:(JCDatePicker *)datePicker dateDidChange:(NSString *)date
 {
+    
+    CLDay *startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:startLabel.text]];
+    CLDay *endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:endLabel.text]];
     if (isstate) {
         startStr=date;
+        NSString *endTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: endLabel.text];
+
+        if ([[startday description] isEqualToString:[endday description]]) {
+              sameTimeLable.text=[NSString stringWithFormat:@"%@ → %@",startStr,endTime];
+              startLabel.text=[NSString stringWithFormat:@"%@%@",[startday description],date];
+              endLabel.text=[NSString stringWithFormat:@"%@%@",[startday description],endTime];
+        }else{
+             tStartLable.text=date;
+             startLabel.text=[NSString stringWithFormat:@"%@%@",[startday description],date];
+             endLabel.text=[NSString stringWithFormat:@"%@%@",[endday description],endTime];
+        }
     }else{
         endStr=date;
+         NSString *startTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: startLabel.text];
+        if ([[startday description] isEqualToString:[endday description]]) {
+            sameTimeLable.text=[NSString stringWithFormat:@"%@ → %@",startTime,endStr];
+            
+            startLabel.text=[NSString stringWithFormat:@"%@%@",[startday description],startTime];
+            endLabel.text=[NSString stringWithFormat:@"%@%@",[startday description],date];
+        }else{
+            tEndLable.text=date;
+            
+            startLabel.text=[NSString stringWithFormat:@"%@%@",[startday description],startTime];
+            endLabel.text=[NSString stringWithFormat:@"%@%@",[endday description],date];
+        }
+        // endLabel.text=[NSString stringWithFormat:@"%@%@",[endday description],date];
     }
 }
 
@@ -294,9 +475,7 @@
 
 -(void)chooseAllDay:(UIButton *) sender
 {
-//    DayViewController *dailyCalController = [[DayViewController alloc] init];
-//    [self.navigationController pushViewController:dailyCalController animated:YES];
-    MJSecondDetailViewController *secondDetailViewController = [[MJSecondDetailViewController alloc] initWithNibName:@"MJSecondDetailViewController" bundle:nil];
+    MJSecondDetailViewController *secondDetailViewController = [[MJSecondDetailViewController alloc] init];
     if (isstate) {
         endLabel.text=startLabel.text;
     }
@@ -312,23 +491,70 @@
     event.displayDate=date1;
     secondDetailViewController.event=event;
     NSLog(@"%@",@"========>>>>>>转的事件");
-
-    secondDetailViewController.mjdelegate = self;
-    [self presentPopupViewController:secondDetailViewController animationType:MJPopupViewAnimationFade];
+    
+    // secondDetailViewController.mjdelegate = self;
+    
+    
+    YQNavigationController *nav = [[YQNavigationController alloc] initWithSize:CGSizeMake(300, 400) rootViewController:secondDetailViewController];
+    nav.touchSpaceHide = YES;
+    nav.panPopView = YES;
+    
+    [nav show:YES animated:YES];
 }
 
 
 -(void)switchAction:(id)sender
 {
     UISwitch *switchButton = (UISwitch*)sender;
-    BOOL isButtonOn = [switchButton isOn];
+    isButtonOn = [switchButton isOn];
     if (isButtonOn) {
-        startStr=@"";
-        endStr=@"";
+        startStr=@"00:00";
+        endStr=@"23:59";
         datePicker.hidden=YES;
+
+        
+        [allDayLable setHidden:NO];
+        [flagLab setHidden:YES];
+        [startTimeLable setHidden:YES];
+        [tStartLable setHidden:YES];
+        [endTimeLabel setHidden:YES];
+        [tEndLable setHidden:YES];
+        [sameTimeLable setHidden:YES];
+        [sameDayLable setHidden:YES];
+        
+        CLDay *startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:startLabel.text]];
+        CLDay *endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:endLabel.text]];
+         if ([[startday description] isEqualToString:[endday description]]) {
+             allDayLable.text=[[startday abbreviationWeekDayMotch] stringByAppendingString:@" (ALL DAY)"];
+         }else{
+              allDayLable.text=[NSString stringWithFormat:@"%@ → %@",[startday abbreviationWeekDayMotch],[endday abbreviationWeekDayMotch]];
+         }
+        
     }else {
+        [allDayLable setHidden:YES];
         datePicker.hidden=NO;
         
+        CLDay *startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:startLabel.text]];
+        CLDay *endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:endLabel.text]];
+        
+        if ([[startday description] isEqualToString:[endday description]]) {
+            [flagLab setHidden:YES];
+            [sameTimeLable setHidden:NO];
+            [sameDayLable setHidden:NO];
+            
+            [startTimeLable setHidden:YES];
+            [tStartLable setHidden:YES];
+            [endTimeLabel setHidden:YES];
+            [tEndLable setHidden:YES];
+            NSString *startD=[NSString stringWithFormat:@"%@%@",[startday description],startStr] ;
+            NSString *endD=[NSString stringWithFormat:@"%@%@",[endday description],endStr] ;
+            [self createTitleViewShowDataStartDate:startD endDate:endD];
+        }else{
+            NSString *startD=[NSString stringWithFormat:@"%@%@",[startday description],startStr] ;
+             NSString *endD=[NSString stringWithFormat:@"%@%@",[endday description],endStr] ;
+            [self createTitleViewShowDataStartDate:startD endDate:endD];
+        }
+
     }
 }
 -(void)calendartitle:(NSString *)title{
@@ -338,8 +564,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
-    [calendarView goBackToday];
 }
 
 #pragma mark - Method
@@ -350,9 +574,23 @@
     
     int head = [CalendarDateUtil getWeekDayWithDate:date] - 1;
     
+    NSUInteger *time=[[PublicMethodsViewController getPublicMethods] timeIntegerDifference:anyEventObj.endDate getStrart:anyEventObj.startDate];
+    
+
+    
     for (int i = 0 ; i < 7; i++) {
         NSDate *temp = [CalendarDateUtil dateWithTimeInterval:i - head sinceDate:date];
         CLDay *day = [[CLDay alloc] initWithDate:temp];
+//        for (int t=0; t<=time; t++) {
+//            NSDate *startDate=[[PublicMethodsViewController getPublicMethods] formatWithStringDate:anyEventObj.startDate];
+//            CLDay *inDate=[[CLDay alloc] initWithDate:[CalendarDateUtil dateWithTimeInterval:t sinceDate:startDate]];
+//            
+//            if ([[inDate description] isEqualToString:[day description]]) {
+//                day.isSelectDay=YES;
+//            }else{
+//                day.isSelectDay=NO;
+//            }
+//        }
         [array addObject:day];
     }
     
@@ -377,46 +615,50 @@
     NSString *title = @"";
     switch (month) {
         case 1:
-            title = @"Jan.";
+            title = @"January";
             break;
         case 2:
-            title = @"Feb.";
+            title = @"February";
             break;
         case 3:
-            title = @"Mar.";
+            title = @"March";
             break;
         case 4:
-            title = @"Apr.";
+            title = @"April";
             break;
         case 5:
             title = @"May";
             break;
         case 6:
-            title = @"Jun.";
+            title = @"June";
             break;
         case 7:
-            title = @"Jul.";
+            title = @"July";
             break;
         case 8:
-            title = @"Aug.";
+            title = @"August";
             break;
         case 9:
-            title = @"Sept.";
+            title = @"September";
             break;
         case 10:
-            title = @"Oct.";
+            title = @"October";
             break;
         case 11:
-            title = @"Nov.";
+            title = @"November";
             break;
         case 12:
-            title = @"Dec.";
+            title = @"December";
             break;
             
         default:
             break;
     }
-    titleLabel.text = [title stringByAppendingFormat:@" %i", year];
+    if ([CalendarDateUtil getCurrentYear]==year) {
+        titleLabel.text = title;
+    }else{
+       titleLabel.text = [title stringByAppendingFormat:@" %i", year];
+    }
 }
 
 
@@ -428,16 +670,21 @@
 
 - (IBAction)startevent:(id)sender {
     isstate=YES;
-    datePicker.date=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"HH:mm"];
+    datePicker.date=startStr;
+    NSLog(@"%@",startStr);
+   
     self.startEventButton.backgroundColor=purple;
     self.endbutton.backgroundColor=grayjcDatePicker;
     
 }
 
 - (IBAction)endEvent:(id)sender {
-    datePicker.date=[[PublicMethodsViewController getPublicMethods] getonehourstime:@"HH:mm"];
-    isstate=NO;
-    endLabel.text=startLabel.text;
+      isstate=NO;
+    datePicker.date=endStr;
+    NSLog(@"%@",endStr);
+    
+  
+   // endLabel.text=startLabel.text;
     self.endbutton.backgroundColor=purple;
     self.startEventButton.backgroundColor=grayjcDatePicker;
     

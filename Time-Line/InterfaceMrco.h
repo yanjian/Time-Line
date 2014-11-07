@@ -74,6 +74,8 @@ typedef NS_ENUM(NSInteger , AccountType){
 };
 
 //基本IP
+//测试： http://t2.oxozoom.com:8080/myCalendar/servlet
+//真实环境  http://w.oxozoom.com:8080/myCalendar/servlet
 #define BASEURL_IP @"http://t2.oxozoom.com:8080/myCalendar/servlet"
 
 

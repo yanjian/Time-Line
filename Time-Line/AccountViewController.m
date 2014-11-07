@@ -128,6 +128,8 @@
     [footview setBackgroundColor:[UIColor clearColor]];
     UIButton *disconnectBtn=[UIButton buttonWithType:UIButtonTypeSystem];
     [disconnectBtn setFrame:CGRectMake(20, 20, 280, 40)];
+    [disconnectBtn.layer setMasksToBounds:YES];
+    [disconnectBtn.layer setCornerRadius:10.f];
     [disconnectBtn setTitle:@"Disconnect Account" forState:UIControlStateNormal];
     [disconnectBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
    

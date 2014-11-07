@@ -37,6 +37,7 @@ isSyncData_YES=1
 @property (nonatomic, retain) NSString * organizer;//组织者
 @property (nonatomic, retain) NSNumber * sequence;
 @property (nonatomic, retain) NSString * status;
+@property (nonatomic, retain) NSNumber * isAllDay;//是否是全天事件
 @property (nonatomic, retain) Calendar *calendar;
 
 @end

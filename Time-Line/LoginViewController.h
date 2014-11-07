@@ -15,7 +15,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *passwordBtn;
 @property (weak, nonatomic) IBOutlet UIButton *ourLoginBtn;
 @property (weak, nonatomic) IBOutlet UIButton *signUpBtn;
-@property (weak, nonatomic) IBOutlet UILabel *ErrerMsg;
 
 @property (weak, nonatomic) IBOutlet TPKeyboardAvoidingScrollView *keyboardScorllView;
 

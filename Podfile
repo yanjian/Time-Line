@@ -15,3 +15,8 @@ pod 'MSCollectionViewCalendarLayout'
 pod 'CupertinoYankee', '~> 0.1.0'
 pod 'UIColor-HexString', '~> 1.0.0'
 pod 'Masonry', '~> 0.4.0'
+
+pod 'CNPPopupController'
+
+pod 'pop', '~> 1.0.6'
+pod 'Fingertips'

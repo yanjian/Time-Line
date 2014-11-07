@@ -10,6 +10,8 @@
 		5A89419930F14EE2AE7A6067 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A79FC40584C54ABD95BCBAD3 /* libPods.a */; };
 		A8116A2419B9B7EF003EB3ED /* FlipBoardNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8116A2319B9B7EF003EB3ED /* FlipBoardNavigationController.m */; };
 		A82B72B719C133ED00D89816 /* day_today.png in Resources */ = {isa = PBXBuildFile; fileRef = A82B72B619C133ED00D89816 /* day_today.png */; };
+		A838B4431A0CA45500D35F14 /* SetingsNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A838B4421A0CA45500D35F14 /* SetingsNavigationController.m */; };
+		A84FFEBD1A06792400C0FA50 /* ShowHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = A84FFEBC1A06792400C0FA50 /* ShowHUD.m */; };
 		A86CEA2019C7CF8D0015BB25 /* GoogleMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A86CEA1F19C7CF8D0015BB25 /* GoogleMapViewController.m */; };
 		A877C94A19B450C50075D9E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A877C94919B450C50075D9E8 /* Foundation.framework */; };
 		A877C94C19B450C50075D9E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A877C94B19B450C50075D9E8 /* CoreGraphics.framework */; };
@@ -60,10 +62,8 @@
 		A894D70D19B57F920088E522 /* LocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D70C19B57F920088E522 /* LocationViewController.m */; };
 		A894D71019B57F9C0088E522 /* NotesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D70F19B57F9C0088E522 /* NotesViewController.m */; };
 		A894D71319B57FA80088E522 /* AlertViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A894D71219B57FA80088E522 /* AlertViewController.m */; };
-		A894D71519B5926E0088E522 /* AddEventViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A894D71419B5926E0088E522 /* AddEventViewController.xib */; };
 		A894D71719B5932D0088E522 /* BackGroundViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A894D71619B5932D0088E522 /* BackGroundViewController.xib */; };
 		A894D71D19B594730088E522 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A894D71C19B594730088E522 /* ViewController.xib */; };
-		A894D71F19B599380088E522 /* DateDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A894D71E19B599380088E522 /* DateDetailsViewController.xib */; };
 		A894D72119B59A930088E522 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A894D72019B59A930088E522 /* MapViewController.xib */; };
 		A894D72319B59ADB0088E522 /* LocationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A894D72219B59ADB0088E522 /* LocationViewController.xib */; };
 		A894D72919B59C730088E522 /* AlertViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A894D72819B59C730088E522 /* AlertViewController.xib */; };
@@ -182,7 +182,6 @@
 		A8B5461719F894AA00C73A24 /* CalendarAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B5461619F894AA00C73A24 /* CalendarAccountViewController.m */; };
 		A8B6533519F6B5D5007E8A26 /* Calendar.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B6533419F6B5D5007E8A26 /* Calendar.m */; };
 		A8B6533819F6B5D6007E8A26 /* AT_Account.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B6533719F6B5D6007E8A26 /* AT_Account.m */; };
-		A8B67C9819FA9A630068E107 /* SetingsNavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B67C9719FA9A630068E107 /* SetingsNavigationViewController.m */; };
 		A8B67C9D19FAA80A0068E107 /* MJPopupBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B67C9A19FAA80A0068E107 /* MJPopupBackgroundView.m */; };
 		A8B67C9E19FAA80A0068E107 /* UIViewController+MJPopupViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B67C9C19FAA80A0068E107 /* UIViewController+MJPopupViewController.m */; };
 		A8B7E73019FF2F1B0097ABE3 /* CircleDrawView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B7E72F19FF2F1B0097ABE3 /* CircleDrawView.m */; };
@@ -191,6 +190,10 @@
 		A8B867E419E296E20004875F /* NSManagedObject+Magic.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B867E119E296E20004875F /* NSManagedObject+Magic.m */; };
 		A8B867E719E297CF0004875F /* NSString+StringManageMd5.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B867E619E297CF0004875F /* NSString+StringManageMd5.m */; };
 		A8B867F519E2A1840004875F /* TimeLine.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A8B867F319E2A1840004875F /* TimeLine.xcdatamodeld */; };
+		A8B95C1D1A0534F800C6B037 /* YQNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B95C181A0534F800C6B037 /* YQNavigationController.m */; };
+		A8B95C1E1A0534F800C6B037 /* YQNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B95C1A1A0534F800C6B037 /* YQNavigationBar.m */; };
+		A8B95C1F1A0534F800C6B037 /* YQViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B95C1C1A0534F800C6B037 /* YQViewController.m */; };
+		A8BF229C1A0A23AE00E42F25 /* DayShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BF229B1A0A23AE00E42F25 /* DayShowView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -208,6 +211,10 @@
 		A8116A2219B9B7EF003EB3ED /* FlipBoardNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlipBoardNavigationController.h; sourceTree = "<group>"; };
 		A8116A2319B9B7EF003EB3ED /* FlipBoardNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlipBoardNavigationController.m; sourceTree = "<group>"; };
 		A82B72B619C133ED00D89816 /* day_today.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = day_today.png; sourceTree = "<group>"; };
+		A838B4411A0CA45500D35F14 /* SetingsNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetingsNavigationController.h; sourceTree = "<group>"; };
+		A838B4421A0CA45500D35F14 /* SetingsNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetingsNavigationController.m; sourceTree = "<group>"; };
+		A84FFEBB1A06792400C0FA50 /* ShowHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowHUD.h; sourceTree = "<group>"; };
+		A84FFEBC1A06792400C0FA50 /* ShowHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowHUD.m; sourceTree = "<group>"; };
 		A86CEA1E19C7CF8D0015BB25 /* GoogleMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleMapViewController.h; sourceTree = "<group>"; };
 		A86CEA1F19C7CF8D0015BB25 /* GoogleMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleMapViewController.m; sourceTree = "<group>"; };
 		A877C94619B450C50075D9E8 /* Time-Line.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Time-Line.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -300,10 +307,8 @@
 		A894D70F19B57F9C0088E522 /* NotesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotesViewController.m; sourceTree = "<group>"; };
 		A894D71119B57FA80088E522 /* AlertViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertViewController.h; sourceTree = "<group>"; };
 		A894D71219B57FA80088E522 /* AlertViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertViewController.m; sourceTree = "<group>"; };
-		A894D71419B5926E0088E522 /* AddEventViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddEventViewController.xib; sourceTree = "<group>"; };
 		A894D71619B5932D0088E522 /* BackGroundViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BackGroundViewController.xib; sourceTree = "<group>"; };
 		A894D71C19B594730088E522 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
-		A894D71E19B599380088E522 /* DateDetailsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DateDetailsViewController.xib; sourceTree = "<group>"; };
 		A894D72019B59A930088E522 /* MapViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapViewController.xib; sourceTree = "<group>"; };
 		A894D72219B59ADB0088E522 /* LocationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LocationViewController.xib; sourceTree = "<group>"; };
 		A894D72819B59C730088E522 /* AlertViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AlertViewController.xib; sourceTree = "<group>"; };
@@ -481,8 +486,6 @@
 		A8B6533419F6B5D5007E8A26 /* Calendar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Calendar.m; sourceTree = "<group>"; };
 		A8B6533619F6B5D6007E8A26 /* AT_Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AT_Account.h; sourceTree = "<group>"; };
 		A8B6533719F6B5D6007E8A26 /* AT_Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AT_Account.m; sourceTree = "<group>"; };
-		A8B67C9619FA9A630068E107 /* SetingsNavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetingsNavigationViewController.h; sourceTree = "<group>"; };
-		A8B67C9719FA9A630068E107 /* SetingsNavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetingsNavigationViewController.m; sourceTree = "<group>"; };
 		A8B67C9919FAA80A0068E107 /* MJPopupBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJPopupBackgroundView.h; sourceTree = "<group>"; };
 		A8B67C9A19FAA80A0068E107 /* MJPopupBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJPopupBackgroundView.m; sourceTree = "<group>"; };
 		A8B67C9B19FAA80A0068E107 /* UIViewController+MJPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+MJPopupViewController.h"; sourceTree = "<group>"; };
@@ -500,6 +503,14 @@
 		A8B867E519E297CF0004875F /* NSString+StringManageMd5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+StringManageMd5.h"; sourceTree = "<group>"; };
 		A8B867E619E297CF0004875F /* NSString+StringManageMd5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+StringManageMd5.m"; sourceTree = "<group>"; };
 		A8B867F419E2A1840004875F /* TimeLine.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TimeLine.xcdatamodel; sourceTree = "<group>"; };
+		A8B95C171A0534F800C6B037 /* YQNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YQNavigationController.h; sourceTree = "<group>"; };
+		A8B95C181A0534F800C6B037 /* YQNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YQNavigationController.m; sourceTree = "<group>"; };
+		A8B95C191A0534F800C6B037 /* YQNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YQNavigationBar.h; sourceTree = "<group>"; };
+		A8B95C1A1A0534F800C6B037 /* YQNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YQNavigationBar.m; sourceTree = "<group>"; };
+		A8B95C1B1A0534F800C6B037 /* YQViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YQViewController.h; sourceTree = "<group>"; };
+		A8B95C1C1A0534F800C6B037 /* YQViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YQViewController.m; sourceTree = "<group>"; };
+		A8BF229A1A0A23AE00E42F25 /* DayShowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DayShowView.h; sourceTree = "<group>"; };
+		A8BF229B1A0A23AE00E42F25 /* DayShowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DayShowView.m; sourceTree = "<group>"; };
 		CE4144533101480F872A30BB /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -763,6 +774,8 @@
 				A88F0BB919D2C53F002D0C4C /* t_Sandbox.m */,
 				A8B867E519E297CF0004875F /* NSString+StringManageMd5.h */,
 				A8B867E619E297CF0004875F /* NSString+StringManageMd5.m */,
+				A84FFEBB1A06792400C0FA50 /* ShowHUD.h */,
+				A84FFEBC1A06792400C0FA50 /* ShowHUD.m */,
 			);
 			name = public;
 			sourceTree = "<group>";
@@ -778,8 +791,8 @@
 		A8923EE819E7E2DA00B9B938 /* Seting */ = {
 			isa = PBXGroup;
 			children = (
-				A8B67C9619FA9A630068E107 /* SetingsNavigationViewController.h */,
-				A8B67C9719FA9A630068E107 /* SetingsNavigationViewController.m */,
+				A838B4411A0CA45500D35F14 /* SetingsNavigationController.h */,
+				A838B4421A0CA45500D35F14 /* SetingsNavigationController.m */,
 				A8975B6A19EA8922006DFDC3 /* Preference */,
 				A890BA2B19E8CCDE0052C10F /* SetingViewController.h */,
 				A890BA2C19E8CCDE0052C10F /* SetingViewController.m */,
@@ -867,6 +880,7 @@
 		A895D4E919D1637A005371C4 /* Calendar24Hous */ = {
 			isa = PBXGroup;
 			children = (
+				A8B95C161A0534CF00C6B037 /* YQPresentView */,
 				A886549619D3E6BD00EEC0A8 /* MAEventKitDataSource.h */,
 				A886549719D3E6BD00EEC0A8 /* MAEventKitDataSource.m */,
 				A886549519D3E64B00EEC0A8 /* Mode */,
@@ -956,6 +970,8 @@
 				A894D6F719B579560088E522 /* EventCell.xib */,
 				A8B7E72E19FF2F1B0097ABE3 /* CircleDrawView.h */,
 				A8B7E72F19FF2F1B0097ABE3 /* CircleDrawView.m */,
+				A8BF229A1A0A23AE00E42F25 /* DayShowView.h */,
+				A8BF229B1A0A23AE00E42F25 /* DayShowView.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -975,7 +991,6 @@
 				A894D72A19B59D6A0088E522 /* NotesViewController.xib */,
 				A894D70519B57F7F0088E522 /* DateDetailsViewController.h */,
 				A894D70619B57F7F0088E522 /* DateDetailsViewController.m */,
-				A894D71E19B599380088E522 /* DateDetailsViewController.xib */,
 				A877C95E19B450C50075D9E8 /* ViewController.h */,
 				A877C95F19B450C50075D9E8 /* ViewController.m */,
 				A894D71C19B594730088E522 /* ViewController.xib */,
@@ -984,7 +999,6 @@
 				A894D71619B5932D0088E522 /* BackGroundViewController.xib */,
 				A894D6FF19B57F5E0088E522 /* AddEventViewController.h */,
 				A894D70019B57F5E0088E522 /* AddEventViewController.m */,
-				A894D71419B5926E0088E522 /* AddEventViewController.xib */,
 				A894D6FC19B57F510088E522 /* EventCountView.h */,
 				A894D6FD19B57F510088E522 /* EventCountView.m */,
 				A894D6F919B57F470088E522 /* SHRootController.h */,
@@ -1123,6 +1137,19 @@
 			name = CoreData;
 			sourceTree = "<group>";
 		};
+		A8B95C161A0534CF00C6B037 /* YQPresentView */ = {
+			isa = PBXGroup;
+			children = (
+				A8B95C171A0534F800C6B037 /* YQNavigationController.h */,
+				A8B95C181A0534F800C6B037 /* YQNavigationController.m */,
+				A8B95C191A0534F800C6B037 /* YQNavigationBar.h */,
+				A8B95C1A1A0534F800C6B037 /* YQNavigationBar.m */,
+				A8B95C1B1A0534F800C6B037 /* YQViewController.h */,
+				A8B95C1C1A0534F800C6B037 /* YQViewController.m */,
+			);
+			name = YQPresentView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1206,7 +1233,6 @@
 				A894D6D119B56B490088E522 /* HomeViewController.xib in Resources */,
 				A894D8AD19B5BB150088E522 /* Event_time_red.png in Resources */,
 				A894D71719B5932D0088E522 /* BackGroundViewController.xib in Resources */,
-				A894D71F19B599380088E522 /* DateDetailsViewController.xib in Resources */,
 				A894D85719B5BACC0088E522 /* Icon_TickBlack.png in Resources */,
 				A894D85D19B5BACC0088E522 /* daybackgrd1@2x.png in Resources */,
 				A894D72119B59A930088E522 /* MapViewController.xib in Resources */,
@@ -1248,7 +1274,6 @@
 				A894D8A919B5BB150088E522 /* Alert_Day.png in Resources */,
 				A894D85A19B5BACC0088E522 /* Icon_Cross.png in Resources */,
 				A894D71D19B594730088E522 /* ViewController.xib in Resources */,
-				A894D71519B5926E0088E522 /* AddEventViewController.xib in Resources */,
 				A894D86219B5BACC0088E522 /* date_background.png in Resources */,
 				A894D72919B59C730088E522 /* AlertViewController.xib in Resources */,
 				A895D4F019D17186005371C4 /* occupied.png in Resources */,
@@ -1312,9 +1337,11 @@
 				A8B6533519F6B5D5007E8A26 /* Calendar.m in Sources */,
 				A8B529C819F635B9009286AA /* NSPersistentStoreCoordinator+MagicalRecord.m in Sources */,
 				A8B867F519E2A1840004875F /* TimeLine.xcdatamodeld in Sources */,
+				A8B95C1F1A0534F800C6B037 /* YQViewController.m in Sources */,
 				A896FFB519D5593D0056F4FF /* TPKeyboardAvoidingScrollView.m in Sources */,
 				A896FFB619D5593D0056F4FF /* TPKeyboardAvoidingTableView.m in Sources */,
 				A89514D019D4F90B00538486 /* LoginViewController.m in Sources */,
+				A838B4431A0CA45500D35F14 /* SetingsNavigationController.m in Sources */,
 				A8B6533819F6B5D6007E8A26 /* AT_Account.m in Sources */,
 				A877C96019B450C50075D9E8 /* ViewController.m in Sources */,
 				A88E35A319E9767C0025CAFB /* NotificationViewController.m in Sources */,
@@ -1333,6 +1360,7 @@
 				A891A75619D5949C004843D2 /* GoogleLoginViewController.m in Sources */,
 				A86CEA2019C7CF8D0015BB25 /* GoogleMapViewController.m in Sources */,
 				A886548B19D3E5C800EEC0A8 /* MADayView.m in Sources */,
+				A8BF229C1A0A23AE00E42F25 /* DayShowView.m in Sources */,
 				A8B529C619F635B9009286AA /* NSManagedObjectModel+MagicalRecord.m in Sources */,
 				A8B5461719F894AA00C73A24 /* CalendarAccountViewController.m in Sources */,
 				A877C95619B450C50075D9E8 /* main.m in Sources */,
@@ -1349,6 +1377,7 @@
 				A894D6E319B578270088E522 /* CalendarCell.m in Sources */,
 				A8B529C919F635B9009286AA /* MagicalRecord+Actions.m in Sources */,
 				A8B867E319E296E20004875F /* NSManagedObject+Explain.m in Sources */,
+				A8B95C1D1A0534F800C6B037 /* YQNavigationController.m in Sources */,
 				A886549419D3E61700EEC0A8 /* DayViewController.m in Sources */,
 				A88EF52E19ECC00400AB15B5 /* IBActionSheet.m in Sources */,
 				A8116A2419B9B7EF003EB3ED /* FlipBoardNavigationController.m in Sources */,
@@ -1358,10 +1387,10 @@
 				A88E35A619E979180025CAFB /* PreferenceViewController.m in Sources */,
 				A8B529BA19F635B9009286AA /* NSObject+MagicalDataImport.m in Sources */,
 				A894D70719B57F7F0088E522 /* DateDetailsViewController.m in Sources */,
-				A8B67C9819FA9A630068E107 /* SetingsNavigationViewController.m in Sources */,
 				A89F91DB19C5D73A00CB7FAE /* AutocompletionTableView.m in Sources */,
 				A89B676B19D980DA00415108 /* BaseMode.m in Sources */,
 				A894D6F419B5786A0088E522 /* PublicMethodsViewController.m in Sources */,
+				A8B95C1E1A0534F800C6B037 /* YQNavigationBar.m in Sources */,
 				A8B529C419F635B9009286AA /* NSManagedObjectContext+MagicalSaves.m in Sources */,
 				A896FFB419D5593D0056F4FF /* TPKeyboardAvoidingCollectionView.m in Sources */,
 				A894D70119B57F5E0088E522 /* AddEventViewController.m in Sources */,
@@ -1407,6 +1436,7 @@
 				A8975B7019EA8D17006DFDC3 /* DefaultCalendarViewController.m in Sources */,
 				A8956F2519EC222F0016674E /* AccountViewController.m in Sources */,
 				A8B529CA19F635B9009286AA /* MagicalRecord+ErrorHandling.m in Sources */,
+				A84FFEBD1A06792400C0FA50 /* ShowHUD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

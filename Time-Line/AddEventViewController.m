@@ -19,6 +19,8 @@
 #import "CalendarAccountViewController.h"
 #import "CircleDrawView.h"
 #import "CalendarDateUtil.h"
+#import "IBActionSheet.h"
+
 #define TITLE     @"eventTitle"
 #define LOCATION  @"location"
 #define STARTDATE  @"startDate"
@@ -29,7 +31,7 @@
 #define COORDINATE @"coordinate"
 #define  REPEAT    @"repeat"
 
-@interface AddEventViewController () <ASIHTTPRequestDelegate,CalendarAccountDelegate>
+@interface AddEventViewController () <ASIHTTPRequestDelegate,CalendarAccountDelegate,IBActionSheetDelegate>
 {
     UITextField* textfiled;
     UILabel *_textlable;
@@ -37,7 +39,6 @@
     NSMutableDictionary* eventDic;
     UILabel* startlabel;
     UILabel* endlabel;
-    NSMutableArray* seledayArr;
     NSArray* alertarr;
     UIButton *intervalbtn;
     
@@ -71,7 +72,9 @@
     UIView *startView;
     UIView *endView;
     UILabel *directionLab;
-    NSString *nowDay;
+    NSString *nowDay;//新增事件时，默认时间为当前时间
+    BOOL isAllDay;//是不是全天事件
+    UILabel *allDayStartLable;
     
 }
 @property (nonatomic,assign) BOOL isShowMap;//地图是否显示
@@ -101,12 +104,19 @@
 {
     [super viewDidLoad];
     
+    
+    
     self.navigationController.navigationBarHidden=NO;
-    self.navigationController.navigationBar.barTintColor = blueColor;
+    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
+    self.tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height) style:UITableViewStylePlain];
+    self.tableView.delegate=self;
+    self.tableView.dataSource=self;
+    self.view =self.tableView;
+ 
     
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Cross.png"] forState:UIControlStateNormal];
-    [leftBtn setFrame:CGRectMake(0, 2, 20, 20)];
+    [leftBtn setFrame:CGRectMake(0, 2, 25, 20)];
     [leftBtn addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
     
@@ -130,8 +140,7 @@
     if ([state isEqualToString:@"edit"]) {
         titlelabel.text=@"Edit Event";
     }
-
-    seledayArr=[[NSMutableArray alloc]initWithCapacity:0];
+    
     eventDic=[[NSMutableDictionary alloc]initWithCapacity:0];
     alertButtonArr=[[NSMutableArray alloc] initWithCapacity:0];//存放alert按钮的array
     selectAlertArr=[[NSMutableArray alloc] initWithCapacity:0];
@@ -139,30 +148,17 @@
     selectRepeatArr=[[NSMutableArray alloc] initWithCapacity:0];
     
     [self InitUI];
+    
     if ([state isEqualToString:@"edit"]) {
-//        CLDay *startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:event.startDate]];
-//        
-//        CLDay *endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:event.endDate]];
-//        
-//        if (![[startday description] isEqualToString:[endday description]]) {//开始时间和结束时间不相同 的从新布局
-//            
-//        }else{
-//            NSString *startDate=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: event.startDate];
-//            NSString *endDate=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: event.endDate];
-//            NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:event.endDate getStrart:event.startDate ];
-//            [intervalbtn setTitle:instr forState:UIControlStateNormal];
-//            startlabel.text=startday.weekDayMotch;
-//            endlabel.text=[NSString stringWithFormat:@"%@ → %@",startDate,endDate]  ;
-//        }
-//        
-//        
-//        seledayArr=[[PublicMethodsViewController getPublicMethods] intervalSinceNow:[endday description] getStrart:[startday description]];
         [intervalbtn setHidden:NO];
         UIView* headview=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 60)];
         UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
-        button.backgroundColor=[UIColor redColor];
-        button.frame=CGRectMake(20, 2, 280, 40);
+        button.backgroundColor=purple;
+        button.frame=CGRectMake(20, 5, 280, 40);
         [button setTitle:@"Delete Event" forState:UIControlStateNormal];
+        [button.layer setMasksToBounds:YES];
+        [button.layer setCornerRadius:10.f];
+        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [button addTarget:self action:@selector(deleteEvent) forControlEvents:UIControlEventTouchUpInside];
         [headview addSubview:button];
         self.tableView.tableFooterView=headview;
@@ -205,6 +201,7 @@
     localfiled=[[UITextField alloc]initWithFrame:CGRectMake(0, 20, self.view.frame.size.width, 64)];
     localfiled.textAlignment=NSTextAlignmentCenter;
     localfiled.font=[UIFont boldSystemFontOfSize:15.0f];
+    localfiled.enabled=NO;
     localfiled.tag=1;
     localfiled.delegate=self;
     
@@ -227,12 +224,13 @@
         btn.tag = i+10;
         CGRect frame;
         frame.size.width = 40;//设置按钮坐标及大小
-        frame.size.height = 20;
+        frame.size.height = 40;
         frame.origin.x = (i%3)*(65+35)+45;
         frame.origin.y = floor(i/3)*(30+20)+70;
         [btn setFrame:frame];
         [btn setTitle:[arr objectAtIndex:i] forState:UIControlStateNormal];
         [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+         btn.titleLabel.font=[UIFont systemFontOfSize:17.f];
         [btn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
         [alertButtonArr addObject:btn];
     }
@@ -241,8 +239,8 @@
     NSArray *Array = [[NSArray alloc] initWithObjects:@"Daily",@"Weekly",@"Monthly", nil];
     for (int i=0; i<Array.count; i++)
     {
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        button.frame = CGRectMake(30+(i*100), 45, 55, 20);
+        UIButton *button = [[UIButton alloc] init];
+        button.frame = CGRectMake(15+(i*100), 30, 90, 50);
         button.tag = i+100;
         [button setTitle:[Array objectAtIndex:i] forState:UIControlStateNormal];
         [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
@@ -311,8 +309,7 @@
     endtimeLab.tag=2;
     endtimeLab.textAlignment=NSTextAlignmentCenter;
     endtimeLab.font=[UIFont boldSystemFontOfSize:15.0f];
-
-//
+    
 //    [endLab setBackgroundColor:[UIColor redColor]];
 //    [endtimeLab setBackgroundColor:[UIColor grayColor]];
     [endView addSubview:endLab];
@@ -325,42 +322,57 @@
     addImage.titleLabel.font=[UIFont boldSystemFontOfSize:17.0f];
     [addImage addTarget:self action:@selector(handleSingleTapFrom) forControlEvents:UIControlEventTouchUpInside];
     
+    allDayStartLable=[[UILabel alloc] initWithFrame:CGRectMake(80, 27, kScreen_Width-90, 40)];
+    allDayStartLable.textAlignment=NSTextAlignmentCenter;
+    allDayStartLable.font=[UIFont boldSystemFontOfSize:15.0f];
+    
      self.isOpen = NO;
      self.isShowMap=NO;
 }
 
 
 
+
+
 //删除事件
 -(void)deleteEvent{
-    NSPredicate *pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and calendarAccount==%@ and startDate==%@ and eId==%@",event.eventTitle,event.calendarAccount,event.startDate,event.eId];
-    AnyEvent *anyEvent=[[AnyEvent MR_findAllWithPredicate:pre] lastObject];
-    Calendar *ca=anyEvent.calendar;
-    if (ca) {
-        if ([ca.type intValue]==AccountTypeGoogle) {
-            if (anyEvent.eId) {
-                ASIHTTPRequest *deleteGoogleRequest= [t_Network httpPostValue:@{@"cid":ca.cid,@"eid":anyEvent.eId}.mutableCopy Url:Google_DeleteCalendarEvent Delegate:self Tag:Google_DeleteCalendarEvent_tag userInfo:@{@"anyEvent": anyEvent}];
-                [deleteGoogleRequest startAsynchronous];
+    IBActionSheet *ibActionSheet=[[IBActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Event" otherButtonTitles:nil, nil];
+    [ibActionSheet showInView:self.navigationController.view];
+
+}
+
+
+#pragma -ibactionsheet的代理
+-(void)actionSheet:(IBActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex==0) {
+        NSPredicate *pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and calendarAccount==%@ and startDate==%@ and eId==%@",event.eventTitle,event.calendarAccount,event.startDate,event.eId];
+        AnyEvent *anyEvent=[[AnyEvent MR_findAllWithPredicate:pre] lastObject];
+        Calendar *ca=anyEvent.calendar;
+        if (ca) {
+            if ([ca.type intValue]==AccountTypeGoogle) {
+                if (anyEvent.eId) {
+                    ASIHTTPRequest *deleteGoogleRequest= [t_Network httpPostValue:@{@"cid":ca.cid,@"eid":anyEvent.eId}.mutableCopy Url:Google_DeleteCalendarEvent Delegate:self Tag:Google_DeleteCalendarEvent_tag userInfo:@{@"anyEvent": anyEvent}];
+                    [deleteGoogleRequest startAsynchronous];
+                }
+            }else if([ca.type intValue]==AccountTypeLocal){
+                if (anyEvent.eId) {
+                    ASIHTTPRequest *deleteGoogleRequest= [t_Network httpPostValue:@{@"id":anyEvent.eId,@"type":@(3)}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"anyEvent": anyEvent}];
+                    [deleteGoogleRequest startAsynchronous];
+                }
             }
-        }else if([ca.type intValue]==AccountTypeLocal){
-            if (anyEvent.eId) {
-                ASIHTTPRequest *deleteGoogleRequest= [t_Network httpPostValue:@{@"id":anyEvent.eId,@"type":@(3)}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"anyEvent": anyEvent}];
-                [deleteGoogleRequest startAsynchronous];
-             }
-         }
-        NSString * uniqueFlagNot=[[anyEvent.objectID URIRepresentation] absoluteString];
-        NSLog(@"删除通知的唯一标记：%@",uniqueFlagNot);
-        [self removeLocationNoticeWithName:uniqueFlagNot];
-        [anyEvent MR_deleteEntity];
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-    }
-    for (UIViewController* obj in [self.navigationController viewControllers]) {
-        if ([obj isKindOfClass:[HomeViewController class]]) {
-            [self.navigationController popToViewController:obj animated:YES];
+            NSString * uniqueFlagNot=[[anyEvent.objectID URIRepresentation] absoluteString];
+            NSLog(@"删除通知的唯一标记：%@",uniqueFlagNot);
+            [self removeLocationNoticeWithName:uniqueFlagNot];
+            [anyEvent MR_deleteEntity];
+            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+        }
+        for (UIViewController* obj in [self.navigationController viewControllers]) {
+            if ([obj isKindOfClass:[HomeViewController class]]) {
+                [self.navigationController popToViewController:obj animated:YES];
+            }
         }
     }
 }
-
 -(void)viewWillAppear:(BOOL)animated{
     
     alarmArray=[[NSMutableArray alloc]initWithCapacity:0];
@@ -387,108 +399,12 @@
     //[self dismissViewControllerAnimated:YES completion:nil];
 }
 
-//添加事件或保存修改
-- (void)onClickAdd
-{
-    
-    NSLog(@"点击保存数据");
-    if (textfiled.text.length<=0) {
-       [textfiled becomeFirstResponder];
-       // [g_AppDelegate showActivityView:@"Please enter Event Title" interval:.5];
-        return;
-    }
-    if ([startlabel.text isEqualToString:@"CHOOSE"])
-    {
-        UIAlertView* alert=[[UIAlertView alloc]initWithTitle:@"提示:" message:@"请选择时间" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        return;
-    }
-    if ([state isEqualToString:@"edit"]) {
-        [self editEvent];
-    }else{
-      [self postEvent];
-    }
-    [textfiled resignFirstResponder];
-    if ([state isEqualToString:@"edit"]) {
-        for (UIViewController* obj in [self.navigationController viewControllers]) {
-            if ([obj isKindOfClass:[HomeViewController class]]) {
-                [self.navigationController popToViewController:obj animated:YES];
-            }
-        }
-    }else {
-        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(dissViewcontroller) userInfo:nil repeats:YES];
-        
-        //    [self dismissViewControllerAnimated:YES completion:nil];
-    }
-}
-
 -(void)dissViewcontroller{
     //if ([state isEqualToString:@"edit"]) {
         [self.navigationController popViewControllerAnimated:YES];
    // }else{
     //   [self dismissViewControllerAnimated:YES completion:nil];
    // }
-}
-
-//修改事件数据
--(void)editEvent{
-    
-    NSPredicate *pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and startDate==%@ and location==%@",event.eventTitle,event.startDate,event.location];
-    AnyEvent *anyEvent= [[AnyEvent MR_findAllWithPredicate:pre ] lastObject];
-    anyEvent.eventTitle= textfiled.text;
-    anyEvent.location= localfiled.text ;
-    anyEvent.startDate= startString ;
-    anyEvent.endDate= endString ;
-    anyEvent.note= notefiled.text;
-    anyEvent.calendarAccount=_calendarLab.text;
-    NSString *coor=@"";
-    if (coordinates) {
-        coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
-    }
-    anyEvent.coordinate= coor;
-    
-    NSString * alertStr=@"";
-    if( selectAlertArr) {
-        alertStr=[selectAlertArr componentsJoinedByString:@","];
-    }
-    anyEvent.alerts= alertStr;
-    
-    anyEvent.calendarAccount= localfiled.text;
-    
-    
-    NSString * repeatStr=@"";
-    if(selectRepeatArr) {
-        repeatStr=[selectRepeatArr componentsJoinedByString:@","];
-    }
-    anyEvent.repeat= repeatStr;
-    anyEvent.isSync=@(isSyncData_NO);
-    
-    NSLog(@"[anyEvent.calendar.type ===%d",[anyEvent.calendar.type intValue]);
-    NSLog(@"self.calendarObj.type  ===%d",[self.calendarObj.type intValue]);
-    if ([anyEvent.calendar.type intValue]!=[self.calendarObj.type intValue]) {//如歌
-        anyEvent.eId=nil;
-    }
-    anyEvent.calendar=self.calendarObj;
-  
-    
-    NSString * nowDate=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
-    anyEvent.updated=nowDate;
-    
-    [self.calendarObj addAnyEventObject:anyEvent];
-    
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
-        NSString *idStr=[[[anyEvent objectID] URIRepresentation] absoluteString];
-        if (error) {
-            NSLog(@"%@",error);
-            return;
-        }
-        [self removeLocationNoticeWithName:idStr];
-        if (contextDidSave) {
-            //为事件添加通知
-            [self createLocationNotification:anyEvent];
-        }
-
-    }];
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
@@ -604,50 +520,66 @@
                     NSString *startTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: tmpstartTime];
                     NSString *endTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: tmpendTime];
                      NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:tmpendTime getStrart:tmpstartTime ];
-                    if (![[startday description] isEqualToString:[endday description]]) {//开始时间和结束时间不相同 的从新布局
-                        for (UILabel *lab in startView.subviews) {
-                            if (lab.tag==1) {
-                                lab.lineBreakMode = NSLineBreakByWordWrapping;
-                                lab.text=[startday abbreviationWeekDayMotch];
-                            }else if (lab.tag==2){
-                                lab.text=startTime;
-                            }                        }
-                        for (UILabel *lab in endView.subviews) {
-                            if (lab.tag==1) {
-                                lab.lineBreakMode = NSLineBreakByWordWrapping;
-                                lab.text=[endday abbreviationWeekDayMotch];
-                            }else if (lab.tag==2){
-                                lab.text=endTime;
-                            }
-                        }
-               
-                        intervalbtn.frame=CGRectMake(35, 18, 40, 40);;
+                    
+                    if ([event.isAllDay boolValue]) {
+                        [allDayStartLable setHidden:NO];
                         [startlabel setHidden:YES];
                         [endlabel setHidden:YES];
-                        [directionLab setHidden:NO];
+                        [directionLab setHidden:YES];
+                        if (![[startday description] isEqualToString:[endday description]]) {
+                            allDayStartLable.text=[NSString stringWithFormat:@"%@ → %@",[startday abbreviationWeekDayMotch],[endday abbreviationWeekDayMotch]];
+                        }else{
+                            allDayStartLable.text=[NSString stringWithFormat:@"%@ (ALL DAY)",[startday abbreviationWeekDayMotch]];
+                        }
                     }else{
-                        startlabel.text=[startday weekDayMotch];
-                        endlabel.text=[NSString stringWithFormat:@"%@ → %@",startTime,endTime]  ;
-                    }
-                    [intervalbtn setTitle:instr forState:UIControlStateNormal];
+                        [allDayStartLable setHidden:YES];
+                        if (![[startday description] isEqualToString:[endday description]]) {//开始时间和结束时间不相同 的从新布局
+                            for (UILabel *lab in startView.subviews) {
+                                if (lab.tag==1) {
+                                    lab.lineBreakMode = NSLineBreakByWordWrapping;
+                                    lab.text=[startday abbreviationWeekDayMotch];
+                                }else if (lab.tag==2){
+                                    lab.text=startTime;
+                                }                        }
+                            for (UILabel *lab in endView.subviews) {
+                                if (lab.tag==1) {
+                                    lab.lineBreakMode = NSLineBreakByWordWrapping;
+                                    lab.text=[endday abbreviationWeekDayMotch];
+                                }else if (lab.tag==2){
+                                    lab.text=endTime;
+                                }
+                            }
+                   
+                            intervalbtn.frame=CGRectMake(35, 18, 40, 40);;
+                            [startlabel setHidden:YES];
+                            [endlabel setHidden:YES];
+                            [directionLab setHidden:NO];
+                        }else{
+                            startlabel.text=[startday weekDayMotch];
+                            endlabel.text=[NSString stringWithFormat:@"%@ → %@",startTime,endTime]  ;
+                        }
+                     }
+                     [intervalbtn setTitle:instr forState:UIControlStateNormal];
                 }
                 
                 if (nowDay) {
-                   
-                    NSDate *nowDate= [[PublicMethodsViewController getPublicMethods] formatWithStringDate:nowDay];
-                    CLDay *now=[[CLDay alloc] initWithDate:nowDate];
-                    NSDate *futureDate=[nowDate dateByAddingTimeInterval:60*60];
-                    NSString *future=[[PublicMethodsViewController getPublicMethods] stringformatWithDate:futureDate];
-                    
-                    NSString *startTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: nowDay];
-                    NSString *endTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: future];
-                    
-                     NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:future getStrart:nowDay ];
-                    
-                    [intervalbtn setTitle:instr forState:UIControlStateNormal];
-                    startlabel.text=[now weekDayMotch];
-                    endlabel.text=[NSString stringWithFormat:@"%@ → %@",startTime,endTime]  ;
-                    [intervalbtn setHidden:NO];
+                        NSDate *nowDate= [[PublicMethodsViewController getPublicMethods] formatWithStringDate:nowDay];
+                        CLDay *now=[[CLDay alloc] initWithDate:nowDate];
+                        NSDate *futureDate=[nowDate dateByAddingTimeInterval:60*60];
+                        NSString *future=[[PublicMethodsViewController getPublicMethods] stringformatWithDate:futureDate];
+                      
+                        startString=nowDay;//事件开始时间
+                        endString=future;//事件结束时间
+                       
+                        NSString *startTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: nowDay];
+                        NSString *endTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: future];
+                        
+                         NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:future getStrart:nowDay ];
+                        
+                        [intervalbtn setTitle:instr forState:UIControlStateNormal];
+                        startlabel.text=[now weekDayMotch];
+                        endlabel.text=[NSString stringWithFormat:@"%@ → %@",startTime,endTime]  ;
+                        [intervalbtn setHidden:NO];
                 }
                 [cell1.contentView addSubview:directionLab];
                 [cell1.contentView addSubview:startView];
@@ -655,6 +587,7 @@
                 [cell1.contentView addSubview:intervalbtn];
                 [cell1.contentView addSubview:startlabel];
                 [cell1.contentView addSubview:endlabel];
+                [cell1.contentView addSubview:allDayStartLable];
             }
         }
         if (indexPath.section==2){//地图，地址显示区
@@ -729,7 +662,6 @@
             localfiled.placeholder=@"LOCATION";
             _locallable.text = @"                          Location";
             notefiled.placeholder=@"Note";
-          //  peoplelabel.text=@"0 Alerts";
             calendarlabel.text=@"                              Note";
         
             _CAlable.text = @"                    Calendar Account";
@@ -759,7 +691,9 @@
                     for (NSString *alertStr in alertItemArr) {
                         for (UIButton *eachBtn in alertButtonArr) {
                             if ([alertStr isEqualToString:[eachBtn currentTitle]]) {
-                                [eachBtn setBackgroundImage:[UIImage imageNamed:@"Event_time_red"] forState:UIControlStateNormal];
+                               // [eachBtn setBackgroundImage:[UIImage imageNamed:@"Event_time_red"] forState:UIControlStateNormal];
+                                [eachBtn setTitleColor:purple forState:UIControlStateNormal];
+                                eachBtn.titleLabel.font=[UIFont systemFontOfSize:20.f];
                                 [eachBtn setBackgroundColor:[UIColor clearColor]];
                                 [selectAlertArr addObject:[eachBtn currentTitle]];
                                 [eachBtn setSelected:YES];
@@ -777,6 +711,7 @@
                     for (NSString *repeatStr in repeatItemArr) {
                         for (UIButton *eachBtn in repeatButtonArr) {
                             if ([repeatStr isEqualToString:[eachBtn currentTitle]]) {
+                                [eachBtn setTitleColor:purple forState:UIControlStateNormal];
                                 [eachBtn setBackgroundColor:[UIColor clearColor]];
                                 [selectRepeatArr addObject:[eachBtn currentTitle]];
                                 [eachBtn setSelected:YES];
@@ -793,7 +728,6 @@
                     }else{
                         [self getlocation:event.location coordinate: nil];
                     }
-                    
                     isReadFlag=YES;//默认只取一次值
               }
           }
@@ -820,9 +754,11 @@
     NSLog(@"buttonPressed %ld",(long)button.tag);
     if(!button.selected) {
         [button setBackgroundColor:[UIColor clearColor]];
+        [button setTitleColor:purple forState:UIControlStateNormal];
         [selectRepeatArr addObject:[button currentTitle]];
         [button setSelected:YES];
     }else{
+        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [selectRepeatArr removeObject:[button currentTitle]];
         [button setSelected:NO];
     }
@@ -847,15 +783,18 @@
 {
    
     if(!btn.selected) {
-        //[btn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-        [btn setBackgroundImage:[UIImage imageNamed:@"Event_time_red"] forState:UIControlStateNormal];
+        [btn setTitleColor:purple forState:UIControlStateNormal];
+        btn.titleLabel.font=[UIFont systemFontOfSize:20.f];
+       // [btn setBackgroundImage:[UIImage imageNamed:@"Event_time_red"] forState:UIControlStateNormal];
         [btn setBackgroundColor:[UIColor clearColor]];
         [selectAlertArr addObject:[btn currentTitle]];
         self.alertCount++;
         [btn setSelected:YES];
     }else{
         [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [btn setBackgroundImage:nil forState:UIControlStateNormal];
+        //[btn setBackgroundImage:nil forState:UIControlStateNormal];
+        [btn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        btn.titleLabel.font=[UIFont systemFontOfSize:17.f];
         [selectAlertArr removeObject:[btn currentTitle]];
         self.alertCount--;
         [btn setSelected:NO];
@@ -906,9 +845,34 @@
 #pragma mark - Table view delegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    if (indexPath.section==1) {
+   if (indexPath.section==1) {
         ViewController* controler=[[ViewController alloc]initWithNibName:@"ViewController" bundle:nil];
+        if (event) {
+            if (startString) {
+                event.startDate=startString;
+                startString=nil;
+            }else{
+                event.startDate=event.startDate;
+            }
+            if (endString) {
+                event.endDate=endString;
+                endString=nil;
+            }else{
+                event.endDate=event.endDate;
+            }
+
+            [controler addEventViewControler:self anyEvent:event];
+        }else{
+            
+            event=[AnyEvent MR_createEntity];
+            event.eventTitle=textfiled.text;
+            event.location= localfiled.text;
+            event.startDate= startString;
+            event.endDate= endString;
+            event.calendarAccount=_calendarLab.text;
+            event.isAllDay=@(isAllDay);//全天事件 标记
+            [controler addEventViewControler:self anyEvent:event];
+        }
         controler.detelegate=self;
         [self.navigationController pushViewController:controler animated:YES];
     }else if(indexPath.section==3){
@@ -916,6 +880,10 @@
         caVC.delegate=self;
         [self.navigationController pushViewController:caVC animated:YES];
     
+    }else if(indexPath.section==2){
+        LocationViewController *locationView=[[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
+        locationView.detelegate=self;
+        [self.navigationController pushViewController:locationView animated:YES];
     }
     
 }
@@ -963,17 +931,13 @@
 
 
 
-#pragma mark - viewController的代理方法 settimedelegate
--(void)getstarttime:(NSString *)start getendtime:(NSString *)end{
+#pragma mark - 时间选择viewController的代理方法 settimedelegate
+-(void)getstarttime:(NSString *)start getendtime:(NSString *)end isAllDay:(BOOL)isAll{
     
     nowDay=nil;//清空新增时的默认时间数据
     
     startString=start;
     endString=end;
-    NSRange ranges=[start rangeOfString:@"日"];
-    NSString* strsend=[start substringWithRange:NSMakeRange(0,ranges.location+1)];
-    NSRange range=[end rangeOfString:@"日"];
-    NSString* ends=[end substringWithRange:NSMakeRange(0,range.location+1)];
     
     CLDay *startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:start]];
     CLDay *endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:end]];
@@ -984,44 +948,60 @@
     NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:end getStrart:start ];
     [intervalbtn setTitle:instr forState:UIControlStateNormal];
     [intervalbtn setHidden:NO];
-
-    if (![[startday description] isEqualToString:[endday description]]) {//开始时间和结束时间不相同 的从新布局
-        for (UILabel *lab in startView.subviews) {
-            if (lab.tag==1) {
-                lab.lineBreakMode = NSLineBreakByWordWrapping;
-                lab.text=[startday abbreviationWeekDayMotch];
-            }else if (lab.tag==2){
-                lab.text=startTime;
-            }
-        }
-        for (UILabel *lab in endView.subviews) {
-            if (lab.tag==1) {
-                lab.lineBreakMode = NSLineBreakByWordWrapping;
-                lab.text=[endday abbreviationWeekDayMotch];
-            }else if (lab.tag==2){
-                lab.text=startTime;
-            }
-        }
-        intervalbtn.frame=CGRectMake(35, 18, 40, 40);
+    
+    isAllDay=isAll;
+    event.isAllDay=@(isAllDay);
+    if (isAll) {
+        [allDayStartLable setHidden:NO];
         [startlabel setHidden:YES];
         [endlabel setHidden:YES];
-        [directionLab setHidden:NO];
-        [startView setHidden:NO];
-        [endView setHidden:NO];
-    }else{
-        intervalbtn.frame=CGRectMake(50, 26, 40, 40);
-        startlabel.text=[startday weekDayMotch];
-        endlabel.text=[NSString stringWithFormat:@"%@ → %@",startTime,endTime];
-        
-        [startlabel setHidden:NO];
-        [endlabel setHidden:NO];
-        
         [directionLab setHidden:YES];
         [startView setHidden:YES];
         [endView setHidden:YES];
-        
+        intervalbtn.frame=CGRectMake(50, 26, 40, 40);
+        if (![[startday description] isEqualToString:[endday description]]) {
+            allDayStartLable.text=[NSString stringWithFormat:@"%@ → %@",[startday abbreviationWeekDayMotch],[endday abbreviationWeekDayMotch]];
+        }else{
+            allDayStartLable.text=[NSString stringWithFormat:@"%@ (ALL DAY)",[startday description]];
+        }
+    }else{
+            [allDayStartLable setHidden:YES];
+           if (![[startday description] isEqualToString:[endday description]]) {//开始时间和结束时间不相同的 从新布局
+                for (UILabel *lab in startView.subviews) {
+                    if (lab.tag==1) {
+                        lab.lineBreakMode = NSLineBreakByWordWrapping;
+                        lab.text=[startday abbreviationWeekDayMotch];
+                    }else if (lab.tag==2){
+                        lab.text=startTime;
+                    }
+                }
+                for (UILabel *lab in endView.subviews) {
+                    if (lab.tag==1) {
+                        lab.lineBreakMode = NSLineBreakByWordWrapping;
+                        lab.text=[endday abbreviationWeekDayMotch];
+                    }else if (lab.tag==2){
+                        lab.text=endTime;
+                    }
+                }
+                intervalbtn.frame=CGRectMake(35, 18, 40, 40);
+                [startlabel setHidden:YES];
+                [endlabel setHidden:YES];
+                [directionLab setHidden:NO];
+                [startView setHidden:NO];
+                [endView setHidden:NO];
+        }else{
+                intervalbtn.frame=CGRectMake(50, 26, 40, 40);
+                startlabel.text=[startday weekDayMotch];
+                endlabel.text=[NSString stringWithFormat:@"%@ → %@",startTime,endTime];
+                
+                [startlabel setHidden:NO];
+                [endlabel setHidden:NO];
+                
+                [directionLab setHidden:YES];
+                [startView setHidden:YES];
+                [endView setHidden:YES];
+        }
     }
-    seledayArr=[[PublicMethodsViewController getPublicMethods] intervalSinceNow:ends getStrart:strsend];
 }
 
 #pragma mark -代理方法 -- getlocation:coordinate:
@@ -1095,11 +1075,6 @@
         [UIView commitAnimations];
     }
     NSLog(@"%ld",textField.tag);
-    if ([@"1" isEqualToString:[NSString stringWithFormat:@"%ld",textField.tag] ]) {
-        LocationViewController *locationView=[[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
-        locationView.detelegate=self;
-        [self.navigationController pushViewController:locationView animated:NO];
-    }
     
 }
 
@@ -1107,7 +1082,7 @@
 
 
 
-
+//创建通知
 -(void)createLocationNotification:(AnyEvent *) anyEvent
 {
     UILocalNotification *notification = [[UILocalNotification alloc] init];
@@ -1245,9 +1220,8 @@
 }
 
 
-//取消一個通知
 /**
- *
+ *取消一個通知
  *name 通知的唯一标记名
  *
  */
@@ -1269,86 +1243,6 @@
             }
         }
     }
-}
-
-
-//屏蔽 以前遗留 已有在删
--(void)getLocalNotification:(NSString*)day{
-    
-    UILocalNotification *notification = [[UILocalNotification alloc] init];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"YYYY年 M月d日HH:mm"];
-    //触发通知的时间
-    NSDate *now = [formatter dateFromString:@"2014年 4月21日21:30"];
-    notification.fireDate = now;
-    //时区
-    notification.timeZone = [NSTimeZone defaultTimeZone];
-    //通知重复提示的单位，可以是天、周、月
-    notification.repeatInterval = NSDayCalendarUnit;
-    //通知内容
-    notification.alertBody = textfiled.text;
-    notification.applicationIconBadgeNumber = 0;
-    //通知被触发时播放的声音
-    notification.soundName = UILocalNotificationDefaultSoundName;
-    //执行通知注册
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-   
-//    NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
-//
-//	// Get the current date
-//    NSRange range=[startlabel.text rangeOfString:@"日"];
-//    NSString* strs=[startlabel.text substringWithRange:NSMakeRange(range.location+1,startlabel.text.length-range.location-1)];
-//    if (strs.length<=00) {
-//        strs=@"8:00";
-//    }
-//    NSString* sateStr=[NSString stringWithFormat:@"%@%@",day,strs];
-//    sateStr=[sateStr stringByReplacingOccurrencesOfString:@"年 " withString:@"-"];
-//    sateStr=[sateStr stringByReplacingOccurrencesOfString:@"月" withString:@"-"];
-//    sateStr=[sateStr stringByReplacingOccurrencesOfString:@"日" withString:@"-"];
-//    sateStr=[sateStr stringByReplacingOccurrencesOfString:@":" withString:@"-"];
-//    sateStr=[sateStr stringByReplacingOccurrencesOfString:@" " withString:@"-"];
-//    NSArray* arr=[sateStr componentsSeparatedByString:@"-"];
-//    NSLog(@"%@-------%@",arr,sateStr);
-//    NSInteger second=[self gettimemonth:arr];
-//    NSDate *now = [NSDate new];
-//    NSDate *pushDate =[now dateByAddingTimeInterval:second];
-//	NSDateComponents *dateComponents = [calendar components:( NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit )
-//												   fromDate:pushDate];
-//	NSDateComponents *timeComponents = [calendar components:( NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit )
-//												   fromDate:pushDate];
-//	
-//	// Set up the fire time
-//    NSDateComponents *dateComps = [[NSDateComponents alloc] init];
-//    [dateComps setDay:[dateComponents day]];
-//    [dateComps setMonth:[dateComponents month]];
-//    [dateComps setYear:[dateComponents year]];
-//    [dateComps setHour:[timeComponents hour]];
-//	// Notification will fire in one minute
-//    [dateComps setMinute:[timeComponents minute]];
-//	[dateComps setSecond:[timeComponents second]];
-//    NSDate *itemDate = [calendar dateFromComponents:dateComps];
-//	NSLog(@"%@",itemDate);
-//    UILocalNotification *localNotif = [[UILocalNotification alloc] init];
-//    if (localNotif == nil)
-//        return;
-//    localNotif.fireDate = pushDate;
-//    localNotif.timeZone = [NSTimeZone defaultTimeZone];
-//	
-//	// Notification details
-//    localNotif.alertBody = textfiled.text;
-//	// Set the action button
-//    localNotif.alertAction = @"View";
-//	
-//    localNotif.soundName = UILocalNotificationDefaultSoundName;
-//    localNotif.applicationIconBadgeNumber = 0;
-//	// Specify custom data for the notification
-//    NSDictionary* infoDict=[[NSDictionary alloc]initWithObjectsAndKeys:textfiled.text,@"title",[NSString stringWithFormat:@"开始时间:%@\n结束时间:%@",startlabel.text,endlabel.text],@"content",nil];
-//    localNotif.userInfo = infoDict;
-//	
-//	// Schedule the notification
-//    [[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
- 
-
 }
 
 -(NSInteger)gettimemonth:(NSArray*)arr{
@@ -1429,53 +1323,94 @@
 }
 
 
+//添加事件或保存修改
+- (void)onClickAdd
+{
+    
+    NSLog(@"点击保存数据");
+    if (textfiled.text.length<=0) {
+        [textfiled becomeFirstResponder];
+        return;
+    }
+    if ([startlabel.text isEqualToString:@"CHOOSE"])
+    {
+        UIAlertView* alert=[[UIAlertView alloc]initWithTitle:@"提示:" message:@"请选择时间" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alert show];
+        return;
+    }
+    if ([state isEqualToString:@"edit"]) {
+        [self editEvent];
+    }else{
+        [self postEvent];
+    }
+    [textfiled resignFirstResponder];
+    if ([state isEqualToString:@"edit"]) {
+        for (UIViewController* obj in [self.navigationController viewControllers]) {
+            if ([obj isKindOfClass:[HomeViewController class]]) {
+                [self.navigationController popToViewController:obj animated:YES];
+            }
+        }
+    }else {
+        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(dissViewcontroller) userInfo:nil repeats:YES];
+        
+        //    [self dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
+
+#pragma -新增事件
 - (void)postEvent
 {
-    AnyEvent *anyEvent=[AnyEvent MR_createEntity];
-    anyEvent.eventTitle=textfiled.text;
-    anyEvent.location= localfiled.text;
-    anyEvent.startDate= startString;
-    anyEvent.endDate= endString;
-    anyEvent.note= notefiled.text;
-    anyEvent.calendarAccount=_calendarLab.text;
+    if (!event) {
+        event=[AnyEvent MR_createEntity];
+    }
+    
+    event.eventTitle=textfiled.text;
+    event.location= localfiled.text;
+    event.startDate= startString;
+    event.endDate= endString;
+    event.note= notefiled.text;
+    event.calendarAccount=_calendarLab.text;
     NSString *coor=@"";
     if (coordinates) {
         coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
     }
-    anyEvent.coordinate= coor;
+    event.coordinate= coor;
 
     NSString * alertStr=@"";
     if( selectAlertArr) {
         alertStr=[selectAlertArr componentsJoinedByString:@","];
     }
-    anyEvent.alerts= alertStr;
-    anyEvent.calendarAccount =  localfiled.text ;
+    event.alerts= alertStr;
+    event.calendarAccount =  localfiled.text ;
     
     
     NSString * repeatStr=@"";
     if(selectRepeatArr) {
         repeatStr=[selectRepeatArr componentsJoinedByString:@","];
     }
-    anyEvent.repeat= repeatStr;
-    anyEvent.calendar=self.calendarObj;
-    anyEvent.isSync=@(isSyncData_NO);
+    event.repeat= repeatStr;
+    event.calendar=self.calendarObj;
+    event.isSync=@(isSyncData_NO);
     NSString * nowDate=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
-    anyEvent.updated=nowDate;
-    anyEvent.created=nowDate;
-    anyEvent.creator= [USER_DEFAULT objectForKey:@"email"];
-    anyEvent.organizer= [USER_DEFAULT objectForKey:@"email"];
-    [self.calendarObj addAnyEventObject:anyEvent];
+    event.updated=nowDate;
+    event.created=nowDate;
+    event.creator= [USER_DEFAULT objectForKey:@"email"];
+    event.organizer= [USER_DEFAULT objectForKey:@"email"];
+    event.isAllDay=@(isAllDay);//全天事件 标记
+    
+    [self.calendarObj addAnyEventObject:event];
     
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
         if (error) {
             NSLog(@"%@",error);
-            NSString *idStr=[[[anyEvent objectID] URIRepresentation] absoluteString];
+            NSString *idStr=[[[event objectID] URIRepresentation] absoluteString];
             [self removeLocationNoticeWithName:idStr];
             return;
         }
         if (contextDidSave) {
             //为事件添加通知
-            [self createLocationNotification:anyEvent];
+            [self createLocationNotification:event];
         }
     }];
     
@@ -1550,4 +1485,69 @@
   
 // ----------------------end------------------------
 }
+
+//修改事件数据
+-(void)editEvent
+{
+    
+    NSPredicate *pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and startDate==%@ and location==%@",event.eventTitle,event.startDate,event.location];
+    AnyEvent *anyEvent= [[AnyEvent MR_findAllWithPredicate:pre ] lastObject];
+    anyEvent.eventTitle= textfiled.text;
+    anyEvent.location= localfiled.text ;
+    
+    anyEvent.startDate= startString ;
+    anyEvent.endDate= endString ;
+    anyEvent.note= notefiled.text;
+    anyEvent.calendarAccount=_calendarLab.text;
+    NSString *coor=@"";
+    if (coordinates) {
+        coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
+    }
+    anyEvent.coordinate= coor;
+    
+    NSString * alertStr=@"";
+    if( selectAlertArr) {
+        alertStr=[selectAlertArr componentsJoinedByString:@","];
+    }
+    anyEvent.alerts= alertStr;
+    
+    anyEvent.calendarAccount= localfiled.text;
+    
+    
+    NSString * repeatStr=@"";
+    if(selectRepeatArr) {
+        repeatStr=[selectRepeatArr componentsJoinedByString:@","];
+    }
+    anyEvent.repeat= repeatStr;
+    anyEvent.isSync=@(isSyncData_NO);
+    
+    NSLog(@"[anyEvent.calendar.type ===%d",[anyEvent.calendar.type intValue]);
+    NSLog(@"self.calendarObj.type  ===%d",[self.calendarObj.type intValue]);
+    if ([anyEvent.calendar.type intValue]!=[self.calendarObj.type intValue]) {//如歌
+        anyEvent.eId=nil;
+    }
+    anyEvent.calendar=self.calendarObj;
+    
+    anyEvent.isAllDay=@(isAllDay);
+    
+    NSString * nowDate=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+    anyEvent.updated=nowDate;
+    
+    [self.calendarObj addAnyEventObject:anyEvent];
+    
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
+        NSString *idStr=[[[anyEvent objectID] URIRepresentation] absoluteString];
+        if (error) {
+            NSLog(@"%@",error);
+            return;
+        }
+        [self removeLocationNoticeWithName:idStr];
+        if (contextDidSave) {
+            //为事件添加通知
+            [self createLocationNotification:anyEvent];
+        }
+        
+    }];
+}
+
 @end

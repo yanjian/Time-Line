@@ -12,7 +12,7 @@
 #import "AnyEvent.h"
 #import "Calendar.h"
 #import "CircleDrawView.h"
-#define calendar_Table_Month_H  132   //只显示一周此处改为44
+#define calendar_Table_Month_H  220   //只显示一周此处改为44
 #define calendar_Table_Week_H   90   //110
 
 //表行的高度 139.0f
@@ -84,7 +84,7 @@
 - (void)loadLable {
     NSLog(@"%@",_time);
     
-    NSArray *array = [NSArray arrayWithObjects:@"Sun", @"Mon", @"Tue", @"Wed", @"Thi", @"Fri", @"Sat", nil];
+    NSArray *array = [NSArray arrayWithObjects:@"Sun", @"Mon", @"Tue", @"Wed", @"Thu", @"Fri", @"Sat", nil];
     
     for (int i = 0; i < 7; i++) {
         UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(kScreen_Width/7*i, 5, kScreen_Width/6, 15)]; // x,y,w,h
@@ -122,11 +122,11 @@
         selectDate[0] = -1;
         
         month=[[UILabel alloc]initWithFrame:calendar_tableView.frame];
-        month.alpha=0.5f;
-        month.backgroundColor=[UIColor blackColor];//显示黑色的几月 如8月黑色背景
+        month.alpha=0.7f;
+        month.backgroundColor=[UIColor whiteColor];//显示黑色的几月 如8月黑色背景
         month.textAlignment=NSTextAlignmentCenter;
         month.font=[UIFont boldSystemFontOfSize:17.0f];
-        month.textColor=[UIColor whiteColor];
+        month.textColor=[UIColor blackColor];
         
     }
 }
@@ -143,10 +143,8 @@
         
         
         [self addSubview:event_tableView];
-        needReload = YES;
+         needReload = YES;
     }
-    
-    
 }
 
 //到顶或到底箭头
@@ -227,7 +225,7 @@
         NSArray *calendararr=[Calendar MR_findAll];
         NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
         for (Calendar *ca in calendararr) {
-            if ([ca.isVisible intValue]==1) {
+            if ([ca.isVisible boolValue]) {
                 NSPredicate *nspre=[NSPredicate predicateWithFormat:@"calendar==%@",ca];
                 NSArray *arr=[AnyEvent MR_findAllWithPredicate:nspre];
                 for (AnyEvent *event in arr) {
@@ -267,7 +265,7 @@
         table_title=[table_title stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
         table_title=[table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
         NSArray* array=[table_title componentsSeparatedByString:@"/"];
-        titlelabel.text=[NSString stringWithFormat:@"%@  %@/%@",weakStr,[array objectAtIndex:2],[array objectAtIndex:1]];
+        titlelabel.text=[NSString stringWithFormat:@"%@, %@ %@",weakStr,[self abbreviationMonthStringWithInteger:[[array objectAtIndex:1] intValue] isAbbreviation:NO],[array objectAtIndex:2]];
         
 //       区头的颜色
         if (clDay.isToday) {
@@ -351,16 +349,15 @@
                 for (NSArray* arr in temarray ) {
                     if (day.month==[[arr objectAtIndex:1] integerValue]&&day.day==[[arr objectAtIndex:2] integerValue]) {
                         cell.imageview.image=[UIImage imageNamed:@"Icon_HaveEvent"];
-                       
-                    NSLog(@"%lu---dsdsdsdsdsd-%lu",(unsigned long)day.month,(unsigned long)day.day);
+                        NSLog(@"%lu---dsdsdsdsdsd-%lu",(unsigned long)day.month,(unsigned long)day.day);
                     }
                 }
+                
                 if (showMonth != day.month) {
                     showMonth = day.month;
-                    month.text=[NSString stringWithFormat:@"%lu Month",(unsigned long)day.month];
+                    month.text=[self abbreviationMonthStringWithInteger:day.month isAbbreviation:YES];
                     [self.delegate calendarDidToMonth:day.month year:day.year CalendarView:self];
                 }
-                
                 cell.weekArr = [dateArr objectAtIndex:indexPath.row];
             }else {
                 [tableView reloadData];
@@ -383,7 +380,7 @@
                 CLDay *day = [[dateArr objectAtIndex:i] objectAtIndex:0];
                 if (showMonth != day.month) {
                     showMonth = day.month;
-                    month.text=[NSString stringWithFormat:@"%lu Month",(unsigned long)day.month];
+                    month.text=[self abbreviationMonthStringWithInteger:day.month isAbbreviation:YES];
                     [self.delegate calendarDidToMonth:day.month year:day.year CalendarView:self];
                 }
                 cell.weekArr = [dateArr objectAtIndex:indexPath.row];
@@ -493,12 +490,20 @@
                 }
                     break;
                 case NSOrderedAscending:{
-                    [goBackbtn setBackgroundImage:[UIImage imageNamed:@"go_back_today"] forState:UIControlStateNormal];
+                    [UIView beginAnimations:@"goBackbtnAnimation" context:NULL];
+                    [UIView setAnimationDuration:1.0f];
+                    [UIView setAnimationDelegate:self];
+                    goBackbtn.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 90.0f);
+                    [UIView commitAnimations];
                 }
                     break;
                 case NSOrderedDescending:
                 {
-                    [goBackbtn setBackgroundImage:[UIImage imageNamed:@"go_back_today"] forState:UIControlStateNormal];
+                    [UIView beginAnimations:@"goBackbtnAnimation" context:NULL];
+                    [UIView setAnimationDuration:1.0f];
+                    [UIView setAnimationDelegate:self];
+                    goBackbtn.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 180.0f);
+                    [UIView commitAnimations];
                 }
                     break;
             }
@@ -534,7 +539,6 @@
         if (day.events) {
             event = [day.events objectAtIndex:indexPath.row];
         }
-
         if (dataEvent.count>0) {
             AnyEvent *anyEvent=[dataEvent objectAtIndex:indexPath.row];
             [self.delegate calendarSelectEvent:self day:day event:anyEvent AllEvent:dataEvent];
@@ -609,7 +613,9 @@
         table_title=[table_title stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
         table_title=[table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
         NSArray* array=[table_title componentsSeparatedByString:@"/"];
-        [_delegate calendartitle:[NSString stringWithFormat:@"%@   %@/%@",weakStr,[array objectAtIndex:2],[array objectAtIndex:1]]];
+        //[_delegate calendartitle:[NSString stringWithFormat:@"%@/%@",[array objectAtIndex:2],[array objectAtIndex:1]]];
+        
+        [_delegate calendartitle:[self abbreviationMonthStringWithInteger:[[array objectAtIndex:1] intValue] isAbbreviation:YES]];
         [event_tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionTop animated:YES];
     }
 }
@@ -675,6 +681,95 @@
     return -1;
 }
 
+-(NSString *)abbreviationMonthStringWithInteger:(int)months isAbbreviation:(BOOL) isabbrev{
+    NSString *title;
+    if (!isabbrev) {
+        switch (months) {
+            case 1:
+                title = @"Jan";
+                break;
+            case 2:
+                title = @"Feb";
+                break;
+            case 3:
+                title = @"Mar";
+                break;
+            case 4:
+                title = @"Apr";
+                break;
+            case 5:
+                title = @"May";
+                break;
+            case 6:
+                title = @"Jun";
+                break;
+            case 7:
+                title = @"Jul";
+                break;
+            case 8:
+                title = @"Aug";
+                break;
+            case 9:
+                title = @"Sep";
+                break;
+            case 10:
+                title = @"Oct";
+                break;
+            case 11:
+                title = @"Nov";
+                break;
+            case 12:
+                title = @"Dec";
+                break;
+                
+            default:
+                break;
+        }
+    }else{
+        switch (months) {
+            case 1:
+                title = @"January";
+                break;
+            case 2:
+                title = @"February";
+                break;
+            case 3:
+                title = @"March";
+                break;
+            case 4:
+                title = @"April";
+                break;
+            case 5:
+                title = @"May";
+                break;
+            case 6:
+                title = @"June";
+                break;
+            case 7:
+                title = @"July";
+                break;
+            case 8:
+                title = @"August";
+                break;
+            case 9:
+                title = @"September";
+                break;
+            case 10:
+                title = @"October";
+                break;
+            case 11:
+                title = @"November";
+                break;
+            case 12:
+                title = @"December";
+                break;
+                
+            default:
+                break;
+        }
+    }
+    return title;
+}
 
 
 @end

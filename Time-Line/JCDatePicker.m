@@ -617,26 +617,6 @@ void drawLinearGradient(CGContextRef context, CGRect rect, CGColorRef startColor
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
 {
-    /*
-     Note: scrollView.contentOffset == targetContentOffset
-     
-     float currentOffsetY = scrollView.contentOffset.y;
-     NSLog(@"current offset y: %f",currentOffsetY);
-     float targetOffsetY = targetContentOffset->y;
-     NSLog(@"target offset y: %f",targetOffsetY);
-     float adjustedOffsetY;
-     if (currentOffsetY > targetOffsetY) {
-     NSLog(@"down");
-     adjustedOffsetY = ceil(targetOffsetY/CELL_HEIGHT)*CELL_HEIGHT;
-     } else {
-     NSLog(@"up");
-     adjustedOffsetY = floor(targetOffsetY/CELL_HEIGHT)*CELL_HEIGHT;
-     }
-     NSLog(@"adjusted offset y: %f",adjustedOffsetY);
-     *targetContentOffset = CGPointMake(targetContentOffset->x, adjustedOffsetY);
-     NSLog(@"test ceil  = %f",ceil(targetOffsetY/CELL_HEIGHT));
-     **/
-    
     float targetOffsetY = targetContentOffset->y;
     float adjustedOffsetY = round(targetOffsetY/_cellHeight)*_cellHeight;
     *targetContentOffset = CGPointMake(targetContentOffset->x, adjustedOffsetY);
@@ -721,7 +701,7 @@ void drawLinearGradient(CGContextRef context, CGRect rect, CGColorRef startColor
     switch (tableView.tag) {
         case YEAR_TAG: {
             
-            //            cell.label.text = [NSString stringWithFormat:@"Year %d",_startYear + indexPath.row];
+            //  cell.label.text = [NSString stringWithFormat:@"Year %d",_startYear + indexPath.row];
             break;
         }
         case MONTH_TAG: {

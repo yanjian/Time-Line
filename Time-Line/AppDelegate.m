@@ -66,24 +66,24 @@
 	}
     
     _isread=YES;
-    NSArray *familyNames =[[NSArray alloc]initWithArray:[UIFont familyNames]];
-    NSArray *fontNames;
-    NSInteger indFamily, indFont;
-    NSLog(@"[familyNames count]===%ld",[familyNames count]);
-    for(indFamily=0;indFamily<[familyNames count];++indFamily)
-        
-    {
-        NSLog(@"Family name: %@", [familyNames objectAtIndex:indFamily]);
-        fontNames =[[NSArray alloc]initWithArray:[UIFont fontNamesForFamilyName:[familyNames objectAtIndex:indFamily]]];
-        
-        for(indFont=0; indFont<[fontNames count]; ++indFont)
-            
-        {
-            NSLog(@"Font name: %@",[fontNames objectAtIndex:indFont]);
-            
-        }
-        
-    }
+//    NSArray *familyNames =[[NSArray alloc]initWithArray:[UIFont familyNames]];
+//    NSArray *fontNames;
+//    NSInteger indFamily, indFont;
+//    NSLog(@"[familyNames count]===%ld",[familyNames count]);
+//    for(indFamily=0;indFamily<[familyNames count];++indFamily)
+//        
+//    {
+//        NSLog(@"Family name: %@", [familyNames objectAtIndex:indFamily]);
+//        fontNames =[[NSArray alloc]initWithArray:[UIFont fontNamesForFamilyName:[familyNames objectAtIndex:indFamily]]];
+//        
+//        for(indFont=0; indFont<[fontNames count]; ++indFont)
+//            
+//        {
+//            NSLog(@"Font name: %@",[fontNames objectAtIndex:indFont]);
+//            
+//        }
+//        
+//    }
     
     NSTimeInterval timeInterval= [self getRefreshFetchTimetimeInterval];
     if (timeInterval==0) {
@@ -95,21 +95,32 @@
     NSInteger loginStatus=[USER_DEFAULT integerForKey:@"loginStatus"];
     if (1!=loginStatus) {
          [self initLoginView];
-    }else{
-        NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
-        [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
-        if ([USER_DEFAULT objectForKey:@"authCode"]) {
-            [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
-            [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
-            ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
-            [request startSynchronous];
-        }
     }
-   
+    [self userLogin];
+    
     return YES;
 }
 
+-(void)userLogin{
 
+    NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
+    BOOL isAccount=[[USER_DEFAULT objectForKey:@"accountType"] boolValue];
+    if (isAccount) {//本地账号
+        [paramDic setObject:[USER_DEFAULT objectForKey:@"userName"]forKey:@"uName"];
+        [paramDic setObject:[USER_DEFAULT objectForKey:@"pwd"] forKey:@"uPw"];
+        [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
+        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+        [request startSynchronous];
+        return;
+    }
+    [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
+    if ([USER_DEFAULT objectForKey:@"authCode"]) {
+        [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
+        [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
+        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+        [request startSynchronous];
+    }
+}
 
 -(NSTimeInterval)getRefreshFetchTimetimeInterval{
     //@"15 minutes",@"30 minutes",@"1 hour",@"2 hour",@"never"
@@ -134,15 +145,28 @@
 
 - (void)requestFinished:(ASIHTTPRequest *)request{
     NSString *str=[request responseString];
-    if ([@"1" isEqualToString:str]) {
-        NSLog(@"登陆成功");
-    }else if ([@"2" isEqualToString:str]){
-         NSLog(@"已经登陆");
-    }else {
-        NSLog(@"登陆错误");
-    }
+    switch (request.tag) {
+        case LOGIN_USER_TAG:
+            if ([@"1" isEqualToString:str]) {
+                NSLog(@"登陆成功");
+            }else if ([@"2" isEqualToString:str]){
+                NSLog(@"已经登陆");
+            }else {
+                NSLog(@"登陆错误");
+            }
 
+            break;
+        case LoginUser_GetUserInfo_Tag:{
+            if ([@"-1000" isEqualToString:str]) {
+                [self userLogin];
+            }
+            break;
+        }
+        default:
+            break;
+    }
 }
+
 //初始化mian界面
 -(void)initMainView
 {
@@ -302,6 +326,9 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    //检查用户是否在登录状态
+    ASIHTTPRequest *request=[t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
+    [request startAsynchronous];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application

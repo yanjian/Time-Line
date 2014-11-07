@@ -14,8 +14,8 @@
 #import "NotesViewController.h"
 #import "AnyEvent.h"
 
-@interface AddEventViewController : UITableViewController<settimeDay,getlocationDelegate,getimagename,getNotesDelegate,UITextFieldDelegate>
-
+@interface AddEventViewController : UIViewController<settimeDay,getlocationDelegate,getimagename,getNotesDelegate,UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate>
+@property (nonatomic,strong) UITableView *tableView;
 @property(retain,nonatomic)NSString *state;                         //state的值为edit表示编辑数据，
 @property(retain,nonatomic)NSDictionary *dateDic;                   //要编辑的事件数据(没有用咯)
 @property(retain,nonatomic)NSMutableArray *dateArr;                        //用户所有的事件数据
