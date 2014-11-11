@@ -96,7 +96,10 @@
     if (1!=loginStatus) {
          [self initLoginView];
     }
-    [self userLogin];
+    if ([USER_DEFAULT objectForKey:@"userName"]) {
+         [self userLogin];
+    }
+   
     
     return YES;
 }
@@ -173,6 +176,7 @@
     HomeViewController *homeVC=[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
     UINavigationController *nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
     nav.navigationBarHidden=YES;
+    nav.navigationBar.translucent=NO;
     self.window.rootViewController=nav;
 }
 

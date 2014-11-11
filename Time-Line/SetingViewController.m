@@ -15,7 +15,6 @@
 #import "AccountViewController.h"
 #import "IBActionSheet.h"
 #import "LoginViewController.h"
-#import "LocalCalendarData.h"
 #import "AT_Account.h"
 
 @interface SetingViewController ()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,IBActionSheetDelegate>{
@@ -50,7 +49,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.navigationItem.hidesBackButton=YES;
     dataArr=[NSMutableArray arrayWithCapacity:0];
     accountDataArr =  [NSMutableArray arrayWithCapacity:0];
     self.calendarArray=[NSMutableArray arrayWithCapacity:0];
@@ -59,7 +57,7 @@
     
     settingDataArr =  [[NSMutableArray alloc] initWithObjects:@"Visible Calendars",@"Notifications",@"Preference", nil];
     moreDataArr    =  [[NSMutableArray alloc] initWithObjects:@"Support",@"Rate in App Store",@"Logout", nil];
-    self.tableView =  [[UITableView alloc]initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
+    self.tableView =  [[UITableView alloc]initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height-self.navigationController.navigationBar.frame.size.height) style:UITableViewStyleGrouped];
     
     [dataArr addObject:settingDataArr];
     [dataArr addObject:accountDataArr];

@@ -8,7 +8,6 @@
 
 #import "AccountViewController.h"
 #import "GoogleCalendarData.h"
-#import "LocalCalendarData.h"
 #import "IBActionSheet.h"
 #import "AT_Account.h"
 
@@ -187,33 +186,5 @@
     [account MR_deleteEntity];
     
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-    
-    
-    
-//    NSMutableArray *tmpArr=[NSMutableArray arrayWithCapacity:0];
-//    NSString *accountStr;
-//    if ([accountData isKindOfClass:[GoogleCalendarData class]]) {
-//        GoogleCalendarData *account=(GoogleCalendarData *)accountData;
-//        accountStr=account.Id;
-//    }else if ([accountData isKindOfClass:[LocalCalendarData class]]){
-//        LocalCalendarData *account=(LocalCalendarData *)accountData;
-//        accountStr=account.emailAccount;
-//    }
-//    NSMutableArray *calendarArr=[g_AppDelegate loadDataFromFile:calendarList];
-//
-//    for (NSArray *caArr in calendarArr) {
-//        for (id obj in caArr) {
-//            if ([obj isKindOfClass:[GoogleCalendarData class]]) {
-//                GoogleCalendarData *gcd=(GoogleCalendarData *)obj;
-//                if ([accountStr isEqualToString:gcd.Id]) {
-//                    [tmpArr addObject:caArr];
-//                }
-//            }
-//        }
-//    }
-//    for (NSArray *arr in tmpArr) {
-//        [calendarArr removeObject:arr];
-//    }
-//    [g_AppDelegate saveFileWithArray:calendarArr fileName:calendarList];
 }
 @end

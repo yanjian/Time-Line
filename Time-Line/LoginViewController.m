@@ -14,9 +14,12 @@
 #import "GoogleCalendarData.h"
 #import "NSString+StringManageMd5.h"
 #import "AT_Account.h"
+#import "AnyEvent.h"
 #import "Calendar.h"
 
-@interface LoginViewController ()<ASIHTTPRequestDelegate,UITextFieldDelegate>
+@interface LoginViewController ()<ASIHTTPRequestDelegate,UITextFieldDelegate>{
+NSArray *accountBindsArrs;//用户绑定的账号
+}
 
 @property (nonatomic,strong) NSMutableArray *calendarListArr;
 @property(nonatomic,strong) NSMutableArray *requestQueue;
@@ -138,7 +141,7 @@
     NSString *responseStr=[request responseString];
     NSLog(@"%@",responseStr);
     switch (request.tag) {
-        case LOGIN_USER_TAG:{
+        case LOGIN_USER_TAG:{//用户登录
             if ([@"1" isEqualToString:responseStr]) {
                 ASIHTTPRequest *userInfoRequest= [t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
                 [g_ASIQuent addOperation:userInfoRequest];
@@ -164,7 +167,7 @@
             }
             break;
         }
-        case LoginUser_GetUserInfo_Tag:{
+        case LoginUser_GetUserInfo_Tag:{//用户信息
             id loginUser= [responseStr objectFromJSONString];
             if ([loginUser isKindOfClass:[NSDictionary class]]) {
                 NSString *statusCode= [loginUser objectForKey:@"statusCode"];
@@ -196,10 +199,10 @@
             }
             break;
         }
-        case Local_CalendarOperation_Tag:{
+        case Local_CalendarOperation_Tag:{//得到本地日历
             NSMutableDictionary *localDataDic=[responseStr objectFromJSONString];
             NSString *statusCode=[localDataDic objectForKey:@"statusCode"];
-            NSArray *arrs=[userInfo objectForKey:@"accountBinds"];
+            accountBindsArrs=[userInfo objectForKey:@"accountBinds"];
             
             if ([@"1" isEqualToString:statusCode]) {//成功取得本地日历列表
                 NSArray *arr=[localDataDic objectForKey:@"data"];
@@ -236,18 +239,13 @@
                     ca.isDefault=@(1);
                     ca.atAccount=atAccount;
                     [caArr addObject:ca];
+                    [self synLocalEventData:ca];//同步本地事件
                 }
                 [atAccount addCa:caArr];
-                
-                
-                [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-                if (arrs.count<=0) {
-                    [self cancelNetWorkrequestQueue];//取消网络请求队列
-                }
              }
             break;
         }
-        case Get_Google_GetCalendarList_Tag:{
+        case Get_Google_GetCalendarList_Tag:{//得到google日历
             if (![@"0" isEqualToString:responseStr]) {
                 NSMutableDictionary *googleDataDic=[responseStr objectFromJSONString];
                 NSArray *arr=[googleDataDic objectForKey:@"items"];
@@ -300,16 +298,81 @@
                     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                 }
                 
-            }else{
-   
             }
-             [self cancelNetWorkrequestQueue];//取消网络请求队列
+            [self cancelNetWorkrequestQueue];//取消网络请求队列
+            break;
+        }
+        case Local_SingleEventOperation_Tag:{
+            [self paseLocalEventRequest:responseStr request:request];
+            if (accountBindsArrs.count<=0) {
+                [self cancelNetWorkrequestQueue];//取消网络请求队列
+            }
             break;
         }
         default:
             break;
        [userInfo synchronize];
     }
+}
+
+
+-(void)synLocalEventData:(Calendar *)localca{
+    ASIHTTPRequest *localRequest=[t_Network httpGet:@{@"cid":localca.cid}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"localData":localca}];
+      [g_ASIQuent addOperation:localRequest];
+    [self addRequestTAG:Local_SingleEventOperation_Tag];
+}
+
+//下面在CalendarListViewController中也存在 需优化解决
+-(void)paseLocalEventRequest:(NSString *) responseStr request:(ASIHTTPRequest *)request{
+    NSDictionary *eventDic=[responseStr objectFromJSONString];
+    NSString *status=[eventDic objectForKey:@"statusCode"];
+    if ([@"1" isEqualToString:status]) {//状态成功
+        Calendar *calendar= (Calendar *)[request.userInfo objectForKey:@"localData"];
+        id eventData=[eventDic objectForKey:@"data"];
+        NSMutableSet *localSet=[NSMutableSet setWithCapacity:0];
+        if ([eventData isKindOfClass:[NSArray class]]) {
+                NSArray *eventArr=(NSArray *)eventData;
+                for (NSMutableDictionary *event in eventArr) {
+                     NSMutableDictionary *eventDic=[event mutableCopy];
+                    [eventDic setObject:calendar forKey:@"calendar"];
+                    [localSet addObject:[self paseLocalEventData:eventDic] ];
+                }
+            }
+            [calendar addAnyEvent:localSet];
+        }
+     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+}
+-(AnyEvent *)paseLocalEventData:(NSDictionary *) dataDic{
+    AnyEvent *anyEvent=[AnyEvent MR_createEntity];
+    
+    NSString *statrstring=[[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"startTime"]];
+    
+    anyEvent.eventTitle=[dataDic objectForKey:@"title"];
+    if ([dataDic objectForKey:@"location"]) {
+        anyEvent.location= [dataDic objectForKey:@"location"];
+    }
+    anyEvent.eId=[dataDic objectForKey:@"id"];
+    anyEvent.sequence=[dataDic objectForKey:@"sequence"];
+    anyEvent.created=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+    anyEvent.updated=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+    anyEvent.status=[dataDic objectForKey:@"status"];
+    anyEvent.startDate= statrstring;
+    anyEvent.isAllDay=@([[dataDic objectForKey:@"allDay"] intValue]);//是否是全天事件
+    anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"endTime"]];
+    
+    if ([dataDic objectForKey:@"note"]) {
+        anyEvent.note= [dataDic objectForKey:@"note"];
+    }
+    if ([dataDic objectForKey:@"calendar"]) {
+        Calendar *ca=[dataDic objectForKey:@"calendar"];
+        anyEvent.calendar=ca;
+        anyEvent.creator=ca.account;
+        anyEvent.creatorDisplayName=ca.summary;
+        anyEvent.organizer =ca.account;
+        anyEvent.orgDisplayName=ca.summary;
+    }
+    anyEvent.isSync=@(isSyncData_YES);//表示已经是同步的数据
+    return anyEvent;
 }
 
 @end

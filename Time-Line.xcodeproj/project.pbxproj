@@ -134,7 +134,6 @@
 		A89AAFCD19EEB67B0023742E /* AllDayEventsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A89AAFCC19EEB67B0023742E /* AllDayEventsViewController.m */; };
 		A89B676B19D980DA00415108 /* BaseMode.m in Sources */ = {isa = PBXBuildFile; fileRef = A89B676A19D980DA00415108 /* BaseMode.m */; };
 		A89B676E19D98A7000415108 /* CalendarListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A89B676D19D98A7000415108 /* CalendarListViewController.m */; };
-		A89DBAC419DAA31D006C8A3C /* GoogleEventMode.m in Sources */ = {isa = PBXBuildFile; fileRef = A89DBAC319DAA31D006C8A3C /* GoogleEventMode.m */; };
 		A89F91D819C5D18D00CB7FAE /* powered-by-google-on-white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A89F91D719C5D18D00CB7FAE /* powered-by-google-on-white@2x.png */; };
 		A89F91DB19C5D73A00CB7FAE /* AutocompletionTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = A89F91DA19C5D73A00CB7FAE /* AutocompletionTableView.m */; };
 		A8A8C26919C1915900362EE5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C26819C1915900362EE5 /* QuartzCore.framework */; };
@@ -400,8 +399,6 @@
 		A89B676A19D980DA00415108 /* BaseMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseMode.m; sourceTree = "<group>"; };
 		A89B676C19D98A7000415108 /* CalendarListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalendarListViewController.h; sourceTree = "<group>"; };
 		A89B676D19D98A7000415108 /* CalendarListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalendarListViewController.m; sourceTree = "<group>"; };
-		A89DBAC219DAA31D006C8A3C /* GoogleEventMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleEventMode.h; sourceTree = "<group>"; };
-		A89DBAC319DAA31D006C8A3C /* GoogleEventMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleEventMode.m; sourceTree = "<group>"; };
 		A89F91D719C5D18D00CB7FAE /* powered-by-google-on-white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "powered-by-google-on-white@2x.png"; sourceTree = "<group>"; };
 		A89F91D919C5D73A00CB7FAE /* AutocompletionTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutocompletionTableView.h; sourceTree = "<group>"; };
 		A89F91DA19C5D73A00CB7FAE /* AutocompletionTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutocompletionTableView.m; sourceTree = "<group>"; };
@@ -931,22 +928,12 @@
 		A898C8F419B4633300559F53 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				A8B6533619F6B5D6007E8A26 /* AT_Account.h */,
-				A8B6533719F6B5D6007E8A26 /* AT_Account.m */,
-				A8B6533319F6B5D5007E8A26 /* Calendar.h */,
-				A8B6533419F6B5D5007E8A26 /* Calendar.m */,
-				A8B5297219F5EE1B009286AA /* AnyEvent.h */,
-				A8B5297319F5EE1B009286AA /* AnyEvent.m */,
-				A898C8F519B4635900559F53 /* CLDay.h */,
-				A898C8F619B4635900559F53 /* CLDay.m */,
-				A898C8F719B4635900559F53 /* CLEvent.h */,
-				A898C8F819B4635900559F53 /* CLEvent.m */,
-				A898FA7B19D964D7008CD862 /* GoogleCalendarData.h */,
-				A898FA7C19D964D7008CD862 /* GoogleCalendarData.m */,
 				A89B676919D980DA00415108 /* BaseMode.h */,
 				A89B676A19D980DA00415108 /* BaseMode.m */,
-				A89DBAC219DAA31D006C8A3C /* GoogleEventMode.h */,
-				A89DBAC319DAA31D006C8A3C /* GoogleEventMode.m */,
+				A8B97ED21A10959800F945EF /* showDataModel */,
+				A8B97ED11A10948300F945EF /* operationDataModel */,
+				A898FA7B19D964D7008CD862 /* GoogleCalendarData.h */,
+				A898FA7C19D964D7008CD862 /* GoogleCalendarData.m */,
 				A899275519E6356C000932C1 /* LocalCalendarData.h */,
 				A899275619E6356C000932C1 /* LocalCalendarData.m */,
 			);
@@ -1148,6 +1135,30 @@
 				A8B95C1C1A0534F800C6B037 /* YQViewController.m */,
 			);
 			name = YQPresentView;
+			sourceTree = "<group>";
+		};
+		A8B97ED11A10948300F945EF /* operationDataModel */ = {
+			isa = PBXGroup;
+			children = (
+				A8B6533619F6B5D6007E8A26 /* AT_Account.h */,
+				A8B6533719F6B5D6007E8A26 /* AT_Account.m */,
+				A8B6533319F6B5D5007E8A26 /* Calendar.h */,
+				A8B6533419F6B5D5007E8A26 /* Calendar.m */,
+				A8B5297219F5EE1B009286AA /* AnyEvent.h */,
+				A8B5297319F5EE1B009286AA /* AnyEvent.m */,
+			);
+			name = operationDataModel;
+			sourceTree = "<group>";
+		};
+		A8B97ED21A10959800F945EF /* showDataModel */ = {
+			isa = PBXGroup;
+			children = (
+				A898C8F519B4635900559F53 /* CLDay.h */,
+				A898C8F619B4635900559F53 /* CLDay.m */,
+				A898C8F719B4635900559F53 /* CLEvent.h */,
+				A898C8F819B4635900559F53 /* CLEvent.m */,
+			);
+			name = showDataModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1432,7 +1443,6 @@
 				A8B867E419E296E20004875F /* NSManagedObject+Magic.m in Sources */,
 				A8B529CD19F635B9009286AA /* MagicalRecord+Setup.m in Sources */,
 				A886549319D3E61700EEC0A8 /* WeekViewController.m in Sources */,
-				A89DBAC419DAA31D006C8A3C /* GoogleEventMode.m in Sources */,
 				A8975B7019EA8D17006DFDC3 /* DefaultCalendarViewController.m in Sources */,
 				A8956F2519EC222F0016674E /* AccountViewController.m in Sources */,
 				A8B529CA19F635B9009286AA /* MagicalRecord+ErrorHandling.m in Sources */,

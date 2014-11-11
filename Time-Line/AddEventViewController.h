@@ -14,17 +14,18 @@
 #import "NotesViewController.h"
 #import "AnyEvent.h"
 
-@interface AddEventViewController : UIViewController<settimeDay,getlocationDelegate,getimagename,getNotesDelegate,UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate>
-@property (nonatomic,strong) UITableView *tableView;
-@property(retain,nonatomic)NSString *state;                         //state的值为edit表示编辑数据，
-@property(retain,nonatomic)NSDictionary *dateDic;                   //要编辑的事件数据(没有用咯)
-@property(retain,nonatomic)NSMutableArray *dateArr;                        //用户所有的事件数据
+@interface AddEventViewController : UIViewController<settimeDay,getlocationDelegate,getimagename,getNotesDelegate,UITextFieldDelegate>
+
+@property (retain,nonatomic)  NSString *state;                         //state的值为edit表示编辑数据，
+@property (retain,nonatomic)  NSDictionary *dateDic;                   //要编辑的事件数据(没有用咯)
+@property (retain,nonatomic)  NSMutableArray *dateArr;                        //用户所有的事件数据
 @property (nonatomic, strong) NSMutableArray *arrGoogleCalendars;
 @property (nonatomic, strong) NSDictionary *dictCurrentCalendar;
 @property (nonatomic, strong) NSDate *dtEvent;
 @property (nonatomic, strong) NSString *strEvent;
-@property (nonatomic,strong) CLDay *nowTimeDay;
-@property (assign)BOOL isOpen;
-@property (nonatomic,retain)NSIndexPath *selectIndex;
-@property (nonatomic,retain) AnyEvent *event;
+@property (nonatomic, strong) CLDay *nowTimeDay;
+@property (nonatomic, assign) BOOL isOpen;
+@property (nonatomic,retain)  NSIndexPath *selectIndex;
+@property (nonatomic,retain)  AnyEvent *event;
+
 @end

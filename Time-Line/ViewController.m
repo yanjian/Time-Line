@@ -189,7 +189,7 @@
     
     [self createTitleViewShowDataStartDate:anyEventObj.startDate endDate:anyEventObj.endDate];
     
-    calendarView = [[CLCalendarView alloc] initWithFrame:CGRectMake(0, 103, self.view.frame.size.width, 220)];
+    calendarView = [[CLCalendarView alloc] initWithFrame:CGRectMake(0, self.startEventButton.frame.origin.y+40, self.view.frame.size.width, 220)];
     calendarView.dataSuorce = self;
     calendarView.delegate = self;
     calendarView.backgroundColor=[UIColor whiteColor];

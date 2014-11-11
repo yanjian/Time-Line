@@ -660,6 +660,7 @@
 //    [UIView commitAnimations];
     SetingViewController *setVC=[[SetingViewController alloc] init];
     SetingsNavigationController *nc=[[SetingsNavigationController alloc] initWithRootViewController:setVC];
+    nc.navigationBar.translucent=NO;
     nc.navigationBar.barTintColor=blueColor;
     [self presentViewController:nc animated:YES completion:nil];
     

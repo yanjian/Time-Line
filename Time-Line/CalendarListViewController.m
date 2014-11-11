@@ -332,7 +332,7 @@
                     for (NSMutableDictionary *event in eventArr) {
                         NSMutableDictionary *eventDic=[event mutableCopy];
                         [eventDic setObject:calendar forKey:@"calendar"];
-                        [googleSet addObject:[self paseLocalEventData:eventDic] ];
+                        [localSet addObject:[self paseLocalEventData:eventDic] ];
                     }
                  }
                 [self paseUserInfo:userinfo calendarData:calendar];
@@ -376,8 +376,43 @@
     
     AnyEvent *anyEvent=[AnyEvent MR_createEntity];
     
-    NSString *startTime= [[dataDic objectForKey:@"start"] objectForKey:@"dateTime"];
-    NSString *statrstring=[[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:startTime];
+    
+    
+    NSString *startTime=nil;
+    id startObj=[dataDic objectForKey:@"start"];
+    if ([startObj isKindOfClass:[NSDictionary class]]){//全天事件的键值---date
+        NSString * start=[[dataDic objectForKey:@"start"] objectForKey:@"date"];
+        if (start) {
+            NSDateFormatter *df=[[NSDateFormatter alloc] init];
+            [df setDateFormat:@"yyyy-M-d"];
+            [df setTimeZone:[NSTimeZone defaultTimeZone]];
+            NSDate *sdate=[df dateFromString:start];
+            [df setDateFormat:@"YYYY年 M月d日HH:mm"];
+            startTime=[df stringFromDate:sdate];
+            anyEvent.isAllDay=@(1);//全天事件
+        }else{
+             NSString *statrstring=[[dataDic objectForKey:@"start"] objectForKey:@"dateTime"];
+             startTime=[[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:statrstring];
+        }
+    }
+    
+    NSString *endTime=nil;
+    id endOjd=[dataDic objectForKey:@"end"];
+    if ([endOjd isKindOfClass:[NSDictionary class]]){//全天事件的键值---date
+        NSString * end=[[dataDic objectForKey:@"end"] objectForKey:@"date"];
+        if (end) {
+            NSDateFormatter *df=[[NSDateFormatter alloc] init];
+            [df setDateFormat:@"yyyy-M-d"];
+            [df setTimeZone:[NSTimeZone defaultTimeZone]];
+            NSDate *edate=[df dateFromString:end];
+            [df setDateFormat:@"YYYY年 M月d日HH:mm"];
+            endTime=[df stringFromDate:edate];
+        }else{
+            NSString * endString=[[dataDic objectForKey:@"end"] objectForKey:@"dateTime"];
+            endTime=[[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:endString];
+        }
+    }
+    
 
     anyEvent.eventTitle=[dataDic objectForKey:@"summary"];
     
@@ -391,8 +426,8 @@
     anyEvent.created=[dataDic objectForKey:@"created"];
     anyEvent.updated=[dataDic objectForKey:@"updated"];
     anyEvent.status=[dataDic objectForKey:@"status"];
-    anyEvent.startDate= statrstring;
-    anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:[[dataDic objectForKey:@"end"] objectForKey:@"dateTime"]];
+    anyEvent.startDate= startTime;
+    anyEvent.endDate= endTime;
     
     if ([dataDic objectForKey:@"description"]) {
         anyEvent.note= [dataDic objectForKey:@"description"];

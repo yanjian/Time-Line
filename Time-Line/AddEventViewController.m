@@ -31,8 +31,9 @@
 #define COORDINATE @"coordinate"
 #define  REPEAT    @"repeat"
 
-@interface AddEventViewController () <ASIHTTPRequestDelegate,CalendarAccountDelegate,IBActionSheetDelegate>
+@interface AddEventViewController () <ASIHTTPRequestDelegate,CalendarAccountDelegate,IBActionSheetDelegate,UITableViewDataSource,UITableViewDelegate>
 {
+    UITableView *_tableView;
     UITextField* textfiled;
     UILabel *_textlable;
     
@@ -104,26 +105,25 @@
 {
     [super viewDidLoad];
     
-    
-    
     self.navigationController.navigationBarHidden=NO;
-    self.navigationController.navigationBar.barTintColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
-    self.tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height) style:UITableViewStylePlain];
-    self.tableView.delegate=self;
-    self.tableView.dataSource=self;
-    self.view =self.tableView;
+   // self.navigationController.navigationBar.translucent=NO;
+    self.navigationController.navigationBar.barTintColor =blueColor;
+    _tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 64, kScreen_Width, kScreen_Height-64) style:UITableViewStylePlain];
+    _tableView.delegate=self;
+    _tableView.dataSource=self;
+    self.view =_tableView ;
  
     
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Cross.png"] forState:UIControlStateNormal];
-    [leftBtn setFrame:CGRectMake(0, 2, 25, 20)];
+    [leftBtn setFrame:CGRectMake(0, 2, 25, 25)];
     [leftBtn addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
     
     
     UIButton*  rightBtn_arrow = [UIButton buttonWithType:UIButtonTypeCustom];
     [rightBtn_arrow setBackgroundImage:[UIImage imageNamed:@"Icon_Tick.png"] forState:UIControlStateNormal];
-    [rightBtn_arrow setFrame:CGRectMake(0, 2, 25, 20)];
+    [rightBtn_arrow setFrame:CGRectMake(0, 2, 30, 25)];
     [rightBtn_arrow addTarget:self action:@selector(onClickAdd) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn_arrow];
     
@@ -161,7 +161,7 @@
         [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [button addTarget:self action:@selector(deleteEvent) forControlEvents:UIControlEventTouchUpInside];
         [headview addSubview:button];
-        self.tableView.tableFooterView=headview;
+        _tableView.tableFooterView=headview;
     }else{
         startlabel.text=@"Time";
         if(self.nowTimeDay){
@@ -379,7 +379,7 @@
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"alert"]) {
         alarmArray=[[NSUserDefaults standardUserDefaults] objectForKey:@"alert"];
     }
-    [self.tableView reloadData];
+    [_tableView reloadData];
 
 }
 
@@ -808,7 +808,7 @@
     [textfiled resignFirstResponder];
     [localfiled resignFirstResponder];
     [notefiled resignFirstResponder];
-    self.tableView.frame=CGRectMake(0, 0, self.tableView.frame.size.width, self.tableView.frame.size.height);
+    _tableView.frame=CGRectMake(0, 64, _tableView.frame.size.width, _tableView.frame.size.height);
     
     
 }
@@ -904,7 +904,7 @@
     self.isOpen = firstDoInsert;
 //    UITableViewCell *cell2 = (UITableViewCell *)[self.tableView cellForRowAtIndexPath:self.selectIndex];
 //    [cell2 changeArrowWithUp:firstDoInsert];
-    [self.tableView beginUpdates];
+    [_tableView beginUpdates];
     int section = self.selectIndex.section;
     int contentCount = 2;
 	NSMutableArray* rowToInsert = [[NSMutableArray alloc] init];
@@ -913,20 +913,21 @@
 		[rowToInsert addObject:indexPathToInsert];
 	}
 	if (firstDoInsert)
-    {   [self.tableView insertRowsAtIndexPaths:rowToInsert withRowAnimation:UITableViewRowAnimationTop];
+    {
+        [_tableView insertRowsAtIndexPaths:rowToInsert withRowAnimation:UITableViewRowAnimationTop];
     }
 	else
     {
-        [self.tableView deleteRowsAtIndexPaths:rowToInsert withRowAnimation:UITableViewRowAnimationTop];
+        [_tableView deleteRowsAtIndexPaths:rowToInsert withRowAnimation:UITableViewRowAnimationTop];
     }
-	[self.tableView endUpdates];
+	[_tableView endUpdates];
     if (nextDoInsert) {
         self.isOpen = YES;
-        self.selectIndex = [self.tableView indexPathForSelectedRow];
+        self.selectIndex = [_tableView indexPathForSelectedRow];
         [self didSelectCellRowFirstDo:YES nextDo:NO];
     }
     if (self.isOpen)
-        [self.tableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:YES];
+        [_tableView scrollToNearestSelectedRowAtScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
 
@@ -1025,7 +1026,7 @@
         }else{
             self.isShowMap=NO;
         }
-        [self.tableView reloadData];
+        [_tableView reloadData];
     }
 }
 
@@ -1071,7 +1072,7 @@
     if (!(3==textField.tag)) {
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.3];
-        self.tableView.frame=CGRectMake(0, -200, self.tableView.frame.size.width, self.tableView.frame.size.height);
+        _tableView.frame=CGRectMake(0, -140, _tableView.frame.size.width, _tableView.frame.size.height);
         [UIView commitAnimations];
     }
     NSLog(@"%ld",textField.tag);

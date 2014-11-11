@@ -14,6 +14,8 @@ isSyncData_NO=0,//没有
 isSyncData_YES=1
 };
 
+
+
 @class Calendar;
 
 @interface AnyEvent : NSManagedObject

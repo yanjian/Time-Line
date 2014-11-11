@@ -58,7 +58,7 @@ static PublicMethodsViewController * PublicMethods = nil;
     [dateFormatter setTimeZone:timeZone];
     
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:sss"];
-    NSDate *dateTime = nil;
+    NSDate *dateTime = [NSDate new];
     [dateFormatter getObjectValue:&dateTime forString:dateString range:nil error:nil];
     [dateFormatter setDateFormat:format];
     return [dateFormatter stringFromDate:dateTime];

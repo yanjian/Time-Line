@@ -29,7 +29,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    self.navigationController.navigationBarHidden = YES;
+    self.navigationController.navigationBarHidden = NO;
 }
 
 - (void)viewDidLoad
@@ -45,22 +45,30 @@
 
 - (void)initNavigationItem
 {
-    _detaileTableview=[[UITableView alloc] initWithFrame:CGRectMake(0, 60, kScreen_Width, kScreen_Height) style:UITableViewStyleGrouped];
+    
+    
+    
+    self.navigationController.navigationBar.barTintColor=blueColor;
+    
+    _detaileTableview=[[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height-64) style:UITableViewStyleGrouped];
     _detaileTableview.delegate=self;
     _detaileTableview.dataSource=self;
     [self.view addSubview:_detaileTableview];
     
+   
     
-    UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 66)];
-    rview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
-    [self.view addSubview:rview];
+//    UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 64)];
+//    rview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
+//    [self.view addSubview:rview];
     
-        //    左边的按钮
+    //    左边的按钮
     _ZVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     _ZVbutton.frame = CGRectMake(20, 30, 21, 25);
     [_ZVbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
     [_ZVbutton addTarget:self action:@selector(disviewcontroller) forControlEvents:UIControlEventTouchUpInside];
-    [rview addSubview:_ZVbutton];
+    self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:_ZVbutton];
+//    [rview addSubview:_ZVbutton];
+    
     
     
     //    右边的按钮
@@ -68,33 +76,30 @@
     _YVbutton.frame = CGRectMake(280, 30, 21, 25);
     [_YVbutton setBackgroundImage:[UIImage imageNamed:@"Icon_Edit.png"] forState:UIControlStateNormal];
     [_YVbutton addTarget:self action:@selector(editEvent) forControlEvents:UIControlEventTouchUpInside];
-    [rview addSubview:_YVbutton];
+    self.navigationItem.rightBarButtonItem =[[UIBarButtonItem alloc] initWithCustomView:_YVbutton];
 
     /* 导航栏标题 */
-    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(90, 20, 200, 30)];
-    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 25, 200, 20)];
+    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(0, 0, 200, 30)];
+    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 18)];
     titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.font = [UIFont boldSystemFontOfSize:18];
+    titleLabel.font = [UIFont boldSystemFontOfSize:17];
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.text =event.eventTitle;
  
-    UILabel* accountLabel = [[UILabel alloc] initWithFrame:CGRectMake(70, 45, 200, 15)];
+    UILabel* accountLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 18, 200, 12)];
     accountLabel.textAlignment = NSTextAlignmentCenter;
     accountLabel.font = [UIFont boldSystemFontOfSize:12];
     accountLabel.textColor = [UIColor whiteColor];
     NSString *summarystr=[event.calendar summary];
-    
-//    NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:15]};
-//    CGSize size = [summarystr boundingRectWithSize:CGSizeMake(320, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
-//    
-//    CircleDrawView *cd=[[CircleDrawView alloc] initWithFrame:CGRectMake(0,0, 10, 15)];
-//    cd.hexString=event.calendar.backgroundColor;
-//    [accountLabel addSubview: cd];
     accountLabel.text =summarystr ;
-    
-    [rview addSubview:accountLabel];
-    [rview addSubview:titleLabel];
-    self.navigationItem.titleView = titleView;
+    NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:12]};
+    CGSize size = [summarystr boundingRectWithSize:CGSizeMake(200, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
+    CircleDrawView *cd=[[CircleDrawView alloc] initWithFrame:CGRectMake(accountLabel.frame.size.width/2-size.width/2-25,2, 20, 10)];
+    cd.hexString=[event.calendar backgroundColor];
+    [accountLabel addSubview:cd];
+    [titleView addSubview:titleLabel];
+    [titleView addSubview:accountLabel];
+    self.navigationItem.titleView = titleView ;
     
 }
 
@@ -261,7 +266,7 @@
     viewcon.state=@"edit";
     viewcon.event=event;
     viewcon.dateArr=dateArr.mutableCopy;
-    self.navigationController.navigationBarHidden = NO;
+    //self.navigationController.navigationBarHidden = NO;
     [self.navigationController pushViewController:viewcon animated:YES];
 }
 

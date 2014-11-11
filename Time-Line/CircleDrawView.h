@@ -1,7 +1,7 @@
 //
 //  CircleDrawView.h
 //  Time-Line
-//
+//  //显示一个带颜色的圆
 //  Created by IF on 14/10/28.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
 //
