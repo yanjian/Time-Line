@@ -114,11 +114,6 @@
 //读取日历事件并写入到本地 --- 每次进入Home界面都会执行（---该方法没有使用----2014 Year 9 moth 屏蔽）
 - (void)getCalendarEvemt {
     NSMutableDictionary* eventDic=[[NSMutableDictionary alloc]initWithCapacity:0];
-
-//    NSString *plistPaths =getSysDocumentsDir;
-//    NSFileManager *defaultManager;
-//    defaultManager = [NSFileManager defaultManager];
-//    [defaultManager removeItemAtPath:plistPaths error:nil];
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -238,9 +233,6 @@
 }
 //将anyEvent 转换为json
 -(NSString *)assemblyStringWithGoogleAnyEvent:(AnyEvent *)anyEvent{
-    
-  NSString *startEventDate=  [[PublicMethodsViewController getPublicMethods] dateWithStringDate:anyEvent.startDate];//开始事件的时间
-  NSString *endEventDate=  [[PublicMethodsViewController getPublicMethods] dateWithStringDate:anyEvent.endDate];//开始事件的时间
     NSDictionary *anyEventDic=[NSMutableDictionary dictionaryWithCapacity:0];
     [anyEventDic setValue:@"calendar#event" forKey:@"kind"];
     
@@ -254,6 +246,12 @@
 //    if (anyEvent.eId) {
 //        [anyEventDic setValue:anyEvent.eId forKey:@"id"];
 //    }
+    if (anyEvent.recurrence) {
+        NSArray *tmpArr=[NSArray arrayWithObjects:anyEvent.recurrence, nil];
+        [anyEventDic setValue:tmpArr forKey:@"recurrence"];
+
+    }
+    
     if(anyEvent.note){
       [anyEventDic setValue:anyEvent.note forKey:@"description"];
     }
@@ -266,9 +264,39 @@
     }
     [anyEventDic setValue:@{@"email": anyEvent.creator==nil?@"":anyEvent.creator,@"displayName":anyEvent.creatorDisplayName==nil?@"":anyEvent.creatorDisplayName} forKey:@"creator"];
     [anyEventDic setValue:@{@"email": anyEvent.organizer==nil?@"":anyEvent.organizer,@"displayName":anyEvent.orgDisplayName==nil?@"":anyEvent.orgDisplayName} forKey:@"organizer"];
-    [anyEventDic setValue:@{@"dateTime":startEventDate,@"timeZone":anyEvent.calendar.timeZone} forKey:@"start"];
-    [anyEventDic setValue:@{@"dateTime":endEventDate,@"timeZone":anyEvent.calendar.timeZone} forKey:@"end"];
+    if(![anyEvent.isAllDay boolValue]){//非全天事件
+        
+      NSString *startEventDate=  [[PublicMethodsViewController getPublicMethods] dateWithStringDate:anyEvent.startDate];//开始事件的时间
+      NSString *endEventDate=  [[PublicMethodsViewController getPublicMethods] dateWithStringDate:anyEvent.endDate];//开始事件的时间
+
+      [anyEventDic setValue:@{@"dateTime":startEventDate,@"timeZone":anyEvent.calendar.timeZone} forKey:@"start"];
+      [anyEventDic setValue:@{@"dateTime":endEventDate,@"timeZone":anyEvent.calendar.timeZone} forKey:@"end"];
+    }else{
+       
+        NSString *startDate=[self newSubStrWithDateStr:anyEvent.startDate];
+        NSString *endDate=[self newSubStrWithDateStr:anyEvent.endDate];
+        
+        [anyEventDic setValue:@{@"date":startDate} forKey:@"start"];
+        [anyEventDic setValue:@{@"date":endDate} forKey:@"end"];
+    }
     return [anyEventDic JSONString];
+}
+
+-(NSString *) newSubStrWithDateStr:(NSString *) dateStr{
+    NSString *tmpdate=nil;
+    NSRange range=[dateStr rangeOfString:@"日"];
+    if (range.location!=NSNotFound) {
+        tmpdate= [dateStr substringToIndex:range.location+1];
+    }else{
+        tmpdate=dateStr;
+    }
+    if (tmpdate) {
+         tmpdate=[tmpdate stringByReplacingOccurrencesOfString:@"年 " withString:@"-"];
+         tmpdate=[tmpdate stringByReplacingOccurrencesOfString:@"月" withString:@"-"];
+         tmpdate=[tmpdate stringByReplacingOccurrencesOfString:@"日" withString:@""];
+    }
+    
+    return tmpdate;
 }
 
 //
@@ -294,7 +322,7 @@
     if (anyEvent.eId) {
         [anyEventDic setValue:anyEvent.eId forKey:@"id"];
     }
-    [anyEventDic setValue:@"" forKey:@"recurrence"];
+    [anyEventDic setValue:anyEvent.recurrence forKey:@"recurrence"];
     [anyEventDic setValue:@(0) forKey:@"status"];
     [anyEventDic setValue:@"" forKey:@"recurringEventId"];
     [anyEventDic setValue:@"" forKey:@"originalStartTime"];
@@ -334,6 +362,18 @@
                     anyEvent.eId=[dataDic objectForKey:@"id"];
                     anyEvent.updated=[dataDic objectForKey:@"updated"];
                     anyEvent.sequence=[dataDic objectForKey:@"sequence"];
+                    id recurrence= [dataDic objectForKey:@"recurrence"];
+                    if (recurrence) {
+                        if ([recurrence isKindOfClass:[NSArray class]]) {
+                            NSArray *recArr=(NSArray *)recurrence;
+                            for (NSString *str in recArr) {
+                                if ([str hasPrefix:@"RRULE"]) {
+                                    anyEvent.recurrence=str;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     NSDictionary *creatordic=[dataDic objectForKey:@"creator"];//创建者
                     if (creatordic) {
                         anyEvent.creator=[creatordic objectForKey:@"email"];
@@ -366,6 +406,7 @@
                     
                     NSString *statrstring=[[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"startTime"]];
                     anyEvent.sequence=[dataDic objectForKey:@"sequence"];
+                    anyEvent.recurrence=[dataDic objectForKey:@"recurrence"];
                     anyEvent.created=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
                     anyEvent.updated=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
                     anyEvent.status=[dataDic objectForKey:@"status"];
@@ -502,6 +543,7 @@
     
     anyEvent.created=[dataDic objectForKey:@"created"];
     anyEvent.updated=[dataDic objectForKey:@"updated"];
+    anyEvent.recurrence=[dataDic objectForKey:@"recurrence"];
     
     anyEvent.startDate= statrstring;
     anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:[[dataDic objectForKey:@"end"] objectForKey:@"dateTime"]];
@@ -707,9 +749,7 @@
  */
 - (void)oClickAdd
 {
-        AddEventViewController *addVC = [[AddEventViewController alloc] initWithNibName:@"AddEventViewController" bundle:nil];
-       // UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:addVC];
-        //[self presentViewController:nav animated:YES completion:nil];
+    AddEventViewController *addVC = [[AddEventViewController alloc] init];
     [self.navigationController pushViewController:addVC animated:YES];
     
 }

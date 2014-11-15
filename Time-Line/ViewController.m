@@ -245,13 +245,21 @@
     if ([anyEventObj.isAllDay boolValue]) {
         [switchButton setOn:YES];
         isButtonOn=YES;
+        startStr=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"HH:mm"];
+        
+        NSDate *now = [NSDate new];
+        NSDate *endDate= [now dateByAddingTimeInterval:60*60];
+        NSString *endDateStr=[[PublicMethodsViewController getPublicMethods] stringformatWithDate:endDate];
+        endStr=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: endDateStr];
+        
+        
+     //   endStr=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"HH:mm"];
         [datePicker setHidden:YES];
         [self createAllDayEventDate:anyEventObj.startDate endDate:anyEventObj.endDate];
     }else{
         [switchButton setOn:NO];
         isButtonOn=NO;
         [datePicker setHidden:NO];
-
     }
 }
 
@@ -269,7 +277,8 @@
 
     CLDay *startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:startDatStr]];
     CLDay *endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:enddateStr]];
-    if ([[startday description] isEqualToString:[endday description]]) {
+     NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:enddateStr getStrart:startDatStr ];
+    if ([[startday description] isEqualToString:[endday description]]||[instr isEqualToString:@"1d"]) {//同一天或为1d都是一天
         allDayLable.text=[[startday abbreviationWeekDayMotch] stringByAppendingString:@" (ALL DAY)"];
     }else{
         allDayLable.text=[NSString stringWithFormat:@"%@ → %@",[startday abbreviationWeekDayMotch],[endday abbreviationWeekDayMotch]];
@@ -348,10 +357,35 @@
 
 
 -(void)sureEvent{
+   
+    NSString *startDateStr;
+    NSString *endDateStr;
+    if (isButtonOn) {//是全天事件
+        CLDay * startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:startLabel.text]];
+        CLDay * endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:endLabel.text]];
+        if ([[startday description] isEqualToString:[endday description]]) {
+            NSDateFormatter *df=[[NSDateFormatter alloc] init];
+            [df setDateFormat:@"YYYY年 M月d日HH:ss"];
+            NSDate *startDate=[df dateFromString:startLabel.text];
+            NSDate *endDate=[CalendarDateUtil dateWithTimeInterval:1 sinceDate:startDate];
+            
+            CLDay * startday_t=[[CLDay alloc] initWithDate:startDate];
+            CLDay * endday_t=[[CLDay alloc] initWithDate:endDate];
+            startDateStr=[NSString stringWithFormat:@"%@%@",[startday_t description],@"00:00" ];
+            endDateStr=[NSString stringWithFormat:@"%@%@",[endday_t description],@"00:00" ];
+        }else{
+            startDateStr=[NSString stringWithFormat:@"%@%@",[startday description],@"00:00" ];
+            endDateStr=[NSString stringWithFormat:@"%@%@",[endday description],@"00:00" ];
+        }
+    }else{
+        startDateStr=startLabel.text;
+        endDateStr=endLabel.text;
+    }
+
     NSDateFormatter *df=[[NSDateFormatter alloc] init];
     [df setDateFormat:@"YYYY年 M月d日HH:ss"];
-    NSDate *date1=[df dateFromString:startLabel.text];
-    NSDate *date2=[df dateFromString:endLabel.text];
+    NSDate *date1=[df dateFromString:startDateStr];
+    NSDate *date2=[df dateFromString:endDateStr];
     int a = [date1 timeIntervalSinceDate:date2];
     
     switch ([date1 compare:date2]) {
@@ -380,7 +414,7 @@
     NSLog(@"%@<><><><><>%@",startStr,endStr);
     NSLog(@"date1%@---qweqwe----date2%@",date1,date2);
     NSLog(@">>>>>>>>>%d",a);
-    [self.detelegate getstarttime:startLabel.text getendtime:endLabel.text isAllDay:isButtonOn];
+    [self.detelegate getstarttime:startDateStr getendtime:endDateStr isAllDay:isButtonOn];
 }
 
 -(void)fileStartDownload:(id)sender
@@ -508,11 +542,8 @@
     UISwitch *switchButton = (UISwitch*)sender;
     isButtonOn = [switchButton isOn];
     if (isButtonOn) {
-        startStr=@"00:00";
-        endStr=@"23:59";
         datePicker.hidden=YES;
 
-        
         [allDayLable setHidden:NO];
         [flagLab setHidden:YES];
         [startTimeLable setHidden:YES];

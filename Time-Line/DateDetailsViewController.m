@@ -86,7 +86,7 @@
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.text =event.eventTitle;
  
-    UILabel* accountLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 18, 200, 12)];
+    UILabel* accountLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 18, 200, 15)];
     accountLabel.textAlignment = NSTextAlignmentCenter;
     accountLabel.font = [UIFont boldSystemFontOfSize:12];
     accountLabel.textColor = [UIColor whiteColor];
@@ -262,7 +262,7 @@
 
 -(void)editEvent{
     
-    AddEventViewController* viewcon=[[AddEventViewController alloc]initWithNibName:@"AddEventViewController" bundle:nil];
+    AddEventViewController* viewcon=[[AddEventViewController alloc]init];
     viewcon.state=@"edit";
     viewcon.event=event;
     viewcon.dateArr=dateArr.mutableCopy;

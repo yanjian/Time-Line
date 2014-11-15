@@ -18,6 +18,10 @@
 
 #define RefTime @"refTime"
 
+//导航的高度
+#define naviHigth 64
+
+
 //google的apikey
 #define GOOGLE_API_KEY @"AIzaSyAKtISyJ4m99OHW4r_aerSkNgMEQGYzPtM"
 

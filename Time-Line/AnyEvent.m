@@ -33,7 +33,7 @@
 @dynamic status;
 @dynamic isAllDay;
 @dynamic calendar;
-
+@dynamic recurrence;
 
 
 @end

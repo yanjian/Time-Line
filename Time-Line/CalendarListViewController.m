@@ -426,6 +426,19 @@
     anyEvent.created=[dataDic objectForKey:@"created"];
     anyEvent.updated=[dataDic objectForKey:@"updated"];
     anyEvent.status=[dataDic objectForKey:@"status"];
+    id recurrence=[dataDic objectForKey:@"recurrence"];
+    if (recurrence) {
+        if ([recurrence isKindOfClass:[NSArray class]]) {
+            NSArray *recArr=(NSArray *)recurrence;
+            for (NSString *str in recArr) {
+                if ([str hasPrefix:@"RRULE"]) {
+                    anyEvent.recurrence=str;
+                    break;
+                }
+            }
+        }
+    }
+
     anyEvent.startDate= startTime;
     anyEvent.endDate= endTime;
     
@@ -466,6 +479,7 @@
     anyEvent.created=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
     anyEvent.updated=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
     anyEvent.status=[dataDic objectForKey:@"status"];
+    anyEvent.recurrence=[dataDic objectForKey:@"recurrence"];
     anyEvent.startDate= statrstring;
     anyEvent.isAllDay=@([[dataDic objectForKey:@"allDay"] intValue]);//是否是全天事件
     anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"endTime"]];

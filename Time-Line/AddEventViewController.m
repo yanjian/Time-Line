@@ -19,7 +19,9 @@
 #import "CalendarAccountViewController.h"
 #import "CircleDrawView.h"
 #import "CalendarDateUtil.h"
+#import "RepeatViewController.h"
 #import "IBActionSheet.h"
+#import "RecurrenceModel.h"
 
 #define TITLE     @"eventTitle"
 #define LOCATION  @"location"
@@ -31,7 +33,7 @@
 #define COORDINATE @"coordinate"
 #define  REPEAT    @"repeat"
 
-@interface AddEventViewController () <ASIHTTPRequestDelegate,CalendarAccountDelegate,IBActionSheetDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface AddEventViewController () <ASIHTTPRequestDelegate,CalendarAccountDelegate,IBActionSheetDelegate,UITableViewDataSource,UITableViewDelegate,RepeatViewControllerDelegate>
 {
     UITableView *_tableView;
     UITextField* textfiled;
@@ -50,7 +52,6 @@
     
     NSMutableArray *alertButtonArr;//存放alert按钮
     NSMutableArray *selectAlertArr;//存放用户选择的提醒时间
-    NSMutableArray *repeatButtonArr;//事件重复
     NSMutableArray *selectRepeatArr;//现在的重复事件 如：每天，每周，等
     
     UIButton* addImage;
@@ -77,6 +78,11 @@
     BOOL isAllDay;//是不是全天事件
     UILabel *allDayStartLable;
     
+    UILabel* repeatContent;
+    UILabel* repeatLabel;
+    
+    RecurrenceModel *recurObj;
+    
 }
 @property (nonatomic,assign) BOOL isShowMap;//地图是否显示
 @property (nonatomic,assign) NSInteger alertCount;//设置的闹钟数
@@ -92,8 +98,6 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        
-        // Custom initialization
     }
     return self;
 }
@@ -108,7 +112,7 @@
     self.navigationController.navigationBarHidden=NO;
    // self.navigationController.navigationBar.translucent=NO;
     self.navigationController.navigationBar.barTintColor =blueColor;
-    _tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 64, kScreen_Width, kScreen_Height-64) style:UITableViewStylePlain];
+    _tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 64, kScreen_Width, kScreen_Height) style:UITableViewStylePlain];
     _tableView.delegate=self;
     _tableView.dataSource=self;
     self.view =_tableView ;
@@ -144,7 +148,6 @@
     eventDic=[[NSMutableDictionary alloc]initWithCapacity:0];
     alertButtonArr=[[NSMutableArray alloc] initWithCapacity:0];//存放alert按钮的array
     selectAlertArr=[[NSMutableArray alloc] initWithCapacity:0];
-    repeatButtonArr=[[NSMutableArray alloc] initWithCapacity:0];//存放事件重复周期
     selectRepeatArr=[[NSMutableArray alloc] initWithCapacity:0];
     
     [self InitUI];
@@ -235,19 +238,6 @@
         [alertButtonArr addObject:btn];
     }
     
-    
-    NSArray *Array = [[NSArray alloc] initWithObjects:@"Daily",@"Weekly",@"Monthly", nil];
-    for (int i=0; i<Array.count; i++)
-    {
-        UIButton *button = [[UIButton alloc] init];
-        button.frame = CGRectMake(15+(i*100), 30, 90, 50);
-        button.tag = i+100;
-        [button setTitle:[Array objectAtIndex:i] forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [button addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
-        [repeatButtonArr addObject:button];
-    }
-    
     _CAlable = [[UILabel alloc] initWithFrame:CGRectMake(0, 5, self.view.frame.size.width, 20)];
    
     _calendarLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 22, self.view.frame.size.width, 62)];
@@ -292,9 +282,7 @@
     starttimeLab.tag=2;
     starttimeLab.textAlignment=NSTextAlignmentCenter;
     starttimeLab.font=[UIFont boldSystemFontOfSize:15.0f];
-    
-//    [startLab setBackgroundColor:[UIColor redColor]];
-//    [starttimeLab setBackgroundColor:[UIColor grayColor]];
+
     
     [startView addSubview:startLab];
     [startView addSubview:starttimeLab];
@@ -310,8 +298,6 @@
     endtimeLab.textAlignment=NSTextAlignmentCenter;
     endtimeLab.font=[UIFont boldSystemFontOfSize:15.0f];
     
-//    [endLab setBackgroundColor:[UIColor redColor]];
-//    [endtimeLab setBackgroundColor:[UIColor grayColor]];
     [endView addSubview:endLab];
     [endView addSubview:endtimeLab];
     directionLab=[[UILabel alloc] initWithFrame:CGRectMake(168, 26, 20, 25)];
@@ -326,6 +312,18 @@
     allDayStartLable.textAlignment=NSTextAlignmentCenter;
     allDayStartLable.font=[UIFont boldSystemFontOfSize:15.0f];
     
+    //repeat 重复提醒
+    repeatLabel=[[UILabel alloc]initWithFrame:CGRectMake(30,0,60, 44)];
+    repeatLabel.tag=200;
+    repeatLabel.textAlignment=NSTextAlignmentLeft;
+    repeatLabel.font=[UIFont boldSystemFontOfSize:15.0f];
+    repeatLabel.textColor=[UIColor blackColor];
+    repeatLabel.text=@"Repeat";
+    repeatContent=[[UILabel alloc]initWithFrame:CGRectMake(repeatLabel.frame.origin.x+repeatLabel.frame.size.width,0,200, 44)];
+    repeatContent.textAlignment=NSTextAlignmentRight;
+    repeatContent.font=[UIFont boldSystemFontOfSize:15.0f];
+    repeatContent.textColor=[UIColor blackColor];
+    repeatContent.text=@"None";
      self.isOpen = NO;
      self.isShowMap=NO;
 }
@@ -413,24 +411,12 @@
     [notefiled resignFirstResponder];
     return YES;
 }
-//
-//-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string{
-//    if (!self.selectIndex) {
-//        self.selectIndex = 0;
-//        [self didSelectCellRowFirstDo:YES nextDo:NO];
-//        
-//    }else
-//    {
-//        [self didSelectCellRowFirstDo:NO nextDo:YES];
-//    }
-//    return YES;
-//}
 
 -(int)getRandomNumber:(int)from to:(int)to
 
 {
-    
-    return (int)(from + (arc4random()%(to -from + 1)));
+
+  return (int)(from + (arc4random()%(to -from + 1)));
     
 }
 
@@ -470,6 +456,10 @@
             if (indexPath.row==1) {
                 return 164;
             }
+        }
+    }if(indexPath.section==6){
+        if (indexPath.row==0) {
+           return  44.f;
         }
     }
     return 84;
@@ -526,7 +516,7 @@
                         [startlabel setHidden:YES];
                         [endlabel setHidden:YES];
                         [directionLab setHidden:YES];
-                        if (![[startday description] isEqualToString:[endday description]]) {
+                        if (![[startday description] isEqualToString:[endday description]]&&![@"1d" isEqualToString:instr]) {
                             allDayStartLable.text=[NSString stringWithFormat:@"%@ → %@",[startday abbreviationWeekDayMotch],[endday abbreviationWeekDayMotch]];
                         }else{
                             allDayStartLable.text=[NSString stringWithFormat:@"%@ (ALL DAY)",[startday abbreviationWeekDayMotch]];
@@ -646,27 +636,17 @@
         {
             if (indexPath.row==0)
             {
-                UILabel* alertlabel=[[UILabel alloc]initWithFrame:CGRectMake(0,0,self.view.frame.size.width, 44)];
-                alertlabel.tag=2000;
-                alertlabel.textAlignment=NSTextAlignmentCenter;
-                alertlabel.font=[UIFont boldSystemFontOfSize:15.0f];
-                alertlabel.textColor=[UIColor blackColor];
-                [cell1.contentView addSubview:alertlabel];
-                for (int i=0; i<repeatButtonArr.count; i++)
-                {
-                    [cell1.contentView addSubview:repeatButtonArr[i]];
-                }
+                
+                [cell1.contentView addSubview:repeatContent];
+                [cell1.contentView addSubview:repeatLabel];
             }
         }
-        
             localfiled.placeholder=@"LOCATION";
             _locallable.text = @"                          Location";
             notefiled.placeholder=@"Note";
             calendarlabel.text=@"                              Note";
         
             _CAlable.text = @"                    Calendar Account";
-            UILabel* label=(UILabel*)[cell1 viewWithTag:2000];
-            label.text=@"Repeat";
 
             textfiled.placeholder = @"EVENT TITLE";
             _textlable.text = @"                         Event Title";
@@ -704,20 +684,16 @@
                     
                     //读取repeat数据
                     NSArray *repeatItemArr=nil;
-                    if (![event.repeat isEqualToString:@""]) {
+                    if (![event.repeat isEqualToString:@""]&&event.repeat) {
                         repeatItemArr=[event.repeat componentsSeparatedByString:@","];
                     }
-                    
-                    for (NSString *repeatStr in repeatItemArr) {
-                        for (UIButton *eachBtn in repeatButtonArr) {
-                            if ([repeatStr isEqualToString:[eachBtn currentTitle]]) {
-                                [eachBtn setTitleColor:purple forState:UIControlStateNormal];
-                                [eachBtn setBackgroundColor:[UIColor clearColor]];
-                                [selectRepeatArr addObject:[eachBtn currentTitle]];
-                                [eachBtn setSelected:YES];
-                            }
-                       }
+                    if (event.recurrence&&![event.recurrence isEqualToString:@""]) {
+                        recurObj=[[RecurrenceModel alloc] initRecrrenceModel:event.recurrence];
+                        repeatContent.text=recurObj.freq;
+                    }else{
+                        repeatContent.text=@"None";
                     }
+
                     NSArray *coorArr=nil;
                     if (![event.coordinate isEqualToString:@""]&&event.coordinate) {
                         NSLog(@"%@",event.coordinate);
@@ -731,7 +707,6 @@
                     isReadFlag=YES;//默认只取一次值
               }
           }
-    
          return cell1;
 }
 
@@ -747,22 +722,6 @@
     NSLog(@"点击咯地图");
 }
 
-
-//事件重复按钮点击事件
--(void)buttonPressed:(UIButton *)button
-{
-    NSLog(@"buttonPressed %ld",(long)button.tag);
-    if(!button.selected) {
-        [button setBackgroundColor:[UIColor clearColor]];
-        [button setTitleColor:purple forState:UIControlStateNormal];
-        [selectRepeatArr addObject:[button currentTitle]];
-        [button setSelected:YES];
-    }else{
-        [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [selectRepeatArr removeObject:[button currentTitle]];
-        [button setSelected:NO];
-    }
-}
 
 
 -(void)btnPressed:(UIButton *)btn
@@ -813,35 +772,6 @@
     
 }
 
-
-
-//#pragma mark - tableview delegate
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-//    if (indexPath.row==1) {
-//        ViewController* controler=[[ViewController alloc]initWithNibName:@"ViewController" bundle:nil];
-//        controler.detelegate=self;
-//        [self.navigationController pushViewController:controler animated:YES];
-//    }
-//    if (indexPath.row==2) {
-//        LocationViewController* location=[[LocationViewController alloc]initWithNibName:@"LocationViewController" bundle:nil];
-//        location.detelegate=self;
-//        [self.navigationController pushViewController:location animated:YES];
-//    }
-//    
-//    if (indexPath.row==3) {
-//        NotesViewController* notes=[[NotesViewController alloc]initWithNibName:@"NotesViewController" bundle:nil];
-//        notes.delegate=self;
-//        [self.navigationController pushViewController:notes animated:YES];
-//    }
-//    if (indexPath.row==4) {
-//        AlertViewController* alert=[[AlertViewController alloc]initWithNibName:@"AlertViewController" bundle:nil];
-//        [self.navigationController pushViewController:alert animated:YES];
-//    }
-//    
-//}
-
 #pragma mark - Table view delegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -884,10 +814,22 @@
         LocationViewController *locationView=[[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
         locationView.detelegate=self;
         [self.navigationController pushViewController:locationView animated:YES];
+    }else if(indexPath.section==6){
+        RepeatViewController *repeatVc = [[RepeatViewController alloc] init];
+        repeatVc.recurrObj = recurObj;
+        repeatVc.delegate=self;
+        repeatVc.repeatParam=repeatContent.text;
+        [self.navigationController pushViewController:repeatVc animated:YES];
     }
     
 }
 
+
+
+-(void)selectValueWithDateString:(NSString *) dateString repeatRecurrence:(RecurrenceModel *)recurrence{
+    repeatContent.text=dateString;
+    recurObj=recurrence;
+}
 # pragma - calendar account view 的代理 取得选择的日历列表
 -(void)calendarAccountWithAccont:(Calendar *)ca{
     NSLog(@"%@",ca);
@@ -960,10 +902,10 @@
         [startView setHidden:YES];
         [endView setHidden:YES];
         intervalbtn.frame=CGRectMake(50, 26, 40, 40);
-        if (![[startday description] isEqualToString:[endday description]]) {
+        if (![@"1d" isEqualToString:instr]) {
             allDayStartLable.text=[NSString stringWithFormat:@"%@ → %@",[startday abbreviationWeekDayMotch],[endday abbreviationWeekDayMotch]];
         }else{
-            allDayStartLable.text=[NSString stringWithFormat:@"%@ (ALL DAY)",[startday description]];
+            allDayStartLable.text=[NSString stringWithFormat:@"%@ (ALL DAY)",[startday abbreviationWeekDayMotch]];
         }
     }else{
             [allDayStartLable setHidden:YES];
@@ -1072,7 +1014,7 @@
     if (!(3==textField.tag)) {
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.3];
-        _tableView.frame=CGRectMake(0, -140, _tableView.frame.size.width, _tableView.frame.size.height);
+        _tableView.frame=CGRectMake(0, -180, _tableView.frame.size.width, _tableView.frame.size.height);
         [UIView commitAnimations];
     }
     NSLog(@"%ld",textField.tag);
@@ -1303,25 +1245,25 @@
 
 
 
-#pragma mark getimagename
--(void)handleSingleTapFrom{
-    BackGroundViewController* background=[[BackGroundViewController alloc]initWithNibName:@"BackGroundViewController" bundle:nil];
-    background.detelegate=self;
-    [self.navigationController pushViewController:background animated:YES];
-}
-
--(void)getimage:(NSString *)image{
-    NSLog(@"%@",[image substringToIndex:6]);
-    if ([[image substringToIndex:6] isEqualToString:@"/Users"]) {
-        UIImage* images=[UIImage imageWithContentsOfFile:image];
-        imagename=@"photo.png";
-        [addImage setBackgroundImage:images forState:UIControlStateNormal];
-    }else{
-    imagename=image;
-    [addImage setBackgroundImage:[UIImage imageNamed:image] forState:UIControlStateNormal];
-    }
-    [addImage setTitle:@"CHANGE A PICTURE" forState:UIControlStateNormal];
-}
+//#pragma mark getimagename
+//-(void)handleSingleTapFrom{
+//    BackGroundViewController* background=[[BackGroundViewController alloc]initWithNibName:@"BackGroundViewController" bundle:nil];
+//    background.detelegate=self;
+//    [self.navigationController pushViewController:background animated:YES];
+//}
+//
+//-(void)getimage:(NSString *)image{
+//    NSLog(@"%@",[image substringToIndex:6]);
+//    if ([[image substringToIndex:6] isEqualToString:@"/Users"]) {
+//        UIImage* images=[UIImage imageWithContentsOfFile:image];
+//        imagename=@"photo.png";
+//        [addImage setBackgroundImage:images forState:UIControlStateNormal];
+//    }else{
+//    imagename=image;
+//    [addImage setBackgroundImage:[UIImage imageNamed:image] forState:UIControlStateNormal];
+//    }
+//    [addImage setTitle:@"CHANGE A PICTURE" forState:UIControlStateNormal];
+//}
 
 
 //添加事件或保存修改
@@ -1390,6 +1332,7 @@
     if(selectRepeatArr) {
         repeatStr=[selectRepeatArr componentsJoinedByString:@","];
     }
+    event.recurrence=[recurObj description];
     event.repeat= repeatStr;
     event.calendar=self.calendarObj;
     event.isSync=@(isSyncData_NO);
@@ -1513,8 +1456,9 @@
     anyEvent.alerts= alertStr;
     
     anyEvent.calendarAccount= localfiled.text;
-    
-    
+    if ([recurObj description]) {
+        event.recurrence=[recurObj description];
+    }
     NSString * repeatStr=@"";
     if(selectRepeatArr) {
         repeatStr=[selectRepeatArr componentsJoinedByString:@","];

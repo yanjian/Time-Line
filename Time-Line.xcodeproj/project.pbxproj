@@ -192,7 +192,13 @@
 		A8B95C1D1A0534F800C6B037 /* YQNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B95C181A0534F800C6B037 /* YQNavigationController.m */; };
 		A8B95C1E1A0534F800C6B037 /* YQNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B95C1A1A0534F800C6B037 /* YQNavigationBar.m */; };
 		A8B95C1F1A0534F800C6B037 /* YQViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B95C1C1A0534F800C6B037 /* YQViewController.m */; };
+		A8BD34311A1303A1005A38FE /* RepeatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BD34301A1303A1005A38FE /* RepeatViewController.m */; };
+		A8BD34341A1313D3005A38FE /* RepeatCalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BD34331A1313D3005A38FE /* RepeatCalViewController.m */; };
+		A8BD34371A133DF1005A38FE /* RepearIntervalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BD34361A133DF1005A38FE /* RepearIntervalViewController.m */; };
+		A8BD343A1A134F47005A38FE /* RepearOnDaysViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BD34391A134F47005A38FE /* RepearOnDaysViewController.m */; };
+		A8BD343D1A1359C2005A38FE /* RepeatUntilViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BD343C1A1359C2005A38FE /* RepeatUntilViewController.m */; };
 		A8BF229C1A0A23AE00E42F25 /* DayShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BF229B1A0A23AE00E42F25 /* DayShowView.m */; };
+		A8C60F061A15B652000FAC7F /* RecurrenceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C60F051A15B652000FAC7F /* RecurrenceModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -506,8 +512,20 @@
 		A8B95C1A1A0534F800C6B037 /* YQNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YQNavigationBar.m; sourceTree = "<group>"; };
 		A8B95C1B1A0534F800C6B037 /* YQViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YQViewController.h; sourceTree = "<group>"; };
 		A8B95C1C1A0534F800C6B037 /* YQViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YQViewController.m; sourceTree = "<group>"; };
+		A8BD342F1A1303A1005A38FE /* RepeatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepeatViewController.h; sourceTree = "<group>"; };
+		A8BD34301A1303A1005A38FE /* RepeatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RepeatViewController.m; sourceTree = "<group>"; };
+		A8BD34321A1313D3005A38FE /* RepeatCalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepeatCalViewController.h; sourceTree = "<group>"; };
+		A8BD34331A1313D3005A38FE /* RepeatCalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RepeatCalViewController.m; sourceTree = "<group>"; };
+		A8BD34351A133DF1005A38FE /* RepearIntervalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepearIntervalViewController.h; sourceTree = "<group>"; };
+		A8BD34361A133DF1005A38FE /* RepearIntervalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RepearIntervalViewController.m; sourceTree = "<group>"; };
+		A8BD34381A134F47005A38FE /* RepearOnDaysViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepearOnDaysViewController.h; sourceTree = "<group>"; };
+		A8BD34391A134F47005A38FE /* RepearOnDaysViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RepearOnDaysViewController.m; sourceTree = "<group>"; };
+		A8BD343B1A1359C2005A38FE /* RepeatUntilViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepeatUntilViewController.h; sourceTree = "<group>"; };
+		A8BD343C1A1359C2005A38FE /* RepeatUntilViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RepeatUntilViewController.m; sourceTree = "<group>"; };
 		A8BF229A1A0A23AE00E42F25 /* DayShowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DayShowView.h; sourceTree = "<group>"; };
 		A8BF229B1A0A23AE00E42F25 /* DayShowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DayShowView.m; sourceTree = "<group>"; };
+		A8C60F041A15B652000FAC7F /* RecurrenceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecurrenceModel.h; sourceTree = "<group>"; };
+		A8C60F051A15B652000FAC7F /* RecurrenceModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecurrenceModel.m; sourceTree = "<group>"; };
 		CE4144533101480F872A30BB /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -936,6 +954,8 @@
 				A898FA7C19D964D7008CD862 /* GoogleCalendarData.m */,
 				A899275519E6356C000932C1 /* LocalCalendarData.h */,
 				A899275619E6356C000932C1 /* LocalCalendarData.m */,
+				A8C60F041A15B652000FAC7F /* RecurrenceModel.h */,
+				A8C60F051A15B652000FAC7F /* RecurrenceModel.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -966,6 +986,7 @@
 		A898C8FC19B4638000559F53 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				A8BD342E1A13034F005A38FE /* RepeatViewController */,
 				A8923EE819E7E2DA00B9B938 /* Seting */,
 				A89514CC19D4F8CE00538486 /* LoginViewController */,
 				A895D4E919D1637A005371C4 /* Calendar24Hous */,
@@ -1159,6 +1180,23 @@
 				A898C8F819B4635900559F53 /* CLEvent.m */,
 			);
 			name = showDataModel;
+			sourceTree = "<group>";
+		};
+		A8BD342E1A13034F005A38FE /* RepeatViewController */ = {
+			isa = PBXGroup;
+			children = (
+				A8BD342F1A1303A1005A38FE /* RepeatViewController.h */,
+				A8BD34301A1303A1005A38FE /* RepeatViewController.m */,
+				A8BD34321A1313D3005A38FE /* RepeatCalViewController.h */,
+				A8BD34331A1313D3005A38FE /* RepeatCalViewController.m */,
+				A8BD34351A133DF1005A38FE /* RepearIntervalViewController.h */,
+				A8BD34361A133DF1005A38FE /* RepearIntervalViewController.m */,
+				A8BD34381A134F47005A38FE /* RepearOnDaysViewController.h */,
+				A8BD34391A134F47005A38FE /* RepearOnDaysViewController.m */,
+				A8BD343B1A1359C2005A38FE /* RepeatUntilViewController.h */,
+				A8BD343C1A1359C2005A38FE /* RepeatUntilViewController.m */,
+			);
+			name = RepeatViewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1367,10 +1405,12 @@
 				A8975B7919EA8D63006DFDC3 /* WeekStartViewController.m in Sources */,
 				A8B529C319F635B9009286AA /* NSManagedObjectContext+MagicalRecord.m in Sources */,
 				A8B867E719E297CF0004875F /* NSString+StringManageMd5.m in Sources */,
+				A8BD34341A1313D3005A38FE /* RepeatCalViewController.m in Sources */,
 				A894D70A19B57F890088E522 /* MapViewController.m in Sources */,
 				A891A75619D5949C004843D2 /* GoogleLoginViewController.m in Sources */,
 				A86CEA2019C7CF8D0015BB25 /* GoogleMapViewController.m in Sources */,
 				A886548B19D3E5C800EEC0A8 /* MADayView.m in Sources */,
+				A8BD34311A1303A1005A38FE /* RepeatViewController.m in Sources */,
 				A8BF229C1A0A23AE00E42F25 /* DayShowView.m in Sources */,
 				A8B529C619F635B9009286AA /* NSManagedObjectModel+MagicalRecord.m in Sources */,
 				A8B5461719F894AA00C73A24 /* CalendarAccountViewController.m in Sources */,
@@ -1390,6 +1430,7 @@
 				A8B867E319E296E20004875F /* NSManagedObject+Explain.m in Sources */,
 				A8B95C1D1A0534F800C6B037 /* YQNavigationController.m in Sources */,
 				A886549419D3E61700EEC0A8 /* DayViewController.m in Sources */,
+				A8BD343D1A1359C2005A38FE /* RepeatUntilViewController.m in Sources */,
 				A88EF52E19ECC00400AB15B5 /* IBActionSheet.m in Sources */,
 				A8116A2419B9B7EF003EB3ED /* FlipBoardNavigationController.m in Sources */,
 				A8B67C9E19FAA80A0068E107 /* UIViewController+MJPopupViewController.m in Sources */,
@@ -1432,15 +1473,18 @@
 				A88F0BBA19D2C53F002D0C4C /* t_Sandbox.m in Sources */,
 				A898C8FA19B4635900559F53 /* CLEvent.m in Sources */,
 				A886548A19D3E5C800EEC0A8 /* MAEvent.m in Sources */,
+				A8BD34371A133DF1005A38FE /* RepearIntervalViewController.m in Sources */,
 				A894D6CF19B56B200088E522 /* HomeViewController.m in Sources */,
 				A886549819D3E6BD00EEC0A8 /* MAEventKitDataSource.m in Sources */,
 				A886548C19D3E5C800EEC0A8 /* MAGridView.m in Sources */,
 				A898FA7D19D964D7008CD862 /* GoogleCalendarData.m in Sources */,
 				A898C8FF19B463E700559F53 /* CalendarDateUtil.m in Sources */,
 				A894D6E019B578270088E522 /* JCDatePicker.m in Sources */,
+				A8C60F061A15B652000FAC7F /* RecurrenceModel.m in Sources */,
 				A8B529C719F635B9009286AA /* NSPersistentStore+MagicalRecord.m in Sources */,
 				A89B676E19D98A7000415108 /* CalendarListViewController.m in Sources */,
 				A8B867E419E296E20004875F /* NSManagedObject+Magic.m in Sources */,
+				A8BD343A1A134F47005A38FE /* RepearOnDaysViewController.m in Sources */,
 				A8B529CD19F635B9009286AA /* MagicalRecord+Setup.m in Sources */,
 				A886549319D3E61700EEC0A8 /* WeekViewController.m in Sources */,
 				A8975B7019EA8D17006DFDC3 /* DefaultCalendarViewController.m in Sources */,

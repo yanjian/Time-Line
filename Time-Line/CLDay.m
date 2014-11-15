@@ -57,7 +57,7 @@
 
 -(NSString *)abbreviationWeekDayMotch{
 
-    return [NSString stringWithFormat:@"%@, %lu %@",[self abbreviationWeekStringWithInteger:_week],(unsigned long)_day,[self abbreviationMonthStringWithInteger:_month]];
+    return [NSString stringWithFormat:@"%@, %@ %lu",[self abbreviationWeekStringWithInteger:_week],[self abbreviationMonthStringWithInteger:_month],(unsigned long)_day];
 }
 
 //英文形式的星期几全写
