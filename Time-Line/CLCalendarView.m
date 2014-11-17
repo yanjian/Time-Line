@@ -12,6 +12,10 @@
 #import "AnyEvent.h"
 #import "Calendar.h"
 #import "CircleDrawView.h"
+#import "RecurrenceModel.h"
+#import "AT_Event.h"
+#import "CalendarDateUtil.h"
+
 #define calendar_Table_Month_H  220   //只显示一周此处改为44
 #define calendar_Table_Week_H   90   //110
 
@@ -24,9 +28,9 @@
 #define calendar_Table_Month_F CGRectMake(0, 20, self.bounds.size.width, calendar_Table_Month_H)
 #define calendar_Table_Week_F  CGRectMake(0, 20, self.bounds.size.width, calendar_Table_Week_H)
 
-#define event_Table_Month_F CGRectMake(0, 20+calendar_Table_Month_H, self.bounds.size.width, self.bounds.size.height - calendar_Table_Month_H-20 )
+#define event_Table_Month_F CGRectMake(0, 20+calendar_Table_Month_H, self.bounds.size.width, self.bounds.size.height - calendar_Table_Month_H-naviHigth -headHeight)
 
-#define event_Table_Week_F CGRectMake(0, calendar_Table_Week_H-headHeight, self.bounds.size.width, self.bounds.size.height - calendar_Table_Week_H+headHeight )
+#define event_Table_Week_F CGRectMake(0, calendar_Table_Week_H-headHeight, self.bounds.size.width, self.bounds.size.height - calendar_Table_Week_H+headHeight-naviHigth )
 
 #define cellID @"CLCalendarCell"
 #define eventCellID @"eventCell"
@@ -61,7 +65,7 @@
 
 - (id)init
 {
-    self = [super initWithFrame:CGRectMake(0, 64, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height-64)];
+    self = [super initWithFrame:CGRectMake(0, 64, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height)];
     return [self initByMode:CLCalendarViewModeWeek];
 }
 //calendartimeline
@@ -99,10 +103,6 @@
 
         lab.text = [array objectAtIndex:i];
         lab.textAlignment = NSTextAlignmentCenter; // 直线居中
-        //暂时屏蔽 多余
-//        UIView *lineview=[[UIView alloc]initWithFrame:CGRectMake(0, 237, self.frame.size.width, 1)];
-//        lineview.backgroundColor=[UIColor whiteColor];
-//        [self addSubview:lineview];
         [self addSubview:lab];
     }
 }
@@ -114,10 +114,12 @@
         calendar_tableView.delegate = self;
         calendar_tableView.dataSource = self;
         calendar_tableView.tag = 0;
+        calendar_tableView.bounces=NO;
         calendar_tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         calendar_tableView.backgroundColor= [UIColor clearColor];
         calendar_tableView.showsHorizontalScrollIndicator = NO;
         calendar_tableView.showsVerticalScrollIndicator = NO;
+        
         [self addSubview:calendar_tableView];
         selectDate[0] = -1;
         
@@ -141,7 +143,7 @@
         
         event_tableView.backgroundColor=[UIColor whiteColor];//设置事件表格背景为白色
         
-        
+        event_tableView.bounces=NO;
         [self addSubview:event_tableView];
          needReload = YES;
     }
@@ -152,7 +154,7 @@
     goBackbtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [goBackbtn setBackgroundImage:[UIImage imageNamed:@"go_back_today.png"] forState:UIControlStateNormal];
     goBackbtn.backgroundColor=[UIColor clearColor];
-    [goBackbtn setFrame:CGRectMake(self.frame.size.width-50, self.frame.size.height-50, 30, 30)];
+    [goBackbtn setFrame:CGRectMake( kScreen_Width -50,kScreen_Height -120, 30, 30)];
     [goBackbtn setHidden:YES];
     [goBackbtn addTarget:self action:@selector(goBackToday) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:goBackbtn];
@@ -222,18 +224,19 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == event_tableView) {  //事件表
-        NSArray *calendararr=[Calendar MR_findAll];
-        NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
-        for (Calendar *ca in calendararr) {
-            if ([ca.isVisible boolValue]) {
-                NSPredicate *nspre=[NSPredicate predicateWithFormat:@"calendar==%@",ca];
-                NSArray *arr=[AnyEvent MR_findAllWithPredicate:nspre];
-                for (AnyEvent *event in arr) {
-                    [anyeventArr addObject:event];
-                }
-             }
-        }
-        eventArr=anyeventArr;
+//        NSArray *calendararr=[Calendar MR_findAll];
+//        NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
+//        for (Calendar *ca in calendararr) {
+//            if ([ca.isVisible boolValue]) {
+//                NSPredicate *nspre=[NSPredicate predicateWithFormat:@"calendar==%@",ca];
+//                NSArray *arr=[AnyEvent MR_findAllWithPredicate:nspre];
+//                for (AnyEvent *event in arr) {
+//                    
+//                    [anyeventArr addObject:event];
+//                }
+//             }
+//        }
+//        eventArr=anyeventArr;
         dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
         return (dateArr) ? dateArr.count*7 : 1;
     }
@@ -294,22 +297,13 @@
 //tableview的row数
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (tableView == calendar_tableView) {
-        dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
+//        dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
         return (dateArr) ? dateArr.count : 0;
     }else if (tableView == event_tableView) {
-       
         int row = section/ 7;
         int index = section % 7;
-        NSString* str=[[[dateArr objectAtIndex:row] objectAtIndex:index] description];
-        NSMutableArray *constArr=[NSMutableArray arrayWithCapacity:0];
-        for (AnyEvent *anyEvent in eventArr) {
-            NSString*  temstr=[[PublicMethodsViewController getPublicMethods] formatStringWithString:anyEvent.startDate];
-            if ([str isEqualToString:temstr]) {
-                [constArr addObject:anyEvent];
-            }
-        }
-        
-        return constArr.count==0?1:constArr.count;
+        CLDay *clDay =[[dateArr objectAtIndex:row] objectAtIndex:index];
+        return clDay.events.count==0?1:clDay.events.count;
         
     }else {
         return 0;
@@ -394,18 +388,19 @@
         if (!cell) {
             cell = (EventCell*)[[[NSBundle mainBundle] loadNibNamed:@"EventCell" owner:self options:nil] objectAtIndex:0];
         }
+        
         int row = indexPath.section / 7;
         int index = indexPath.section % 7;
-        NSString* str=[[[dateArr objectAtIndex:row] objectAtIndex:index] description];
-        NSMutableArray *dataEvent=[NSMutableArray arrayWithArray:0];
-        for (AnyEvent *anyEvent in eventArr) {
-             NSString*  temstr=[[PublicMethodsViewController getPublicMethods] formatStringWithString:anyEvent.startDate];
-            if ([str isEqualToString:temstr]) {
-                [dataEvent addObject:anyEvent];
-             }
+        CLDay *clday= [[dateArr objectAtIndex:row]  objectAtIndex:index] ;
+        
+        for (AT_Event *anyEvent in clday.events) {
+            NSLog(@"%@",anyEvent.eventTitle);
+        
         }
-        if (dataEvent.count>0) {
-            AnyEvent *anyEvent=[dataEvent objectAtIndex:indexPath.row];
+        
+        if (clday.events.count>0) {
+            
+            AT_Event *anyEvent=[clday.events objectAtIndex:indexPath.row];
             NSString* starttime=anyEvent.startDate;
             NSRange range=[starttime rangeOfString:@"日"];
             NSString* startstrs=[starttime substringWithRange:NSMakeRange(range.location+1,starttime.length-range.location-1)];
@@ -419,21 +414,20 @@
             cell.timelabel.text=intervalTime;
             NSLog(@"strtime->>>>%@",starttime);
             cell.starttimelabel.text=[NSString stringWithFormat:@"%@",startstrs];
-
+            
             NSString* strtitle=anyEvent.eventTitle;
             cell.content.lineBreakMode=NSLineBreakByWordWrapping;
             cell.content.text=[strtitle uppercaseString];
             cell.content.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
             cell.content.textColor=[UIColor blackColor];
             
-            Calendar *caObj=anyEvent.calendar;
-            
-            CircleDrawView *cd=[[CircleDrawView alloc] init];
-            cd.frame=cell.cirPoint.frame;
-            cd.hexString=caObj.backgroundColor;
-            [cell.cirPoint addSubview: cd];
-        }
-        if ([cell.content.text isEqualToString:@""]) {
+            //            Calendar *caObj=anyEvent.calendar;
+            //
+            //            CircleDrawView *cd=[[CircleDrawView alloc] init];
+            //            cd.frame=cell.cirPoint.frame;
+            //            cd.hexString=caObj.backgroundColor;
+            //            [cell.cirPoint addSubview: cd];
+        }else{
             cell.textLabel.text=@"FREE DAY";
             cell.textLabel.font=[UIFont boldSystemFontOfSize:17.0f];
             cell.textLabel.textAlignment=NSTextAlignmentCenter;
@@ -442,16 +436,9 @@
             cell.starttimelabel.hidden=YES;
             cell.timelabel.hidden=YES;
             cell.backImage.hidden=YES;
-            
         }
-        return cell;
-    }
-}
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (tableView==calendar_tableView) {
         
+        return cell;
     }
 }
 

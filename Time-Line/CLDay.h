@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "CLEvent.h"
+#import "AT_Event.h"
 #import "CalendarDateUtil.h"
 
 @interface CLDay : NSObject
@@ -25,7 +25,7 @@
 
 - (id)initWithDate:(NSDate*)date;
 
-- (BOOL)addEvent:(CLEvent*)event;
+- (void)addEvent:(AT_Event*)event;
 
 - (BOOL)removeEventByIndex:(int)index;
 

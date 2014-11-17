@@ -71,7 +71,7 @@
         }
         [minArray addObject:str];
     }
-    NSInteger cDay = [CalendarDateUtil getCurrentDay] + 6 *30;
+    NSInteger cDay = calendarDateCount;
    // NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
     
     NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];

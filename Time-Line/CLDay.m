@@ -8,6 +8,7 @@
 
 #import "CLDay.h"
 
+
 @implementation CLDay
 
 - (id)init
@@ -19,6 +20,7 @@
 {
     self = [super init];
     if (self) {
+         self.events=[[NSMutableArray alloc] init];
         _day = [CalendarDateUtil getDayWithDate:date];
         _month = [CalendarDateUtil getMonthWithDate:date];
         _year = [CalendarDateUtil getYearWithDate:date];
@@ -31,9 +33,11 @@
     return self;
 }
 
-- (BOOL)addEvent:(CLEvent*)event
+- (void)addEvent:(AT_Event*)event
 {
-    return NO;
+   
+    [self.events addObject:event];
+    
 }
 
 - (BOOL)removeEventByIndex:(int)index

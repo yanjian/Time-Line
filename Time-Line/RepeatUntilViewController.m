@@ -49,7 +49,7 @@
     
     
     dateArr = [NSMutableArray array];
-    NSInteger cDay = [CalendarDateUtil getCurrentDay] + 6 *30;
+    NSInteger cDay = calendarDateCount;
     NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];
     
     NSInteger startIndex = -(cDay - 1  + weekDay - 1);

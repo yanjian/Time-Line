@@ -22,6 +22,8 @@
 #define naviHigth 64
 
 
+#define  calendarDateCount [CalendarDateUtil getCurrentDay] + 2 *30
+
 //google的apikey
 #define GOOGLE_API_KEY @"AIzaSyAKtISyJ4m99OHW4r_aerSkNgMEQGYzPtM"
 

@@ -179,6 +179,7 @@
 		A8B529CE19F635B9009286AA /* MagicalRecord+ShorthandSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B529AF19F635B9009286AA /* MagicalRecord+ShorthandSupport.m */; };
 		A8B529CF19F635B9009286AA /* MagicalRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B529B119F635B9009286AA /* MagicalRecord.m */; };
 		A8B5461719F894AA00C73A24 /* CalendarAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B5461619F894AA00C73A24 /* CalendarAccountViewController.m */; };
+		A8B54FE21A1791230011C90D /* AT_Event.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B54FE11A1791230011C90D /* AT_Event.m */; };
 		A8B6533519F6B5D5007E8A26 /* Calendar.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B6533419F6B5D5007E8A26 /* Calendar.m */; };
 		A8B6533819F6B5D6007E8A26 /* AT_Account.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B6533719F6B5D6007E8A26 /* AT_Account.m */; };
 		A8B67C9D19FAA80A0068E107 /* MJPopupBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B67C9A19FAA80A0068E107 /* MJPopupBackgroundView.m */; };
@@ -485,6 +486,8 @@
 		A8B529B519F635B9009286AA /* CoreData+MagicalRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CoreData+MagicalRecord.h"; sourceTree = "<group>"; };
 		A8B5461519F894AA00C73A24 /* CalendarAccountViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalendarAccountViewController.h; sourceTree = "<group>"; };
 		A8B5461619F894AA00C73A24 /* CalendarAccountViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalendarAccountViewController.m; sourceTree = "<group>"; };
+		A8B54FE01A1791230011C90D /* AT_Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AT_Event.h; sourceTree = "<group>"; };
+		A8B54FE11A1791230011C90D /* AT_Event.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AT_Event.m; sourceTree = "<group>"; };
 		A8B6533319F6B5D5007E8A26 /* Calendar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Calendar.h; sourceTree = "<group>"; };
 		A8B6533419F6B5D5007E8A26 /* Calendar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Calendar.m; sourceTree = "<group>"; };
 		A8B6533619F6B5D6007E8A26 /* AT_Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AT_Account.h; sourceTree = "<group>"; };
@@ -1178,6 +1181,8 @@
 				A898C8F619B4635900559F53 /* CLDay.m */,
 				A898C8F719B4635900559F53 /* CLEvent.h */,
 				A898C8F819B4635900559F53 /* CLEvent.m */,
+				A8B54FE01A1791230011C90D /* AT_Event.h */,
+				A8B54FE11A1791230011C90D /* AT_Event.m */,
 			);
 			name = showDataModel;
 			sourceTree = "<group>";
@@ -1471,6 +1476,7 @@
 				A8B529B719F635B9009286AA /* NSAttributeDescription+MagicalDataImport.m in Sources */,
 				A8B529CC19F635B9009286AA /* MagicalRecord+Options.m in Sources */,
 				A88F0BBA19D2C53F002D0C4C /* t_Sandbox.m in Sources */,
+				A8B54FE21A1791230011C90D /* AT_Event.m in Sources */,
 				A898C8FA19B4635900559F53 /* CLEvent.m in Sources */,
 				A886548A19D3E5C800EEC0A8 /* MAEvent.m in Sources */,
 				A8BD34371A133DF1005A38FE /* RepearIntervalViewController.m in Sources */,
