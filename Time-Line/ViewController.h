@@ -24,5 +24,5 @@
 @property (weak, nonatomic) IBOutlet UIButton *endbutton;
 - (IBAction)startevent:(id)sender;
 - (IBAction)endEvent:(id)sender;
--(void)addEventViewControler:(UITableViewController *)view anyEvent:(AnyEvent *)anyEvent;
+-(void)addEventViewControler:(UIViewController *)view anyEvent:(AnyEvent *)anyEvent;
 @end

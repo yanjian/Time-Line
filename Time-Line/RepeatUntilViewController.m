@@ -54,7 +54,7 @@
     
     NSInteger startIndex = -(cDay - 1  + weekDay - 1);
     
-    for (int i = startIndex; i < startIndex + (7* 4 * 12); i+=7) {
+    for (int i = startIndex; i < startIndex + (7* 6 * 12); i+=7) {
         NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];
         
         NSArray *weekArr = [self switchWeekByDate:temp];
@@ -160,7 +160,7 @@
 
 }
 
-- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AnyEvent*)event AllEvent:(NSArray*)events{
+- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AT_Event*)event AllEvent:(NSArray*)events{
 
 }
 

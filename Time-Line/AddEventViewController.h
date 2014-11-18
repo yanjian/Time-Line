@@ -12,7 +12,8 @@
 #import "HomeViewController.h"
 #import "BackGroundViewController.h"
 #import "NotesViewController.h"
-#import "AnyEvent.h"
+
+#import "AT_Event.h"
 
 @interface AddEventViewController : UIViewController<settimeDay,getlocationDelegate,getimagename,getNotesDelegate,UITextFieldDelegate>
 
@@ -26,6 +27,6 @@
 @property (nonatomic, strong) CLDay *nowTimeDay;
 @property (nonatomic, assign) BOOL isOpen;
 @property (nonatomic,retain)  NSIndexPath *selectIndex;
-@property (nonatomic,retain)  AnyEvent *event;
+@property (nonatomic,retain)  AT_Event *event;
 
 @end

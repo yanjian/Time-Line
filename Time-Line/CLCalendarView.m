@@ -51,7 +51,6 @@
     BOOL         needReload;
     UILabel* month;
     BOOL isshow;
-    NSArray *eventArr;
 }
 
 @end
@@ -73,7 +72,6 @@
 {
     if (self) {
         self.backgroundColor = [UIColor whiteColor];//原为黑色
-        
         
         [self loadLable];
         [self loadCalendar];
@@ -190,13 +188,6 @@
     }];
 }
 
-
-
-
-
-
-
-
 - (void)setToDayRow:(int)row Index:(int)index
 {
     toDayDate[0] = row;
@@ -224,19 +215,6 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     if (tableView == event_tableView) {  //事件表
-//        NSArray *calendararr=[Calendar MR_findAll];
-//        NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
-//        for (Calendar *ca in calendararr) {
-//            if ([ca.isVisible boolValue]) {
-//                NSPredicate *nspre=[NSPredicate predicateWithFormat:@"calendar==%@",ca];
-//                NSArray *arr=[AnyEvent MR_findAllWithPredicate:nspre];
-//                for (AnyEvent *event in arr) {
-//                    
-//                    [anyeventArr addObject:event];
-//                }
-//             }
-//        }
-//        eventArr=anyeventArr;
         dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
         return (dateArr) ? dateArr.count*7 : 1;
     }
@@ -249,7 +227,7 @@
         CGPoint offset = event_tableView.contentOffset;
         CGRect bounds = event_tableView.bounds;
         UIEdgeInsets inset = event_tableView.contentInset;
-        NSInteger currentOffset = offset.y + bounds.size.height-inset.bottom;
+        NSInteger currentOffset = offset.y + 3*bounds.size.height-inset.bottom;
         NSLog(@"----->%ld",(long)currentOffset);
         int row = section / 7;
         int index = section % 7;
@@ -297,7 +275,7 @@
 //tableview的row数
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (tableView == calendar_tableView) {
-//        dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
+        dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
         return (dateArr) ? dateArr.count : 0;
     }else if (tableView == event_tableView) {
         int row = section/ 7;
@@ -328,24 +306,6 @@
                     i = dateArr.count-1;
                 }
                 CLDay *day = [[dateArr objectAtIndex:i] objectAtIndex:0];
-                NSMutableArray* temarray=[[NSMutableArray alloc]initWithCapacity:0];
-                
-                for (int i=0;i<[eventArr count];i++) {
-                    AnyEvent *anyEvent=[eventArr objectAtIndex:i];
-                    NSString*  str=[[PublicMethodsViewController getPublicMethods] formatStringWithString:anyEvent.startDate];
-                    str=[str stringByReplacingOccurrencesOfString:@"年" withString:@"/"];
-                    str=[str stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
-                    str=[str stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
-                    NSArray* array=[str componentsSeparatedByString:@"/"];
-                    [temarray addObject:array];
-                }
-                
-                for (NSArray* arr in temarray ) {
-                    if (day.month==[[arr objectAtIndex:1] integerValue]&&day.day==[[arr objectAtIndex:2] integerValue]) {
-                        cell.imageview.image=[UIImage imageNamed:@"Icon_HaveEvent"];
-                        NSLog(@"%lu---dsdsdsdsdsd-%lu",(unsigned long)day.month,(unsigned long)day.day);
-                    }
-                }
                 
                 if (showMonth != day.month) {
                     showMonth = day.month;
@@ -421,12 +381,11 @@
             cell.content.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
             cell.content.textColor=[UIColor blackColor];
             
-            //            Calendar *caObj=anyEvent.calendar;
-            //
-            //            CircleDrawView *cd=[[CircleDrawView alloc] init];
-            //            cd.frame=cell.cirPoint.frame;
-            //            cd.hexString=caObj.backgroundColor;
-            //            [cell.cirPoint addSubview: cd];
+            //设置小圆点
+            CircleDrawView *cd=[[CircleDrawView alloc] init];
+            cd.frame=cell.cirPoint.frame;
+            cd.hexString=anyEvent.backgroundColor;
+            [cell.cirPoint addSubview: cd];
         }else{
             cell.textLabel.text=@"FREE DAY";
             cell.textLabel.font=[UIFont boldSystemFontOfSize:17.0f];
@@ -513,25 +472,13 @@
         
         int row = indexPath.section / 7;
         int index = indexPath.section % 7;
-        NSString* str=[[[dateArr objectAtIndex:row] objectAtIndex:index] description];
-        NSMutableArray *dataEvent=[NSMutableArray arrayWithArray:0];
-        for (AnyEvent *anyEvent in eventArr) {
-            NSString*  temstr=[[PublicMethodsViewController getPublicMethods] formatStringWithString:anyEvent.startDate];
-            if ([str isEqualToString:temstr]) {
-                [dataEvent addObject:anyEvent];
-            }
-        }
+        
         CLDay *day = [[dateArr objectAtIndex:row] objectAtIndex:index];
-        CLEvent *event = nil;
+        AT_Event *event = nil;
         if (day.events) {
             event = [day.events objectAtIndex:indexPath.row];
         }
-        if (dataEvent.count>0) {
-            AnyEvent *anyEvent=[dataEvent objectAtIndex:indexPath.row];
-            [self.delegate calendarSelectEvent:self day:day event:anyEvent AllEvent:dataEvent];
-        }else{
-            [self.delegate calendarSelectEvent:self day:day event:nil AllEvent:dataEvent];
-        }
+       [self.delegate calendarSelectEvent:self day:day event:event AllEvent:day.events];
     }
 }
 

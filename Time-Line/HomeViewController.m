@@ -75,7 +75,7 @@
     
     NSInteger startIndex = -(cDay - 1  + weekDay - 1);
     NSUInteger intervalCount=0;
-    for (int i = startIndex; i < startIndex + (7* 4 * 12); i+=7) {
+    for (int i = startIndex; i < startIndex + (7* 6 * 12); i+=7) {
         NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];//回到200天前
         NSArray *weekArr = [self switchWeekByDate:temp];
         for (int d = 0; d<7; d++) {
@@ -97,9 +97,15 @@
                         }
                     }
                     RecurrenceModel *rm = [[RecurrenceModel alloc] initRecrrenceModel:event.recurrence];
+                    
+                    if(!rm.interval){
+                        rm.interval=1;//默认为1
+                    }
+                    
+                    NSDate *startDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:startStr];
+                    NSDate *dayDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:[day description]];
                     if ([[rm.freq uppercaseString] isEqualToString:[@"daily" uppercaseString]]) {//重复提醒天
-                        NSDate *startDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:startStr];
-                        NSDate *dayDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:[day description]];
+                      
                         NSTimeInterval interval = [dayDate timeIntervalSinceDate:startDate];
                         if (interval>=0) {
                             NSInteger tmpInte = interval/86400;//除以一天的时间秒
@@ -122,11 +128,45 @@
                             }
                         }
                     }else if([[rm.freq uppercaseString] isEqualToString:[@"weekly" uppercaseString]]){
-                        
-                    
+                         NSTimeInterval interval = [dayDate timeIntervalSinceDate:startDate];
+                        if (interval>=0) {
+                            NSInteger tmpInte = interval/86400;//除以一天的时间秒
+                            NSInteger weekCount=tmpInte/7;
+                            if((weekCount%rm.interval) == 0){
+                                if (!rm.count) {
+                                    NSInteger j= [CalendarDateUtil getWeekDayWithDate:dayDate]-1;
+                                    NSArray *byDayArr= [[rm stringWithIntFromWeek] componentsSeparatedByString:@","];
+                                    for (int i=0; i< byDayArr.count; i++) {
+                                          NSInteger byDay= [byDayArr[i] integerValue];
+                                        if (j==byDay) {
+                                            AT_Event *atEvents = [atEvent mutableCopy];
+                                            // NSDate *date=[CalendarDateUtil dateWithTimeInterval:rm.interval  sinceDate:startDate];
+                                            // atEvents.startDate=[[PublicMethodsViewController getPublicMethods] stringformatWithDate:date];
+                                            [day addEvent:atEvents];
+
+                                        }
+                                    }
+                                }else{
+                                    rm.count= rm.count-intervalCount;
+                                    
+                                    NSInteger j= [CalendarDateUtil getWeekDayWithDate:dayDate]-1;
+                                    NSArray *byDayArr= [[rm stringWithIntFromWeek] componentsSeparatedByString:@","];
+                                    for (int i=0; i< byDayArr.count; i++) {
+                                        NSInteger byDay= [byDayArr[i] integerValue];
+                                        if (j==byDay) {
+                                            if (rm.count>0) {
+                                                intervalCount++;
+                                                AT_Event *atEvents= [atEvent mutableCopy];
+                                                // NSDate *date=[CalendarDateUtil dateWithTimeInterval:rm.interval  sinceDate:startDate];
+                                                // atEvents.startDate=[[PublicMethodsViewController getPublicMethods] stringformatWithDate:date];
+                                                [day addEvent:atEvents];
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }else if([[rm.freq uppercaseString] isEqualToString:[@"monthly" uppercaseString]]){
-                        NSDate *startDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:startStr];
-                        NSDate *dayDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:[day description]];
                         NSCalendar* chineseClendar = [ [ NSCalendar alloc ] initWithCalendarIdentifier:NSGregorianCalendar ];
                         NSUInteger unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit;
                         NSDateComponents *cps = [chineseClendar components:unitFlags fromDate:startDate  toDate:dayDate  options:0];
@@ -155,8 +195,6 @@
                         }
                      
                     }else if([[rm.freq uppercaseString] isEqualToString:[@"yearly" uppercaseString]]){
-                        NSDate *startDate= [[PublicMethodsViewController getPublicMethods] formatWithStringDate:event.startDate];
-                        NSDate *dayDate= [[PublicMethodsViewController getPublicMethods] formatWithStringDate:[day description]];
                         NSCalendar* chineseClendar = [ [ NSCalendar alloc ] initWithCalendarIdentifier:NSGregorianCalendar ];
                         NSUInteger unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit;
                         NSDateComponents *cps = [chineseClendar components:unitFlags fromDate:startDate  toDate:dayDate  options:0];
@@ -166,9 +204,6 @@
                         NSInteger diffDay = [cps day];
                         if (diffYear>=0&&diffMon==0&&diffDay==0) {
                             NSInteger years= diffYear;
-                            if (rm.interval) {
-                                rm.interval=1;
-                            }
                             if (years%rm.interval==0) {
                                  if (!rm.count) {
                                     AT_Event *atEvents= [atEvent mutableCopy];
@@ -187,13 +222,14 @@
                         }
                     }
                 }else{
-                    [day addEvent:atEvent];
+                    if ([atEvent.startDate hasPrefix:[day description]]) {
+                        [day addEvent:atEvent];
+                    }
                 }
-                
-                if (day.events.count>0) {//events集合数大于零表示有数据
-                    day.isExistData=YES;
-                }
-            }
+             }
+             if (day.events.count>0) {//events集合数大于零表示有数据
+                day.isExistData=YES;
+             }
          }
         [dateArr addObject:weekArr];
     }
@@ -736,7 +772,7 @@
     [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
     [rview addSubview:titleView];
     
-    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 150, 30)];
+    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 170, 30)];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     //    titleLabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
     titleLabel.font=[UIFont boldSystemFontOfSize:20.0f];
@@ -900,7 +936,7 @@
 
 #pragma mark - CLCalendar Delegate
 //点击事件tableview，添加或查询事件详细
-- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AnyEvent*)event AllEvent:(NSArray *)events {
+- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AT_Event*)event AllEvent:(NSArray *)events {
     if (!event) {  //没有事件添加
         AddEventViewController* add=[[AddEventViewController alloc] init];
         add.nowTimeDay=day;
@@ -916,7 +952,6 @@
 -(void)calendartitle:(NSString *)title{
      titleLabel.text = title;
 }
-
 
 - (void)calendarDidToMonth:(int)month year:(int)year CalendarView:(CLCalendarView *)calendarView
 {

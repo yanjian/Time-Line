@@ -12,6 +12,7 @@
 #import "CircleDrawView.h"
 @interface DateDetailsViewController (){
    UIImageView *addressIcon;
+    Calendar  *atCalendar;
 }
 
 @property (nonatomic,strong)  NSDictionary *coordinateDic;//地图坐标
@@ -35,12 +36,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    
+    NSPredicate *pre=[NSPredicate predicateWithFormat:@"cid==%@",event.cId];
+    NSArray * caArr= [Calendar MR_findAllWithPredicate:pre];
+    atCalendar=[caArr lastObject];
     
     [self initNavigationItem];
 
-    // Do any additional setup after loading the view from its nib.
 }
 
 - (void)initNavigationItem
@@ -90,12 +91,12 @@
     accountLabel.textAlignment = NSTextAlignmentCenter;
     accountLabel.font = [UIFont boldSystemFontOfSize:12];
     accountLabel.textColor = [UIColor whiteColor];
-    NSString *summarystr=[event.calendar summary];
+    NSString *summarystr=[atCalendar summary];
     accountLabel.text =summarystr ;
     NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:12]};
     CGSize size = [summarystr boundingRectWithSize:CGSizeMake(200, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
     CircleDrawView *cd=[[CircleDrawView alloc] initWithFrame:CGRectMake(accountLabel.frame.size.width/2-size.width/2-25,2, 20, 10)];
-    cd.hexString=[event.calendar backgroundColor];
+    cd.hexString=[atCalendar backgroundColor];
     [accountLabel addSubview:cd];
     [titleView addSubview:titleLabel];
     [titleView addSubview:accountLabel];

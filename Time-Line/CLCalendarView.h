@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "CLCanlendarDelegate.h"
 #import "CLCalendarCell.h"
-#import "CLEvent.h"
 #import "CalendarCell.h"
 typedef enum {
     CLCalendarViewModeMonth = 0,

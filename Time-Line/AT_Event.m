@@ -32,6 +32,8 @@
 @synthesize isAllDay;
 @synthesize recurrence;
 
+@synthesize backgroundColor;
+@synthesize cId;
 -(instancetype)initWithAnyEvent:(AnyEvent *) anyEvent{
     self=[super init];
     if (self) {
@@ -56,6 +58,8 @@
         status=anyEvent.status;
         isAllDay=anyEvent.isAllDay ;
         recurrence=anyEvent.recurrence;
+        backgroundColor=anyEvent.calendar.backgroundColor;
+        cId=anyEvent.calendar.cid;
     }
     return self;
 }
@@ -84,6 +88,9 @@
     atEvent->status=self.status;
     atEvent->isAllDay=self.isAllDay ;
     atEvent->recurrence=self.recurrence;
+    atEvent->backgroundColor=self.backgroundColor;
+    atEvent->cId=self.cId;
+    
     
     return atEvent;
 }
@@ -111,6 +118,9 @@
     atEvent->status=[status copy];
     atEvent->isAllDay=[isAllDay copy];
     atEvent->recurrence=[recurrence copy];
+    atEvent->backgroundColor=[backgroundColor copy];
+    atEvent->cId=[cId copy];
+    
     return atEvent;
 }
 

@@ -22,6 +22,7 @@
 #import "RepeatViewController.h"
 #import "IBActionSheet.h"
 #import "RecurrenceModel.h"
+#import "AnyEvent.h"
 
 #define TITLE     @"eventTitle"
 #define LOCATION  @"location"
@@ -80,7 +81,7 @@
     
     UILabel* repeatContent;
     UILabel* repeatLabel;
-    
+    AnyEvent *eventData;
     RecurrenceModel *recurObj;
     
 }
@@ -182,7 +183,9 @@
     }
 
     if (event) {
-         self.calendarObj= event.calendar;
+        NSPredicate *pre=[NSPredicate predicateWithFormat:@"cid==%@",event.cId];
+        NSArray * caArr= [Calendar MR_findAllWithPredicate:pre];
+        self.calendarObj= [caArr lastObject];
     }else{
         //查询默认日历
         NSPredicate *pre=[NSPredicate predicateWithFormat:@"isDefault==1"];
@@ -777,31 +780,31 @@
 {
    if (indexPath.section==1) {
         ViewController* controler=[[ViewController alloc]initWithNibName:@"ViewController" bundle:nil];
+        eventData=[AnyEvent MR_createEntity];
         if (event) {
             if (startString) {
-                event.startDate=startString;
+                eventData.startDate=startString;
                 startString=nil;
             }else{
-                event.startDate=event.startDate;
+                eventData.startDate=event.startDate;
             }
             if (endString) {
-                event.endDate=endString;
+                eventData.endDate=endString;
                 endString=nil;
             }else{
-                event.endDate=event.endDate;
+                eventData.endDate=event.endDate;
             }
-
-            [controler addEventViewControler:self anyEvent:event];
+            [controler addEventViewControler:self anyEvent:eventData];
         }else{
             
-            event=[AnyEvent MR_createEntity];
-            event.eventTitle=textfiled.text;
-            event.location= localfiled.text;
-            event.startDate= startString;
-            event.endDate= endString;
-            event.calendarAccount=_calendarLab.text;
-            event.isAllDay=@(isAllDay);//全天事件 标记
-            [controler addEventViewControler:self anyEvent:event];
+            eventData=[AnyEvent MR_createEntity];
+            eventData.eventTitle=textfiled.text;
+            eventData.location= localfiled.text;
+            eventData.startDate= startString;
+            eventData.endDate= endString;
+            eventData.calendarAccount=_calendarLab.text;
+            eventData.isAllDay=@(isAllDay);//全天事件 标记
+            [controler addEventViewControler:self anyEvent:eventData];
         }
         controler.detelegate=self;
         [self.navigationController pushViewController:controler animated:YES];
@@ -893,7 +896,7 @@
     [intervalbtn setHidden:NO];
     
     isAllDay=isAll;
-    event.isAllDay=@(isAllDay);
+    eventData.isAllDay=@(isAllDay);
     if (isAll) {
         [allDayStartLable setHidden:NO];
         [startlabel setHidden:YES];
@@ -1305,56 +1308,56 @@
 - (void)postEvent
 {
     if (!event) {
-        event=[AnyEvent MR_createEntity];
+        eventData=[AnyEvent MR_createEntity];
     }
     
-    event.eventTitle=textfiled.text;
-    event.location= localfiled.text;
-    event.startDate= startString;
-    event.endDate= endString;
-    event.note= notefiled.text;
-    event.calendarAccount=_calendarLab.text;
+    eventData.eventTitle=textfiled.text;
+    eventData.location= localfiled.text;
+    eventData.startDate= startString;
+    eventData.endDate= endString;
+    eventData.note= notefiled.text;
+    eventData.calendarAccount=_calendarLab.text;
     NSString *coor=@"";
     if (coordinates) {
         coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
     }
-    event.coordinate= coor;
+    eventData.coordinate= coor;
 
     NSString * alertStr=@"";
     if( selectAlertArr) {
         alertStr=[selectAlertArr componentsJoinedByString:@","];
     }
-    event.alerts= alertStr;
-    event.calendarAccount =  localfiled.text ;
+    eventData.alerts= alertStr;
+    eventData.calendarAccount =  localfiled.text ;
     
     
     NSString * repeatStr=@"";
     if(selectRepeatArr) {
         repeatStr=[selectRepeatArr componentsJoinedByString:@","];
     }
-    event.recurrence=[recurObj description];
-    event.repeat= repeatStr;
-    event.calendar=self.calendarObj;
-    event.isSync=@(isSyncData_NO);
+    eventData.recurrence=[recurObj description];
+    eventData.repeat= repeatStr;
+   // event.calendar=self.calendarObj;
+    eventData.isSync=@(isSyncData_NO);
     NSString * nowDate=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
-    event.updated=nowDate;
-    event.created=nowDate;
-    event.creator= [USER_DEFAULT objectForKey:@"email"];
-    event.organizer= [USER_DEFAULT objectForKey:@"email"];
-    event.isAllDay=@(isAllDay);//全天事件 标记
+    eventData.updated=nowDate;
+    eventData.created=nowDate;
+    eventData.creator= [USER_DEFAULT objectForKey:@"email"];
+    eventData.organizer= [USER_DEFAULT objectForKey:@"email"];
+    eventData.isAllDay=@(isAllDay);//全天事件 标记
     
-    [self.calendarObj addAnyEventObject:event];
+    [self.calendarObj addAnyEventObject:eventData];
     
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
         if (error) {
             NSLog(@"%@",error);
-            NSString *idStr=[[[event objectID] URIRepresentation] absoluteString];
+            NSString *idStr=[[[eventData objectID] URIRepresentation] absoluteString];
             [self removeLocationNoticeWithName:idStr];
             return;
         }
         if (contextDidSave) {
             //为事件添加通知
-            [self createLocationNotification:event];
+            [self createLocationNotification:eventData];
         }
     }];
     
@@ -1443,13 +1446,13 @@
     anyEvent.endDate= endString ;
     anyEvent.note= notefiled.text;
     anyEvent.calendarAccount=_calendarLab.text;
-    NSString *coor=@"";
+    NSString *coor=nil;
     if (coordinates) {
         coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
     }
     anyEvent.coordinate= coor;
     
-    NSString * alertStr=@"";
+    NSString * alertStr=nil;
     if( selectAlertArr) {
         alertStr=[selectAlertArr componentsJoinedByString:@","];
     }
@@ -1457,9 +1460,9 @@
     
     anyEvent.calendarAccount= localfiled.text;
     if ([recurObj description]) {
-        event.recurrence=[recurObj description];
+        anyEvent.recurrence=[recurObj description];
     }
-    NSString * repeatStr=@"";
+    NSString * repeatStr=nil;
     if(selectRepeatArr) {
         repeatStr=[selectRepeatArr componentsJoinedByString:@","];
     }

@@ -73,12 +73,12 @@
     }
     NSInteger cDay = calendarDateCount;
    // NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
-    
+    NSLog(@"%@",[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]);
     NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];
     
     NSInteger startIndex = -(cDay - 1  + weekDay - 1);
     
-    for (int i = startIndex; i < startIndex + (7* 4 * 12); i+=7) {
+    for (int i = startIndex; i < startIndex + (7* 6 * 12); i+=7) {
         NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];
         
         NSArray *weekArr = [self switchWeekByDate:temp];
@@ -462,7 +462,7 @@
 }
 
 
--(void)addEventViewControler:(UITableViewController *)view anyEvent:(AnyEvent *)anyEvent{
+-(void)addEventViewControler:(UIViewController *)view anyEvent:(AnyEvent *)anyEvent{
     
     anyEventObj=anyEvent;
     NSLog(@"%@",anyEvent.startDate);
@@ -602,26 +602,10 @@
 - (NSMutableArray*)switchWeekByDate:(NSDate*)date;
 {
     NSMutableArray* array = [[NSMutableArray alloc] init];
-    
     int head = [CalendarDateUtil getWeekDayWithDate:date] - 1;
-    
-    NSUInteger *time=[[PublicMethodsViewController getPublicMethods] timeIntegerDifference:anyEventObj.endDate getStrart:anyEventObj.startDate];
-    
-
-    
     for (int i = 0 ; i < 7; i++) {
         NSDate *temp = [CalendarDateUtil dateWithTimeInterval:i - head sinceDate:date];
         CLDay *day = [[CLDay alloc] initWithDate:temp];
-//        for (int t=0; t<=time; t++) {
-//            NSDate *startDate=[[PublicMethodsViewController getPublicMethods] formatWithStringDate:anyEventObj.startDate];
-//            CLDay *inDate=[[CLDay alloc] initWithDate:[CalendarDateUtil dateWithTimeInterval:t sinceDate:startDate]];
-//            
-//            if ([[inDate description] isEqualToString:[day description]]) {
-//                day.isSelectDay=YES;
-//            }else{
-//                day.isSelectDay=NO;
-//            }
-//        }
         [array addObject:day];
     }
     
@@ -635,7 +619,7 @@
     return [NSArray arrayWithArray:dateArr];
 }
 
--(void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay *)day event:(AnyEvent *)event AllEvent:(NSArray *)events{
+-(void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay *)day event:(AT_Event *)event AllEvent:(NSArray *)events{
 }
 
 
