@@ -42,8 +42,6 @@
 {
     [super viewDidLoad];
     [self initNavigationItem];
-   
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -51,17 +49,28 @@
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.navigationController.navigationBarHidden = YES;
-    [self synchronizationDataWriteEventId];//同步数据写入离线事件的Eid
-    //默认不执行下面加载数据刷新ui的功能
-    if(self.isRefreshUIData){
-        
+    if (self.isRefreshUIData) {
         dateArr = [NSMutableArray array];
         NSInteger cDay = calendarDateCount;
-        //    NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
+        //NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
         
         NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];
+        NSInteger startIndex = -(cDay - 1  + weekDay - 1);
+        for (int i = startIndex; i < startIndex + (7* 6 * 12); i+=7) {
+            NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];//回到200天前
+            NSArray *weekArr = [self switchWeekByDate:temp];
+            for (int d = 0; d<7; d++) {
+                CLDay *day = [weekArr objectAtIndex:d];
+                if (day.isToday) {
+                    [calendarView setToDayRow:(i-startIndex)/7 Index:d];
+                }
+            }
+            [dateArr addObject:weekArr];
+        }
         
-        
+        [self synchronizationDataWriteEventId];//同步数据写入离线事件的Eid
+        //默认不执行下面加载数据刷新ui的功能
+
         NSArray *calendararr=[Calendar MR_findAll];
         NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
         for (Calendar *ca in calendararr) {
@@ -74,162 +83,161 @@
             }
         }
         
-        NSInteger startIndex = -(cDay - 1  + weekDay - 1);
-        NSUInteger intervalCount=0;
-        for (int i = startIndex; i < startIndex + (7* 6 * 12); i+=7) {
-            NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];//回到200天前
-            NSArray *weekArr = [self switchWeekByDate:temp];
-            for (int d = 0; d<7; d++) {
-                CLDay *day = [weekArr objectAtIndex:d];
-                if (day.isToday) {
-                    [calendarView setToDayRow:(i-startIndex)/7 Index:d];
-                }
-                for (AnyEvent *event in anyeventArr) {
-                    NSLog(@"%@",event.recurrence);
-
-                    AT_Event *atEvent=[[AT_Event alloc] initWithAnyEvent:event];
-                    
-                    if (event.recurrence){
+        __block  NSUInteger intervalCount=0;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            for (NSArray *weekArr in dateArr) {
+                for (int d=0; d<7; d++) {
+                    CLDay *day = [weekArr objectAtIndex:d];
+                    for (AnyEvent *event in anyeventArr) {
+                        NSLog(@"%@",event.recurrence);
                         
-                        NSString *startStr = nil;
-                        if (event.startDate) {
-                            NSRange rage = [event.startDate rangeOfString:@"日"];
-                            if (rage.location!=NSNotFound) {
-                                startStr = [event.startDate substringToIndex:rage.location+1];
+                        AT_Event *atEvent=[[AT_Event alloc] initWithAnyEvent:event];
+                        
+                        if (event.recurrence){
+                            
+                            NSString *startStr = nil;
+                            if (event.startDate) {
+                                NSRange rage = [event.startDate rangeOfString:@"日"];
+                                if (rage.location!=NSNotFound) {
+                                    startStr = [event.startDate substringToIndex:rage.location+1];
+                                }
                             }
-                        }
-                        RecurrenceModel *rm = [[RecurrenceModel alloc] initRecrrenceModel:event.recurrence];
-                        
-                        if(!rm.interval){
-                            rm.interval=1;//默认为1
-                        }
-                        
-                        NSDate *startDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:startStr];
-                        NSDate *dayDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:[day description]];
-                        if ([[rm.freq uppercaseString] isEqualToString:[@"daily" uppercaseString]]) {//重复提醒天
-                          
-                            NSTimeInterval interval = [dayDate timeIntervalSinceDate:startDate];
-                            if (interval>=0) {
-                                NSInteger tmpInte = interval/86400;//除以一天的时间秒
+                            RecurrenceModel *rm = [[RecurrenceModel alloc] initRecrrenceModel:event.recurrence];
+                            
+                            if(!rm.interval){
+                                rm.interval=1;//默认为1
+                            }
+                            
+                            NSDate *startDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:startStr];
+                            NSDate *dayDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:[day description]];
+                            if ([[rm.freq uppercaseString] isEqualToString:[@"daily" uppercaseString]]) {//重复提醒天
                                 
-                                if((tmpInte%rm.interval) == 0){
-                                    if (!rm.count) {
-                                        NSLog(@"%@",rm.until);
-                                        [self untilDateWithEndEvent:rm.until clDay:day dayDate:dayDate atEvent:atEvent dayIndex:d weekArr:weekArr];
-                                    }else{
-                                        rm.count= rm.count-intervalCount;
-                                        if (rm.count>0) {
-                                            intervalCount++;
-                                            AT_Event *atEvents= [atEvent mutableCopy];
-                                             NSDate *date=[CalendarDateUtil dateWithTimeInterval:rm.interval  sinceDate:dayDate];
-                                             atEvents.startDate=[[PublicMethodsViewController getPublicMethods] stringformatWithDate:date];
-                                            
-                                            [day addEvent:atEvents];
+                                NSTimeInterval interval = [dayDate timeIntervalSinceDate:startDate];
+                                if (interval>=0) {
+                                    NSInteger tmpInte = interval/86400;//除以一天的时间秒
+                                    
+                                    if((tmpInte%rm.interval) == 0){
+                                        if (!rm.count) {
+                                            NSLog(@"%@",rm.until);
+                                            [self untilDateWithEndEvent:rm.until clDay:day dayDate:dayDate atEvent:atEvent dayIndex:d weekArr:weekArr];
+                                        }else{
+                                            rm.count= rm.count-intervalCount;
+                                            if (rm.count>0) {
+                                                intervalCount++;
+                                                AT_Event *atEvents= [atEvent mutableCopy];
+                                                NSDate *date=[CalendarDateUtil dateWithTimeInterval:rm.interval  sinceDate:dayDate];
+                                                atEvents.startDate=[[PublicMethodsViewController getPublicMethods] stringformatWithDate:date];
+                                                
+                                                [day addEvent:atEvents];
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        }else if([[rm.freq uppercaseString] isEqualToString:[@"weekly" uppercaseString]]){
-                             NSTimeInterval interval = [dayDate timeIntervalSinceDate:startDate];
-                            if (interval>=0) {
-                                NSInteger tmpInte = interval/86400;//除以一天的时间秒
-                                NSInteger weekCount=tmpInte/7;
-                                if((weekCount%rm.interval) == 0){
-                                    if (!rm.count) {
-                                        NSInteger j= [CalendarDateUtil getWeekDayWithDate:dayDate]-1;
-                                        NSArray *byDayArr= [[rm stringWithIntFromWeek] componentsSeparatedByString:@","];
-                                        for (int i=0; i< byDayArr.count; i++) {
-                                              NSInteger byDay= [byDayArr[i] integerValue];
-                                            if (j==byDay) {
-                                                NSLog(@"%@",rm.until);
-                                                [self untilDateWithEndEvent:rm.until clDay:day dayDate:dayDate atEvent:atEvent dayIndex:d weekArr:weekArr];
+                            }else if([[rm.freq uppercaseString] isEqualToString:[@"weekly" uppercaseString]]){
+                                NSTimeInterval interval = [dayDate timeIntervalSinceDate:startDate];
+                                if (interval>=0) {
+                                    NSInteger tmpInte = interval/86400;//除以一天的时间秒
+                                    NSInteger weekCount=tmpInte/7;
+                                    if((weekCount%rm.interval) == 0){
+                                        if (!rm.count) {
+                                            NSInteger j= [CalendarDateUtil getWeekDayWithDate:dayDate]-1;
+                                            NSArray *byDayArr= [[rm stringWithIntFromWeek] componentsSeparatedByString:@","];
+                                            for (int i=0; i< byDayArr.count; i++) {
+                                                NSInteger byDay= [byDayArr[i] integerValue];
+                                                if (j==byDay) {
+                                                    NSLog(@"%@",rm.until);
+                                                    [self untilDateWithEndEvent:rm.until clDay:day dayDate:dayDate atEvent:atEvent dayIndex:d weekArr:weekArr];
+                                                }
                                             }
-                                        }
-                                    }else{
-                                        rm.count= rm.count-intervalCount;
-                                        
-                                        NSInteger j= [CalendarDateUtil getWeekDayWithDate:dayDate]-1;
-                                        NSArray *byDayArr= [[rm stringWithIntFromWeek] componentsSeparatedByString:@","];
-                                        for (int i=0; i< byDayArr.count; i++) {
-                                            NSInteger byDay= [byDayArr[i] integerValue];
-                                            if (j==byDay) {
-                                                if (rm.count>0) {
-                                                    intervalCount++;
-                                                    AT_Event *atEvents= [atEvent mutableCopy];
-                                                    // NSDate *date=[CalendarDateUtil dateWithTimeInterval:rm.interval  sinceDate:startDate];
-                                                    // atEvents.startDate=[[PublicMethodsViewController getPublicMethods] stringformatWithDate:date];
-                                                    [day addEvent:atEvents];
+                                        }else{
+                                            rm.count= rm.count-intervalCount;
+                                            
+                                            NSInteger j= [CalendarDateUtil getWeekDayWithDate:dayDate]-1;
+                                            NSArray *byDayArr= [[rm stringWithIntFromWeek] componentsSeparatedByString:@","];
+                                            for (int i=0; i< byDayArr.count; i++) {
+                                                NSInteger byDay= [byDayArr[i] integerValue];
+                                                if (j==byDay) {
+                                                    if (rm.count>0) {
+                                                        intervalCount++;
+                                                        AT_Event *atEvents= [atEvent mutableCopy];
+                                                        // NSDate *date=[CalendarDateUtil dateWithTimeInterval:rm.interval  sinceDate:startDate];
+                                                        // atEvents.startDate=[[PublicMethodsViewController getPublicMethods] stringformatWithDate:date];
+                                                        [day addEvent:atEvents];
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            }
-                        }else if([[rm.freq uppercaseString] isEqualToString:[@"monthly" uppercaseString]]){
-                            NSCalendar* chineseClendar = [ [ NSCalendar alloc ] initWithCalendarIdentifier:NSGregorianCalendar ];
-                            NSUInteger unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit;
-                            NSDateComponents *cps = [chineseClendar components:unitFlags fromDate:startDate  toDate:dayDate  options:0];
-                            
-                            NSInteger diffYear = [cps year];
-                            NSInteger diffMon = [cps month];
-                            NSInteger diffDay = [cps day];
-                            if (diffYear>=0&&diffMon>=0&&diffDay==0) {
-                                NSInteger months= diffYear*12+diffMon;
-                                if (months%rm.interval==0) {
-                                    if (!rm.count) {
-                                        NSLog(@"%@",rm.until);
-                                        [self untilDateWithEndEvent:rm.until clDay:day dayDate:dayDate atEvent:atEvent dayIndex:d weekArr:weekArr];
-                                    }else{
-                                        rm.count= rm.count-intervalCount;
-                                        if (rm.count>0) {
-                                            intervalCount++;
-                                            AT_Event *atEvents= [atEvent mutableCopy];
-                                            [day addEvent:atEvents];
+                            }else if([[rm.freq uppercaseString] isEqualToString:[@"monthly" uppercaseString]]){
+                                NSCalendar* chineseClendar = [ [ NSCalendar alloc ] initWithCalendarIdentifier:NSGregorianCalendar ];
+                                NSUInteger unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit;
+                                NSDateComponents *cps = [chineseClendar components:unitFlags fromDate:startDate  toDate:dayDate  options:0];
+                                
+                                NSInteger diffYear = [cps year];
+                                NSInteger diffMon = [cps month];
+                                NSInteger diffDay = [cps day];
+                                if (diffYear>=0&&diffMon>=0&&diffDay==0) {
+                                    NSInteger months= diffYear*12+diffMon;
+                                    if (months%rm.interval==0) {
+                                        if (!rm.count) {
+                                            NSLog(@"%@",rm.until);
+                                            [self untilDateWithEndEvent:rm.until clDay:day dayDate:dayDate atEvent:atEvent dayIndex:d weekArr:weekArr];
+                                        }else{
+                                            rm.count= rm.count-intervalCount;
+                                            if (rm.count>0) {
+                                                intervalCount++;
+                                                AT_Event *atEvents= [atEvent mutableCopy];
+                                                [day addEvent:atEvents];
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                            }else if([[rm.freq uppercaseString] isEqualToString:[@"yearly" uppercaseString]]){
+                                NSCalendar* chineseClendar = [ [ NSCalendar alloc ] initWithCalendarIdentifier:NSGregorianCalendar ];
+                                NSUInteger unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit;
+                                NSDateComponents *cps = [chineseClendar components:unitFlags fromDate:startDate  toDate:dayDate  options:0];
+                                
+                                NSInteger diffYear = [cps year];
+                                NSInteger diffMon = [cps month];
+                                NSInteger diffDay = [cps day];
+                                if (diffYear>=0&&diffMon==0&&diffDay==0) {
+                                    NSInteger years= diffYear;
+                                    if (years%rm.interval==0) {
+                                        if (!rm.count) {
+                                            NSLog(@"%@",rm.until);
+                                            [self untilDateWithEndEvent:rm.until clDay:day dayDate:dayDate atEvent:atEvent dayIndex:d weekArr:weekArr];
+                                        }else{
+                                            rm.count= rm.count-intervalCount;
+                                            if (rm.count>0) {
+                                                intervalCount++;
+                                                AT_Event *atEvents= [atEvent mutableCopy];
+                                                [day addEvent:atEvents];
+                                            }
                                         }
                                     }
                                 }
                             }
-                         
-                        }else if([[rm.freq uppercaseString] isEqualToString:[@"yearly" uppercaseString]]){
-                            NSCalendar* chineseClendar = [ [ NSCalendar alloc ] initWithCalendarIdentifier:NSGregorianCalendar ];
-                            NSUInteger unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit;
-                            NSDateComponents *cps = [chineseClendar components:unitFlags fromDate:startDate  toDate:dayDate  options:0];
-                            
-                            NSInteger diffYear = [cps year];
-                            NSInteger diffMon = [cps month];
-                            NSInteger diffDay = [cps day];
-                            if (diffYear>=0&&diffMon==0&&diffDay==0) {
-                                NSInteger years= diffYear;
-                                if (years%rm.interval==0) {
-                                     if (!rm.count) {
-                                         NSLog(@"%@",rm.until);
-                                         [self untilDateWithEndEvent:rm.until clDay:day dayDate:dayDate atEvent:atEvent dayIndex:d weekArr:weekArr];
-                                     }else{
-                                         rm.count= rm.count-intervalCount;
-                                         if (rm.count>0) {
-                                             intervalCount++;
-                                             AT_Event *atEvents= [atEvent mutableCopy];
-                                             [day addEvent:atEvents];
-                                         }
-                                     }
-                                }
+                        }else{
+                            if ([atEvent.startDate hasPrefix:[day description]]) {
+                                [day addEvent:atEvent];
                             }
                         }
-                    }else{
-                        if ([atEvent.startDate hasPrefix:[day description]]) {
-                            [day addEvent:atEvent];
-                        }
                     }
-                 }
-                 if (day.events.count>0) {//events集合数大于零表示有数据
-                     day.isExistData=YES;
-                 }
-             }
-            [dateArr addObject:weekArr];
-        }
-       [self refreshUI];
-       [calendarView goBackToday];//回到今天
-    }
+                    if (day.events.count>0) {//events集合数大于零表示有数据
+                        day.isExistData=YES;
+                    }
+                    
+                }
+            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self refreshUI];
+            });
+        });
+          [calendarView goBackToday];//回到今天
+
+   }
 }
 
 
@@ -370,6 +378,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+   
 }
 //将anyEvent 转换为json
 -(NSString *)assemblyStringWithGoogleAnyEvent:(AnyEvent *)anyEvent{
