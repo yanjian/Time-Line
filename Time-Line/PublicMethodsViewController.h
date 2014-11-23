@@ -26,6 +26,9 @@
 
 -(NSString*)stringFormaterDate:(NSString*)format dateString:(NSString *) dateString;
 
+
+-(NSString *) rfc3339StringWithStringDate:(NSString *) dateString;
+
 -(NSString *) dateWithStringDate:(NSString *) dateString;
 
 -(NSMutableArray*)intervalSinceNow: (NSString *) theDate getStrart:(NSString*)startdate;

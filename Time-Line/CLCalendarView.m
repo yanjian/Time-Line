@@ -162,7 +162,7 @@
 - (void)setDisplayMode:(CLCalendarDisplayMode)displayMode {
     _displayMode = displayMode;
     isshow=NO;
-    [UIView animateWithDuration:0.8 animations:^{
+    [UIView animateWithDuration:0.4 animations:^{
         switch (_displayMode) {
             case CLCalendarViewModeMonth:
                 event_tableView.frame = event_Table_Month_F;
@@ -224,11 +224,11 @@
 //表头
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     if (tableView == event_tableView) {
-        CGPoint offset = event_tableView.contentOffset;
-        CGRect bounds = event_tableView.bounds;
-        UIEdgeInsets inset = event_tableView.contentInset;
-        NSInteger currentOffset = offset.y + 3*bounds.size.height-inset.bottom;
-        NSLog(@"----->%ld",(long)currentOffset);
+//        CGPoint offset = event_tableView.contentOffset;
+//        CGRect bounds = event_tableView.bounds;
+//        UIEdgeInsets inset = event_tableView.contentInset;
+//        NSInteger currentOffset = offset.y + bounds.size.height-inset.bottom;
+//        NSLog(@"----->%ld",(long)currentOffset);
         int row = section / 7;
         int index = section % 7;
         UIView* headview=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, headHeight)];
@@ -410,6 +410,7 @@
         }/*else{
             [self setDisplayMode:CLCalendarViewModeMonth];
         }*/
+        
         int i = tableView.contentOffset.y / (headHeight + [tableView numberOfRowsInSection:indexPath.row]*rowHeight);
         int s = i /7;
         int index = i %7;
@@ -475,7 +476,7 @@
         
         CLDay *day = [[dateArr objectAtIndex:row] objectAtIndex:index];
         AT_Event *event = nil;
-        if (day.events) {
+        if (day.events.count>0) {
             event = [day.events objectAtIndex:indexPath.row];
         }
        [self.delegate calendarSelectEvent:self day:day event:event AllEvent:day.events];
@@ -513,10 +514,12 @@
      if (calendar_tableView == scrollView) {
          [self addSubview:month];
          [self setDisplayMode:CLCalendarViewModeMonth];
+          NSLog(@"开始滑动日历列表");
      }else{
          isshow=YES;
+          NSLog(@"开始滑动事件列表");
      }
-    NSLog(@"开始拖拽图片");
+   
 }
 
 
@@ -538,11 +541,13 @@
     }else{
         EventCell* cell=[[event_tableView visibleCells] objectAtIndex:1];
         NSIndexPath* path=[event_tableView indexPathForCell:cell];
-        NSString* table_title=[[[dateArr objectAtIndex:path.section/7] objectAtIndex:path.section%7] description];
+        CLDay *clday = [[dateArr objectAtIndex:path.section/7] objectAtIndex:path.section%7];
+        
+        NSString* table_title=[clday description];
         NSDateFormatter *formatter =[[NSDateFormatter alloc] init];
         [formatter setDateFormat:@"YYYY年 M月dd日"];
-        NSDate* date=[formatter dateFromString:table_title];
-        NSString* weakStr=[[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
+        //NSDate* date=[formatter dateFromString:table_title];
+        //NSString* weakStr=[[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
         table_title=[table_title stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
         table_title=[table_title stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
         table_title=[table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];

@@ -291,7 +291,7 @@
                     NSDictionary *eventDataDic=(NSDictionary *)eventData;
                     NSArray *eventArr=[eventDataDic objectForKey:Google_Items];
                     for (NSDictionary *event in eventArr) {
-                        NSMutableDictionary *eventDic=[event mutableCopy];
+                         NSMutableDictionary *eventDic=[event mutableCopy];
                         [eventDic setObject:calendar forKey:@"calendar"];
                         [googleSet addObject:[self paseGoogleEventData:eventDic] ];
                     }
@@ -441,7 +441,7 @@
 
     anyEvent.startDate= startTime;
     anyEvent.endDate= endTime;
-    
+    anyEvent.isDelete=@(isDeleteData_NO);//默认非删除数据
     if ([dataDic objectForKey:@"description"]) {
         anyEvent.note= [dataDic objectForKey:@"description"];
     }
@@ -482,6 +482,7 @@
     anyEvent.recurrence=[dataDic objectForKey:@"recurrence"];
     anyEvent.startDate= statrstring;
     anyEvent.isAllDay=@([[dataDic objectForKey:@"allDay"] intValue]);//是否是全天事件
+    anyEvent.isDelete=@(isDeleteData_NO);//默认不是删除数据
     anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"endTime"]];
     
     if ([dataDic objectForKey:@"note"]) {

@@ -14,6 +14,12 @@ isSyncData_NO=0,//没有
 isSyncData_YES=1
 };
 
+typedef NS_ENUM(NSInteger, isDeleteData) {
+    isDeleteData_NO=0,//没有
+    isDeleteData_YES=1,//删除的数据
+    isDeleteData_mode=2,//表示重复数据中有数据删除
+    isDeleteData_record=3//表示这条记录不需要删除
+};
 
 
 @class Calendar;
@@ -42,5 +48,7 @@ isSyncData_YES=1
 @property (nonatomic, retain) NSNumber * isAllDay;//是否是全天事件
 @property (nonatomic, retain) Calendar *calendar;
 @property (nonatomic, retain) NSString * recurrence;
+@property (nonatomic, retain) NSString * recurringEventId;
+@property (nonatomic, retain) NSNumber * isDelete;
 
 @end

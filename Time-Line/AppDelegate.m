@@ -43,10 +43,22 @@
     
     _netWorkStatus = ReachableViaWiFi;
     
+    NSTimeInterval timeInterval= [self getRefreshFetchTimetimeInterval];
+    if (timeInterval==0) {
+        timeInterval= UIApplicationBackgroundFetchIntervalNever;
+    }
+    [application setMinimumBackgroundFetchInterval:timeInterval];
+    
+    
+
+    if ([USER_DEFAULT objectForKey:@"userName"]) {
+        [self userLogin];
+    }
+
     
     [self initMainView];
     
-    [self.window makeKeyAndVisible];
+   
 
     
     
@@ -85,22 +97,11 @@
 //        
 //    }
     
-    NSTimeInterval timeInterval= [self getRefreshFetchTimetimeInterval];
-    if (timeInterval==0) {
-        timeInterval= UIApplicationBackgroundFetchIntervalNever;
-    }
-    [application setMinimumBackgroundFetchInterval:timeInterval];
-    
-    
     NSInteger loginStatus=[USER_DEFAULT integerForKey:@"loginStatus"];
     if (1!=loginStatus) {
-         [self initLoginView];
+        [self initLoginView];
     }
-    if ([USER_DEFAULT objectForKey:@"userName"]) {
-         [self userLogin];
-    }
-   
-    
+     [self.window makeKeyAndVisible];
     return YES;
 }
 
@@ -116,7 +117,8 @@
         [request startSynchronous];
         return;
     }
-    [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
+    if([USER_DEFAULT objectForKey:@"email"] )
+      [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
     if ([USER_DEFAULT objectForKey:@"authCode"]) {
         [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
         [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
@@ -174,6 +176,7 @@
 -(void)initMainView
 {
     HomeViewController *homeVC=[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
+    homeVC.isRefreshUIData=YES;//初始化的时候刷新ui加载数据
     UINavigationController *nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
     nav.navigationBarHidden=YES;
     nav.navigationBar.translucent=NO;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6252" systemVersion="14A389" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6252" systemVersion="14B25" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="AnyEvent" representedClassName="AnyEvent" syncable="YES">
         <attribute name="alerts" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="calendarAccount" optional="YES" attributeType="String" syncable="YES"/>
@@ -11,12 +11,14 @@
         <attribute name="endDate" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="eventTitle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isAllDay" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="isDelete" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="isSync" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="organizer" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="orgDisplayName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="recurrence" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recurringEventId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="repeat" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="sequence" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="startDate" optional="YES" attributeType="String" syncable="YES"/>
@@ -43,7 +45,7 @@
         <relationship name="atAccount" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AT_Account" inverseName="ca" inverseEntity="AT_Account" syncable="YES"/>
     </entity>
     <elements>
-        <element name="AnyEvent" positionX="-306" positionY="-124" width="128" height="375"/>
+        <element name="AnyEvent" positionX="-306" positionY="-124" width="128" height="405"/>
         <element name="AT_Account" positionX="-497" positionY="-136" width="128" height="88"/>
         <element name="Calendar" positionX="-54" positionY="68" width="128" height="210"/>
     </elements>

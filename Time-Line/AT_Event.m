@@ -31,6 +31,8 @@
 @synthesize status;
 @synthesize isAllDay;
 @synthesize recurrence;
+@synthesize recurringEventId;
+@synthesize isDelete;
 
 @synthesize backgroundColor;
 @synthesize cId;
@@ -60,6 +62,8 @@
         recurrence=anyEvent.recurrence;
         backgroundColor=anyEvent.calendar.backgroundColor;
         cId=anyEvent.calendar.cid;
+        recurringEventId=anyEvent.recurringEventId;
+        isDelete =anyEvent.isDelete;
     }
     return self;
 }
@@ -90,8 +94,8 @@
     atEvent->recurrence=self.recurrence;
     atEvent->backgroundColor=self.backgroundColor;
     atEvent->cId=self.cId;
-    
-    
+    atEvent->recurringEventId=self.recurringEventId;
+    atEvent->isDelete=self.isDelete;
     return atEvent;
 }
 
@@ -120,7 +124,8 @@
     atEvent->recurrence=[recurrence copy];
     atEvent->backgroundColor=[backgroundColor copy];
     atEvent->cId=[cId copy];
-    
+    atEvent->recurringEventId=[recurringEventId copy];
+        atEvent->isDelete=[self.isDelete copy];
     return atEvent;
 }
 

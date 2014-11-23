@@ -24,6 +24,7 @@
     self=[super init];
     if (self) {
         recStr=recString;
+        self.interval=1;//默认为1
         weekArr=[NSArray arrayWithObjects:@"SU",@"MO",@"TU",@"WE",@"TH",@"FR",@"SA", nil];
         if (recString) {
             NSRange tmpRange=[recString rangeOfString:@":"];
@@ -172,7 +173,24 @@
 
 
 -(NSString *)description{
-    return recStr;
+    NSMutableArray *tmpArr=[NSMutableArray array];
+    if (self.freq) {
+        [tmpArr addObject:[NSString stringWithFormat:@"RRULE:FREQ=%@",[self.freq uppercaseString]]] ;
+    }
+    if(self.interval){
+         [tmpArr addObject:[NSString stringWithFormat:@"INTERVAL=%i",self.interval]];
+        
+    }
+    if(self.count){
+        [tmpArr addObject:[NSString stringWithFormat:@"COUNT=%i",self.count]];
+        
+    }if (self.byDay) {
+         [tmpArr addObject:[NSString stringWithFormat:@"BYDAY=%@",[self.byDay uppercaseString]]];
+    }
+    if(self.until){
+         [tmpArr addObject:[NSString stringWithFormat:@"UNTIL=%@",self.until]];
+    }
+    return [tmpArr componentsJoinedByString:@";"];
 }
 
 -(NSString *)repeatDateWithInteger:(NSUInteger) dayCount{

@@ -94,6 +94,21 @@ static PublicMethodsViewController * PublicMethods = nil;
 }
 
 
+-(NSString *) rfc3339StringWithStringDate:(NSString *) dateString
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setLocale:[[NSLocale alloc]initWithLocaleIdentifier:@"en_US_POSIX"]];
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE];
+    [dateFormatter setTimeZone:timeZone];
+    
+    [dateFormatter setDateFormat:@"yyyyMMdd"];
+    NSDate *dateTime = nil;
+    [dateFormatter getObjectValue:&dateTime forString:dateString range:nil error:nil];
+    [dateFormatter setDateFormat:@"YYYY年 M月d日"];
+    return [dateFormatter stringFromDate:dateTime];
+}
+
+
 -(NSString *) dateWithStringDate:(NSString *) dateString
 {
     NSDate *dateTime= [self formatWithStringDate:dateString];
@@ -138,6 +153,7 @@ static PublicMethodsViewController * PublicMethods = nil;
     NSDateFormatter *tempFormatter = [[NSDateFormatter alloc]init];
     [tempFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
     [tempFormatter setDateFormat:@"YYYY年 M月d日HH:mm"];
+    NSLog(@"%@",[tempFormatter stringFromDate:date]);
     return [tempFormatter stringFromDate:date];
 }
 

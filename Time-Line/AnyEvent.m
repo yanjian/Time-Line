@@ -34,6 +34,7 @@
 @dynamic isAllDay;
 @dynamic calendar;
 @dynamic recurrence;
-
+@dynamic recurringEventId;
+@dynamic isDelete;
 
 @end

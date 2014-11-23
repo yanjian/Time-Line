@@ -30,6 +30,12 @@
 //事件本地通知的标记 (取消事件通知，添加通知用)
 #define anyEventLocalNot_Flag @"anyEventLocalNot"
 
+
+//基本IP
+//测试： http://t2.oxozoom.com:8080/myCalendar/servlet
+//真实环境  http://w.oxozoom.com:8080/myCalendar/servlet
+#define BASEURL_IP @"http://w.oxozoom.com:8080/myCalendar/servlet"
+
 //googel搜索地址自动补全
 #define GOOGLE_ADDRESS_REQUEST_SEARCH  @"https://maps.googleapis.com/maps/api/place/autocomplete/json"
 #define GOOGLE_ADDRESS_REQUEST_SEARCH_TAG  1
@@ -46,17 +52,18 @@
 #define GOOGLE_ADDRESS_PIC @"http://maps.googleapis.com/maps/api/staticmap"
 #define GOOGLE_ADDRESS_PIC_TAG 3
 
-//https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/calendar&redirect_uri=http://t2.oxozoom.com:8080/myCalendar/servlet/Oauth2callback&response_type=code&client_id=124861103249-11bp8t5epj45u5n91li89m4cknvajqrf.apps.googleusercontent.com&access_type=offline
-
-//https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/calendar&redirect_uri=http://t2.oxozoom.com:8080/myCalendar/servlet/Oauth2callback&response_type=code&client_id=124861103249-11bp8t5epj45u5n91li89m4cknvajqrf.apps.googleusercontent.com&approval_prompt=force&access_type=offline&include_granted_scopes=true
 
 //oauth认证url
 #define Google_Base       @"https://accounts.google.com/o/oauth2/auth"
 #define Google_UserInfo   @"https://www.googleapis.com/auth/userinfo.profile"
 #define Google_User_Email @"https://www.googleapis.com/auth/userinfo.email"
 #define Google_Calendar   @"https://www.googleapis.com/auth/calendar"
-#define Google_redirech   @"http://t2.oxozoom.com:8080/myCalendar/servlet/Oauth2callback"
-#define Google_Auth_APPID @"124861103249-11bp8t5epj45u5n91li89m4cknvajqrf.apps.googleusercontent.com"
+#define Google_redirech   [NSString stringWithFormat:@"%@/Oauth2callback",BASEURL_IP]
+//测试环境
+//#define Google_Auth_APPID @"124861103249-11bp8t5epj45u5n91li89m4cknvajqrf.apps.googleusercontent.com"
+
+//真实环境
+#define Google_Auth_APPID @"535796093828-esa2fotq9tjdgf1cbs0lb0jm5q46uv57.apps.googleusercontent.com"
 
 #define Google_OAuth_URL [NSString stringWithFormat:@"%@?scope=%@+%@+%@&redirect_uri=%@&response_type=code&client_id=%@&access_type=offline&approval_prompt=force&include_granted_scopes=true",Google_Base,Google_UserInfo,Google_User_Email,Google_Calendar,Google_redirech,Google_Auth_APPID]
 
@@ -79,10 +86,7 @@ typedef NS_ENUM(NSInteger , AccountType){
 
 };
 
-//基本IP
-//测试： http://t2.oxozoom.com:8080/myCalendar/servlet
-//真实环境  http://w.oxozoom.com:8080/myCalendar/servlet
-#define BASEURL_IP @"http://t2.oxozoom.com:8080/myCalendar/servlet"
+
 
 
 //可配置IP
@@ -152,6 +156,9 @@ typedef NS_ENUM(NSInteger , AccountType){
 #define Google_DeleteCalendarEvent_tag 17
 
 
+// 删除google数据事件
+#define Google_CalendarEventRepeat [NSString stringWithFormat:@"%@/GoogleCalendarEventRepeat",BASEURL_IP]
+#define Google_CalendarEventRepeat_tag 19
 
 
 
