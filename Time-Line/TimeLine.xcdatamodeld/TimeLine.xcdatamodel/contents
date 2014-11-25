@@ -17,6 +17,7 @@
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="organizer" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="orgDisplayName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="originalStartTime" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="recurrence" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="recurringEventId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="repeat" optional="YES" attributeType="String" syncable="YES"/>
@@ -45,7 +46,7 @@
         <relationship name="atAccount" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AT_Account" inverseName="ca" inverseEntity="AT_Account" syncable="YES"/>
     </entity>
     <elements>
-        <element name="AnyEvent" positionX="-306" positionY="-124" width="128" height="405"/>
+        <element name="AnyEvent" positionX="-306" positionY="-124" width="128" height="420"/>
         <element name="AT_Account" positionX="-497" positionY="-136" width="128" height="88"/>
         <element name="Calendar" positionX="-54" positionY="68" width="128" height="210"/>
     </elements>

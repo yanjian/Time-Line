@@ -21,6 +21,14 @@
 //导航的高度
 #define naviHigth 64
 
+#define cancelled @"cancelled" //google的事件状态
+#define confirmed @"confirmed"  
+
+typedef NS_ENUM(NSInteger, eventStatus) {
+    eventStatus_confirmed=0,
+    eventStatus_cancelled=1
+};
+
 
 #define  calendarDateCount [CalendarDateUtil getCurrentDay] + 2 *30
 
@@ -34,7 +42,7 @@
 //基本IP
 //测试： http://t2.oxozoom.com:8080/myCalendar/servlet
 //真实环境  http://w.oxozoom.com:8080/myCalendar/servlet
-#define BASEURL_IP @"http://w.oxozoom.com:8080/myCalendar/servlet"
+#define BASEURL_IP @"http://t2.oxozoom.com:8080/myCalendar/servlet"
 
 //googel搜索地址自动补全
 #define GOOGLE_ADDRESS_REQUEST_SEARCH  @"https://maps.googleapis.com/maps/api/place/autocomplete/json"
@@ -60,10 +68,10 @@
 #define Google_Calendar   @"https://www.googleapis.com/auth/calendar"
 #define Google_redirech   [NSString stringWithFormat:@"%@/Oauth2callback",BASEURL_IP]
 //测试环境
-//#define Google_Auth_APPID @"124861103249-11bp8t5epj45u5n91li89m4cknvajqrf.apps.googleusercontent.com"
+#define Google_Auth_APPID @"124861103249-11bp8t5epj45u5n91li89m4cknvajqrf.apps.googleusercontent.com"
 
 //真实环境
-#define Google_Auth_APPID @"535796093828-esa2fotq9tjdgf1cbs0lb0jm5q46uv57.apps.googleusercontent.com"
+//#define Google_Auth_APPID @"535796093828-esa2fotq9tjdgf1cbs0lb0jm5q46uv57.apps.googleusercontent.com"
 
 #define Google_OAuth_URL [NSString stringWithFormat:@"%@?scope=%@+%@+%@&redirect_uri=%@&response_type=code&client_id=%@&access_type=offline&approval_prompt=force&include_granted_scopes=true",Google_Base,Google_UserInfo,Google_User_Email,Google_Calendar,Google_redirech,Google_Auth_APPID]
 

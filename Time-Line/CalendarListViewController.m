@@ -376,8 +376,6 @@
     
     AnyEvent *anyEvent=[AnyEvent MR_createEntity];
     
-    
-    
     NSString *startTime=nil;
     id startObj=[dataDic objectForKey:@"start"];
     if ([startObj isKindOfClass:[NSDictionary class]]){//全天事件的键值---date
@@ -396,6 +394,25 @@
         }
     }
     
+    NSString *originalStartTimeStr;
+    id originalStartTimeObj=[dataDic objectForKey:@"originalStartTime"];
+    if ([originalStartTimeObj isKindOfClass:[NSDictionary class]]){//全天事件的键值---date
+        NSString * originalStartTimeAll=[originalStartTimeObj objectForKey:@"date"];
+        if (originalStartTimeAll) {
+            NSDateFormatter *df=[[NSDateFormatter alloc] init];
+            [df setDateFormat:@"yyyy-M-d"];
+            [df setTimeZone:[NSTimeZone defaultTimeZone]];
+            NSDate *sdate=[df dateFromString:originalStartTimeAll];
+            [df setDateFormat:@"YYYY年 M月d日HH:mm"];
+            originalStartTimeStr=[df stringFromDate:sdate];
+        }else{
+            NSString *statrstring=[originalStartTimeObj objectForKey:@"dateTime"];
+            originalStartTimeStr=[[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:statrstring];
+        }
+    }
+    anyEvent.originalStartTime=originalStartTimeStr;
+    
+    anyEvent.recurringEventId=[dataDic objectForKey:@"recurringEventId"];
     NSString *endTime=nil;
     id endOjd=[dataDic objectForKey:@"end"];
     if ([endOjd isKindOfClass:[NSDictionary class]]){//全天事件的键值---date
@@ -425,7 +442,9 @@
     
     anyEvent.created=[dataDic objectForKey:@"created"];
     anyEvent.updated=[dataDic objectForKey:@"updated"];
-    anyEvent.status=[dataDic objectForKey:@"status"];
+    
+    anyEvent.status=[[dataDic objectForKey:@"status"] isEqualToString:cancelled]?[NSString stringWithFormat:@"%i",eventStatus_cancelled] :[NSString stringWithFormat:@"%i",eventStatus_confirmed];
+    
     id recurrence=[dataDic objectForKey:@"recurrence"];
     if (recurrence) {
         if ([recurrence isKindOfClass:[NSArray class]]) {

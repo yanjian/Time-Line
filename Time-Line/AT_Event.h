@@ -33,6 +33,7 @@
 @property (nonatomic, retain) NSNumber * isAllDay;//是否是全天事件
 @property (nonatomic, retain) NSString * recurrence;
 @property (nonatomic, retain) NSNumber * isDelete;
+@property (nonatomic, retain) NSString * originalStartTime;
 
 @property (nonatomic, retain) NSString * backgroundColor;//日历的背景色
 @property (nonatomic, retain) NSString * cId;//日历的id

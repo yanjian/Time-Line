@@ -35,20 +35,7 @@
 
 - (void)addEvent:(AT_Event*)event
 {
-    if (event.recurringEventId&&![@"" isEqualToString:event.recurringEventId]) {
-        NSMutableArray *tmpArr=[NSMutableArray array];
-        for (AT_Event *atEvent in self.events) {
-            if ([atEvent.eId isEqualToString:event.recurringEventId]) {
-            //    [self.events addObject:event];
-                [tmpArr addObject:atEvent];
-            }else{
-                [self.events addObject:event];
-            }
-        }
-        for (AT_Event *atEvent in tmpArr) {
-            [self.events removeObject:atEvent];
-        }
-    }else{
+    if (event) {
         [self.events addObject:event];
     }
 }

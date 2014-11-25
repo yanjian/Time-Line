@@ -33,6 +33,7 @@
 @synthesize recurrence;
 @synthesize recurringEventId;
 @synthesize isDelete;
+@synthesize originalStartTime;
 
 @synthesize backgroundColor;
 @synthesize cId;
@@ -64,6 +65,7 @@
         cId=anyEvent.calendar.cid;
         recurringEventId=anyEvent.recurringEventId;
         isDelete =anyEvent.isDelete;
+        originalStartTime=anyEvent.originalStartTime;
     }
     return self;
 }
@@ -96,6 +98,7 @@
     atEvent->cId=self.cId;
     atEvent->recurringEventId=self.recurringEventId;
     atEvent->isDelete=self.isDelete;
+    atEvent->originalStartTime=self.originalStartTime;
     return atEvent;
 }
 
@@ -125,7 +128,8 @@
     atEvent->backgroundColor=[backgroundColor copy];
     atEvent->cId=[cId copy];
     atEvent->recurringEventId=[recurringEventId copy];
-        atEvent->isDelete=[self.isDelete copy];
+    atEvent->isDelete=[self.isDelete copy];
+    atEvent->originalStartTime=[self.originalStartTime copy];
     return atEvent;
 }
 

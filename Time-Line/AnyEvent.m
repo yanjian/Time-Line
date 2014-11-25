@@ -36,5 +36,6 @@
 @dynamic recurrence;
 @dynamic recurringEventId;
 @dynamic isDelete;
+@dynamic originalStartTime;
 
 @end

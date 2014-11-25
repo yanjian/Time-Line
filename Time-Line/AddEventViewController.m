@@ -359,14 +359,15 @@
             [request startAsynchronous];
         }else{
             //在没有网络的情况下先记录删除的事件
-            
             if (event.recurrence&&![@"" isEqualToString:event.recurrence ]) {
                 NSLog(@"-------------->>><<<<<>>>>> %@",event.startDate);
                 
                 AnyEvent *anyEvent= [AnyEvent MR_createEntity];
                 anyEvent.isDelete=@(isDeleteData_mode);//记录重复数据中删除的事件
                 anyEvent.recurringEventId=event.eId;
-                anyEvent.isSync=@(isSyncData_NO);
+                anyEvent.status=[NSString stringWithFormat:@"%i",eventStatus_cancelled] ;
+                anyEvent.originalStartTime=event.startDate;
+                anyEvent.isSync=@(isSyncData_NO);//没有同步
                 anyEvent.isAllDay=event.isAllDay;//全天事件 标记
                 
                 NSPredicate *pre=[NSPredicate predicateWithFormat:@"cid==%@",event.cId];
@@ -377,8 +378,8 @@
                 anyEvent.endDate= event.endDate;
                 anyEvent.eventTitle=event.eventTitle;
                 anyEvent.calendarAccount=event.calendarAccount;
-                anyEvent.status=event.status;
-                anyEvent.eId=event.eId;
+                NSString *tmpStr=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyyMMddHHmmsss"];
+                anyEvent.eId=[NSString stringWithFormat:@"%@_%@",event.eId,tmpStr];
                 //后面的数据可以不要
                 anyEvent.location= event.location;
                 anyEvent.note= event.note;
@@ -439,13 +440,12 @@
             NSArray * currEvents= [AnyEvent MR_findAllWithPredicate:pre];
             AnyEvent * currEvent=[currEvents lastObject];
             NSDate *startD= [[PublicMethodsViewController getPublicMethods] formatWithStringDate: startString];
-            NSDate *tmpStart= [NSDate dateWithTimeIntervalSince1970:[startD timeIntervalSince1970]-24*60*60];//减去一天时间
             
             NSDateFormatter *tempFormatter = [[NSDateFormatter alloc]init];
             [tempFormatter setTimeZone:[NSTimeZone defaultTimeZone]];
             [tempFormatter setDateFormat:@"YYYYMMdd"];
             
-            recuMode.until=[tempFormatter stringFromDate:tmpStart];
+            recuMode.until=[tempFormatter stringFromDate:startD];
             currEvent.recurrence=[recuMode description];
             currEvent.isSync=@(isSyncData_NO);
             
@@ -466,6 +466,15 @@
         }
     }else if(buttonIndex==2){
         if (isClickEdit) {
+            //修改所有事件数据时用户已经修改过的备份数据  删除
+            NSPredicate *pre=[NSPredicate predicateWithFormat:@"recurringEventId==%@",event.eId];
+            NSArray *eventArr= [AnyEvent MR_findAllWithPredicate:pre];
+            for (AnyEvent *eventTmp in eventArr) {
+                if([eventTmp.status intValue]==eventStatus_confirmed){
+                     eventTmp.isSync=@(isSyncData_YES);
+                    [eventTmp MR_deleteEntity];
+                }
+            }
             [self editEvent];
         }else{
             [self deleteAllEventsInData];
@@ -484,12 +493,7 @@
 }
 
 -(void)deleteAllEventsInData{
-    NSPredicate *pre=nil;
-    if (!event.eId) {
-        pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and startDate==%@ and location==%@",event.eventTitle,event.startDate,event.location];
-    }else{
-        pre=[NSPredicate predicateWithFormat:@"eId==%@ ",event.eId];
-    }
+    NSPredicate *pre=[NSPredicate predicateWithFormat:@"eId==%@",event.eId];
     AnyEvent *anyEvent=[[AnyEvent MR_findAllWithPredicate:pre] lastObject];
     anyEvent.isDelete=@(isDeleteData_YES);//数据删除
     anyEvent.isSync=@(isSyncData_NO);//数据没有同步
@@ -1176,7 +1180,18 @@
                             anyEvent.status=anEvent.status;
                             anyEvent.calendar=self.calendarObj;
                             anyEvent.recurringEventId=anEvent.recurringEventId;
+                            anyEvent.originalStartTime=anEvent.originalStartTime;
+                            
                             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                            for (UIViewController* obj in [self.navigationController viewControllers]) {
+                                if ([obj isKindOfClass:[HomeViewController class]]) {
+                                    HomeViewController *homeVc= (HomeViewController *)obj;
+                                    homeVc.isRefreshUIData=YES;
+                                    [self.navigationController popToViewController:homeVc animated:YES];
+                                }
+                            }
+                            
+
                             break;
                         }
                     }
@@ -1498,7 +1513,7 @@
     if (!eventData) {
         eventData=[AnyEvent MR_createEntity];
     }
-    
+    eventData.eId=[self generateUniqueEventID];
     eventData.eventTitle=textfiled.text;
     eventData.location= localfiled.text;
     eventData.startDate= startString;
@@ -1516,16 +1531,15 @@
         alertStr=[selectAlertArr componentsJoinedByString:@","];
     }
     eventData.alerts= alertStr;
-    eventData.calendarAccount =  localfiled.text ;
+    eventData.calendarAccount =calendarlabel.text;
     
     
     NSString * repeatStr=nil;
     if(selectRepeatArr) {
         repeatStr=[selectRepeatArr componentsJoinedByString:@","];
     }
-    eventData.recurrence=[recurObj description];
     eventData.repeat= repeatStr;
-   // event.calendar=self.calendarObj;
+    eventData.recurrence=[recurObj description];
     eventData.isSync=@(isSyncData_NO);
     eventData.isDelete=@(isDeleteData_NO);//数据非删除
     NSString * nowDate=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
@@ -1534,7 +1548,7 @@
     eventData.creator= [USER_DEFAULT objectForKey:@"email"];
     eventData.organizer= [USER_DEFAULT objectForKey:@"email"];
     eventData.isAllDay=@(isAllDay);//全天事件 标记
-    
+    eventData.status=[NSString stringWithFormat:@"%i",eventStatus_confirmed];//新添加的数据为确定状态
     [self.calendarObj addAnyEventObject:eventData];
     
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
@@ -1634,12 +1648,7 @@
 //修改事件数据
 -(void)editEvent
 {
-    NSPredicate *pre=nil;
-    if (!event.eId) {
-        pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and startDate==%@ and location==%@",event.eventTitle,event.startDate,event.location];
-    }else{
-        pre=[NSPredicate predicateWithFormat:@"eId==%@ ",event.eId];
-    }
+    NSPredicate * pre=[NSPredicate predicateWithFormat:@"eId==%@ ",event.eId];
     AnyEvent *anyEvent= [[AnyEvent MR_findAllWithPredicate:pre ] lastObject];
     anyEvent.eventTitle= textfiled.text;
     anyEvent.location= localfiled.text ;
@@ -1755,6 +1764,27 @@
     }
     
     
+    NSString *originalStartTimeStr;
+    id originalStartTimeObj=[dataDic objectForKey:@"originalStartTime"];
+    if ([originalStartTimeObj isKindOfClass:[NSDictionary class]]){//全天事件的键值---date
+        NSString * originalStartTimeAll=[originalStartTimeObj objectForKey:@"date"];
+        if (originalStartTimeAll) {
+            NSDateFormatter *df=[[NSDateFormatter alloc] init];
+            [df setDateFormat:@"yyyy-M-d"];
+            [df setTimeZone:[NSTimeZone defaultTimeZone]];
+            NSDate *sdate=[df dateFromString:originalStartTimeAll];
+            [df setDateFormat:@"YYYY年 M月d日HH:mm"];
+            originalStartTimeStr=[df stringFromDate:sdate];
+        }else{
+            NSString *statrstring=[originalStartTimeObj objectForKey:@"dateTime"];
+            originalStartTimeStr=[[PublicMethodsViewController getPublicMethods] formatStringWithStringDate:statrstring];
+        }
+    }
+    anyEvent.originalStartTime=originalStartTimeStr;
+    
+    anyEvent.recurringEventId=[dataDic objectForKey:@"recurringEventId"];
+    
+    
     anyEvent.eventTitle=[dataDic objectForKey:@"summary"];
     
     if ([dataDic objectForKey:@"location"]) {
@@ -1766,7 +1796,7 @@
     
     anyEvent.created=[dataDic objectForKey:@"created"];
     anyEvent.updated=[dataDic objectForKey:@"updated"];
-    anyEvent.status=[dataDic objectForKey:@"status"];
+    anyEvent.status=[[dataDic objectForKey:@"status"] isEqualToString:cancelled]?[NSString stringWithFormat:@"%i",eventStatus_cancelled] :[NSString stringWithFormat:@"%i",eventStatus_confirmed];
     id recurrence=[dataDic objectForKey:@"recurrence"];
     if (recurrence) {
         if ([recurrence isKindOfClass:[NSArray class]]) {
@@ -1782,7 +1812,6 @@
     
     anyEvent.startDate= startTime;
     anyEvent.endDate= endTime;
-    anyEvent.recurringEventId=[dataDic objectForKey:@"recurringEventId"];
     if ([dataDic objectForKey:@"description"]) {
         anyEvent.note= [dataDic objectForKey:@"description"];
     }
@@ -1802,5 +1831,17 @@
     
 }
 
+
+//生成唯一个eventId
+-(NSString *) generateUniqueEventID
+{
+    NSString *prefix=@"event";
+    NSDate *newDate=[NSDate date];
+    NSDateFormatter *df=[[NSDateFormatter alloc] init];
+    [df setDateFormat:@"YYYYMdHHmmss"];
+    NSString *dateStr=[df stringFromDate:newDate];
+    NSInteger random= arc4random()%10000+1;
+    return [NSString stringWithFormat:@"%@%@%d",prefix,dateStr,random];
+}
 
 @end

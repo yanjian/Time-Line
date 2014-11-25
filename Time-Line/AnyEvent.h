@@ -50,5 +50,5 @@ typedef NS_ENUM(NSInteger, isDeleteData) {
 @property (nonatomic, retain) NSString * recurrence;
 @property (nonatomic, retain) NSString * recurringEventId;
 @property (nonatomic, retain) NSNumber * isDelete;
-
+@property (nonatomic, retain) NSString * originalStartTime;
 @end

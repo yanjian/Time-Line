@@ -355,7 +355,8 @@ NSArray *accountBindsArrs;//用户绑定的账号
     anyEvent.sequence=[dataDic objectForKey:@"sequence"];
     anyEvent.created=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
     anyEvent.updated=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
-    anyEvent.status=[dataDic objectForKey:@"status"];
+    anyEvent.status=[[dataDic objectForKey:@"status"] isEqualToString:cancelled]?[NSString stringWithFormat:@"%i",eventStatus_cancelled] :[NSString stringWithFormat:@"%i",eventStatus_confirmed];
+
     anyEvent.startDate= statrstring;
     anyEvent.isAllDay=@([[dataDic objectForKey:@"allDay"] intValue]);//是否是全天事件
     anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"endTime"]];
