@@ -15,9 +15,9 @@ isSyncData_YES=1
 };
 
 typedef NS_ENUM(NSInteger, isDeleteData) {
-    isDeleteData_NO=0,//没有
-    isDeleteData_YES=1,//删除的数据
-    isDeleteData_mode=2,//表示重复数据中有数据删除
+    isDeleteData_NO=0,//不需要删除的数据
+    isDeleteData_YES=1,//要删除的数据
+    isDeleteData_mode=2,//表示重复数据中有数据删除但还没有达到远程的id
     isDeleteData_record=3//表示这条记录不需要删除
 };
 

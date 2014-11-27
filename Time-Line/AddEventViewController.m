@@ -355,31 +355,93 @@
 -(void)actionSheet:(IBActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (buttonIndex==0) {
         if (isClickEdit) {
-            ASIHTTPRequest *request =  [t_Network httpGet:@{@"cid":event.cId,@"eid":event.eId}.mutableCopy Url:Google_CalendarEventRepeat Delegate:self Tag:Google_CalendarEventRepeat_tag];
-            [request startAsynchronous];
+                AnyEvent *anyEvent= [AnyEvent MR_createEntity];
+              //-----------start---------下面值是关键
+                anyEvent.eId=[self generateUniqueEventID];
+
+                anyEvent.recurringEventId=event.eId;
+                anyEvent.originalStartTime=startString;
+                anyEvent.isSync=@(isSyncData_NO);
+               if ([self.calendarObj.type intValue]==AccountTypeLocal) {
+                   anyEvent.isDelete=@(isDeleteData_NO);
+               }else{
+                   anyEvent.isDelete=@(isDeleteData_mode);
+               }
+                anyEvent.status=[NSString stringWithFormat:@"%i",eventStatus_confirmed];//为0表示确认如果有originalStartTime表示是修改的数据
+                anyEvent.calendar=self.calendarObj;
+             //------------end-----------
+                anyEvent.eventTitle=textfiled.text;
+                anyEvent.location= localfiled.text;
+                anyEvent.startDate= startString;
+                anyEvent.endDate= endString;
+                anyEvent.note= notefiled.text;
+                anyEvent.calendarAccount=_calendarLab.text;
+                anyEvent.isAllDay=@(isAllDay);//全天事件 标记
+                NSString *coor=nil;
+                if (coordinates) {
+                    coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
+                }
+                anyEvent.coordinate= coor;
+                NSString * alertStr=nil;
+                if( selectAlertArr) {
+                    alertStr=[selectAlertArr componentsJoinedByString:@","];
+                }
+                anyEvent.alerts= alertStr;
+                
+                NSString * repeatStr=nil;
+                if(selectRepeatArr) {
+                    repeatStr=[selectRepeatArr componentsJoinedByString:@","];
+                }
+                anyEvent.repeat= repeatStr;
+                NSString * nowDate=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+                anyEvent.updated=nowDate;
+                anyEvent.created=nowDate;
+                anyEvent.creator=event.creator;
+                anyEvent.organizer=event.organizer;
+                anyEvent.sequence=event.sequence;
+                [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                for (UIViewController* obj in [self.navigationController viewControllers]) {
+                    if ([obj isKindOfClass:[HomeViewController class]]) {
+                        HomeViewController *homeVc= (HomeViewController *)obj;
+                        homeVc.isRefreshUIData=YES;
+                        [self.navigationController popToViewController:homeVc animated:YES];
+                    }
+                }
+//            }else{
+//                ASIHTTPRequest *request =  [t_Network httpGet:@{@"cid":event.cId,@"eid":event.eId}.mutableCopy Url:Google_CalendarEventRepeat Delegate:self Tag:Google_CalendarEventRepeat_tag];
+//                [request startAsynchronous];
+//            }
         }else{
             //在没有网络的情况下先记录删除的事件
             if (event.recurrence&&![@"" isEqualToString:event.recurrence ]) {
                 NSLog(@"-------------->>><<<<<>>>>> %@",event.startDate);
                 
                 AnyEvent *anyEvent= [AnyEvent MR_createEntity];
-                anyEvent.isDelete=@(isDeleteData_mode);//记录重复数据中删除的事件
-                anyEvent.recurringEventId=event.eId;
-                anyEvent.status=[NSString stringWithFormat:@"%i",eventStatus_cancelled] ;
-                anyEvent.originalStartTime=event.startDate;
-                anyEvent.isSync=@(isSyncData_NO);//没有同步
-                anyEvent.isAllDay=event.isAllDay;//全天事件 标记
                 
                 NSPredicate *pre=[NSPredicate predicateWithFormat:@"cid==%@",event.cId];
                 NSArray * caArr= [Calendar MR_findAllWithPredicate:pre];
-                anyEvent.calendar=[caArr lastObject];
+                Calendar *ca=[caArr lastObject];
+                anyEvent.calendar=ca;
+                if ([ca.type intValue]==AccountTypeLocal) {//如果是本地日历
+                     anyEvent.isDelete=@(isDeleteData_NO);
+                     anyEvent.eId=[self generateUniqueEventID];
+                }else{
+                    anyEvent.isDelete=@(isDeleteData_mode);//记录重复数据中删除的事件
+                    NSString *tmpStr=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyyMMddHHmmsss"];
+                    anyEvent.eId=[NSString stringWithFormat:@"%@_%@",event.eId,tmpStr];
+                }
                 
+                anyEvent.isSync=@(isSyncData_NO);//没有同步
+                anyEvent.isAllDay=event.isAllDay;//全天事件 标记
+                anyEvent.recurringEventId=event.eId;
+                anyEvent.status=[NSString stringWithFormat:@"%i",eventStatus_cancelled];
+                anyEvent.originalStartTime=event.startDate;
+            
                 anyEvent.startDate= event.startDate;
                 anyEvent.endDate= event.endDate;
                 anyEvent.eventTitle=event.eventTitle;
                 anyEvent.calendarAccount=event.calendarAccount;
-                NSString *tmpStr=[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyyMMddHHmmsss"];
-                anyEvent.eId=[NSString stringWithFormat:@"%@_%@",event.eId,tmpStr];
+                
                 //后面的数据可以不要
                 anyEvent.location= event.location;
                 anyEvent.note= event.note;
@@ -393,30 +455,20 @@
                 anyEvent.creator=event.creator ;
                 anyEvent.organizer=event.organizer ;
             }else{
-                NSPredicate *pre=nil;
-                if (!event.eId) {
-                    pre=[NSPredicate predicateWithFormat:@"eventTitle==%@ and startDate==%@ and location==%@",event.eventTitle,event.startDate,event.location];
-                }else{
-                    pre=[NSPredicate predicateWithFormat:@"eId==%@ ",event.eId];
-                }
+                NSPredicate *pre=[NSPredicate predicateWithFormat:@"eId==%@ ",event.eId];
                 AnyEvent *anyEvent=[[AnyEvent MR_findAllWithPredicate:pre] lastObject];
                 Calendar *ca=anyEvent.calendar;
                 if (ca) {
                     if ([ca.type intValue]==AccountTypeGoogle) {
-                        if (anyEvent.eId) {
-                            ASIHTTPRequest *deleteGoogleRequest= [t_Network httpPostValue:@{@"cid":ca.cid,@"eid":anyEvent.eId}.mutableCopy Url:Google_DeleteCalendarEvent Delegate:self Tag:Google_DeleteCalendarEvent_tag userInfo:@{@"anyEvent": anyEvent}];
-                            [deleteGoogleRequest startAsynchronous];
-                        }
+                        anyEvent.isSync=@(isSyncData_NO);
+                        anyEvent.isDelete=@(isDeleteData_record);
                     }else if([ca.type intValue]==AccountTypeLocal){
-                        if (anyEvent.eId) {
-                            ASIHTTPRequest *deleteGoogleRequest= [t_Network httpPostValue:@{@"id":anyEvent.eId,@"type":@(3)}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"anyEvent": anyEvent}];
-                            [deleteGoogleRequest startAsynchronous];
-                        }
+                        anyEvent.isDelete=@(isDeleteData_record);
+                        anyEvent.status=[NSString stringWithFormat:@"%i",eventStatus_cancelled];
                     }
                     NSString * uniqueFlagNot=[[anyEvent.objectID URIRepresentation] absoluteString];
                     NSLog(@"删除通知的唯一标记：%@",uniqueFlagNot);
                     [self removeLocationNoticeWithName:uniqueFlagNot];
-                    [anyEvent MR_deleteEntity];
                 }
             
             }
@@ -431,7 +483,6 @@
 
         }
     }else if (buttonIndex==1){
-        
         if(event.recurrence){
             RecurrenceModel *recuMode=[[RecurrenceModel alloc] initRecrrenceModel:event.recurrence];
             NSLog(@"%@",startString) ;
@@ -489,14 +540,24 @@
         }
 
     }
-    
 }
 
 -(void)deleteAllEventsInData{
     NSPredicate *pre=[NSPredicate predicateWithFormat:@"eId==%@",event.eId];
     AnyEvent *anyEvent=[[AnyEvent MR_findAllWithPredicate:pre] lastObject];
-    anyEvent.isDelete=@(isDeleteData_YES);//数据删除
-    anyEvent.isSync=@(isSyncData_NO);//数据没有同步
+    if ([anyEvent.calendar.type intValue]==AccountTypeLocal) {//本地账号
+        anyEvent.isDelete=@(isDeleteData_YES);//数据删除
+        anyEvent.isSync=@(isSyncData_NO);//数据没有同步
+        NSPredicate *pre=[NSPredicate predicateWithFormat:@"recurringEventId==%@",anyEvent.eId];
+        NSArray *childEventArr=[AnyEvent MR_findAllWithPredicate:pre];
+        for (AnyEvent *tmpEvent in childEventArr) {
+            tmpEvent.isDelete=@(isDeleteData_YES);//数据删除
+            tmpEvent.isSync=@(isSyncData_NO);//数据没有同步
+        }
+    }else{
+        anyEvent.isDelete=@(isDeleteData_YES);//数据删除
+        anyEvent.isSync=@(isSyncData_NO);//数据没有同步
+    }
     NSString * uniqueFlagNot=[[anyEvent.objectID URIRepresentation] absoluteString];
     NSLog(@"删除通知的唯一标记：%@",uniqueFlagNot);
     [self removeLocationNoticeWithName:uniqueFlagNot];//删除通知
@@ -1141,7 +1202,6 @@
                     for (AT_Event *anEvent in tmpArr) {
                         if([anEvent.startDate isEqualToString:event.startDate]){
                             NSLog(@"-------------->>><<<<<>>>>> %@",anEvent.startDate);
-                            
                             AnyEvent *anyEvent= [AnyEvent MR_createEntity];
                             anyEvent.eventTitle=textfiled.text;
                             anyEvent.location= localfiled.text;
@@ -1149,6 +1209,7 @@
                             anyEvent.endDate= endString;
                             anyEvent.note= notefiled.text;
                             anyEvent.calendarAccount=_calendarLab.text;
+                            
                             NSString *coor=nil;
                             if (coordinates) {
                                 coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
@@ -1159,8 +1220,6 @@
                                 alertStr=[selectAlertArr componentsJoinedByString:@","];
                             }
                             anyEvent.alerts= alertStr;
-                            anyEvent.calendarAccount =  localfiled.text ;
-    
                             NSString * repeatStr=nil;
                             if(selectRepeatArr) {
                                 repeatStr=[selectRepeatArr componentsJoinedByString:@","];
@@ -1531,9 +1590,6 @@
         alertStr=[selectAlertArr componentsJoinedByString:@","];
     }
     eventData.alerts= alertStr;
-    eventData.calendarAccount =calendarlabel.text;
-    
-    
     NSString * repeatStr=nil;
     if(selectRepeatArr) {
         repeatStr=[selectRepeatArr componentsJoinedByString:@","];

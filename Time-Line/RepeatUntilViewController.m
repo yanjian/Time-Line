@@ -92,7 +92,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-  //  [calendarView goBackToday];
+    [calendarView goBackToday];
 }
 
 

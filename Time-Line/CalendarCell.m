@@ -62,7 +62,8 @@
         [temp setTitle:[NSString stringWithFormat:@"%i", day.day] forState:UIControlStateNormal];
         
         [temp setTitleColor:grayColors forState:UIControlStateNormal];
-        /* 调整显示月份字体颜色 */
+        
+                /* 调整显示月份字体颜色 */
         if ([self.detelegate getShowMonths] == day.month) {
             //当前月份的颜色
             [temp setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
@@ -77,21 +78,18 @@
             [temp setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"day" object:day];
         } else {
+            /* 调整背景色 */
+            if (day.isToday) {
+                //当前日期的图片
+                [tempBgView setImage:[UIImage imageNamed:@"day_today"]];
+            }else
             [tempBgView setImage:nil];
-            
         }
         
         if (day.isSelectDay) {
             //当前日期的图片
             [tempBgView setImage:[UIImage imageNamed:@"Event_time_red"]];
             [temp setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        }
-        
-        //某天中是否存在数据
-        if (day.isExistData) {
-            [pointView setImage:[UIImage imageNamed:@"Icon_HaveEvent"]];
-        }else{
-            [pointView setImage:nil];
         }
         
     }

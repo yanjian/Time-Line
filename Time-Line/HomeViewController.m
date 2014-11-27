@@ -562,56 +562,67 @@
                 NSDictionary *responseDic=(NSDictionary *)responseObj;
                 NSString *statusCode=[responseDic objectForKey:@"statusCode"];
                 if ([statusCode isEqualToString:@"1"]) {
-                    NSDictionary *dataDic= [responseDic objectForKey:@"data"];
                     
                     AnyEvent *anyEvent=[request.userInfo objectForKey:@"anyEvent"];
-                    anyEvent.isSync=@(isSyncData_YES);
-                   
-                    NSString *location=[dataDic objectForKey:@"location"];
-                    if (![location isEqualToString:@""]) {
-                         anyEvent.location= [dataDic objectForKey:@"location"];
+                    
+                    if ([anyEvent.isDelete intValue]==isDeleteData_YES) {//本地如果为1 表示这条数据是要删除的
+                        [anyEvent MR_deleteEntity];
+                        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                     }
-                   
-                    anyEvent.eId=[dataDic objectForKey:@"id"];
-                    
-                    
-                    NSString *repeat=[dataDic objectForKey:@"repeat"];
-                    if (![@"" isEqualToString:repeat]) {
-                        anyEvent.repeat=repeat;
+                    if ([anyEvent.isDelete intValue]==isDeleteData_record) {
+                        NSPredicate *pre=[NSPredicate predicateWithFormat:@"eId==%@",anyEvent.eId];
+                        AnyEvent *event= [[AnyEvent MR_findAllWithPredicate:pre] lastObject];
+                        event.isSync=@(isSyncData_YES);
+                        event.status= [NSString stringWithFormat:@"%i",eventStatus_cancelled];
+                        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                    }
+                    NSDictionary *dataDic= [responseDic objectForKey:@"data"];
+                    if(dataDic){
+                            anyEvent.isSync=@(isSyncData_YES);
+                           
+                            NSString *location=[dataDic objectForKey:@"location"];
+                            if (![location isEqualToString:@""]&&location) {
+                                 anyEvent.location= [dataDic objectForKey:@"location"];
+                            }
+                            anyEvent.eId=[dataDic objectForKey:@"id"];
+                            NSString *repeat=[dataDic objectForKey:@"repeat"];
+                            if (![@"" isEqualToString:repeat]) {
+                                anyEvent.repeat=repeat;
 
-                    }
-                    
-                    NSString *originalStartTime= [dataDic objectForKey:@"originalStartTime"] ;
-                    if (![originalStartTime isEqualToString:@""]) {
-                         anyEvent.originalStartTime=originalStartTime;
-                    }
-                    
-                    NSString *recurringEventId=[dataDic objectForKey:@"recurringEventId"];
-                    if (![@"" isEqualToString:recurringEventId]) {
-                        anyEvent.recurringEventId=recurringEventId;
-                    }
-                    
-                    NSString *statrstring=[[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"startTime"]];
-                    anyEvent.sequence=[dataDic objectForKey:@"sequence"];
-                    
-                    NSString *recurrence= [dataDic objectForKey:@"recurrence"];
-                    if (![@"" isEqualToString:recurrence]) {
-                         anyEvent.recurrence=[dataDic objectForKey:@"recurrence"];
-                    }
-                    anyEvent.created=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
-                    anyEvent.updated=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
-                    anyEvent.status=[dataDic objectForKey:@"status"];
-                    anyEvent.startDate= statrstring;
-                    anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"endTime"]];
-                    if ([dataDic objectForKey:@"calendar"]) {
-                        Calendar *ca=[dataDic objectForKey:@"calendar"];
-                        anyEvent.calendar=ca;
-                        anyEvent.creator=ca.account;
-                        anyEvent.creatorDisplayName=ca.summary;
-                        anyEvent.organizer =ca.account;
-                        anyEvent.orgDisplayName=ca.summary;
-                    }
-                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                            }
+                            
+                            NSString *originalStartTime= [dataDic objectForKey:@"originalStartTime"] ;
+                            if (![originalStartTime isEqualToString:@""]&&originalStartTime) {
+                                 anyEvent.originalStartTime=originalStartTime;
+                            }
+                            
+                            NSString *recurringEventId=[dataDic objectForKey:@"recurringEventId"];
+                            if (![@"" isEqualToString:recurringEventId]&&recurringEventId) {
+                                anyEvent.recurringEventId=recurringEventId;
+                            }
+                            
+                            NSString *statrstring=[[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"startTime"]];
+                            anyEvent.sequence=[dataDic objectForKey:@"sequence"];
+                            
+                            NSString *recurrence= [dataDic objectForKey:@"recurrence"];
+                            if (![@"" isEqualToString:recurrence]&&recurrence) {
+                                 anyEvent.recurrence=[dataDic objectForKey:@"recurrence"];
+                            }
+                            anyEvent.created=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+                            anyEvent.updated=[[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
+                            anyEvent.status=[dataDic objectForKey:@"status"];
+                            anyEvent.startDate= statrstring;
+                            anyEvent.endDate= [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"endTime"]];
+                            if ([dataDic objectForKey:@"calendar"]) {
+                                Calendar *ca=[dataDic objectForKey:@"calendar"];
+                                anyEvent.calendar=ca;
+                                anyEvent.creator=ca.account;
+                                anyEvent.creatorDisplayName=ca.summary;
+                                anyEvent.organizer =ca.account;
+                                anyEvent.orgDisplayName=ca.summary;
+                            }
+                        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                     }
                 }else{
                     NSLog(@"message ======== %@",[responseDic objectForKey:@"message"]);
                 }
@@ -656,6 +667,7 @@
                         NSPredicate *pre=[NSPredicate predicateWithFormat:@"eId==%@",anyEvent.eId];
                         AnyEvent *event= [[AnyEvent MR_findAllWithPredicate:pre] lastObject];
                         event.isSync=@(isSyncData_YES);
+                        event.status= [NSString stringWithFormat:@"%i",eventStatus_cancelled];
                     }else{
                         NSPredicate *pre=[NSPredicate predicateWithFormat:@"eId like %@",[NSString stringWithFormat:@"%@*",anyEvent.eId]];
                         NSArray *eventArr= [AnyEvent MR_findAllWithPredicate:pre];
@@ -671,7 +683,6 @@
         }
         case Google_CalendarEventRepeat_tag:{
             id tmpObj= [request.responseString objectFromJSONString];
-            
             if ([tmpObj isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *dic= (NSDictionary *) tmpObj;
                 NSString *statusCode = [dic objectForKey:@"statusCode"];
@@ -692,7 +703,11 @@
                             AnyEvent *tmpEvent= [[AnyEvent MR_findAllWithPredicate:pre] lastObject];
                             tmpEvent.eId=anEvent.eId;
                             tmpEvent.created=anEvent.created;
-                            tmpEvent.isDelete=@(isDeleteData_record);
+                            if([event.status intValue]==eventStatus_confirmed){//表示只是修改事件不删除修改保存的记录
+                                tmpEvent.isDelete=@(isDeleteData_NO);
+                            }else{
+                                tmpEvent.isDelete=@(isDeleteData_record);
+                            }
                             
                             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                             break;
@@ -1155,10 +1170,6 @@
 }
 
 
-
-
-
-
 -(void)synchronizationDataWriteEventId{
     //同步事件数据
     if (g_NetStatus!=NotReachable) {
@@ -1188,7 +1199,6 @@
                            
                         }else{
                             NSLog(@"%@=====%@",ca.cid,anyEvent.eId);
-                            
                             ASIHTTPRequest *request =  [t_Network httpGet:@{@"cid":ca.cid,@"eid":anyEvent.recurringEventId}.mutableCopy Url:Google_CalendarEventRepeat Delegate:self Tag:Google_CalendarEventRepeat_tag userInfo:@{@"anyEvent":anyEvent}];
                             [request startSynchronous];
                         }
@@ -1212,8 +1222,8 @@
                                 [deleteLocalRequest startSynchronous];
                             }
                         }else if([anyEvent.isDelete intValue]==isDeleteData_mode){
-                            anyEvent.isDelete=@(isDeleteData_record);
-                            anyEvent.isSync=@(isSyncData_YES);
+                            anyEvent.isDelete=@(isDeleteData_NO);
+                            anyEvent.isSync=@(isSyncData_NO);
                             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                         }
                     }
