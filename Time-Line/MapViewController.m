@@ -54,7 +54,7 @@ double endLng = 113.6657;
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow.png"] forState:UIControlStateNormal];
     leftBtn.backgroundColor = [UIColor yellowColor];
-    [leftBtn setFrame:CGRectMake(20, 20, 15, 20)];
+    [leftBtn setFrame:CGRectMake(0, 2, 21, 25)];
     [leftBtn addTarget:self action:@selector(disviewcontroller) forControlEvents:UIControlEventTouchUpInside];
     [view addSubview:leftBtn];
     

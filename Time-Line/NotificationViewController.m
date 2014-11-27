@@ -55,7 +55,7 @@
     self.navigationItem.hidesBackButton=YES;
     UIButton *leftBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-    leftBtn.frame=CGRectMake(0, 0, 20, 20);
+    leftBtn.frame=CGRectMake(0, 2, 21, 25);
     [leftBtn addTarget:self action:@selector(notificationTobackSetingView) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:leftBtn];
     
@@ -171,7 +171,7 @@
     
     UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(cd.frame.size.width, 2, 215, 40)];
     [contextLab setBackgroundColor:[UIColor clearColor]];
-    contextLab.lineBreakMode=NSLineBreakByTruncatingTail;
+    contextLab.lineBreakMode=NSLineBreakByTruncatingMiddle;
     if ([ca.type intValue ]==AccountTypeGoogle) {
         [contextLab setText:ca.summary];
     }else if([ca.type intValue ]==AccountTypeLocal){

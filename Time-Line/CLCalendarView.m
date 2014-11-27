@@ -246,7 +246,7 @@
         table_title=[table_title stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
         table_title=[table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
         NSArray* array=[table_title componentsSeparatedByString:@"/"];
-        titlelabel.text=[NSString stringWithFormat:@"%@, %@ %@",weakStr,[self abbreviationMonthStringWithInteger:[[array objectAtIndex:1] intValue] isAbbreviation:NO],[array objectAtIndex:2]];
+        titlelabel.text=[NSString stringWithFormat:@"%@, %@ %@",weakStr,[self abbreviationMonthStringWithInteger:[[array objectAtIndex:1 ] intValue] currYear:[[array objectAtIndex:0 ] intValue] isAbbreviation:NO],[array objectAtIndex:2]];
         
 //       区头的颜色
         if (clDay.isToday) {
@@ -309,7 +309,7 @@
                 
                 if (showMonth != day.month) {
                     showMonth = day.month;
-                    month.text=[self abbreviationMonthStringWithInteger:day.month isAbbreviation:YES];
+                    month.text=[self abbreviationMonthStringWithInteger:day.month currYear:day.year isAbbreviation:YES];
                     [self.delegate calendarDidToMonth:day.month year:day.year CalendarView:self];
                 }
                 cell.weekArr = [dateArr objectAtIndex:indexPath.row];
@@ -334,7 +334,7 @@
                 CLDay *day = [[dateArr objectAtIndex:i] objectAtIndex:0];
                 if (showMonth != day.month) {
                     showMonth = day.month;
-                    month.text=[self abbreviationMonthStringWithInteger:day.month isAbbreviation:YES];
+                    month.text=[self abbreviationMonthStringWithInteger:day.month currYear:day.year  isAbbreviation:YES];
                     [self.delegate calendarDidToMonth:day.month year:day.year CalendarView:self];
                 }
                 cell.weekArr = [dateArr objectAtIndex:indexPath.row];
@@ -554,7 +554,7 @@
         NSArray* array=[table_title componentsSeparatedByString:@"/"];
         //[_delegate calendartitle:[NSString stringWithFormat:@"%@/%@",[array objectAtIndex:2],[array objectAtIndex:1]]];
         
-        [_delegate calendartitle:[self abbreviationMonthStringWithInteger:[[array objectAtIndex:1] intValue] isAbbreviation:YES]];
+        [_delegate calendartitle:[self abbreviationMonthStringWithInteger:[[array objectAtIndex:1] intValue] currYear: [[array objectAtIndex:0] intValue] isAbbreviation:YES]];
         [event_tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionTop animated:YES];
     }
 }
@@ -620,7 +620,7 @@
     return -1;
 }
 
--(NSString *)abbreviationMonthStringWithInteger:(int)months isAbbreviation:(BOOL) isabbrev{
+-(NSString *)abbreviationMonthStringWithInteger:(int)months currYear:(int) year isAbbreviation:(BOOL) isabbrev{
     NSString *title;
     if (!isabbrev) {
         switch (months) {
@@ -705,6 +705,10 @@
                 
             default:
                 break;
+        }
+        
+        if ([CalendarDateUtil getCurrentYear]!=year) {
+            title=[NSString stringWithFormat:@"%@ %d",title,year];
         }
     }
     return title;

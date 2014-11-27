@@ -58,7 +58,7 @@
     
     [self initMainView];
     
-   
+   //[[UIApplication sharedApplication] cancelAllLocalNotifications];
 
     
     

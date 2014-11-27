@@ -87,7 +87,7 @@
 -(UIButton *)createLeftButton{
     UIButton *leftBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-    [leftBtn setFrame:CGRectMake(0, 2, 20, 20)];
+    [leftBtn setFrame:CGRectMake(0, 2, 21, 25)];
     [leftBtn addTarget:self action:@selector(dimssGoogleView:) forControlEvents:UIControlEventTouchUpInside];
     return leftBtn;
 }

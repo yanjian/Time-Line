@@ -53,7 +53,7 @@
     self.navigationItem.hidesBackButton=YES;
     UIButton *leftBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-    leftBtn.frame=CGRectMake(0, 0, 20, 20);
+    leftBtn.frame=CGRectMake(0, 2, 21, 25);
     [leftBtn addTarget:self action:@selector(visibleCaTobackSetingView) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:leftBtn];
     
@@ -103,13 +103,15 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     NSArray *calendarListArr=self.calendarArray[section];
-    Calendar *caObj=calendarListArr[0];
     NSString *returnStr=@"";
-    
-    if ([caObj.type intValue]==AccountTypeLocal) {
-        returnStr=[NSString stringWithFormat:@"  IF(%@)",caObj.account];
-    }else if ([caObj.type intValue]==AccountTypeGoogle){
-        returnStr=[NSString stringWithFormat:@"  GOOGLE(%@)",caObj.account];
+    if (calendarListArr.count>0) {
+        Calendar *caObj=calendarListArr[0];
+        if ([caObj.type intValue]==AccountTypeLocal) {
+            returnStr=[NSString stringWithFormat:@"  IF(%@)",caObj.account];
+        }else if ([caObj.type intValue]==AccountTypeGoogle){
+            returnStr=[NSString stringWithFormat:@"  GOOGLE(%@)",caObj.account];
+        }
+
     }
     UILabel *label=[[UILabel alloc] init] ;
     label.frame=CGRectMake(2, 20, 300, 22);
@@ -146,6 +148,7 @@
     [cell.contentView addSubview: cd];
     
     UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(cd.frame.size.width, 2, 215, 40)];
+    contextLab.lineBreakMode=NSLineBreakByTruncatingMiddle;
     [contextLab setBackgroundColor:[UIColor clearColor]];
     [contextLab setText:caObj.summary];
     [cell.contentView addSubview:contextLab];

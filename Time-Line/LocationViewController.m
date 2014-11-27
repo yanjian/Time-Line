@@ -45,7 +45,7 @@
     [super viewDidLoad];
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow.png"] forState:UIControlStateNormal];
-    [leftBtn setFrame:CGRectMake(0, 2, 15, 20)];
+    [leftBtn setFrame:CGRectMake(0, 2, 21, 25)];
     
     [leftBtn addTarget:self action:@selector(disviewcontroller) forControlEvents:UIControlEventTouchUpInside];
     

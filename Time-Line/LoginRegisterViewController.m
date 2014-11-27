@@ -80,6 +80,7 @@
          GoogleLoginViewController *glvc=[[GoogleLoginViewController alloc] initWithNibName:@"GoogleLoginViewController" bundle:nil];
         glvc.isLogin=NO;//不是登陆，不注册本地账号，注册googl账号直接登陆
         UINavigationController *googleNav=[[UINavigationController alloc] initWithRootViewController:glvc];
+        googleNav.navigationBar.translucent=NO;
         [self presentViewController:googleNav animated:YES completion:nil];
 
     }

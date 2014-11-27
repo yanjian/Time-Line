@@ -34,7 +34,7 @@
 {
     [super viewDidLoad];
     
-    self.itemDataArr=[NSMutableArray arrayWithObjects:@"Background Refresh",@"Default Calendar",@"Alerts",@"Directions",@"Week Start", nil];
+    self.itemDataArr=[NSMutableArray arrayWithObjects:@"Background Refresh",@"Default Calendar",@"Alerts",/*@"Directions",@"Week Start", */nil];
     
     self.tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height) style:UITableViewStyleGrouped];
     self.tableView.dataSource=self;
@@ -53,7 +53,7 @@
     self.navigationItem.hidesBackButton=YES;
     UIButton *leftBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-    leftBtn.frame=CGRectMake(0, 0, 20, 20);
+    leftBtn.frame=CGRectMake(0, 2, 21, 25);
     [leftBtn addTarget:self action:@selector(preferenceTobackSetingView) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:leftBtn];
     

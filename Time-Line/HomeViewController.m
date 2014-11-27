@@ -885,12 +885,12 @@
     [rview addSubview:_YVbutton];
     
 //  箭头图标
-    rightBtn_arrow = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn_arrow setImage:[UIImage imageNamed:@"arrow_icon"] forState:UIControlStateNormal];
-    [rightBtn_arrow setFrame:CGRectMake(240, 20, 30, 30)];
-    //rightBtn_arrow.backgroundColor = [UIColor greenColor];
-    [rightBtn_arrow addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
-    [rview addSubview:rightBtn_arrow];
+//    rightBtn_arrow = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [rightBtn_arrow setImage:[UIImage imageNamed:@"arrow_icon"] forState:UIControlStateNormal];
+//    [rightBtn_arrow setFrame:CGRectMake(240, 20, 30, 30)];
+//    //rightBtn_arrow.backgroundColor = [UIColor greenColor];
+//    [rightBtn_arrow addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
+//    [rview addSubview:rightBtn_arrow];
 //  中间的标题
     UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(80, 30, 180, 30)];
     [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
@@ -1079,25 +1079,25 @@
 
 #pragma mark - Action
 /**
- * 点击导航箭头按钮
+ * 点击titleView 导航箭头按钮
  */
 - (void)oClickArrow {
-    if (ison) {
-        ison=NO;
-        [UIView beginAnimations:@"clockwiseAnimation" context:NULL];
-        [UIView setAnimationDuration:1.0f];
-        [UIView setAnimationDelegate:self];
-        rightBtn_arrow.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 90.0f);
-        [UIView commitAnimations];
-    }else{
-        ison=YES;
-        [UIView beginAnimations:@"clockwiseAnimation" context:NULL];
-        [UIView setAnimationDuration:1.0f];
-        [UIView setAnimationDelegate:self];
-        rightBtn_arrow.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 180.0f);
-        [UIView commitAnimations];
-        
-    }
+//    if (ison) {
+//        ison=NO;
+//        [UIView beginAnimations:@"clockwiseAnimation" context:NULL];
+//        [UIView setAnimationDuration:1.0f];
+//        [UIView setAnimationDelegate:self];
+//       // rightBtn_arrow.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 90.0f);
+//        [UIView commitAnimations];
+//    }else{
+//        ison=YES;
+//        [UIView beginAnimations:@"clockwiseAnimation" context:NULL];
+//        [UIView setAnimationDuration:1.0f];
+//        [UIView setAnimationDelegate:self];
+//      //  rightBtn_arrow.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 180.0f);
+//        [UIView commitAnimations];
+//        
+//    }
     calendarView.displayMode = !calendarView.displayMode;
 }
 

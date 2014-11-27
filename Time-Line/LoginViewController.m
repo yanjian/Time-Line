@@ -85,6 +85,7 @@ NSArray *accountBindsArrs;//用户绑定的账号
         glvc.isLogin=YES;
         UINavigationController *googleNav=[[UINavigationController alloc] initWithRootViewController:glvc];
         googleNav.modalTransitionStyle=UIModalTransitionStyleCrossDissolve;
+        googleNav.navigationBar.translucent=NO;
         [self presentViewController:googleNav animated:YES completion:nil];
     }else if (sender.tag==11){//Login button
         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
@@ -155,6 +156,7 @@ NSArray *accountBindsArrs;//用户绑定的账号
                 glvc.isSync=YES;
                 glvc.isSeting=YES;
                 UINavigationController *googleNav=[[UINavigationController alloc] initWithRootViewController:glvc];
+                googleNav.navigationBar.translucent=NO;
                 [self presentViewController:googleNav animated:YES completion:nil];
             }else{
                 [ShowHUD showTextOnly:@"account or password error!" configParameter:^(ShowHUD *config) {

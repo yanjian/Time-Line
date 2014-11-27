@@ -56,7 +56,7 @@
     self.titleHeadArr = [[NSMutableArray alloc] initWithObjects:@"SETTINGS",@"ACCOUNTS",@"MORE", nil];
     
     settingDataArr =  [[NSMutableArray alloc] initWithObjects:@"Visible Calendars",@"Notifications",@"Preference", nil];
-    moreDataArr    =  [[NSMutableArray alloc] initWithObjects:@"Support",@"Rate in App Store",@"Logout", nil];
+    moreDataArr    =  [[NSMutableArray alloc] initWithObjects:/*@"Support",@"Rate in App Store",*/@"Logout", nil];
     self.tableView =  [[UITableView alloc]initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height-self.navigationController.navigationBar.frame.size.height) style:UITableViewStyleGrouped];
     
     [dataArr addObject:settingDataArr];
@@ -67,7 +67,7 @@
     self.tableView.delegate=self;
     [self.view addSubview:self.tableView];
     UIButton *rightBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    rightBtn.frame=CGRectMake(0, 0, 20, 20);
+    rightBtn.frame=CGRectMake(0, 2, 25, 25);
     [rightBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Cross"] forState:UIControlStateNormal];
     [rightBtn addTarget:self action:@selector(closeNavigation) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
@@ -147,7 +147,7 @@
         AT_Account *atAccount=(AT_Account *)tmpObj;
         UILabel *lab=[self createUILabe];
         UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(lab.bounds.size.width, 2, 215, 40)];
-        contextLab.lineBreakMode=NSLineBreakByTruncatingTail;
+        contextLab.lineBreakMode=NSLineBreakByTruncatingMiddle;
         [contextLab setBackgroundColor:[UIColor clearColor]];
         if ([atAccount.accountType intValue]==AccountTypeGoogle) {
             lab.text=@"G";
@@ -167,7 +167,7 @@
     UILabel *lab=[[UILabel alloc] initWithFrame:CGRectMake(0, 2, 40, 40)];
     [lab setTextAlignment:NSTextAlignmentCenter];
     [lab setBackgroundColor:[UIColor clearColor]];
-    [lab setFont:[UIFont fontWithName:@"Verdana-Bold" size:17.f]];
+    [lab setFont:[UIFont fontWithName:@"Verdana-Bold" size:12.f]];
     return lab;
 }
 
@@ -185,11 +185,11 @@
     }else if (selectCell.tag==2){
         PreferenceViewController *preferenceVC=[[PreferenceViewController alloc] init];
         [self.navigationController pushViewController:preferenceVC animated:YES];
-    }else if(selectCell.tag==20){
+    }else if(selectCell.tag==22){
     
     }else if(selectCell.tag==21){
         
-    }else if(selectCell.tag==22){
+    }else if(selectCell.tag==20){
         IBActionSheet *ibActionSheet=[[IBActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Logout" otherButtonTitles:nil, nil];
         [ibActionSheet showInView:self.navigationController.view];
     }else {
