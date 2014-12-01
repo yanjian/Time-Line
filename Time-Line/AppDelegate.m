@@ -12,8 +12,11 @@
 #import "AddEventViewController.h"
 #import "LoginViewController.h"
 #import "CoreDataUtil.h"
-@interface AppDelegate ()<ASIHTTPRequestDelegate>
-
+@interface AppDelegate ()<ASIHTTPRequestDelegate>{
+LoginViewController *loginVc;
+HomeViewController *homeVC;
+    UINavigationController *nav;
+}
 @end
 
 @implementation AppDelegate
@@ -48,15 +51,7 @@
         timeInterval= UIApplicationBackgroundFetchIntervalNever;
     }
     [application setMinimumBackgroundFetchInterval:timeInterval];
-    
-    
 
-    if ([USER_DEFAULT objectForKey:@"userName"]) {
-        [self userLogin];
-    }
-
-    
-    [self initMainView];
     
    //[[UIApplication sharedApplication] cancelAllLocalNotifications];
 
@@ -78,52 +73,32 @@
 	}
     
     _isread=YES;
-//    NSArray *familyNames =[[NSArray alloc]initWithArray:[UIFont familyNames]];
-//    NSArray *fontNames;
-//    NSInteger indFamily, indFont;
-//    NSLog(@"[familyNames count]===%ld",[familyNames count]);
-//    for(indFamily=0;indFamily<[familyNames count];++indFamily)
-//        
-//    {
-//        NSLog(@"Family name: %@", [familyNames objectAtIndex:indFamily]);
-//        fontNames =[[NSArray alloc]initWithArray:[UIFont fontNamesForFamilyName:[familyNames objectAtIndex:indFamily]]];
-//        
-//        for(indFont=0; indFont<[fontNames count]; ++indFont)
-//            
-//        {
-//            NSLog(@"Font name: %@",[fontNames objectAtIndex:indFont]);
-//            
-//        }
-//        
-//    }
     
-    NSInteger loginStatus=[USER_DEFAULT integerForKey:@"loginStatus"];
-    if (1!=loginStatus) {
-        [self initLoginView];
-    }
-     [self.window makeKeyAndVisible];
+    [self initMainView];
+    
     return YES;
 }
 
 -(void)userLogin{
-
-    NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
-    BOOL isAccount=[[USER_DEFAULT objectForKey:@"accountType"] boolValue];
-    if (isAccount) {//本地账号
-        [paramDic setObject:[USER_DEFAULT objectForKey:@"userName"]forKey:@"uName"];
-        [paramDic setObject:[USER_DEFAULT objectForKey:@"pwd"] forKey:@"uPw"];
-        [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
-        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
-        [request startSynchronous];
-        return;
-    }
-    if([USER_DEFAULT objectForKey:@"email"] )
-      [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
-    if ([USER_DEFAULT objectForKey:@"authCode"]) {
-        [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
-        [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
-        ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
-        [request startSynchronous];
+    if ([USER_DEFAULT objectForKey:@"userName"]) {
+        NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
+        BOOL isAccount=[[USER_DEFAULT objectForKey:@"accountType"] boolValue];
+        if (isAccount) {//本地账号
+            [paramDic setObject:[USER_DEFAULT objectForKey:@"userName"]forKey:@"uName"];
+            [paramDic setObject:[USER_DEFAULT objectForKey:@"pwd"] forKey:@"uPw"];
+            [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
+            ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+            [request startAsynchronous];
+            return;
+        }
+        if([USER_DEFAULT objectForKey:@"email"] )
+          [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
+        if ([USER_DEFAULT objectForKey:@"authCode"]) {
+            [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
+            [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
+            ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+            [request startAsynchronous];
+        }
     }
 }
 
@@ -143,9 +118,9 @@
     return timeMs;
 }
 
--(void) initLoginView{
-    LoginViewController *loginVc = [[LoginViewController alloc] init];
-    self.window.rootViewController =loginVc;
+-(void) initLoginView:(id )target{
+    loginVc = [[LoginViewController alloc] init];
+    [target presentViewController:loginVc animated:YES completion:nil];
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request{
@@ -175,12 +150,13 @@
 //初始化mian界面
 -(void)initMainView
 {
-    HomeViewController *homeVC=[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
+    homeVC=[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
     homeVC.isRefreshUIData=YES;//初始化的时候刷新ui加载数据
-    UINavigationController *nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
+    nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
     nav.navigationBarHidden=YES;
     nav.navigationBar.translucent=NO;
     self.window.rootViewController=nav;
+    [self.window makeKeyAndVisible];
 }
 
 
@@ -233,18 +209,22 @@
     self.netWorkStatus = status;
     if([curReach isReachable]){
         NSLog(@"网络可用YES");
+        //检查用户是否在登录状态 返回-1000表示没有登录
+        ASIHTTPRequest *request=[t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
+        [request startAsynchronous];
     }else{
         NSLog(@"网络不可用NO");
-        [self reachabilityChanged];
+        [self noReachabilityChanged];
     }
 }
 
 //网络改变
--(void)reachabilityChanged
+-(void)noReachabilityChanged
 {
-    UIAlertView *alert;
-    alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请检查你的网络连接" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-    [alert show];
+//    UIAlertView *alert;
+//    alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请检查你的网络连接" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+//    [alert show];
+    NSLog(@"无网络连接");
 }
 
 - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
@@ -333,9 +313,6 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-    //检查用户是否在登录状态
-    ASIHTTPRequest *request=[t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
-    [request startAsynchronous];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
@@ -359,8 +336,6 @@
             }
         }
     }
-    
-    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

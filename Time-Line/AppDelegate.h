@@ -23,6 +23,8 @@
 @property (nonatomic,retain) ASINetworkQueue *netWorkQueue; //g_ASIQueue
 @property (nonatomic,assign) NetworkStatus netWorkStatus; //g_NetStatus
 
+
+
 +(AppDelegate *)getAppDelegate;
 
 #pragma mark - MBProgressHuD Method
@@ -38,7 +40,7 @@
 //隐藏提示框
 - (void)hideActivityView ;
 
--(void) initLoginView;
+-(void) initLoginView:(id )target;
 
 -(void)initMainView;
 //文件归档
