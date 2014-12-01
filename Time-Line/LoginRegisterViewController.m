@@ -33,8 +33,7 @@
 }
 - (IBAction)commonAllEvent:(UIButton *)sender {
     if (sender.tag==12) {
-        LoginViewController *loginView=[[LoginViewController alloc] init];
-        [self presentViewController:loginView animated:YES completion:nil];
+        [g_AppDelegate initLoginView:self];
     }else if (sender.tag==11){
        
         if ([@"" isEqualToString:self.userNameTextField.text ]) {

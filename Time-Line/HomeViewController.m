@@ -49,15 +49,28 @@
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.navigationController.navigationBarHidden = YES;
+   
+    NSArray *calendararr=[Calendar MR_findAll];
+    NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
+    for (Calendar *ca in calendararr) {
+        if ([ca.isVisible intValue]==1) {
+            NSPredicate *nspre=[NSPredicate predicateWithFormat:@"calendar==%@ and isDelete!=%i and recurringEventId==nil",ca,isDeleteData_YES];//不查询删除的数据
+            NSArray *arr=[AnyEvent MR_findAllWithPredicate:nspre];
+            for (AnyEvent *anyevent  in arr) {
+                [anyeventArr addObject:anyevent];
+            }
+        }
+    }
+
     [self synchronizationDataWriteEventId];//同步数据写入离线事件的Eid
-    if (self.isRefreshUIData) {
+   // if (self.isRefreshUIData) {
         dateArr = [NSMutableArray array];
         NSInteger cDay = calendarDateCount;
         //NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
         
         NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];
         NSInteger startIndex = -(cDay - 1  + weekDay - 1);
-        for (int i = startIndex; i < startIndex + (7* 6 * 12); i+=7) {
+        for (int i = startIndex; i < startIndex + (7* 5 * 12); i+=7) {
             NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];//回到200天前
             NSArray *weekArr = [self switchWeekByDate:temp];
             for (int d = 0; d<7; d++) {
@@ -70,20 +83,6 @@
         }
         
         //默认不执行下面加载数据刷新ui的功能
-
-        NSArray *calendararr=[Calendar MR_findAll];
-        NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
-        for (Calendar *ca in calendararr) {
-            if ([ca.isVisible intValue]==1) {
-                NSPredicate *nspre=[NSPredicate predicateWithFormat:@"calendar==%@ and isDelete!=%i and recurringEventId==nil",ca,isDeleteData_YES];//不查询删除的数据
-                NSArray *arr=[AnyEvent MR_findAllWithPredicate:nspre];
-                for (AnyEvent *anyevent  in arr) {
-                    [anyeventArr addObject:anyevent];
-                }
-            }
-        }
-        
-        
         __block  NSUInteger intervalCount=0;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             for (NSArray *weekArr in dateArr) {
@@ -254,7 +253,7 @@
             });
         });
         [calendarView goBackToday];//回到今天
-   }
+  // }
    
 }
 
@@ -396,6 +395,12 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+    NSInteger loginStatus=[USER_DEFAULT integerForKey:@"loginStatus"];
+    if (1!=loginStatus) {
+        [g_AppDelegate initLoginView:self];
+    }
+
+    
 }
 //将anyEvent 转换为json
 -(NSString *)assemblyStringWithGoogleAnyEvent:(AnyEvent *)anyEvent{

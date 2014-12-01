@@ -54,7 +54,7 @@
     
     NSInteger startIndex = -(cDay - 1  + weekDay - 1);
     
-    for (int i = startIndex; i < startIndex + (7* 6 * 12); i+=7) {
+    for (int i = startIndex; i < startIndex + (7* 5 * 12); i+=7) {
         NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];
         
         NSArray *weekArr = [self switchWeekByDate:temp];

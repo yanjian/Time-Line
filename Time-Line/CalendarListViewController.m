@@ -260,6 +260,7 @@
 -(void)synchronizeGoogleData:(UIButton*) sender{
     
     [[AppDelegate getAppDelegate] initMainView];
+    [self dismissViewControllerAnimated:YES completion:nil ];
 }
 
 

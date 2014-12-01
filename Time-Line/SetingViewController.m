@@ -235,8 +235,6 @@
         [userInfo removeObjectForKey:@"accountType"];
         [userInfo synchronize];
     
-        LoginViewController *loginVc = [[LoginViewController alloc] init];
-        [self presentViewController:loginVc animated:YES completion:nil];
         [self closeNavigation];
     }
 }

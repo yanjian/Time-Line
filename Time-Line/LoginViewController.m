@@ -114,11 +114,11 @@ NSArray *accountBindsArrs;//用户绑定的账号
         [paramDic setObject:md5Pw forKey:@"uPw"];
         [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
         [self addNetWorkRequest:paramDic];
-        
     }else if (sender.tag==12){//sign up button
         LoginRegisterViewController *loginRegist=[[LoginRegisterViewController alloc] init];
-        loginRegist.modalTransitionStyle=UIModalTransitionStyleCrossDissolve;
+      //  loginRegist.modalTransitionStyle=UIModalTransitionStyleFlipHorizontal;
         [self presentViewController:loginRegist animated:YES completion:nil];
+       
     }
 }
 
