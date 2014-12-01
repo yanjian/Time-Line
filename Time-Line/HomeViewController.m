@@ -402,7 +402,8 @@
 
     
 }
-//将anyEvent 转换为json
+
+#pragma mark -   将anyEvent 转换为json
 -(NSString *)assemblyStringWithGoogleAnyEvent:(AnyEvent *)anyEvent{
     NSDictionary *anyEventDic=[NSMutableDictionary dictionaryWithCapacity:0];
     [anyEventDic setValue:@"calendar#event" forKey:@"kind"];
@@ -845,9 +846,8 @@
     // Dispose of any resources that can be recreated.
 }
 
-/**
- * 初始化导航栏内容
- */
+
+#pragma 初始化导航栏内容
 - (void)initNavigationItem
 {
     _scrollview = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
