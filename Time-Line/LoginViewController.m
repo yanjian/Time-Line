@@ -56,7 +56,7 @@ NSArray *accountBindsArrs;//用户绑定的账号
     [super viewDidDisappear:animated];
 }
 
-//取消网络请求队列
+#pragma  mark - 取消网络请求队列
 -(void)cancelNetWorkrequestQueue{
     for (ASIHTTPRequest *request in g_ASIQuent.operations) {
         if (request) {
@@ -77,7 +77,8 @@ NSArray *accountBindsArrs;//用户绑定的账号
 }
 
 
-//登陆页上按钮事件
+
+#pragma mark - 登陆页上按钮事件
 - (IBAction)commonButtonEvent:(UIButton *)sender {
     
     if (sender.tag==10) {//login with Google button
