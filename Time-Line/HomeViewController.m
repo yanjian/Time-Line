@@ -396,7 +396,7 @@
 {
     [super viewDidAppear:animated];
     NSInteger loginStatus=[USER_DEFAULT integerForKey:@"loginStatus"];
-    if (1!=loginStatus) {
+    if (1!=loginStatus) {//1表示用户没有登陆
         [g_AppDelegate initLoginView:self];
     }
 
