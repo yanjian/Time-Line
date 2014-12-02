@@ -104,6 +104,7 @@
 
 
 -(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
     self.accountArr=[[NSMutableArray alloc] initWithCapacity:0];
     [ _activityIndicatorView startAnimating ];//启动活动图标
     [self loadWebPageWithString:Google_OAuth_URL];
