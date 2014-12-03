@@ -13,6 +13,7 @@
 #import "AddEventViewController.h"
 #import "AnyEvent.h"
 #import "AT_Event.h"
+#import "SloppySwiper.h"
 #import "RecurrenceModel.h"
 #import "Calendar.h"
 #import "SetingViewController.h"
@@ -25,6 +26,7 @@
     UIButton* rightBtn_arrow;
     BOOL isSuccess;
 }
+@property (strong, nonatomic) SloppySwiper *swiper;
 @end
 
 @implementation HomeViewController
@@ -969,10 +971,26 @@
 //    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
 //    _scrollview.contentOffset = CGPointMake(0, 0);
 //    [UIView commitAnimations];
+    
+   
+    
+    /**另外一种导航滑动样式！
+     SetingViewController *setVC=[[SetingViewController alloc] init];
+     SetingsNavigationController *nc=[[SetingsNavigationController alloc] initWithRootViewController:setVC];
+     nc.navigationBar.translucent=NO;
+     nc.navigationBar.barTintColor=blueColor;
+     [self presentViewController:nc animated:YES completion:nil];
+     self.isRefreshUIData=NO;
+     */
+    
+    
     SetingViewController *setVC=[[SetingViewController alloc] init];
-    SetingsNavigationController *nc=[[SetingsNavigationController alloc] initWithRootViewController:setVC];
+    UINavigationController *nc=[[UINavigationController alloc] initWithRootViewController:setVC];
     nc.navigationBar.translucent=NO;
+    nc.navigationItem.hidesBackButton=YES;
     nc.navigationBar.barTintColor=blueColor;
+    self.swiper = [[SloppySwiper alloc] initWithNavigationController:nc];
+    nc.delegate = self.swiper;
     [self presentViewController:nc animated:YES completion:nil];
     self.isRefreshUIData=NO;
 }
