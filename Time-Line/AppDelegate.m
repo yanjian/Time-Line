@@ -12,11 +12,13 @@
 #import "AddEventViewController.h"
 #import "LoginViewController.h"
 #import "CoreDataUtil.h"
+#import "SloppySwiper.h"
 @interface AppDelegate ()<ASIHTTPRequestDelegate>{
 LoginViewController *loginVc;
 HomeViewController *homeVC;
-    UINavigationController *nav;
+UINavigationController *nav;
 }
+@property (strong, nonatomic) SloppySwiper *swiper;
 @end
 
 @implementation AppDelegate
@@ -120,7 +122,11 @@ HomeViewController *homeVC;
 
 -(void) initLoginView:(id )target{
     loginVc = [[LoginViewController alloc] init];
-    [target presentViewController:loginVc animated:YES completion:nil];
+    nav=[[UINavigationController alloc] initWithRootViewController:loginVc];
+    nav.navigationBar.hidden=YES;
+    self.swiper = [[SloppySwiper alloc] initWithNavigationController:nav];
+    nav.delegate = self.swiper;
+    [target presentViewController:nav animated:YES completion:nil];
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request{
