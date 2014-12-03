@@ -100,7 +100,7 @@
         UILabel *contextLab=[[UILabel alloc] initWithFrame:CGRectMake(lab.bounds.size.width, 2, 215, 40)];
         [contextLab setBackgroundColor:[UIColor clearColor]];
         contextLab.lineBreakMode=NSLineBreakByTruncatingMiddle;
-        lab.text=@"Account";
+        lab.text=@"Account: ";
         [contextLab setText:account.account];
         [cell.contentView addSubview:lab];
         [cell.contentView addSubview:contextLab];
@@ -110,7 +110,7 @@
 
 
 -(UILabel *) createUILabe{
-    UILabel *lab=[[UILabel alloc] initWithFrame:CGRectMake(0, 2, 80, 40)];
+    UILabel *lab=[[UILabel alloc] initWithFrame:CGRectMake(0, 2, 90, 40)];
     [lab setTextAlignment:NSTextAlignmentCenter];
     [lab setBackgroundColor:[UIColor clearColor]];
     [lab setFont:[UIFont fontWithName:@"Verdana-Bold" size:17.f]];
