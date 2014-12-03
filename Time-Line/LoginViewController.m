@@ -42,6 +42,11 @@ NSArray *accountBindsArrs;//用户绑定的账号
     
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    
+}
+
 
 -(void)viewDidAppear:(BOOL)animated
 {
@@ -117,8 +122,8 @@ NSArray *accountBindsArrs;//用户绑定的账号
         [self addNetWorkRequest:paramDic];
     }else if (sender.tag==12){//sign up button
         LoginRegisterViewController *loginRegist=[[LoginRegisterViewController alloc] init];
-      //  loginRegist.modalTransitionStyle=UIModalTransitionStyleFlipHorizontal;
-        [self presentViewController:loginRegist animated:YES completion:nil];
+        
+        [self.navigationController pushViewController:loginRegist animated:YES];
        
     }
 }

@@ -28,12 +28,41 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, 320, 64)];
+    navBar.translucent=NO;
+    navBar.barTintColor=blueColor;
+    UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:nil];
+    //创建一个左边按钮
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
+    [leftBtn setFrame:CGRectMake(20, 30, 21, 25)];
+    [leftBtn addTarget:self action:@selector(onClickClose) forControlEvents:UIControlEventTouchUpInside];
     
+    UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
+    navItem.leftBarButtonItem=leftButton;
+    
+    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 18)];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    titleLabel.font = [UIFont boldSystemFontOfSize:17];
+    titleLabel.textColor = [UIColor whiteColor];
+    titleLabel.text =@"REGIST";
+    navItem.titleView =titleLabel;
+    
+    [navBar pushNavigationItem:navItem animated:NO];
+    [self.view addSubview:navBar];
     // Do any additional setup after loading the view from its nib.
 }
+
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    self.navigationItem.hidesBackButton=YES;
+    
+}
+
 - (IBAction)commonAllEvent:(UIButton *)sender {
     if (sender.tag==12) {
-        [g_AppDelegate initLoginView:self];
+        [self.navigationController popViewControllerAnimated:YES];
     }else if (sender.tag==11){
        
         if ([@"" isEqualToString:self.userNameTextField.text ]) {
@@ -95,6 +124,11 @@
         UINavigationController *googleNav=[[UINavigationController alloc] initWithRootViewController:glvc];
         [self presentViewController:googleNav animated:YES completion:nil];
     }
+}
+
+
+-(void)onClickClose{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)didReceiveMemoryWarning
