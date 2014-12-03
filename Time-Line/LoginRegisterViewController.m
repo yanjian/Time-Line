@@ -45,7 +45,7 @@
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.font = [UIFont boldSystemFontOfSize:17];
     titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.text =@"REGIST";
+    titleLabel.text =@"REGISTER";
     navItem.titleView =titleLabel;
     
     [navBar pushNavigationItem:navItem animated:NO];
