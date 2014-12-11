@@ -66,33 +66,29 @@
     }else if (sender.tag==11){
        
         if ([@"" isEqualToString:self.userNameTextField.text ]) {
-            [ShowHUD showTextOnly:@"userName empty" configParameter:^(ShowHUD *config) {
-                config.animationStyle=MBProgressHUDAnimationFade;
-                config.margin          = 20.f;    // 边缘留白
-                config.opacity         = 0.7f;    // 设定透明度
-                config.cornerRadius    = 10.f;     // 设定圆角
-                config.textFont        = [UIFont systemFontOfSize:14.f];
-            } duration:2 inView:self.view];
+            [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
+                                                    KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
+                                                    KVNProgressViewParameterStatus: @"userName empty",
+                                                    KVNProgressViewParameterSuperview: self.view
+                                                    }];
             return;
         }
         if ([@"" isEqualToString:self.emailTextField.text ]) {
-            [ShowHUD showTextOnly:@"email empty" configParameter:^(ShowHUD *config) {
-                config.animationStyle=MBProgressHUDAnimationFade;
-                config.margin          = 20.f;    // 边缘留白
-                config.opacity         = 0.7f;    // 设定透明度
-                config.cornerRadius    = 10.f;     // 设定圆角
-                config.textFont        = [UIFont systemFontOfSize:14.f];
-            } duration:2 inView:self.view];
+            [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
+                                                    KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
+                                                    KVNProgressViewParameterStatus: @"email empty",
+                                                    KVNProgressViewParameterSuperview: self.view
+                                                    }];
+
             return;
         }
         if ([ @"" isEqualToString:self.passwordTextField.text ]) {
-            [ShowHUD showTextOnly:@"password empty" configParameter:^(ShowHUD *config) {
-                config.animationStyle=MBProgressHUDAnimationFade;
-                config.margin          = 20.f;    // 边缘留白
-                config.opacity         = 0.7f;    // 设定透明度
-                config.cornerRadius    = 10.f;     // 设定圆角
-                config.textFont        = [UIFont systemFontOfSize:14.f];
-            } duration:2 inView:self.view];
+            [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
+                                                    KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
+                                                    KVNProgressViewParameterStatus: @"password empty",
+                                                    KVNProgressViewParameterSuperview: self.view
+                                                    }];
+
             return;
         }
         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];

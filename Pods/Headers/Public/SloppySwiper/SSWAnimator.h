@@ -1,0 +1,1 @@
+../../../SloppySwiper/Classes/SSWAnimator.h

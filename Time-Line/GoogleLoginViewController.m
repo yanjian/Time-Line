@@ -218,13 +218,12 @@
                 NSDictionary *dic=(NSMutableDictionary *)tmpObj;
                 NSString *param= dic[@"statusCode"];
                 if ([@"-3" isEqualToString:param]) {
-                    [ShowHUD showTextOnly:@"This email has been registered or binding" configParameter:^(ShowHUD *config) {
-                        config.animationStyle=MBProgressHUDAnimationZoomOut;
-                        config.margin          = 20.f;    // 边缘留白
-                        config.opacity         = 0.7f;    // 设定透明度
-                        config.cornerRadius    = 10.f;     // 设定圆角
-                        config.textFont        = [UIFont systemFontOfSize:14.f];
-                    } duration:3 inView:self.view];
+                    [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
+                                                            KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
+                                                            KVNProgressViewParameterStatus: @"This email has been registered or binding",
+                                                            KVNProgressViewParameterSuperview: self.view
+                                                            }];
+
                     [self.googleLoginView reload];
                 }
             }

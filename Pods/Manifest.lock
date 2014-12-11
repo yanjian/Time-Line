@@ -1,11 +1,11 @@
 PODS:
   - AFNetworking (2.3.1):
-    - AFNetworking/NSURLConnection
-    - AFNetworking/NSURLSession
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-    - AFNetworking/UIKit
+    - AFNetworking/NSURLConnection (= 2.3.1)
+    - AFNetworking/NSURLSession (= 2.3.1)
+    - AFNetworking/Reachability (= 2.3.1)
+    - AFNetworking/Security (= 2.3.1)
+    - AFNetworking/Serialization (= 2.3.1)
+    - AFNetworking/UIKit (= 2.3.1)
   - AFNetworking/NSURLConnection (2.3.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
@@ -21,10 +21,10 @@ PODS:
     - AFNetworking/NSURLConnection
     - AFNetworking/NSURLSession
   - ASIHTTPRequest (1.8.2):
-    - ASIHTTPRequest/ASIWebPageRequest
-    - ASIHTTPRequest/CloudFiles
-    - ASIHTTPRequest/Core
-    - ASIHTTPRequest/S3
+    - ASIHTTPRequest/ASIWebPageRequest (= 1.8.2)
+    - ASIHTTPRequest/CloudFiles (= 1.8.2)
+    - ASIHTTPRequest/Core (= 1.8.2)
+    - ASIHTTPRequest/S3 (= 1.8.2)
   - ASIHTTPRequest/ASIWebPageRequest (1.8.2):
     - ASIHTTPRequest/Core
   - ASIHTTPRequest/CloudFiles (1.8.2):
@@ -40,6 +40,7 @@ PODS:
   - Fingertips (0.3.0)
   - FXBlurView (1.6.3)
   - JSONKit-NoWarning (1.2)
+  - KVNProgress (2.1.3)
   - Masonry (0.4.0)
   - MBProgressHUD (0.9)
   - MSCollectionViewCalendarLayout (0.1.3):
@@ -48,6 +49,9 @@ PODS:
   - pop (1.0.7)
   - Reachability (3.2)
   - SBJson (4.0.1)
+  - SDWebImage (3.7.1):
+    - SDWebImage/Core (= 3.7.1)
+  - SDWebImage/Core (3.7.1)
   - SHLineGraphView (1.0.6)
   - SloppySwiper (0.3.0)
   - TBXML (1.5)
@@ -63,12 +67,14 @@ DEPENDENCIES:
   - Fingertips
   - FXBlurView (~> 1.6.2)
   - JSONKit-NoWarning (~> 1.1)
+  - KVNProgress
   - Masonry (~> 0.4.0)
   - MBProgressHUD (~> 0.9)
   - MSCollectionViewCalendarLayout
   - PEPhotoCropEditor (~> 1.3.1)
   - pop (~> 1.0.6)
   - SBJson (~> 4.0.1)
+  - SDWebImage (~> 3.7.1)
   - SHLineGraphView (~> 1.0.6)
   - SloppySwiper
   - TBXML (~> 1.5)
@@ -84,6 +90,7 @@ SPEC CHECKSUMS:
   Fingertips: 09d223a390349b317a51d4c941d778bdb661c4e1
   FXBlurView: abe1046285813c4f6e9008abbc324fc5ab32af90
   JSONKit-NoWarning: fc8d6dd8ec65e303867d1bd274632fc60a4a8ab9
+  KVNProgress: 0c0fcd44798c91d50abbad19b76d869b4f8f5cb1
   Masonry: 392466f4090cb28cc5349adec067453463e2ecd9
   MBProgressHUD: 2038dbcf3dce73215abed6001657043d53aa79a8
   MSCollectionViewCalendarLayout: 10ca29578b0dd9b8586b1beed3ab479a3788b4b5
@@ -91,9 +98,10 @@ SPEC CHECKSUMS:
   pop: 2f14a1ea61339767af9e66741b418c831b3844df
   Reachability: 1ef8adf5c4e3d362f96515d4278f68dad3c26930
   SBJson: d71212c078abf4679d54b0d0565260c474e46235
+  SDWebImage: 116e88633b5b416ea0ca4b334a4ac59cf72dd38d
   SHLineGraphView: ea496febee7a19bef01d5d1c832cf83a5e6a443e
   SloppySwiper: 732c1d6008b19748feb196e560fb304693221fbc
   TBXML: a279440030ba55c40e1455cafba3b0a44e1963d4
   UIColor-HexString: 9cf42ab500ce12fdaf523cdb96ecffd11a28b7ed
 
-COCOAPODS: 0.33.1
+COCOAPODS: 0.35.0

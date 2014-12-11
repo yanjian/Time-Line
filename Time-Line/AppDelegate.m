@@ -29,7 +29,6 @@ UINavigationController *nav;
     self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor=[UIColor whiteColor];
     [GMSServices provideAPIKey:GOOGLE_API_KEY];
-    //[CoreDataUtil launch];
     
     [MagicalRecord setupCoreDataStackWithStoreNamed:@"TimeLine.sqlite"];
     
@@ -55,13 +54,8 @@ UINavigationController *nav;
     [application setMinimumBackgroundFetchInterval:timeInterval];
 
     
-   //[[UIApplication sharedApplication] cancelAllLocalNotifications];
+   [[UIApplication sharedApplication] cancelAllLocalNotifications];
 
-    
-    
-    //初始化 MBProgressHUD控件
-    _HUD=[[MBProgressHUD alloc] initWithView:self.window];
-    [self.window addSubview:_HUD];
     
     UILocalNotification *localNotif =[launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
     if (localNotif) {
@@ -81,28 +75,6 @@ UINavigationController *nav;
     return YES;
 }
 
--(void)userLogin{
-    if ([USER_DEFAULT objectForKey:@"userName"]) {
-        NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
-        BOOL isAccount=[[USER_DEFAULT objectForKey:@"accountType"] boolValue];
-        if (isAccount) {//本地账号
-            [paramDic setObject:[USER_DEFAULT objectForKey:@"userName"]forKey:@"uName"];
-            [paramDic setObject:[USER_DEFAULT objectForKey:@"pwd"] forKey:@"uPw"];
-            [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
-            ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
-            [request startAsynchronous];
-            return;
-        }
-        if([USER_DEFAULT objectForKey:@"email"] )
-          [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
-        if ([USER_DEFAULT objectForKey:@"authCode"]) {
-            [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
-            [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
-            ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
-            [request startAsynchronous];
-        }
-    }
-}
 
 -(NSTimeInterval)getRefreshFetchTimetimeInterval{
     //@"15 minutes",@"30 minutes",@"1 hour",@"2 hour",@"never"
@@ -153,6 +125,39 @@ UINavigationController *nav;
     }
 }
 
+-(void) clearUserDefault:(NSUserDefaults *) userInfo{
+    [userInfo removeObjectForKey:@"userName"];
+    [userInfo removeObjectForKey:@"loginStatus"];
+    [userInfo removeObjectForKey:@"accountBinds"];
+    [userInfo removeObjectForKey:@"email"];
+    [userInfo removeObjectForKey:@"authCode"];
+    [userInfo removeObjectForKey:@"pwd"];
+    [userInfo removeObjectForKey:@"accountType"];
+}
+
+-(void)userLogin{
+    if ([USER_DEFAULT objectForKey:@"userName"]) {
+        NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
+        BOOL isAccount=[[USER_DEFAULT objectForKey:@"accountType"] boolValue];
+        if (isAccount) {//本地账号
+            [paramDic setObject:[USER_DEFAULT objectForKey:@"userName"]forKey:@"uName"];
+            [paramDic setObject:[USER_DEFAULT objectForKey:@"pwd"] forKey:@"uPw"];
+            [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
+            ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+            [request startAsynchronous];
+            return;
+        }
+        if([USER_DEFAULT objectForKey:@"email"] )
+            [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
+        if ([USER_DEFAULT objectForKey:@"authCode"]) {
+            [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
+            [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
+            ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+            [request startAsynchronous];
+        }
+    }
+}
+
 //初始化mian界面
 -(void)initMainView
 {
@@ -168,7 +173,6 @@ UINavigationController *nav;
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
 {
-    
     if (notification)
     {
         UIApplicationState state = application.applicationState;
@@ -206,6 +210,12 @@ UINavigationController *nav;
 }
 
 
+-(void)autoUserWithLogin{
+    //检查用户是否在登录状态 返回-1000表示没有登录
+    ASIHTTPRequest *request=[t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
+    [request startAsynchronous];
+}
+
 //网络状态发生变化
 - (void)reachabilityChanged:(NSNotification *)note
 {
@@ -215,9 +225,7 @@ UINavigationController *nav;
     self.netWorkStatus = status;
     if([curReach isReachable]){
         NSLog(@"网络可用YES");
-        //检查用户是否在登录状态 返回-1000表示没有登录
-        ASIHTTPRequest *request=[t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
-        [request startAsynchronous];
+       // [self autoUserWithLogin];
     }else{
         NSLog(@"网络不可用NO");
         [self noReachabilityChanged];
@@ -236,8 +244,8 @@ UINavigationController *nav;
 - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
     
-    UINavigationController *nav=(UINavigationController *)self.window.rootViewController;
-    id fetchViewControl=nav.topViewController;
+    UINavigationController *navs=(UINavigationController *)self.window.rootViewController;
+    id fetchViewControl=navs.topViewController;
     if ([fetchViewControl respondsToSelector:@selector(fetchDataResult:)]) {
         if ([fetchViewControl isKindOfClass:[HomeViewController class]]) {
             HomeViewController *home=(HomeViewController *) fetchViewControl;
@@ -245,64 +253,6 @@ UINavigationController *nav;
         }
     }
 }
-
-#pragma mark - MBProgressHuD Method
-//显示带时限的等待进度提示框
--(void)showActivityView:(NSString *)text interval:(NSTimeInterval)time{
-    if( _HUD ){
-        _HUD.mode=MBProgressHUDModeIndeterminate;
-        _HUD.labelText=text;
-        if( [_HUD isHidden] ) {
-            [_HUD show:YES];
-        }
-        [_HUD hide:YES afterDelay:time];
-    }
-}
-
-
-//持续显示的提示框
--(void)showActivityView:(NSString *)text{
-    if ( _HUD ) {
-        _HUD.labelText=text;
-        _HUD.mode=MBProgressHUDModeIndeterminate;
-        [_HUD show:YES];
-    }
-}
-
-
-//显示普通的文字提示框
-- (void)showNormalyTextView:(NSString *)text interval:(NSTimeInterval)time
-{
-    if ( _HUD ) {
-        if (text != nil && ![text isEqualToString:@""]) {
-            _HUD.mode = MBProgressHUDModeText;
-            _HUD.labelText = text;
-            [_HUD show:YES];
-            [_HUD hide:YES afterDelay:time];
-        } else {
-            [_HUD hide:YES];
-        }
-    }
-}
-
-//隐藏提示框
-- (void)hideActivityView {
-    if (_HUD) {
-        [_HUD hide:YES];
-    }
-}
-
-
-
-#pragma mark - LoginViewController Method
-//显示带时限的等待进度提示框
-- (void)push2LoginViewController
-{
-    [self.window.rootViewController presentViewController:[LoginViewController new] animated:YES completion:nil];
-}
-
-
-
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
@@ -319,6 +269,7 @@ UINavigationController *nav;
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+     [self autoUserWithLogin];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application

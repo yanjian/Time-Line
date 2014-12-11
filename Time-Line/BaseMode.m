@@ -25,7 +25,6 @@
         if ([self respondsToSelector:selector]) {
             //执行set方法
             NSObject *dicValue = [dicData objectForKey:parmeValue];
-            //            id value = [dicValue isKindOfClass:[NSNumber class]]?(id)[(NSNumber*)dicValue integerValue]:dicValue;
             [self performSelector:selector withObject:dicValue];
         }
     }

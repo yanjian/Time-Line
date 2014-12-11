@@ -18,6 +18,11 @@
 #import "Calendar.h"
 #import "SetingViewController.h"
 #import "SetingsNavigationController.h"
+#import "SegmentedControl.h"
+#import "NoticesViewController.h"
+#import "ManageViewController.h"
+#import "FriendInfoViewController.h"
+#import "DMLazyScrollView.h"
 
 
 @interface HomeViewController () <ASIHTTPRequestDelegate>{
@@ -27,6 +32,11 @@
     BOOL isSuccess;
 }
 @property (strong, nonatomic) SloppySwiper *swiper;
+@property (nonatomic, strong) NoticesViewController *notivesView;
+@property (nonatomic, strong) ManageViewController *manageView;
+@property (nonatomic, strong) FriendInfoViewController *friendView;
+@property (nonatomic, assign) NSInteger lastSelectedSegmentIndex;
+@property (nonatomic, strong) NSArray *viewsControllers;
 @end
 
 @implementation HomeViewController
@@ -400,9 +410,11 @@
     NSInteger loginStatus=[USER_DEFAULT integerForKey:@"loginStatus"];
     if (1!=loginStatus) {//1表示用户没有登陆
         [g_AppDelegate initLoginView:self];
+    }else{
+        if (g_NetStatus!=NotReachable){//在有网络的情况下自动登录
+           [g_AppDelegate autoUserWithLogin];
+        }
     }
-
-    
 }
 
 #pragma mark -   将anyEvent 转换为json
@@ -853,16 +865,17 @@
 - (void)initNavigationItem
 {
     _scrollview = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
-    //_scrollview .contentSize = CGSizeMake(3*_scrollview.frame.size.width, 0);
+    _scrollview .contentSize = CGSizeMake(2*_scrollview.frame.size.width, 0);
     
-  //  _scrollview.contentOffset = CGPointMake(kScreen_Width, 0);
+    _scrollview.contentOffset = CGPointMake(kScreen_Width, 0);
     _scrollview.backgroundColor = [UIColor whiteColor];
     _scrollview.pagingEnabled = YES;
     _scrollview.bounces = NO;//最后一页滑不动
+    _scrollview.showsHorizontalScrollIndicator=NO;
     [self.view addSubview:_scrollview];
+    
     calendarView = [[CLCalendarView alloc] init];
-    //calendarView.frame = CGRectMake (kScreen_Width, 40, kScreen_Width, kScreen_Height);
-    calendarView.frame = CGRectMake (0, 40, kScreen_Width, kScreen_Height);
+    calendarView.frame = CGRectMake (kScreen_Width, 40, kScreen_Width, kScreen_Height);
     calendarView.dataSuorce = self;
     calendarView.delegate = self;
     calendarView.time=@"time";
@@ -870,19 +883,9 @@
     ison=YES;
     titleLabel.text=[NSString stringWithFormat:@"Today %@",[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"dd/M"]];
 
-    
-    
-//    中间view
- //   UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(kScreen_Width, -20, kScreen_Width, 66)];
-    UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, -20, kScreen_Width, 66)];
+    //主页面
+    UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(kScreen_Width, -20, kScreen_Width, 64)];
     rview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
-//    左边的按钮
-    _ZVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    _ZVbutton.frame = CGRectMake(10, 32, 27, 25);
-    [_ZVbutton setBackgroundImage:[UIImage imageNamed:@"Icon_Menu"] forState:UIControlStateNormal];
-    [_ZVbutton addTarget:self action:@selector(setZVbutton) forControlEvents:UIControlEventTouchUpInside];
-    [rview addSubview:_ZVbutton];
-    
 
 //   导航： 右边的按钮
     _YVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -892,12 +895,11 @@
     [rview addSubview:_YVbutton];
     
 //  箭头图标
-//    rightBtn_arrow = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [rightBtn_arrow setImage:[UIImage imageNamed:@"arrow_icon"] forState:UIControlStateNormal];
-//    [rightBtn_arrow setFrame:CGRectMake(240, 20, 30, 30)];
-//    //rightBtn_arrow.backgroundColor = [UIColor greenColor];
-//    [rightBtn_arrow addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
-//    [rview addSubview:rightBtn_arrow];
+    rightBtn_arrow = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rightBtn_arrow setImage:[UIImage imageNamed:@"bell_default"] forState:UIControlStateNormal];
+    [rightBtn_arrow setFrame:CGRectMake(0, 20, 50, 50)];
+    [rightBtn_arrow addTarget:self action:@selector(skipNotificationView) forControlEvents:UIControlEventTouchUpInside];
+    [rview addSubview:rightBtn_arrow];
 //  中间的标题
     UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(80, 30, 180, 30)];
     [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
@@ -905,15 +907,56 @@
     
     titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 170, 30)];
     titleLabel.textAlignment = NSTextAlignmentCenter;
-    //    titleLabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
     titleLabel.font=[UIFont boldSystemFontOfSize:20.0f];
     titleLabel.textColor = [UIColor whiteColor];
-    //titleLabel.backgroundColor = [UIColor yellowColor];
     [titleView addSubview:titleLabel];
     [_scrollview addSubview:rview];
+   
     
+    // 左间view
+    UIView *zview = [[UIView alloc] initWithFrame:CGRectMake(0, -20, kScreen_Width, 64)];
+    zview.backgroundColor = blueColor;
     
+    UIControl *segmentedView = [[UIControl alloc]initWithFrame:CGRectMake(55, 27, 210, 30)];
+    SegmentedControl *segmentedControl = [[SegmentedControl alloc] init];
+    [segmentedControl addTarget:self action:@selector(typeAction:) forControlEvents:UIControlEventValueChanged];
     
+    segmentedControl.selectedSegmentIndex = 0;//默认显示那个视图
+    self.lastSelectedSegmentIndex = segmentedControl.selectedSegmentIndex;
+    
+    self.notivesView = [[NoticesViewController alloc] init];//初始化通知视图控制器
+    [_scrollview addSubview:self.notivesView.view];
+    
+    self.manageView = [[ManageViewController alloc] init];//初始化管理控制器
+    [_scrollview addSubview:self.manageView.view];
+    
+    self.friendView = [[FriendInfoViewController  alloc] init];
+    [_scrollview addSubview:self.friendView.view];
+    
+    self.viewsControllers = @[self.notivesView, self.manageView, self.friendView];
+    
+    [segmentedView addSubview:segmentedControl];
+    [zview addSubview:segmentedView];
+    
+    self.notivesView.view.hidden = NO;//默认显示那个视图就让其他视图隐藏
+    self.manageView.view.hidden = YES;
+    self.friendView.view.hidden = YES;
+    
+    // 右边xiew上返回button
+    _rbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    _rbutton.frame = CGRectMake(280, 30, 21, 25);
+    [_rbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow1"] forState:UIControlStateNormal];
+    [_rbutton addTarget:self action:@selector(setrbutton) forControlEvents:UIControlEventTouchUpInside];
+    //左边的按钮
+    _ZVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    _ZVbutton.frame = CGRectMake(0, 20, 45, 45);
+    [_ZVbutton setBackgroundImage:[UIImage imageNamed:@"setting_default"] forState:UIControlStateNormal];
+    [_ZVbutton addTarget:self action:@selector(setZVbutton) forControlEvents:UIControlEventTouchUpInside];
+    [zview addSubview:_ZVbutton];
+    [zview addSubview:_rbutton];
+    [_scrollview addSubview:zview];
+    
+
 //    //    右边view
 //    UIView *xview = [[UIView alloc] initWithFrame:CGRectMake(640, -20, kScreen_Width, kScreen_Height)];
 //    xview.backgroundColor = [UIColor orangeColor];
@@ -941,18 +984,6 @@
 //    [xview addSubview:Xbutton];
 //    [_scrollview addSubview:xview];
 //
-//    //    左间view
-//    UIView *zview = [[UIView alloc] initWithFrame:CGRectMake(0, -20, kScreen_Width, 66)];
-//    zview.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
-//    
-//    //   右边xiew上返回button
-//    _rbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-//    _rbutton.frame = CGRectMake(280, 30, 21, 25);
-//    //_rbutton.backgroundColor = [UIColor redColor];
-//    [_rbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow1"] forState:UIControlStateNormal];
-//    [_rbutton addTarget:self action:@selector(setrbutton) forControlEvents:UIControlEventTouchUpInside];
-//    [zview addSubview:_rbutton];
-//    [_scrollview addSubview:zview];
 }
 #pragma mark -－－ 所有点击事件
 - (void)setrbutton
@@ -964,16 +995,19 @@
     [UIView commitAnimations];
     
 }
+
+#pragma mark -跳到通知视图页面
+-(void)skipNotificationView{
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDuration:.2];
+    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
+    _scrollview.contentOffset = CGPointMake(0, 0);
+    [UIView commitAnimations];
+}
+
+#pragma mark 条到设置视图页面
 -(void)setZVbutton
 {
-//    [UIView beginAnimations:nil context:nil];
-//    [UIView setAnimationDuration:.2];
-//    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-//    _scrollview.contentOffset = CGPointMake(0, 0);
-//    [UIView commitAnimations];
-    
-   
-    
     /**另外一种导航滑动样式！
      SetingViewController *setVC=[[SetingViewController alloc] init];
      SetingsNavigationController *nc=[[SetingsNavigationController alloc] initWithRootViewController:setVC];
@@ -994,6 +1028,8 @@
     [self presentViewController:nc animated:YES completion:nil];
     self.isRefreshUIData=NO;
 }
+
+#pragma mark -添加新的事件
 -(void)setYVbutton
 {
 //    [UIView beginAnimations:nil context:nil];
@@ -1003,9 +1039,32 @@
 //    [UIView commitAnimations];
     
     [self oClickAdd];
-    
 }
 
+
+- (void) typeAction:(SegmentedControl *) sender{
+    NSLog(@"ViewController typeAction:");
+    [self transitionFrom:self.lastSelectedSegmentIndex to:sender.selectedSegmentIndex];
+    self.lastSelectedSegmentIndex = sender.selectedSegmentIndex;
+}
+
+-(void)transitionFrom:(NSInteger)from to:(NSInteger)to{
+    CATransition *transition = [[CATransition alloc] init];
+    transition.type = kCATransitionPush;
+    transition.subtype = from > to ? kCATransitionFromLeft : kCATransitionFromRight;
+    
+    UIViewController *currentSegmentedView = (UIViewController *)self.viewsControllers[from];
+    UIViewController *nextSegmentedView = (UIViewController *)self.viewsControllers[to];
+    
+    [currentSegmentedView.view.layer addAnimation:transition forKey:@"transition"];
+    [nextSegmentedView.view.layer addAnimation:transition forKey:@"transition"];
+    
+    currentSegmentedView.view.hidden = YES;
+    nextSegmentedView.view.hidden = NO;
+}
+
+
+#pragma mark -解析googel事件数据
 -(AT_Event *)paseGoogleEventData:(NSDictionary *) dataDic
 {
     NSLog(@"%@",dataDic);

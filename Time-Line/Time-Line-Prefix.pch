@@ -13,7 +13,8 @@
 #import "InterfaceMrco.h"
 #import "CoreData+MagicalRecord.h"
 #import "AppDelegate.h"
-#import "ShowHUD.h"
+#import "UserInfo.h"
+#import "KVNProgress/KVNProgress.h"
 //#import "CoreDataUtil.h"
 #ifndef __IPHONE_3_0
 #warning "This project uses features only available in iOS SDK 3.0 and later."

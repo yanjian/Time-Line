@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MBProgressHUD.h"
 #import "Reachability.h"
 #import "ASINetworkQueue.h"
 #import "FlipBoardNavigationController.h"
@@ -19,7 +18,6 @@
 
 @property (nonatomic,strong) FlipBoardNavigationController *flipNC;
 
-@property (nonatomic,strong) MBProgressHUD *HUD;
 @property (nonatomic,retain) ASINetworkQueue *netWorkQueue; //g_ASIQueue
 @property (nonatomic,assign) NetworkStatus netWorkStatus; //g_NetStatus
 
@@ -27,22 +25,13 @@
 
 +(AppDelegate *)getAppDelegate;
 
-#pragma mark - MBProgressHuD Method
-//显示带时限的等待进度提示框
-- (void)showActivityView:(NSString*)text interval:(NSTimeInterval)time;
-
-//持续显示的提示框
-- (void)showActivityView:(NSString *)text;
-
-//显示普通的文字提示框
-- (void)showNormalyTextView:(NSString *)text interval:(NSTimeInterval)time;
-
-//隐藏提示框
-- (void)hideActivityView ;
 
 -(void) initLoginView:(id )target;
 
+-(void)autoUserWithLogin;
 -(void)initMainView;
+//清理存储在NSUserDefaults中的信息
+-(void) clearUserDefault:(NSUserDefaults *) userInfo;
 //文件归档
 - (void) saveFileWithArray: (NSMutableArray*)activityArray fileName:(NSString *) name;
 //文件解档

@@ -96,33 +96,30 @@ NSArray *accountBindsArrs;//用户绑定的账号
     }else if (sender.tag==11){//Login button
         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
         if ([@"" isEqualToString:self.username.text]) {
-            [ShowHUD showTextOnly:@"Please enter your user name" configParameter:^(ShowHUD *config) {
-                config.animationStyle=MBProgressHUDAnimationFade;
-                config.margin          = 20.f;    // 边缘留白
-                config.opacity         = 0.7f;    // 设定透明度
-                config.cornerRadius    = 10.f;     // 设定圆角
-                config.textFont        = [UIFont systemFontOfSize:14.f];
-            } duration:2 inView:self.view];
+            [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
+                                                    KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
+                                                    KVNProgressViewParameterStatus: @"Please enter your user name",
+                                                    KVNProgressViewParameterSuperview: self.view
+                                                    }];
+
             return;
         }
         if ([@"" isEqualToString:self.passwordBtn.text]) {
-            [ShowHUD showTextOnly:@"Please enter the password" configParameter:^(ShowHUD *config) {
-                config.animationStyle=MBProgressHUDAnimationZoomOut;
-                config.margin          = 20.f;    // 边缘留白
-                config.opacity         = 0.7f;    // 设定透明度
-                config.cornerRadius    = 10.f;     // 设定圆角
-                config.textFont        = [UIFont systemFontOfSize:14.f];
-            } duration:2 inView:self.view];
+            [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
+                                                    KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
+                                                    KVNProgressViewParameterStatus: @"Please enter the password",
+                                                    KVNProgressViewParameterSuperview: self.view
+                                                    }];
             return;
         }
         [paramDic setObject:self.username.text forKey:@"uName"];
         NSString *md5Pw= [[NSString stringWithString:self.passwordBtn.text] md5];
         [paramDic setObject:md5Pw forKey:@"uPw"];
         [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
+        [KVNProgress showProgress:0.5f status:@"Loading"];
         [self addNetWorkRequest:paramDic];
     }else if (sender.tag==12){//sign up button
         LoginRegisterViewController *loginRegist=[[LoginRegisterViewController alloc] init];
-        
         [self.navigationController pushViewController:loginRegist animated:YES];
        
     }
@@ -150,9 +147,14 @@ NSArray *accountBindsArrs;//用户绑定的账号
     switch (request.tag) {
         case LOGIN_USER_TAG:{//用户登录
             if ([@"1" isEqualToString:responseStr]) {
+                [KVNProgress dismiss];
+                
                 ASIHTTPRequest *userInfoRequest= [t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
                 [g_ASIQuent addOperation:userInfoRequest];
                 [self addRequestTAG:LoginUser_GetUserInfo_Tag];
+                
+                [g_AppDelegate clearUserDefault:userInfo];//清理用户信息
+                
                 [userInfo setValue:self.username.text forKey:@"userName"];
                 [userInfo setValue:[[NSString stringWithString:self.passwordBtn.text] md5] forKey:@"pwd"];
                 [userInfo setValue:@(UserLoginStatus_YES) forKey:@"loginStatus"];
@@ -165,14 +167,13 @@ NSArray *accountBindsArrs;//用户绑定的账号
                 googleNav.navigationBar.translucent=NO;
                 [self presentViewController:googleNav animated:YES completion:nil];
             }else{
-                [ShowHUD showTextOnly:@"account or password error!" configParameter:^(ShowHUD *config) {
-                    config.animationStyle=MBProgressHUDAnimationZoomOut;
-                    config.margin          = 20.f;    // 边缘留白
-                    config.opacity         = 0.7f;    // 设定透明度
-                    config.cornerRadius    = 10.f;     // 设定圆角
-                    config.textFont        = [UIFont systemFontOfSize:14.f];
-                } duration:2 inView:self.view];
-            }
+                [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
+                                                        KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
+                                                        KVNProgressViewParameterStatus: @"account or password error!",
+                                                        KVNProgressViewParameterSuperview: self.view
+                                                        }];
+
+             }
             break;
         }
         case LoginUser_GetUserInfo_Tag:{//用户信息
@@ -183,8 +184,20 @@ NSArray *accountBindsArrs;//用户绑定的账号
                     ASIHTTPRequest *bindListRequest= [t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
                    
                     [g_ASIQuent addOperation:bindListRequest];
+                    
                     [self addRequestTAG:Local_CalendarOperation_Tag];
-                    NSDictionary *userInfoDic=[loginUser objectForKey:@"data"];
+                    NSDictionary *userInfoDic=[loginUser objectForKey:@"data"];//请求到的用信息
+    
+                    UserInfo *uInfo=[UserInfo currUserInfo];//当前用户信息对象
+                    [uInfo parseDictionary:userInfoDic];
+                    uInfo.gender=[[userInfoDic objectForKey:@"gender"] intValue]==0?gender_woman:gender_man;
+                    if (uInfo.imgUrl) {
+                        uInfo.imgUrl=[uInfo.imgUrl stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                    }
+                    if (uInfo.imgUrlSmall) {
+                        uInfo.imgUrlSmall=[uInfo.imgUrlSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                    }
+                    
                     //accountBinds =     ({account = "yanjaya5201314@gmail.com";type = 1;uid = 76;})
                     NSArray *accountBinds=[userInfoDic objectForKey:@"accountBinds"] ;
                     if (accountBinds.count>0) {
@@ -198,9 +211,7 @@ NSArray *accountBindsArrs;//用户绑定的账号
                     NSString *userEmail=[userInfoDic objectForKey:@"email"];
                     atAcount.account=userEmail;
                     atAcount.accountType=@(AccountTypeLocal);
-                    
                     [self.accountArr addObject:atAcount];
-                    
                     self.emailStr=userEmail;
                     [userInfo setValue:userEmail forKey:@"email"];
                 }

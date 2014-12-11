@@ -16,6 +16,7 @@
 #import "IBActionSheet.h"
 #import "LoginViewController.h"
 #import "AT_Account.h"
+#import "UserInfoTableViewController.h"
 
 @interface SetingViewController ()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,IBActionSheetDelegate>{
     BOOL isUserInfo;
@@ -56,7 +57,7 @@
     self.titleHeadArr = [[NSMutableArray alloc] initWithObjects:@"SETTINGS",@"ACCOUNTS",@"MORE", nil];
     
     settingDataArr =  [[NSMutableArray alloc] initWithObjects:@"Visible Calendars",@"Notifications",@"Preference", nil];
-    moreDataArr    =  [[NSMutableArray alloc] initWithObjects:/*@"Support",@"Rate in App Store",*/@"Logout", nil];
+    moreDataArr    =  [[NSMutableArray alloc] initWithObjects:/*@"Support",@"Rate in App Store",*/@"Profile",@"Logout", nil];
     self.tableView =  [[UITableView alloc]initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height-self.navigationController.navigationBar.frame.size.height) style:UITableViewStyleGrouped];
     
     [dataArr addObject:settingDataArr];
@@ -188,10 +189,11 @@
     }else if(selectCell.tag==22){
     
     }else if(selectCell.tag==21){
-        
-    }else if(selectCell.tag==20){
         IBActionSheet *ibActionSheet=[[IBActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Logout" otherButtonTitles:nil, nil];
         [ibActionSheet showInView:self.navigationController.view];
+    }else if(selectCell.tag==20){
+        UserInfoTableViewController *userInfoVC=[[UserInfoTableViewController alloc] initWithNibName:@"UserInfoTableViewController" bundle:nil];
+        [self.navigationController pushViewController:userInfoVC animated:YES];
     }else {
         id rowData=[[dataArr objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
         if ([rowData isKindOfClass:[NSString class]]) {
@@ -226,15 +228,8 @@
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         }
         
-        [userInfo removeObjectForKey:@"userName"];
-        [userInfo removeObjectForKey:@"loginStatus"];
-        [userInfo removeObjectForKey:@"accountBinds"];
-        [userInfo removeObjectForKey:@"email"];
-        [userInfo removeObjectForKey:@"authCode"];
-        [userInfo removeObjectForKey:@"pwd"];
-        [userInfo removeObjectForKey:@"accountType"];
+        [g_AppDelegate clearUserDefault:userInfo];
         [userInfo synchronize];
-    
         [self closeNavigation];
     }
 }
