@@ -18,7 +18,8 @@
 #import "Calendar.h"
 
 @interface LoginViewController ()<ASIHTTPRequestDelegate,UITextFieldDelegate>{
-NSArray *accountBindsArrs;//用户绑定的账号
+   NSArray  * accountBindsArrs;//用户绑定的账号
+   UserInfo * uInfo;
 }
 
 @property (nonatomic,strong) NSMutableArray *calendarListArr;
@@ -141,24 +142,33 @@ NSArray *accountBindsArrs;//用户绑定的账号
 - (void)requestFinished:(ASIHTTPRequest *)request
 {
     
-    NSUserDefaults *userInfo=[NSUserDefaults standardUserDefaults];
+   // NSUserDefaults *userInfo=[NSUserDefaults standardUserDefaults];
     NSString *responseStr=[request responseString];
     NSLog(@"%@",responseStr);
     switch (request.tag) {
         case LOGIN_USER_TAG:{//用户登录
             if ([@"1" isEqualToString:responseStr]) {
                 [KVNProgress dismiss];
+                [USER_DEFAULT removeObjectForKey:CURRENTUSERINFO];
+                
+                uInfo=[UserInfo currUserInfo];//当前用户信息对象
                 
                 ASIHTTPRequest *userInfoRequest= [t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
                 [g_ASIQuent addOperation:userInfoRequest];
                 [self addRequestTAG:LoginUser_GetUserInfo_Tag];
                 
-                [g_AppDelegate clearUserDefault:userInfo];//清理用户信息
+             //   [g_AppDelegate clearUserDefault:userInfo];//清理用户信息
                 
-                [userInfo setValue:self.username.text forKey:@"userName"];
-                [userInfo setValue:[[NSString stringWithString:self.passwordBtn.text] md5] forKey:@"pwd"];
-                [userInfo setValue:@(UserLoginStatus_YES) forKey:@"loginStatus"];
-                [userInfo setValue:@(AccountTypeLocal) forKey:@"accountType"];
+                
+                uInfo.username = self.username.text ;
+                uInfo.password = [[NSString stringWithString:self.passwordBtn.text] md5] ;
+                uInfo.loginStatus = UserLoginStatus_YES ;
+                uInfo.accountType = AccountTypeLocal ;
+                //[userInfo setValue:self.username.text forKey:@"userName"];
+                //[userInfo setValue:[[NSString stringWithString:self.passwordBtn.text] md5] forKey:@"pwd"];
+                //[userInfo setValue:@(UserLoginStatus_YES) forKey:@"loginStatus"];
+                //[userInfo setValue:@(AccountTypeLocal) forKey:@"accountType"];
+                
                 GoogleLoginViewController *glvc=[[GoogleLoginViewController alloc] initWithNibName:@"GoogleLoginViewController" bundle:nil];
                 glvc.isBind=YES;
                 glvc.isSync=YES;
@@ -186,9 +196,10 @@ NSArray *accountBindsArrs;//用户绑定的账号
                     [g_ASIQuent addOperation:bindListRequest];
                     
                     [self addRequestTAG:Local_CalendarOperation_Tag];
-                    NSDictionary *userInfoDic=[loginUser objectForKey:@"data"];//请求到的用信息
-    
-                    UserInfo *uInfo=[UserInfo currUserInfo];//当前用户信息对象
+                     NSMutableDictionary *userInfoDic=[NSMutableDictionary dictionaryWithDictionary:[loginUser objectForKey:@"data"]] ;//请求到的用信息
+                    [userInfoDic removeObjectForKey:@"password"];//防止密码被空String 覆盖 删除
+                     
+                    uInfo=[UserInfo currUserInfo];//当前用户信息对象
                     [uInfo parseDictionary:userInfoDic];
                     uInfo.gender=[[userInfoDic objectForKey:@"gender"] intValue]==0?gender_woman:gender_man;
                     if (uInfo.imgUrl) {
@@ -199,12 +210,12 @@ NSArray *accountBindsArrs;//用户绑定的账号
                     }
                     
                     //accountBinds =     ({account = "yanjaya5201314@gmail.com";type = 1;uid = 76;})
-                    NSArray *accountBinds=[userInfoDic objectForKey:@"accountBinds"] ;
+                    NSArray *accountBinds=uInfo.accountBinds ;
                     if (accountBinds.count>0) {
                          ASIHTTPRequest *googleBindListRequest= [t_Network httpGet:nil Url:Get_Google_GetCalendarList Delegate:self Tag:Get_Google_GetCalendarList_Tag];
                         [g_ASIQuent addOperation:googleBindListRequest];
                         [self addRequestTAG:Get_Google_GetCalendarList_Tag];
-                         [userInfo setValue:[userInfoDic objectForKey:@"accountBinds"] forKey:@"accountBinds"];
+                        // [userInfo setValue:[userInfoDic objectForKey:@"accountBinds"] forKey:@"accountBinds"];
                     }
                    
                     AT_Account *atAcount=[AT_Account MR_createEntity];
@@ -213,7 +224,11 @@ NSArray *accountBindsArrs;//用户绑定的账号
                     atAcount.accountType=@(AccountTypeLocal);
                     [self.accountArr addObject:atAcount];
                     self.emailStr=userEmail;
-                    [userInfo setValue:userEmail forKey:@"email"];
+                    //[userInfo setValue:userEmail forKey:@"email"];
+                    
+                    NSData * userInfoData = [NSKeyedArchiver archivedDataWithRootObject:uInfo];
+                    [USER_DEFAULT setObject:userInfoData forKey:CURRENTUSERINFO];
+                    [USER_DEFAULT synchronize];
                 }
             }
             break;
@@ -221,7 +236,7 @@ NSArray *accountBindsArrs;//用户绑定的账号
         case Local_CalendarOperation_Tag:{//得到本地日历
             NSMutableDictionary *localDataDic=[responseStr objectFromJSONString];
             NSString *statusCode=[localDataDic objectForKey:@"statusCode"];
-            accountBindsArrs=[userInfo objectForKey:@"accountBinds"];
+            accountBindsArrs = uInfo.accountBinds ;
             
             if ([@"1" isEqualToString:statusCode]) {//成功取得本地日历列表
                 NSArray *arr=[localDataDic objectForKey:@"data"];
@@ -285,7 +300,7 @@ NSArray *accountBindsArrs;//用户绑定的账号
                 
                 [self.calendarListArr addObject:googleArr];
                 
-                NSArray *accountArr=[userInfo objectForKey:@"accountBinds"];
+                NSArray *accountArr = uInfo.accountBinds ;;
                 NSMutableArray *accArr=[NSMutableArray arrayWithCapacity:0];
                 if (accountArr&&accountArr.count>0) {
                     for (NSDictionary *accountDic in accountArr) {
@@ -330,7 +345,7 @@ NSArray *accountBindsArrs;//用户绑定的账号
         }
         default:
             break;
-       [userInfo synchronize];
+      // [userInfo synchronize];
     }
 }
 
@@ -361,6 +376,7 @@ NSArray *accountBindsArrs;//用户绑定的账号
         }
      [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
 }
+
 -(AnyEvent *)paseLocalEventData:(NSDictionary *) dataDic{
     AnyEvent *anyEvent=[AnyEvent MR_createEntity];
     

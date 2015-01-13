@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 @protocol getlocationDelegate <NSObject>
+
 -(void)getlocation:(NSString*) name coordinate:(NSDictionary *) coordinatesDic;
+
 @end
 
 @interface LocationViewController : UIViewController 

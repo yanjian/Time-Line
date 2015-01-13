@@ -10,5 +10,8 @@
 
 @interface UserApplyTableViewCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *userHead;
+@property (weak, nonatomic) IBOutlet UILabel *userRequestInfo;
+@property (weak, nonatomic) IBOutlet UIButton *acceptBtn;
+@property (weak, nonatomic) IBOutlet UIButton *denyBtn;
 
 @end

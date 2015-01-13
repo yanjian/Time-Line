@@ -51,4 +51,8 @@
 -(NSString *) formatStringWithStringDate:(NSString *) dateString;
 
 -(NSString *) formatStringWithString:(NSString *) stringDate;
+
+-(NSString *) datewithstringEnglist:(NSDate *)date;
+-(NSDate *) stringToDate:(NSString *) dateStr;
+-(NSString *) shortTimeFromDate:(NSDate *) date;
 @end

@@ -122,14 +122,14 @@
  
     
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Cross.png"] forState:UIControlStateNormal];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Cross"] forState:UIControlStateNormal];
     [leftBtn setFrame:CGRectMake(0, 2, 25, 25)];
     [leftBtn addTarget:self action:@selector(onClickCancel) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
     
     
     UIButton*  rightBtn_arrow = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn_arrow setBackgroundImage:[UIImage imageNamed:@"Icon_Tick.png"] forState:UIControlStateNormal];
+    [rightBtn_arrow setBackgroundImage:[UIImage imageNamed:@"Icon_Tick"] forState:UIControlStateNormal];
     [rightBtn_arrow setFrame:CGRectMake(0, 2, 30, 25)];
     [rightBtn_arrow addTarget:self action:@selector(onClickAdd) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn_arrow];
@@ -227,7 +227,7 @@
     
     //alert按钮初始化
     NSArray *arr = [[NSArray alloc] initWithObjects:@"1d",@"0.5h",@"5m",@"2d",@"1h",@"10m",@"7d",@"2h",@"15m", nil];
-    for (int i=0; i<arr.count; i++) {
+    for (NSUInteger i=0; i<arr.count; i++) {
         UIButton *btn = [[UIButton alloc] init];
         btn.tag = i+10;
         CGRect frame;
@@ -583,11 +583,11 @@
 //取消返回
 - (void)onClickCancel
 {
-   // if ([state isEqualToString:@"edit"]) {
+    if ([state isEqualToString:@"edit"]) {
         [self.navigationController popViewControllerAnimated:YES];
-        //return;
-  //  }
-    //[self dismissViewControllerAnimated:YES completion:nil];
+        return;
+    }
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(void)dissViewcontroller{
@@ -806,7 +806,7 @@
         if (indexPath.section==4) {//alerts 提醒
             if (indexPath.row==0) {
                 NSArray *array = [[NSArray alloc] initWithObjects:@"Alert_Day.png",@"Alert_Hour.png",@"Alert_Minute.png", nil];
-                for (int i=0; i<3; i++)
+                for (NSUInteger i=0; i<3; i++)
                 {
                     UIImageView*imageview = [[UIImageView alloc] init];
                     imageview.frame = CGRectMake(50+(i*100), 30, 30, 30);
@@ -1016,7 +1016,6 @@
     }
     
 }
-
 
 
 -(void)selectValueWithDateString:(NSString *) dateString repeatRecurrence:(RecurrenceModel *)recurrence{
@@ -1343,7 +1342,7 @@
         }
         if (timeSecArr&&timeSecArr.count>0) {
             [timeSecArr addObject:@(0)];//表示当前事件的开始时间
-            for (int i=0; i<timeSecArr.count; i++) {
+            for (NSUInteger i=0; i<timeSecArr.count; i++) {
                 NSTimeInterval t=[[timeSecArr objectAtIndex:i] doubleValue];
                 NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
                 [formatter setDateFormat:@"YYYY年 M月d日HH:mm"];
@@ -1438,7 +1437,7 @@
     NSUInteger acount=[narry count];
     if (acount>0)
     {
-        for (int i=0; i<acount; i++)
+        for (NSUInteger i=0; i<acount; i++)
         {
             UILocalNotification *myUILocalNotification = [narry objectAtIndex:i];
             NSDictionary *userInfo = myUILocalNotification.userInfo;

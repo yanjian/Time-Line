@@ -218,9 +218,7 @@
         isLogout=YES;
         ASIHTTPRequest *request =  [t_Network httpGet:nil Url:account_Logoff Delegate:self Tag:account_Logoff_Tag];
         [request startAsynchronous];
-        NSUserDefaults *userInfo=[NSUserDefaults standardUserDefaults];
-        
-        NSPredicate *pre=[NSPredicate predicateWithFormat:@"account==%@",[userInfo objectForKey:@"email"]];
+        NSPredicate *pre=[NSPredicate predicateWithFormat:@"account==%@",[UserInfo currUserInfo].email];
         NSArray  *atAccountArr=[AT_Account MR_findAllWithPredicate:pre];
         
         for(AT_Account *atAccount in atAccountArr){
@@ -228,8 +226,8 @@
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         }
         
-        [g_AppDelegate clearUserDefault:userInfo];
-        [userInfo synchronize];
+        [USER_DEFAULT removeObjectForKey:CURRENTUSERINFO];
+        [USER_DEFAULT synchronize];
         [self closeNavigation];
     }
 }

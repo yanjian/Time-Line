@@ -99,7 +99,7 @@
         NSArray *tmpArr=[self.suggestionOptions objectAtIndex:indexPath.row];
         if (tmpArr.count>1) {
             NSString *strData=@"";
-            for (int i=0; i<tmpArr.count; i++) {
+            for (NSUInteger i=0; i<tmpArr.count; i++) {
                 if (i==0) {
                     UILabel *datalabel = [[UILabel alloc] initWithFrame:CGRectMake(27, 0, 300, 22)];
                     datalabel.text=tmpArr[i];
@@ -186,7 +186,7 @@
             NSLog(@"%@",[ndic valueForKey:@"description"]);
             NSMutableArray *ma=[NSMutableArray array];
             NSArray *tmpArr= [ndic valueForKey:@"terms"];
-            for (int i=0; i<tmpArr.count; i++) {
+            for (NSUInteger i=0; i<tmpArr.count; i++) {
                 if (0==i) {
                      [tmpDir setObject:[ndic valueForKey:@"reference"] forKey:[tmpArr[i] valueForKey:@"value"]];
                 }

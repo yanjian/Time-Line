@@ -7,6 +7,7 @@
 //
 #include <math.h>
 #import "PublicMethodsViewController.h"
+#import "CalendarDateUtil.h"
 
 @interface PublicMethodsViewController ()
 
@@ -270,6 +271,28 @@ static PublicMethodsViewController * PublicMethods = nil;
 }
 
 
+-(NSDate *) stringToDate:(NSString *) dateStr{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    [formatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];// ----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
+    
+    NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
+    [formatter setTimeZone:timeZone];
+    return [formatter dateFromString:dateStr];
+}
+
+
+-(NSString *) shortTimeFromDate:(NSDate *) date{
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    [formatter setDateFormat:@"HH:mm"];// ----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
+    
+    NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
+    [formatter setTimeZone:timeZone];
+    return [formatter stringFromDate:date];
+}
+
 - (NSString *)timeDifference: (NSString *) theDate getStrart:(NSString*)startdate
 {
     
@@ -455,6 +478,95 @@ static PublicMethodsViewController * PublicMethods = nil;
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+
+-(NSString *) datewithstringEnglist:(NSDate *)date{
+     NSString *month = [self monthStringWithInteger:[CalendarDateUtil getMonthWithDate:date]];
+    
+      NSInteger day = [CalendarDateUtil getDayWithDate:date];
+      NSString * week = [self weekStringWithInteger:[CalendarDateUtil getWeekDayWithDate:date]];
+      //NSInteger year = [CalendarDateUtil getYearWithDate:date];
+    
+    return [NSString stringWithFormat:@"%@,%@ %d",week,month,day];
+}
+
+
+-(NSString *) weekStringWithInteger:(NSUInteger)weekday{
+    NSString *weakStr;
+    switch (weekday-1) {
+        case 0:
+            weakStr=@"Sunday";
+            break;
+        case 1:
+            weakStr=@"Monday";
+            break;
+        case 2:
+            weakStr=@"Tuesday";
+            break;
+        case 3:
+            weakStr=@"Wednesday";
+            break;
+        case 4:
+            weakStr=@"Thursday";
+            break;
+        case 5:
+            weakStr=@"Friday";
+            break;
+        case 6:
+            weakStr=@"Saturday";
+            break;
+        default:
+            break;
+    }
+    return  weakStr;
+}
+
+
+-(NSString *)monthStringWithInteger:(NSUInteger)month{
+    NSString *title;
+    switch (month) {
+        case 1:
+            title = @"January";
+            break;
+        case 2:
+            title = @"February";
+            break;
+        case 3:
+            title = @"March";
+            break;
+        case 4:
+            title = @"April";
+            break;
+        case 5:
+            title = @"May";
+            break;
+        case 6:
+            title = @"June";
+            break;
+        case 7:
+            title = @"July";
+            break;
+        case 8:
+            title = @"August";
+            break;
+        case 9:
+            title = @"September";
+            break;
+        case 10:
+            title = @"October";
+            break;
+        case 11:
+            title = @"November";
+            break;
+        case 12:
+            title = @"December";
+            break;
+            
+        default:
+            break;
+    }
+    return title;
 }
 
 /*

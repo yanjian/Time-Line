@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "37C567B11FC4FC6AEA3E2613"
+               BlueprintIdentifier = "431470CE1E3A04685024D85F"
                BuildableName = "libPods-SloppySwiper.a"
                BlueprintName = "Pods-SloppySwiper"
                ReferencedContainer = "container:Pods.xcodeproj">

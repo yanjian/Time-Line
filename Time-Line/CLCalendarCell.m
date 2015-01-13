@@ -30,7 +30,7 @@
          //日历的背景色
         self.backgroundColor = [UIColor whiteColor];
         
-        for (int i = 0; i < 7; i++)
+        for (NSUInteger i = 0; i < 7; i++)
         {
             //日历中的每个日期的背景
             UIImageView *bgView = [[UIImageView alloc] initWithFrame:CGRectMake(kScreen_Width/7*i+12.3, 7.8, 25, 25)];
@@ -60,7 +60,7 @@
 
 - (void)setWeekArr:(NSArray *)weekArr
 {
-    for (int i = 0; i < weekArr.count && i < _btnArray.count; i++) {
+    for (NSUInteger i = 0; i < weekArr.count && i < _btnArray.count; i++) {
         
         UIButton *temp = [_btnArray objectAtIndex:i];
         UIImageView *tempBgView = [_bgArray objectAtIndex:i];

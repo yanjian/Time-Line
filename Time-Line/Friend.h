@@ -14,7 +14,7 @@
 
 @property  (nonatomic, copy)  NSString * Id;
 @property  (nonatomic, copy)  NSString * icon;
-@property  (nonatomic, copy)  NSString * note;
+@property  (nonatomic, copy)  NSString * alias;
 @property  (nonatomic, copy)  NSString * username;
 @property  (nonatomic, copy)  NSString * email;
 @property  (nonatomic, copy)  NSString * nickname;

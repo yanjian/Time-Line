@@ -10,8 +10,11 @@
 #import "ActiveTableViewCell.h"
 #import "UserApplyTableViewCell.h"
 
-@interface NoticesViewController ()<UITableViewDataSource,UITableViewDelegate>
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@interface NoticesViewController ()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate>{
+    NSMutableArray * _noticeArr;
+
+}
+@property (strong, nonatomic)  UITableView *tableView;
 
 @end
 
@@ -19,13 +22,41 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 44, kScreen_Width, kScreen_Height-naviHigth) style:UITableViewStyleGrouped];
-    self.tableView.dataSource=self;
-    self.tableView.delegate=self;
-    self.view =self.tableView;
-    // Do any additional setup after loading the view from its nib.
+    CGRect frame = CGRectMake(0, naviHigth, kScreen_Width, kScreen_Height);
+    self.view.frame=frame;
+    
+    self.tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height-frame.origin.y) style:UITableViewStyleGrouped];
+    
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    [self.view addSubview:self.tableView];
+    // [self loadUserRequestInfo];
     
 }
+
+-(void)loadUserRequestInfo{
+    ASIHTTPRequest  *msgRequest = [t_Network httpGet:nil Url:anyTime_GetUserMessage2 Delegate:self Tag:anyTime_GetUserMessage2_tag];
+    [msgRequest startAsynchronous];
+    
+}
+
+
+
+- (void)requestFinished:(ASIHTTPRequest *)request{
+    switch (request.tag) {
+        case anyTime_GetUserMessage2_tag:{
+            
+        
+        
+        }
+        break;
+            
+        default:
+            break;
+    }
+
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -46,7 +77,7 @@
     if (indexPath.section%2==0) {
         return 110.f;
     }else{
-        return 170.f;
+        return 215.f;
     }
     
 }

@@ -126,12 +126,6 @@
 #define COCOAPODS_VERSION_MINOR_KVNProgress 1
 #define COCOAPODS_VERSION_PATCH_KVNProgress 3
 
-// MBProgressHUD
-#define COCOAPODS_POD_AVAILABLE_MBProgressHUD
-#define COCOAPODS_VERSION_MAJOR_MBProgressHUD 0
-#define COCOAPODS_VERSION_MINOR_MBProgressHUD 9
-#define COCOAPODS_VERSION_PATCH_MBProgressHUD 0
-
 // MSCollectionViewCalendarLayout
 #define COCOAPODS_POD_AVAILABLE_MSCollectionViewCalendarLayout
 #define COCOAPODS_VERSION_MAJOR_MSCollectionViewCalendarLayout 0
@@ -149,6 +143,12 @@
 #define COCOAPODS_VERSION_MAJOR_PEPhotoCropEditor 1
 #define COCOAPODS_VERSION_MINOR_PEPhotoCropEditor 3
 #define COCOAPODS_VERSION_PATCH_PEPhotoCropEditor 1
+
+// RMDateSelectionViewController
+#define COCOAPODS_POD_AVAILABLE_RMDateSelectionViewController
+#define COCOAPODS_VERSION_MAJOR_RMDateSelectionViewController 1
+#define COCOAPODS_VERSION_MINOR_RMDateSelectionViewController 4
+#define COCOAPODS_VERSION_PATCH_RMDateSelectionViewController 1
 
 // Reachability
 #define COCOAPODS_POD_AVAILABLE_Reachability

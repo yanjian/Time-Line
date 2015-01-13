@@ -125,35 +125,26 @@ UINavigationController *nav;
     }
 }
 
--(void) clearUserDefault:(NSUserDefaults *) userInfo{
-    [userInfo removeObjectForKey:@"userName"];
-    [userInfo removeObjectForKey:@"loginStatus"];
-    [userInfo removeObjectForKey:@"accountBinds"];
-    [userInfo removeObjectForKey:@"email"];
-    [userInfo removeObjectForKey:@"authCode"];
-    [userInfo removeObjectForKey:@"pwd"];
-    [userInfo removeObjectForKey:@"accountType"];
-}
-
 -(void)userLogin{
-    if ([USER_DEFAULT objectForKey:@"userName"]) {
+    UserInfo * currUserInfo = [UserInfo currUserInfo] ;
+    if (currUserInfo) {
         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
-        BOOL isAccount=[[USER_DEFAULT objectForKey:@"accountType"] boolValue];
-        if (isAccount) {//本地账号
-            [paramDic setObject:[USER_DEFAULT objectForKey:@"userName"]forKey:@"uName"];
-            [paramDic setObject:[USER_DEFAULT objectForKey:@"pwd"] forKey:@"uPw"];
+        AccountType isAccount=currUserInfo.accountType;
+        if (isAccount == AccountTypeLocal) {//本地账号
+            [paramDic setObject:currUserInfo.username forKey:@"uName"];
+            [paramDic setObject:currUserInfo.password forKey:@"uPw"];
             [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
             ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
             [request startAsynchronous];
-            return;
-        }
-        if([USER_DEFAULT objectForKey:@"email"] )
-            [paramDic setObject:[USER_DEFAULT objectForKey:@"email"] forKey:@"email"];
-        if ([USER_DEFAULT objectForKey:@"authCode"]) {
-            [paramDic setObject:[USER_DEFAULT objectForKey:@"authCode"] forKey:@"authCode"];
-            [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
-            ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
-            [request startAsynchronous];
+        }else if (isAccount == AccountTypeGoogle){
+            if(currUserInfo.email)
+                [paramDic setObject:currUserInfo.email forKey:@"email"];
+            if (currUserInfo.authCode) {
+                [paramDic setObject:currUserInfo.authCode forKey:@"authCode"];
+                [paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
+                ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+                [request startAsynchronous];
+            }
         }
     }
 }
@@ -162,11 +153,12 @@ UINavigationController *nav;
 -(void)initMainView
 {
     homeVC=[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
+    
     homeVC.isRefreshUIData=YES;//初始化的时候刷新ui加载数据
-    nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
-    nav.navigationBarHidden=YES;
-    nav.navigationBar.translucent=NO;
-    self.window.rootViewController=nav;
+//    nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
+//    nav.navigationBarHidden=YES;
+//    nav.navigationBar.translucent=NO;
+    self.window.rootViewController=homeVC;
     [self.window makeKeyAndVisible];
 }
 
@@ -193,14 +185,14 @@ UINavigationController *nav;
         if(count>0)
         {
             NSMutableArray *newarry= [NSMutableArray arrayWithCapacity:0];
-            for (int i=0; i<count; i++) {
+            for (NSUInteger i=0; i<count; i++) {
                 UILocalNotification *notif=[[[UIApplication sharedApplication] scheduledLocalNotifications] objectAtIndex:i];
                 notif.applicationIconBadgeNumber=i+1;
                 [newarry addObject:notif];
             }
             [[UIApplication sharedApplication] cancelAllLocalNotifications];
             if (newarry.count>0) {
-                for (int i=0; i<newarry.count; i++) {
+                for (NSUInteger i=0; i<newarry.count; i++) {
                     UILocalNotification *notif = [newarry objectAtIndex:i];
                     [[UIApplication sharedApplication] scheduleLocalNotification:notif];
                 }
@@ -280,14 +272,14 @@ UINavigationController *nav;
     if(count>0)
     {
         NSMutableArray *newarry= [NSMutableArray arrayWithCapacity:0];
-        for (int i=0; i<count; i++) {
+        for (NSUInteger i=0; i<count; i++) {
             UILocalNotification *notif=[[[UIApplication sharedApplication] scheduledLocalNotifications] objectAtIndex:i];
             notif.applicationIconBadgeNumber=i+1;
             [newarry addObject:notif];
         }
         [[UIApplication sharedApplication] cancelAllLocalNotifications];
         if (newarry.count>0) {
-            for (int i=0; i<newarry.count; i++) {
+            for (NSUInteger i=0; i<newarry.count; i++) {
                 UILocalNotification *notif = [newarry objectAtIndex:i];
                 [[UIApplication sharedApplication] scheduleLocalNotification:notif];
             }

@@ -35,7 +35,7 @@
         }
     }
     NSArray *array=[enumeratorKey allObjects];
-    for (int i=0;i<[array count];i++)
+    for (NSUInteger i=0;i<[array count];i++)
     {
         NSObject *object=[array objectAtIndex:i];
         NSString *key=[object description];
@@ -47,8 +47,9 @@
             urlString =[NSString stringWithFormat:@"%@%@=%@&",urlString,key,[value valueForKey:key]];
         }
     }
-    urlString=[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSLog(@"requestURL: %@",urlString);
+    urlString=[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    //NSLog(@"requestURL: %@",urlString);
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:urlString]];
     [request setDelegate:delegate];
     [request setRequestMethod:@"GET"];
@@ -106,7 +107,7 @@
         [request setUserInfo:dictionary];
     }
     if (value) {
-        for (int i=0; i<allKeyArr.count; i++) {
+        for (NSUInteger i=0; i<allKeyArr.count; i++) {
             NSString *key=allKeyArr[i];
             [request setPostValue:[value objectForKey:key] forKey:key];
         }

@@ -15,7 +15,7 @@ typedef enum{
 
 
 @interface UserInfo :BaseMode
-@property (nonatomic,strong) NSString *id;
+@property (nonatomic,strong) NSString *Id;
 @property (nonatomic,strong) NSArray *accountBinds;
 @property (nonatomic,strong) NSString *authCode;
 @property (nonatomic,strong) NSString *email;
@@ -31,6 +31,9 @@ typedef enum{
 @property (nonatomic,strong) NSString *tokenTime;
 @property (nonatomic,strong) NSString *type;
 @property (nonatomic,strong) NSString *username;
+
+@property (nonatomic,assign) UserLoginStatus  loginStatus;//登陆状态
+@property (nonatomic,assign) AccountType  accountType;//登陆账号的类型
 
 +(instancetype)currUserInfo;
 @end

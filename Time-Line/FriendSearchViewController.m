@@ -80,7 +80,7 @@
 
 
 -(void)onClickClose{
-    [self.navigationController popViewControllerAnimated:YES];
+    [self  dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)searchFriendAdd:(UIButton *)sender {
@@ -170,7 +170,7 @@
     
     cell.textLabel.textColor = friend.isVip ? [UIColor redColor] : [UIColor blackColor];
     cell.textLabel.text = friend.nickname;
-    cell.detailTextLabel.text = friend.note;
+    cell.detailTextLabel.text = friend.alias;
     return cell;
 }
 

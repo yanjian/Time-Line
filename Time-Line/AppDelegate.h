@@ -30,8 +30,6 @@
 
 -(void)autoUserWithLogin;
 -(void)initMainView;
-//清理存储在NSUserDefaults中的信息
--(void) clearUserDefault:(NSUserDefaults *) userInfo;
 //文件归档
 - (void) saveFileWithArray: (NSMutableArray*)activityArray fileName:(NSString *) name;
 //文件解档

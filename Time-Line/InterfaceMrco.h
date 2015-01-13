@@ -24,6 +24,14 @@
 #define cancelled @"cancelled" //google的事件状态
 #define confirmed @"confirmed"  
 
+
+
+//===================================保存在NSUserDefaults的key的定义===============================================
+#define CURRENTUSERINFO @"currentlyUserInfo" //从 NSUserDefaults 中取出保存的当前用户信息
+
+
+//===============================================================================================================
+
 typedef NS_ENUM(NSInteger, eventStatus) {
     eventStatus_confirmed=0,
     eventStatus_cancelled=1
@@ -168,6 +176,9 @@ typedef NS_ENUM(NSInteger , AccountType){
 #define Google_CalendarEventRepeat [NSString stringWithFormat:@"%@/servlet/GoogleCalendarEventRepeat",BASEURL_IP]
 #define Google_CalendarEventRepeat_tag 19
 
+
+//***************************************添加好友或组等（第二期）***************************************************//
+
 //更新用户信息
 #define UserInfo_UpdateUserInfo [NSString stringWithFormat:@"%@/servlet/updateUserInfo",BASEURL_IP]
 #define UserInfo_UpdateUserInfo_tag 20
@@ -175,11 +186,6 @@ typedef NS_ENUM(NSInteger , AccountType){
 //更新用户头像
 #define UserInfo_UploadImg [NSString stringWithFormat:@"%@/servlet/uploadImg",BASEURL_IP]
 #define UserInfo_UploadImg_tag 21
-
-
-
-
-//***************************************添加好友或组等（第二期）***************************************************//
 
 //新增组
 #define anyTime_AddFTeam [NSString stringWithFormat:@"%@/servlet/AddFTeam",BASEURL_IP]
@@ -209,7 +215,6 @@ typedef NS_ENUM(NSInteger , AccountType){
 #define anyTime_GetUserMessage_tag 35
 
 //得到用户未读消息 GetUserMessage2
-
 #define anyTime_GetUserMessage2 [NSString stringWithFormat:@"%@/servlet/GetUserMessage2",BASEURL_IP]
 #define anyTime_GetUserMessage2_tag 36
 
@@ -230,6 +235,64 @@ typedef NS_ENUM(NSInteger , AccountType){
 //加好友申请  AddFriend
 #define anyTime_AddFriend [NSString stringWithFormat:@"%@/servlet/AddFriend",BASEURL_IP]
 #define anyTime_AddFriend_tag 40
+
+
+
+//新增社交活动 AddEvents
+#define anyTime_AddEvents [NSString stringWithFormat:@"%@/servlet/AddEvents",BASEURL_IP]
+#define anyTime_AddEvents_tag 41
+
+//上传社交活动图片 EventAddPhoto
+#define anyTime_EventAddPhoto [NSString stringWithFormat:@"%@/servlet/EventAddPhoto",BASEURL_IP]
+#define anyTime_EventAddPhoto_tag 42
+
+//得到社交活动 Events
+#define anyTime_Events [NSString stringWithFormat:@"%@/servlet/Events",BASEURL_IP]
+#define anyTime_Events_tag 43
+
+
+//更新参加活动状态 JoinEvent
+#define anyTime_JoinEvent [NSString stringWithFormat:@"%@/servlet/JoinEvent",BASEURL_IP]
+#define anyTime_JoinEvent_tag 44
+
+//社交活动时间投票 VoteTimeForEvent
+#define anyTime_VoteTimeForEvent [NSString stringWithFormat:@"%@/servlet/VoteTimeForEvent",BASEURL_IP]
+#define anyTime_VoteTimeForEvent_tag 45
+
+//投票社交活动中的问题投票 VoteEventOtherOption
+
+#define anyTime_VoteEventOtherOption [NSString stringWithFormat:@"%@/servlet/VoteEventOtherOption",BASEURL_IP]
+#define anyTime_VoteEventOtherOption_tag 46
+
+
+//取消投票社交活动中的问题投票 VoteEventOtherOptionCancel
+#define anyTime_VoteEventOtherOptionCancel [NSString stringWithFormat:@"%@/servlet/VoteEventOtherOptionCancel",BASEURL_IP]
+#define anyTime_VoteEventOtherOptionCancel_tag 47
+
+//添加投票时间  AddEventTime
+#define anyTime_AddEventTime [NSString stringWithFormat:@"%@/servlet/AddEventTime",BASEURL_IP]
+#define anyTime_AddEventTime_tag 48
+
+
+//社交活动增加问题投票 AddEventVote
+#define anyTime_AddEventVote [NSString stringWithFormat:@"%@/servlet/AddEventVote",BASEURL_IP]
+#define anyTime_AddEventVote_tag 49
+
+
+// 社交活动增加问题投票中的选项 AddEventVoteOption
+#define anyTime_AddEventVoteOption [NSString stringWithFormat:@"%@/servlet/AddEventVoteOption",BASEURL_IP]
+#define anyTime_AddEventVoteOption_tag 50
+
+//更新社交活动 UpdateEvents
+#define anyTime_UpdateEvents [NSString stringWithFormat:@"%@/servlet/UpdateEvents",BASEURL_IP]
+#define anyTime_UpdateEvents_tag 51
+
+
+
+
+
+
+
 
 
 
