@@ -117,7 +117,7 @@
                 if ([objGroup isKindOfClass:[NSDictionary class]]) {
                     NSString *statusCode = [objGroup objectForKey:@"statusCode"];
                     if ([statusCode isEqualToString:@"1"]) {
-                       [KVNProgress showSuccess];
+                       [MBProgressHUD showSuccess:@"Update Success"];
                         if ([_delegate respondsToSelector:@selector(clickHeadView)]) {
                             [_delegate clickHeadView];
                         }
@@ -139,7 +139,7 @@
                 if ([objGroup isKindOfClass:[NSDictionary class]]) {
                     NSString *statusCode = [objGroup objectForKey:@"statusCode"];
                     if ([statusCode isEqualToString:@"1"]) {
-                        [KVNProgress showSuccess];
+                         [MBProgressHUD showSuccess:@"Delete Success"];
                     }
                 }
                 if ([_delegate respondsToSelector:@selector(clickHeadView)]) {

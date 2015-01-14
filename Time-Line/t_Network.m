@@ -7,7 +7,7 @@
 //
 
 #import "t_Network.h"
-
+#import "ASIDownloadCache.h"
 @implementation t_Network
 
 /**
@@ -49,7 +49,7 @@
     }
     NSLog(@"requestURL: %@",urlString);
     urlString=[urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    //NSLog(@"requestURL: %@",urlString);
+
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:urlString]];
     [request setDelegate:delegate];
     [request setRequestMethod:@"GET"];

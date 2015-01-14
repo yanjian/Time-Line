@@ -229,7 +229,8 @@
 -(void)saveNewVoteContext{
 
     if (!_placeText.text||[@"" isEqualToString:_placeText.text]) {
-        [KVNProgress showErrorWithStatus:@"Please Enter An Question!"];
+        [MBProgressHUD showError:@"Please Enter An Question!"];
+        
         [_placeText becomeFirstResponder];
         return;
     }

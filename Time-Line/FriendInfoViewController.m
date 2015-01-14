@@ -61,9 +61,15 @@
 - (void)loadData
 {
     ASIHTTPRequest *_friendGroups = [t_Network httpGet:nil Url:anyTime_GetFTlist Delegate:self Tag:anyTime_GetFTlist_tag];
+    [_friendGroups setDownloadCache:g_AppDelegate.anyTimeCache] ;
+    [_friendGroups setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
+    [_friendGroups setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
     [_friendGroups startSynchronous];
     
     ASIHTTPRequest *_friend = [t_Network httpGet:nil Url:anyTime_GetFriendList Delegate:self Tag:anyTime_GetFriendList_tag];
+    [_friend setDownloadCache:g_AppDelegate.anyTimeCache] ;
+    [_friend setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
+    [_friend setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
     [_friend startSynchronous];
 }
 
@@ -156,9 +162,10 @@
         __block FriendGroup  *friendGroup= [[FriendGroup alloc ] init];
         friendGroup.name=[alertView textFieldAtIndex:0].text;
         
-        __block ASIHTTPRequest *addGroupsRequest = [t_Network httpPostValue:@{@"name": friendGroup.name}.mutableCopy Url:anyTime_AddFTeam Delegate:nil Tag:anyTime_AddFTeam_tag];
+         ASIHTTPRequest *addGroupsRequest = [t_Network httpPostValue:@{@"name": friendGroup.name}.mutableCopy Url:anyTime_AddFTeam Delegate:nil Tag:anyTime_AddFTeam_tag];
+        __block ASIHTTPRequest *groupsRequest = addGroupsRequest;
         [addGroupsRequest setCompletionBlock:^{//请求成功
-            NSString * responseStr = [addGroupsRequest responseString];
+            NSString * responseStr = [groupsRequest responseString];
             NSLog(@"%@",responseStr);
             id objGroup = [responseStr objectFromJSONString];
             if ([objGroup isKindOfClass:[NSDictionary class]]) {
@@ -171,7 +178,7 @@
         }];
         
         [addGroupsRequest setFailedBlock:^{//请求失败
-            NSLog(@"%@",[addGroupsRequest responseString]);
+            NSLog(@"%@",[groupsRequest responseString]);
             
         }];
         
@@ -204,9 +211,6 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    //   UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    //    cell.imageView.layer.cornerRadius =  cell.imageView.frame.size.width / 2;
-    //    cell.imageView.layer.masksToBounds = YES;
     return 55.f;
 }
 

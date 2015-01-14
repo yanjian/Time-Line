@@ -1186,7 +1186,7 @@ NS_ENUM(NSInteger, voteAndFixDateType){
 
 -(void)onClickAddActiveEvent{
     if (!_activeEventTitle.text||[@"" isEqualToString:_activeEventTitle.text]) {
-        [KVNProgress showErrorWithStatus:@"Must fill in the Event Title"];
+        [MBProgressHUD showError:@"Must fill in the Event Title"];
         return;
     }
     
@@ -1194,7 +1194,7 @@ NS_ENUM(NSInteger, voteAndFixDateType){
     
     [activeDic setObject:_activeEventTitle.text forKey:@"title"];
     if (newVoteArr.count<=0) {
-        [KVNProgress showErrorWithStatus:@"Must fill in the New vote"];
+        [MBProgressHUD showError:@"Must fill in the New vote"];
         return;
     }
     if (localfiled.text) {
@@ -1210,11 +1210,11 @@ NS_ENUM(NSInteger, voteAndFixDateType){
     if(isEdit){
         if (voteAndFixTimeType ==2 ) {
             if (voteDateArr.count<2) {
-                [KVNProgress showErrorWithStatus:@"Must fill in vote date"];
+                [MBProgressHUD showError:@"Must fill in vote date"];
                 return;
             }
             if (!deadlineTextField.text||[@"" isEqualToString:deadlineTextField.text]) {
-                [KVNProgress showErrorWithStatus:@"Must fill in the deadline"];
+                [MBProgressHUD showError:@"Must fill in the deadline"];
                 return;
             }
             [activeDic setObject:deadlineTime forKey:@"voteEndTime"];
@@ -1262,11 +1262,11 @@ NS_ENUM(NSInteger, voteAndFixDateType){
     
     if (voteAndFixTimeType ==2 ) {
         if (voteDateArr.count<2) {
-            [KVNProgress showErrorWithStatus:@"Must fill in vote date"];
+            [MBProgressHUD showError:@"Must fill in vote date"];
             return;
         }
         if (!deadlineTextField.text||[@"" isEqualToString:deadlineTextField.text]) {
-            [KVNProgress showErrorWithStatus:@"Must fill in the deadline"];
+            [MBProgressHUD showError:@"Must fill in the deadline"];
             return;
         }
         [activeDic setObject:deadlineTime forKey:@"veTime"];
@@ -1307,24 +1307,19 @@ NS_ENUM(NSInteger, voteAndFixDateType){
             NSString * statusCode = [dic objectForKey:@"statusCode"];
             NSError *error = [request error];
             if (error) {
-                [KVNProgress dismiss];
-                [KVNProgress showErrorWithStatus:@"save fail"];
+                [MBProgressHUD showError:@"save fail"];
                 return;
             }
             if ([statusCode isEqualToString:@"1"]) {
                 id  tmpData = [dic objectForKey:@"data"];
                 if([tmpData isKindOfClass:[NSDictionary class]]){
-                    [KVNProgress showSuccessWithParameters: @{KVNProgressViewParameterFullScreen: @(YES),
-                                                              KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-                                                              KVNProgressViewParameterStatus: @"Saving...",
-                                                              KVNProgressViewParameterSuperview: self.view
-                                                              }];
+                    [MBProgressHUD showSuccess:@"Save Success"];
                     
                     NSDictionary *tmpDic = (NSDictionary *)tmpData;
                     NSString *activeId = [tmpDic objectForKey:@"id"];
                     //上传活动图片
                     NSURL *url=[NSURL URLWithString:  [anyTime_EventAddPhoto stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-                    __block ASIFormDataRequest *uploadImageRequest=[ASIFormDataRequest requestWithURL:url] ;
+                     ASIFormDataRequest *uploadImageRequest=[ASIFormDataRequest requestWithURL:url] ;
                     [uploadImageRequest setRequestMethod:@"POST"];
                     [uploadImageRequest setPostValue:activeId forKey:@"eid"];
                     NSData *data = UIImagePNGRepresentation(_activeImgView.image);
@@ -1336,26 +1331,24 @@ NS_ENUM(NSInteger, voteAndFixDateType){
                     
                     [uploadImageRequest addData:imageData withFileName:[NSString stringWithFormat:@"%@.jpg",tmpDate]  andContentType:@"image/jpeg" forKey:@"f1"];
                     [uploadImageRequest setTag:anyTime_EventAddPhoto_tag];
-                    
+                    __block ASIFormDataRequest *uploadRequest = uploadImageRequest;
                     [uploadImageRequest setCompletionBlock:^{
-                        NSString * responseStr = [uploadImageRequest responseString];
+                        NSString * responseStr = [uploadRequest responseString];
                         NSLog(@"数据更新成功：%@",responseStr);
                         id obj = [responseStr objectFromJSONString];
                         if ([obj isKindOfClass:[NSDictionary class]]) {
                             NSDictionary * tmpDic = (NSDictionary *)obj;
                             int statusCode = [[tmpDic objectForKey:@"statusCode"] integerValue];
                             if (statusCode==1) {
-                                [KVNProgress dismissWithCompletion:^{
-                                    [self.navigationController popViewControllerAnimated:YES];
-                                }];
+                                [self.navigationController popViewControllerAnimated:YES];
                             }
                             
                         }
                     }];
                     
                     [uploadImageRequest setFailedBlock:^{
-                        NSLog(@"请求失败：%@",[uploadImageRequest responseString]);
-                        [KVNProgress showErrorWithStatus:@"Please connect to the Internet"];
+                        NSLog(@"请求失败：%@",[uploadRequest responseString]);
+                        [MBProgressHUD showError:@"Please connect to the Internet"];
                     }];
                     [uploadImageRequest startAsynchronous];
                 }

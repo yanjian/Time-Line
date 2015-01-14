@@ -25,13 +25,14 @@ UINavigationController *nav;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    // Override point for customization after application launch.
     self.window=[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor=[UIColor whiteColor];
-    [GMSServices provideAPIKey:GOOGLE_API_KEY];
+    [GMSServices provideAPIKey:GOOGLE_API_KEY];//google地图key值
     
-    [MagicalRecord setupCoreDataStackWithStoreNamed:@"TimeLine.sqlite"];
+    [MagicalRecord setupCoreDataStackWithStoreNamed:@"TimeLine.sqlite"];//coreData 类的加载
     
+    [self createAnyTimeCache];//创建自定义缓存....
+   
     // 监测网络情况
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(reachabilityChanged:)
@@ -39,7 +40,6 @@ UINavigationController *nav;
                                                object: nil];
     Reachability *hostReach = [Reachability reachabilityWithHostname:@"www.baidu.com"];
     [hostReach startNotifier];
-    
     
     //ASI QUENE
     _netWorkQueue= [[ASINetworkQueue alloc] init];
@@ -136,7 +136,7 @@ UINavigationController *nav;
             [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
             ASIHTTPRequest *request=[t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
             [request startAsynchronous];
-        }else if (isAccount == AccountTypeGoogle){
+        }else if (isAccount == AccountTypeGoogle){//google登陆
             if(currUserInfo.email)
                 [paramDic setObject:currUserInfo.email forKey:@"email"];
             if (currUserInfo.authCode) {
@@ -324,5 +324,18 @@ UINavigationController *nav;
         NSLog(@"not exist");
         return nil;
     }
+}
+
+
+-(void)createAnyTimeCache{
+    //自定义缓存
+    ASIDownloadCache *cache = [[ASIDownloadCache alloc] init];
+    self.anyTimeCache = cache;
+    
+    //设置缓存路径
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentDirectory = [paths objectAtIndex:0];
+    [self.anyTimeCache setStoragePath:[documentDirectory stringByAppendingPathComponent:@"anyTimeCache"]];
+    [self.anyTimeCache setDefaultCachePolicy:ASIOnlyLoadIfNotCachedCachePolicy];
 }
 @end

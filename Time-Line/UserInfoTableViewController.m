@@ -79,19 +79,19 @@
 -(void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:animated];
     if (!isSelectHeadImg) {
-        __block  ASIHTTPRequest *userRequest=[t_Network httpGet:@{@"tel":(self.userInfo.phone==nil?@"":self.userInfo.phone),@"name":(self.userInfo.nickName==nil?@"":self.userInfo.nickName),@"gender":@(self.userInfo.gender)}.mutableCopy Url:UserInfo_UpdateUserInfo Delegate:nil Tag:UserInfo_UpdateUserInfo_tag ];
-        
+        ASIHTTPRequest *userRequest=[t_Network httpGet:@{@"tel":(self.userInfo.phone==nil?@"":self.userInfo.phone),@"name":(self.userInfo.nickName==nil?@"":self.userInfo.nickName),@"gender":@(self.userInfo.gender)}.mutableCopy Url:UserInfo_UpdateUserInfo Delegate:nil Tag:UserInfo_UpdateUserInfo_tag ];
+        __block  ASIHTTPRequest *request = userRequest ;
         [userRequest setCompletionBlock:^{
-            NSLog(@"数据更新成功：%@",[userRequest responseString]);
+            NSLog(@"数据更新成功：%@",[request responseString]);
         }];
         
         [userRequest setFailedBlock:^{
-            NSLog(@"请求失败：%@",[userRequest responseString]);
+            NSLog(@"请求失败：%@",[request responseString]);
         }];
         [userRequest startAsynchronous];
         if (isChangImg) {//上传头像
             NSURL *url=[NSURL URLWithString:  [UserInfo_UploadImg stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-            __block ASIFormDataRequest *uploadImageRequest=[ASIFormDataRequest requestWithURL:url] ;
+            ASIFormDataRequest *uploadImageRequest=[ASIFormDataRequest requestWithURL:url] ;
             NSData *data = UIImagePNGRepresentation(self.imageUser.image);
             NSMutableData *imageData = [NSMutableData dataWithData:data];
             [uploadImageRequest setStringEncoding:NSUTF8StringEncoding];
@@ -102,9 +102,9 @@
             
             [uploadImageRequest addData:imageData withFileName:[NSString stringWithFormat:@"%@.jpg",tmpDate]  andContentType:@"image/jpeg" forKey:@"f1"];
             [uploadImageRequest setTag:UserInfo_UploadImg_tag];
-            
+            __block ASIFormDataRequest *uploadRequest = uploadImageRequest ;
             [uploadImageRequest setCompletionBlock:^{
-                NSString * responseStr = [uploadImageRequest responseString];
+                NSString * responseStr = [uploadRequest responseString];
                 NSLog(@"数据更新成功：%@",responseStr);
                 id obj = [responseStr objectFromJSONString];
                 if ([obj isKindOfClass:[NSDictionary class]]) {
@@ -127,7 +127,7 @@
             }];
             
             [uploadImageRequest setFailedBlock:^{
-                NSLog(@"请求失败：%@",[uploadImageRequest responseString]);
+                NSLog(@"请求失败：%@",[uploadRequest responseString]);
             }];
             
             [uploadImageRequest startAsynchronous];

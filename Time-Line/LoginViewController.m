@@ -97,27 +97,17 @@
     }else if (sender.tag==11){//Login button
         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
         if ([@"" isEqualToString:self.username.text]) {
-            [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
-                                                    KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-                                                    KVNProgressViewParameterStatus: @"Please enter your user name",
-                                                    KVNProgressViewParameterSuperview: self.view
-                                                    }];
-
+            [MBProgressHUD showError:@"Please enter your user name"];
             return;
         }
         if ([@"" isEqualToString:self.passwordBtn.text]) {
-            [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
-                                                    KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-                                                    KVNProgressViewParameterStatus: @"Please enter the password",
-                                                    KVNProgressViewParameterSuperview: self.view
-                                                    }];
+            [MBProgressHUD showError:@"Please enter the password"];
             return;
         }
         [paramDic setObject:self.username.text forKey:@"uName"];
         NSString *md5Pw= [[NSString stringWithString:self.passwordBtn.text] md5];
         [paramDic setObject:md5Pw forKey:@"uPw"];
         [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
-        [KVNProgress showProgress:0.5f status:@"Loading"];
         [self addNetWorkRequest:paramDic];
     }else if (sender.tag==12){//sign up button
         LoginRegisterViewController *loginRegist=[[LoginRegisterViewController alloc] init];
@@ -127,6 +117,11 @@
 }
 
 -(void)addNetWorkRequest:(NSMutableDictionary *) dic{
+    if (g_NetStatus == NotReachable) {
+         [MBProgressHUD showError:@"Network connection failure"];
+        return;
+    }
+    [MBProgressHUD showMessage:@"Loading..."];
     ASIHTTPRequest *request= [t_Network httpGet:dic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
     [g_ASIQuent addOperation:request];
     [self addRequestTAG:LOGIN_USER_TAG];
@@ -147,8 +142,8 @@
     NSLog(@"%@",responseStr);
     switch (request.tag) {
         case LOGIN_USER_TAG:{//用户登录
+            [MBProgressHUD hideHUD] ;
             if ([@"1" isEqualToString:responseStr]) {
-                [KVNProgress dismiss];
                 [USER_DEFAULT removeObjectForKey:CURRENTUSERINFO];
                 
                 uInfo=[UserInfo currUserInfo];//当前用户信息对象
@@ -177,12 +172,7 @@
                 googleNav.navigationBar.translucent=NO;
                 [self presentViewController:googleNav animated:YES completion:nil];
             }else{
-                [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
-                                                        KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-                                                        KVNProgressViewParameterStatus: @"account or password error!",
-                                                        KVNProgressViewParameterSuperview: self.view
-                                                        }];
-
+                [MBProgressHUD showError:@"account or password error!"];
              }
             break;
         }
@@ -349,6 +339,13 @@
     }
 }
 
+- (void)requestFailed:(ASIHTTPRequest *)request{
+    NSError *error = [request error];
+    if (error) {
+        NSLog(@"%@",[error userInfo]);
+        [MBProgressHUD showError:@"Error"];
+    }
+}
 
 -(void)synLocalEventData:(Calendar *)localca{
     ASIHTTPRequest *localRequest=[t_Network httpGet:@{@"cid":localca.cid}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"localData":localca}];

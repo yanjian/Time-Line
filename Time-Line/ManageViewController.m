@@ -38,8 +38,9 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
     self.tableView.dataSource=self;
     [self.view  addSubview:self.tableView];
     
-    
-    _activeArr=[self loadActiveData];
+    _activeArr=[self loadActiveData:^{
+        [MBProgressHUD showMessage:@"Loading..." toView:self.view];
+    }];
     
     
     if (_refreshHeaderView == nil) {
@@ -141,11 +142,16 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
 
 
 
--(NSArray *) loadActiveData{
+-(NSArray *) loadActiveData:(void(^)())AddHUD{
      _tmpActiveArr= [NSMutableArray arrayWithCapacity:0];
-    ASIHTTPRequest * activeRequest = [t_Network httpPostValue:nil Url:anyTime_Events Delegate:self Tag:anyTime_Events_tag];
-    
+    ASIHTTPRequest * activeRequest = [t_Network httpGet:nil Url:anyTime_Events Delegate:self Tag:anyTime_Events_tag];
+    [activeRequest setDownloadCache:g_AppDelegate.anyTimeCache] ;
+    [activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
+    [activeRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
     [activeRequest startAsynchronous];
+    if (AddHUD) {
+        AddHUD();
+    }
     return _tmpActiveArr;
 }
 
@@ -153,14 +159,13 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
 - (void)requestFinished:(ASIHTTPRequest *)request{
     NSError *error = [request error];
     if (error) {
-        [KVNProgress showErrorWithStatus:@"error"];
+        [MBProgressHUD showError:@"error"];
     }
     NSString * requestStr =  [request responseString];
     NSDictionary * dic = [requestStr objectFromJSONString];
     NSString * statusCode = [dic objectForKey:@"statusCode"];
     if ([@"1" isEqualToString:statusCode]) {
         id dataObj = [dic objectForKey:@"data"];
-        
         if ([dataObj isKindOfClass:[NSDictionary class]]) {
             NSDictionary *dataDic =(NSDictionary *) dataObj;
             NSArray * memberArr =  [dataDic objectForKey:@"member"];
@@ -185,12 +190,15 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
         }
         [self.tableView reloadData];
     }else{
-        [KVNProgress showErrorWithStatus:@"Request Fail"];
+        [MBProgressHUD showError:@"Request Fail"];
     }
-    
+     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 - (void)requestFailed:(ASIHTTPRequest *)request{
-    
+    NSError * error = [request error];
+    if (error) {
+        [MBProgressHUD hideHUDForView:self.view];
+    }
 }
 
 
@@ -199,24 +207,16 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
     NSLog(@"start");
     _reloading = YES;
     //打开线程，读取下一页数据
-    [NSThread detachNewThreadSelector:@selector(requestNext) toTarget:self withObject:nil];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+         _activeArr=[self loadActiveData:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [_tableView reloadData];
+            [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:0];
+        });
+    });
 }
-
-- (void)requestNext
-{
-    //回到主线程跟新界面
-    [self performSelectorOnMainThread:@selector(dosomething) withObject:nil waitUntilDone:YES];
-}
-
--(void)dosomething
-{
-    
-    [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:0];
-}
-
 
 - (void)doneLoadingTableViewData{
-    
     _reloading = NO;
     [_refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
     NSLog(@"end");
@@ -260,7 +260,7 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
 
 
 -(void)cancelActivedetailsViewController:(ActivedetailsViewController *)activeDetailsViewVontroller{
-      _activeArr=[self loadActiveData];//刷新数据
+    _activeArr=[self loadActiveData:nil];//刷新数据
     [activeDetailsViewVontroller dismissViewControllerAnimated:YES completion:nil];
     
 }

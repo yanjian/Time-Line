@@ -229,6 +229,9 @@
 		A8BB2E7E1A315E220046E1E9 /* ManageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8BB2E7C1A315E220046E1E9 /* ManageViewController.xib */; };
 		A8BB2E821A315E550046E1E9 /* NoticesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BB2E801A315E550046E1E9 /* NoticesViewController.m */; };
 		A8BB2E831A315E550046E1E9 /* NoticesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8BB2E811A315E550046E1E9 /* NoticesViewController.xib */; };
+		A8BBB1941A660EDA001522B2 /* MBProgressHUD+MJ.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BBB1931A660EDA001522B2 /* MBProgressHUD+MJ.m */; };
+		A8BBB1971A660EE5001522B2 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BBB1961A660EE5001522B2 /* MBProgressHUD.m */; };
+		A8BBB1991A660F04001522B2 /* MBProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A8BBB1981A660F04001522B2 /* MBProgressHUD.bundle */; };
 		A8BBD78F1A35E9420036CB9E /* HeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BBD78E1A35E9420036CB9E /* HeadView.m */; };
 		A8BBD7921A35E9DC0036CB9E /* FriendGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BBD7911A35E9DC0036CB9E /* FriendGroup.m */; };
 		A8BBD7951A35EACA0036CB9E /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BBD7941A35EACA0036CB9E /* Friend.m */; };
@@ -631,6 +634,11 @@
 		A8BB2E7F1A315E550046E1E9 /* NoticesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoticesViewController.h; sourceTree = "<group>"; };
 		A8BB2E801A315E550046E1E9 /* NoticesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoticesViewController.m; sourceTree = "<group>"; };
 		A8BB2E811A315E550046E1E9 /* NoticesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NoticesViewController.xib; sourceTree = "<group>"; };
+		A8BBB1921A660EDA001522B2 /* MBProgressHUD+MJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+MJ.h"; sourceTree = "<group>"; };
+		A8BBB1931A660EDA001522B2 /* MBProgressHUD+MJ.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+MJ.m"; sourceTree = "<group>"; };
+		A8BBB1951A660EE5001522B2 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
+		A8BBB1961A660EE5001522B2 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		A8BBB1981A660F04001522B2 /* MBProgressHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MBProgressHUD.bundle; sourceTree = "<group>"; };
 		A8BBD78D1A35E9420036CB9E /* HeadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeadView.h; sourceTree = "<group>"; };
 		A8BBD78E1A35E9420036CB9E /* HeadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HeadView.m; sourceTree = "<group>"; };
 		A8BBD7901A35E9DC0036CB9E /* FriendGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendGroup.h; sourceTree = "<group>"; };
@@ -760,6 +768,7 @@
 		A8116A2119B9A24B003EB3ED /* ThirdLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				A8BBB1911A660EB6001522B2 /* MBProgressHUD */,
 				A8B9CBD01A37FB3C00DA0C54 /* LPPopupListView */,
 				A89117F919C1F03D00A0960B /* MacroDefinition.h */,
 				A88EF52B19ECBFC600AB15B5 /* IBActionSheet */,
@@ -1522,6 +1531,18 @@
 			name = popView;
 			sourceTree = "<group>";
 		};
+		A8BBB1911A660EB6001522B2 /* MBProgressHUD */ = {
+			isa = PBXGroup;
+			children = (
+				A8BBB1981A660F04001522B2 /* MBProgressHUD.bundle */,
+				A8BBB1951A660EE5001522B2 /* MBProgressHUD.h */,
+				A8BBB1961A660EE5001522B2 /* MBProgressHUD.m */,
+				A8BBB1921A660EDA001522B2 /* MBProgressHUD+MJ.h */,
+				A8BBB1931A660EDA001522B2 /* MBProgressHUD+MJ.m */,
+			);
+			name = MBProgressHUD;
+			sourceTree = "<group>";
+		};
 		A8BCF23B1A5D12570062F386 /* view */ = {
 			isa = PBXGroup;
 			children = (
@@ -1746,6 +1767,7 @@
 				A894D84E19B5BACC0088E522 /* PEPhotoCropEditor.bundle in Resources */,
 				A8B7F37B1A2ED166000F7EC5 /* bell_default.png in Resources */,
 				A8B7F3731A2EC8C5000F7EC5 /* setting_press.png in Resources */,
+				A8BBB1991A660F04001522B2 /* MBProgressHUD.bundle in Resources */,
 				A894D84D19B5BACC0088E522 /* Icon_BackArrow1.png in Resources */,
 				A8B9CBDC1A37FB3C00DA0C54 /* closeButton.png in Resources */,
 				A877C95D19B450C50075D9E8 /* Main.storyboard in Resources */,
@@ -1854,6 +1876,8 @@
 				A8BD34341A1313D3005A38FE /* RepeatCalViewController.m in Sources */,
 				A8C668081A3E88010017605A /* AddActiveViewController.m in Sources */,
 				A894D70A19B57F890088E522 /* MapViewController.m in Sources */,
+				A8BBB1941A660EDA001522B2 /* MBProgressHUD+MJ.m in Sources */,
+				A8BBB1971A660EE5001522B2 /* MBProgressHUD.m in Sources */,
 				A8BDABBB1A47F35C00545EC4 /* PlaceholderTextView.m in Sources */,
 				A8BBD7921A35E9DC0036CB9E /* FriendGroup.m in Sources */,
 				A8BA60601A42D6F100992603 /* UIViewController+MJPopupViewController.m in Sources */,

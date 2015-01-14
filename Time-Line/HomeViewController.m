@@ -395,7 +395,6 @@
             [array addObject:dictem];
             [eventDic setObject:array forKey:day];
             [eventDic writeToFile:plistPath atomically:YES];
-            
         }
     }
 }

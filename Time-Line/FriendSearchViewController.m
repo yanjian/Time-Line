@@ -86,16 +86,12 @@
 - (IBAction)searchFriendAdd:(UIButton *)sender {
     
     searchFriendArr = [NSMutableArray array];
-    [KVNProgress showWithParameters:
-     @{KVNProgressViewParameterFullScreen: @(YES),
-       KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-       KVNProgressViewParameterStatus: @"Search...",
-       KVNProgressViewParameterSuperview: self.view
-       }];
+    [MBProgressHUD showMessage:@"Search..."];
     if (self.searchText.text&&![self.searchText.text isEqualToString:@""]) {
-        __block ASIHTTPRequest *request = [t_Network httpGet:@{@"uid":self.searchText.text}.mutableCopy Url:anyTime_FindUser Delegate:nil Tag:anyTime_FindUser_tag];
+        ASIHTTPRequest *request = [t_Network httpGet:@{@"uid":self.searchText.text}.mutableCopy Url:anyTime_FindUser Delegate:nil Tag:anyTime_FindUser_tag];
+        __block ASIHTTPRequest *searchRequest = request ;
         [request setCompletionBlock:^{
-            NSString *responseStr = [request responseString];
+            NSString *responseStr = [searchRequest responseString];
             NSLog(@"%@", responseStr);
             NSDictionary *tmpObj = [responseStr objectFromJSONString];
             NSString  *statusCode= [tmpObj objectForKey:@"statusCode"];
@@ -115,7 +111,7 @@
                     }
                 }
             }
-            [KVNProgress dismiss];
+            [MBProgressHUD hideHUD];
         }];
         
         [request startSynchronous];
@@ -188,18 +184,19 @@
 #pragma mark -LPPopupListView的代理
 - (void)popupListView:(LPPopupListView *)popupListView didSelectFriendGroup:(FriendGroup *) selectFriendGroup{
     Friend *friend = searchFriendArr[selectIndexPath.row];
-    __block ASIHTTPRequest *addFriendRequest = [t_Network httpPostValue:@{@"fid":friend.Id,@"tid":selectFriendGroup.Id,@"name":friend.username}.mutableCopy Url:anyTime_AddFriend Delegate:nil Tag:anyTime_AddFriend_tag];
+    ASIHTTPRequest *addFriendRequest = [t_Network httpPostValue:@{@"fid":friend.Id,@"tid":selectFriendGroup.Id,@"name":friend.username}.mutableCopy Url:anyTime_AddFriend Delegate:nil Tag:anyTime_AddFriend_tag];
+    __block ASIHTTPRequest *friendRequest = addFriendRequest ;
     [addFriendRequest setCompletionBlock:^{
-        NSString *responseStr = [addFriendRequest responseString];
+        NSString *responseStr = [friendRequest responseString];
         NSLog(@"%@",responseStr);
         id  objTmp = [responseStr objectFromJSONString];
         NSString *statusCode = [objTmp objectForKey:@"statusCode"];
         if ([statusCode isEqualToString:@"1"]) {
-            [KVNProgress showSuccessWithStatus:@"Success"];
+            [MBProgressHUD showSuccess:@"Success"];
         }
     }];
     [addFriendRequest setFailedBlock:^{
-        NSLog(@"添加失败！》》》》》》》》》》》》》%@",[addFriendRequest error]);
+        NSLog(@"添加失败！》》》》》》》》》》》》》%@",[friendRequest error]);
     }];
     [addFriendRequest startAsynchronous];
 }

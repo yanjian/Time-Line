@@ -66,29 +66,15 @@
     }else if (sender.tag==11){
        
         if ([@"" isEqualToString:self.userNameTextField.text ]) {
-            [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
-                                                    KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-                                                    KVNProgressViewParameterStatus: @"userName empty",
-                                                    KVNProgressViewParameterSuperview: self.view
-                                                    }];
+            [MBProgressHUD showError:@"UserName empty"];
             return;
         }
         if ([@"" isEqualToString:self.emailTextField.text ]) {
-            [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
-                                                    KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-                                                    KVNProgressViewParameterStatus: @"email empty",
-                                                    KVNProgressViewParameterSuperview: self.view
-                                                    }];
-
+            [MBProgressHUD showError:@"Email empty"];
             return;
         }
         if ([ @"" isEqualToString:self.passwordTextField.text ]) {
-            [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
-                                                    KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-                                                    KVNProgressViewParameterStatus: @"password empty",
-                                                    KVNProgressViewParameterSuperview: self.view
-                                                    }];
-
+            [MBProgressHUD showError:@"Password empty"];
             return;
         }
         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];

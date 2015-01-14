@@ -169,12 +169,12 @@
 - (void)requestFinished:(ASIHTTPRequest *)request{
     
     NSString *responseStr=[request responseString];
-    NSUserDefaults *userInfo=[NSUserDefaults standardUserDefaults];
+    //NSUserDefaults *userInfo=[NSUserDefaults standardUserDefaults];
     NSLog(@"%@",responseStr);
     switch (request.tag) {
         case 1000:{
             id tmpObj=[responseStr objectFromJSONString];
-            if ([tmpObj isKindOfClass:[NSDictionary class]]) {
+            if ([tmpObj isKindOfClass:[NSDictionary class]]) {//绑定账号
                     oauthDic=(NSMutableDictionary *)tmpObj  ;
                     if (self.isBind) {//本地账号绑定google账号
                         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
@@ -218,18 +218,123 @@
                 NSDictionary *dic=(NSMutableDictionary *)tmpObj;
                 NSString *param= dic[@"statusCode"];
                 if ([@"-3" isEqualToString:param]) {
-                    [KVNProgress showErrorWithParameters: @{KVNProgressViewParameterFullScreen: @(NO),
-                                                            KVNProgressViewParameterBackgroundType: @(KVNProgressBackgroundTypeSolid),
-                                                            KVNProgressViewParameterStatus: @"This email has been registered or binding",
-                                                            KVNProgressViewParameterSuperview: self.view
-                                                            }];
-
+                    [MBProgressHUD showError:@"This email has been registered or binding"];
                     [self.googleLoginView reload];
                 }
             }
-            
-            break;
-        }
+        }break;
+        case LOGIN_USER_TAG:{
+            // oauthDic = [request.userInfo mutableCopy];
+            if ([@"1" isEqualToString:responseStr]) {
+                ASIHTTPRequest *request = [t_Network httpGet:nil Url:Get_Google_GetCalendarList Delegate:self Tag:Get_Google_GetCalendarList_Tag];
+                [request startAsynchronous];
+                ASIHTTPRequest *userInfoRequest = [t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
+                [userInfoRequest startAsynchronous];
+            }
+
+        }break;
+        case Get_Google_GetCalendarList_Tag:{
+            NSMutableDictionary *googleDataDic=[responseStr objectFromJSONString];
+            NSDictionary  *dataDic=[googleDataDic objectForKey:@"data"];
+            if ([dataDic isKindOfClass:[NSDictionary class]]) {
+                NSArray *arr=[dataDic objectForKey:@"items"];
+                NSMutableArray *googleArr=[NSMutableArray arrayWithCapacity:0];
+                
+                AT_Account *ac=[AT_Account MR_createEntity];
+                
+                [self.accountArr addObject:ac];
+                
+                for (NSDictionary *dic in arr) {
+                    NSLog(@"%@",dic);
+                    GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
+                    [gcd parseDictionary:dic];
+                    if ([dic objectForKey:@"primary"]) {
+                        gcd.isPrimary=YES;
+                        ac.account=[dic objectForKey:@"summary"];
+                        ac.accountType=@(AccountTypeGoogle);
+                    }
+                    [gcd setAccount:ac.account];
+                    [googleArr addObject:gcd];
+                }
+                
+                [self.googleCalendar addObject:googleArr];
+                
+                if (!self.isSeting) {//这里如果是设置页面传来的就不取得本地日历
+                    ASIHTTPRequest *request=[t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
+                    [request startAsynchronous];
+                }else{
+                    [self.delegate setGoogleCalendarListData:self.googleCalendar];
+                    CalendarListViewController *ca=[[CalendarListViewController alloc] init];
+                    ca.googleCalendarDataArr=self.googleCalendar;
+                    ca.calendarAccountArr=self.accountArr;
+                    [self.navigationController pushViewController:ca animated:YES];
+                }
+            }
+        }break;
+        case Local_CalendarOperation_Tag:{
+            NSMutableDictionary *localDataDic=[responseStr objectFromJSONString];
+            NSString *statusCode=[localDataDic objectForKey:@"statusCode"];
+            if ([@"1" isEqualToString:statusCode]) {//成功取得本地日历列表
+                GoogleCalendarData *gcd= [[self.googleCalendar objectAtIndex:0] objectAtIndex:0];
+                
+                AT_Account *ac=[AT_Account MR_createEntity];
+                ac.account=gcd.account;
+                ac.accountType=@(AccountTypeLocal);
+                
+//                [userInfo setValue:gcd.account forKey:@"email"];
+//                [userInfo setValue:gcd.account forKey:@"userName"];
+//                [userInfo setValue:@(UserLoginStatus_YES) forKey:@"loginStatus"];
+//                [userInfo setValue:@(AccountTypeGoogle) forKey:@"accountType"];
+                
+                [self.accountArr addObject:ac];
+                
+                NSArray *arr=[localDataDic objectForKey:@"data"];
+                NSMutableArray *localArr=[NSMutableArray arrayWithCapacity:0];
+                
+                for (NSDictionary *dic in arr) {
+                    NSLog(@"%@",dic);
+                    LocalCalendarData *ld=[[LocalCalendarData alloc] init];
+                    [ld parseDictionary:dic];
+                    [ld setEmailAccount:ac.account];
+                    [ld setIsLocalAccount:YES];
+                    [localArr addObject:ld];
+                }
+                [self.googleCalendar addObject:localArr];
+                
+                [self.delegate setGoogleCalendarListData:self.googleCalendar];
+                CalendarListViewController *ca=[[CalendarListViewController alloc] init];
+                ca.googleCalendarDataArr=self.googleCalendar;
+                ca.calendarAccountArr=self.accountArr;
+                [self.navigationController pushViewController:ca animated:YES];
+            }
+        }break;
+        case LoginUser_GetUserInfo_Tag:{
+            id loginUser = [responseStr objectFromJSONString];
+            if ([loginUser isKindOfClass:[NSDictionary class]]) {
+                NSString *statusCode = [loginUser objectForKey:@"statusCode"];
+                if ([@"1" isEqualToString:statusCode]) {
+                    NSMutableDictionary *userInfoDic = [NSMutableDictionary dictionaryWithDictionary:[loginUser objectForKey:@"data"]] ;//请求到的用信息
+                    [userInfoDic removeObjectForKey:@"password"];//防止密码被空String 覆盖 删除
+                    
+                    UserInfo * uInfo = [UserInfo currUserInfo];//当前用户信息对象
+                    [uInfo parseDictionary:userInfoDic];
+                    uInfo.authCode = [oauthDic objectForKey:@"authCode"];
+                    uInfo.gender = [[userInfoDic objectForKey:@"gender"] intValue]==0?gender_woman:gender_man;
+                    if (uInfo.imgUrl) {
+                        uInfo.imgUrl = [uInfo.imgUrl stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                    }
+                    if (uInfo.imgUrlSmall) {
+                        uInfo.imgUrlSmall = [uInfo.imgUrlSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                    }
+                    uInfo.loginStatus = UserLoginStatus_YES ;
+                    uInfo.accountType = AccountTypeGoogle ;
+                    
+                    NSData * userInfoData = [NSKeyedArchiver archivedDataWithRootObject:uInfo];
+                    [USER_DEFAULT setObject:userInfoData forKey:CURRENTUSERINFO];
+                    [USER_DEFAULT synchronize];
+                }
+            }
+        }break;
         default:
             break;
     }
@@ -252,79 +357,10 @@
                           return;
                   }
               }
-              if (self.isShowCalendarList){
-                  if (!self.isLocalClandarList) { //取得google日历列表
-                      NSArray *arr=[googleDataDic objectForKey:@"items"];
-                      
-                      NSMutableArray *tmpArr=[NSMutableArray arrayWithCapacity:0];
-                      
-                      AT_Account *ac=[AT_Account MR_createEntity];
-                      
-                      [self.accountArr addObject:ac];
-                      for (NSDictionary *dic in arr) {
-                          NSLog(@"%@",dic);
-                          GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
-                          [gcd parseDictionary:dic];
-                          if ([dic objectForKey:@"primary"]) {
-                              gcd.isPrimary=YES;
-                              ac.account=[dic objectForKey:@"summary"];
-                              ac.accountType=@(AccountTypeGoogle);
-                          }
-                          [gcd setAccount:ac.account];
-                          [tmpArr addObject:gcd];
-                      }
-                      [self.googleCalendar addObject:tmpArr];
-                      
-                      if (!self.isSeting) {//这里如果是设置页面传来的就不取得本地日历
-                          ASIHTTPRequest *request=[t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
-                          [request startAsynchronous];
-                          self.isLocalClandarList=YES;
-                       }else{
-                           [self.delegate setGoogleCalendarListData:self.googleCalendar];
-                           CalendarListViewController *ca=[[CalendarListViewController alloc] init];
-                           ca.googleCalendarDataArr=self.googleCalendar;
-                           ca.calendarAccountArr=self.accountArr;
-                           [self.navigationController pushViewController:ca animated:YES];
-                       }
-                  }
-                  if (self.isLocalClandarList) {
-                      NSMutableDictionary *localDataDic=[responseStr objectFromJSONString];
-                      NSString *statusCode=[localDataDic objectForKey:@"statusCode"];
-                      if ([@"1" isEqualToString:statusCode]) {//成功取得本地日历列表
-                         GoogleCalendarData *gcd= [[self.googleCalendar objectAtIndex:0] objectAtIndex:0];
-                          NSArray *arr=[localDataDic objectForKey:@"data"];
-                          
-                          AT_Account *ac=[AT_Account MR_createEntity];
-                          ac.account=gcd.account;
-                          ac.accountType=@(AccountTypeLocal);
-
-                          [userInfo setValue:@(AccountTypeGoogle) forKey:@"accountType"];
-                          [userInfo setValue:gcd.account forKey:@"email"];
-                          [userInfo setValue:gcd.account forKey:@"userName"];
-                          [userInfo setValue:@(UserLoginStatus_YES) forKey:@"loginStatus"];
-                          
-                          [self.accountArr addObject:ac];
-                          NSMutableArray *localArr=[NSMutableArray arrayWithCapacity:0];
-                          for (NSDictionary *dic in arr) {
-                              NSLog(@"%@",dic);
-                              LocalCalendarData *ld=[[LocalCalendarData alloc] init];
-                              [ld parseDictionary:dic];
-                              [ld setEmailAccount:ac.account];//用google账号登陆默认本地账号就是google账号
-                              [localArr addObject:ld];
-                          }
-                          [self.googleCalendar addObject:localArr];
-                          [self.delegate setGoogleCalendarListData:self.googleCalendar];
-                          CalendarListViewController *ca=[[CalendarListViewController alloc] init];
-                          ca.googleCalendarDataArr=self.googleCalendar;
-                          ca.calendarAccountArr=self.accountArr;
-                          [self.navigationController pushViewController:ca animated:YES];
-                      }
-                  }
-               }
           }
-        }
+      }
     }else{
-            oauthDic= [request.userInfo mutableCopy];//[[responseStr objectFromJSONString] mutableCopy]  ;
+            oauthDic = [request.userInfo mutableCopy];//[[responseStr objectFromJSONString] mutableCopy]  ;
             if (!self.isLogin) {
                 if (!self.isRegister) {
                     if (responseStr) {
@@ -354,89 +390,11 @@
                     [request startAsynchronous];
                     self.isLogin=YES;
                 }
-            }else{
-                
-                if (!self.isShowCalendarList) {
-                     if ([@"1" isEqualToString:responseStr]) {
-                         ASIHTTPRequest *request=[t_Network httpGet:nil Url:Get_Google_GetCalendarList Delegate:self Tag:Get_Google_GetCalendarList_Tag];
-                         [request startAsynchronous];
-                         [userInfo setValue:[oauthDic objectForKey:@"authCode"] forKey:@"authCode"];
-                         self.isShowCalendarList=YES;
-                     }
-                }else{
-                    if (!self.isLocalClandarList) {//取得google日历集合
-                        NSMutableDictionary *googleDataDic=[responseStr objectFromJSONString];
-                        NSDictionary  *dataDic=[googleDataDic objectForKey:@"data"];
-                        if ([dataDic isKindOfClass:[NSDictionary class]]) {
-                            NSArray *arr=[dataDic objectForKey:@"items"];
-                            NSMutableArray *googleArr=[NSMutableArray arrayWithCapacity:0];
-                            
-                            AT_Account *ac=[AT_Account MR_createEntity];
-                            
-                            [self.accountArr addObject:ac];
-                            
-                            for (NSDictionary *dic in arr) {
-                                NSLog(@"%@",dic);
-                                GoogleCalendarData *gcd=[[GoogleCalendarData alloc] init];
-                                [gcd parseDictionary:dic];
-                                if ([dic objectForKey:@"primary"]) {
-                                    gcd.isPrimary=YES;
-                                    ac.account=[dic objectForKey:@"summary"];
-                                    ac.accountType=@(AccountTypeGoogle);
-                                }
-                                [gcd setAccount:ac.account];
-                                [googleArr addObject:gcd];
-                            }
-                            
-                            [self.googleCalendar addObject:googleArr];
-                            ASIHTTPRequest *request=[t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
-                            [request startAsynchronous];
-                            self.isLocalClandarList=YES;
-
-                        }
-                        
-                    }else{
-                        NSMutableDictionary *localDataDic=[responseStr objectFromJSONString];
-                        NSString *statusCode=[localDataDic objectForKey:@"statusCode"];
-                        if ([@"1" isEqualToString:statusCode]) {//成功取得本地日历列表
-                            GoogleCalendarData *gcd= [[self.googleCalendar objectAtIndex:0] objectAtIndex:0];
-                            
-                            AT_Account *ac=[AT_Account MR_createEntity];
-                            ac.account=gcd.account;
-                            ac.accountType=@(AccountTypeLocal);
-                            
-                            [userInfo setValue:gcd.account forKey:@"email"];
-                            [userInfo setValue:gcd.account forKey:@"userName"];
-                            [userInfo setValue:@(UserLoginStatus_YES) forKey:@"loginStatus"];
-                            [userInfo setValue:@(AccountTypeGoogle) forKey:@"accountType"];
-                            
-                            [self.accountArr addObject:ac];
-                            
-                            NSArray *arr=[localDataDic objectForKey:@"data"];
-                            NSMutableArray *localArr=[NSMutableArray arrayWithCapacity:0];
-                            
-                            for (NSDictionary *dic in arr) {
-                                NSLog(@"%@",dic);
-                                LocalCalendarData *ld=[[LocalCalendarData alloc] init];
-                                [ld parseDictionary:dic];
-                                [ld setEmailAccount:ac.account];
-                                [ld setIsLocalAccount:YES];
-                                [localArr addObject:ld];
-                            }
-                            [self.googleCalendar addObject:localArr];
-                            
-                            [self.delegate setGoogleCalendarListData:self.googleCalendar];
-                            CalendarListViewController *ca=[[CalendarListViewController alloc] init];
-                            ca.googleCalendarDataArr=self.googleCalendar;
-                            ca.calendarAccountArr=self.accountArr;
-                            [self.navigationController pushViewController:ca animated:YES];
-                        }
-                    }
             }
-        }
     }
-    [userInfo synchronize];
+   // [userInfo synchronize];
 }
+    
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];

@@ -189,9 +189,10 @@
         __block FriendGroup  *friendGroup= [[FriendGroup alloc ] init];
         friendGroup.name=[alertView textFieldAtIndex:0].text;
         
-        __block ASIHTTPRequest *addGroupsRequest = [t_Network httpPostValue:@{@"name": friendGroup.name}.mutableCopy Url:anyTime_AddFTeam Delegate:nil Tag:anyTime_AddFTeam_tag];
+        ASIHTTPRequest *addGroupsRequest = [t_Network httpPostValue:@{@"name": friendGroup.name}.mutableCopy Url:anyTime_AddFTeam Delegate:nil Tag:anyTime_AddFTeam_tag];
+        __block ASIHTTPRequest *groupsRequest  = addGroupsRequest;
         [addGroupsRequest setCompletionBlock:^{//请求成功
-            NSString * responseStr = [addGroupsRequest responseString];
+            NSString * responseStr = [groupsRequest responseString];
             NSLog(@"%@",responseStr);
             id objGroup = [responseStr objectFromJSONString];
             if ([objGroup isKindOfClass:[NSDictionary class]]) {
@@ -204,7 +205,7 @@
         }];
         
         [addGroupsRequest setFailedBlock:^{//请求失败
-            NSLog(@"%@",[addGroupsRequest responseString]);
+            NSLog(@"%@",[groupsRequest responseString]);
             
         }];
         

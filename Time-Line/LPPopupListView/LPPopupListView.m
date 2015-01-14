@@ -136,7 +136,7 @@ static BOOL isShown = false;
             }
             [request setFailedBlock:^{
                 NSLog(@"%@",[request error]);
-                [KVNProgress showError];
+                [MBProgressHUD showError:@"Error"];
             }];
             self.arrayList = fgArray;
             [self.tableView reloadData];

@@ -9,18 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "Reachability.h"
 #import "ASINetworkQueue.h"
+#import "ASIDownloadCache.h"
 #import "FlipBoardNavigationController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (readwrite, nonatomic) BOOL isread;
-
 @property (nonatomic,strong) FlipBoardNavigationController *flipNC;
-
 @property (nonatomic,retain) ASINetworkQueue *netWorkQueue; //g_ASIQueue
 @property (nonatomic,assign) NetworkStatus netWorkStatus; //g_NetStatus
-
+@property (nonatomic,retain) ASIDownloadCache *anyTimeCache;
 
 
 +(AppDelegate *)getAppDelegate;
