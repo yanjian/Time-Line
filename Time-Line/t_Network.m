@@ -98,7 +98,7 @@
     }
     
     NSString *urlString=[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    ASIFormDataRequest*request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
+    ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
     [request setDelegate:delegate];
     [request setRequestMethod:@"POST"];
     [request setTimeOutSeconds:20];

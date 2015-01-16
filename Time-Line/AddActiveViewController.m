@@ -508,7 +508,7 @@ NS_ENUM(NSInteger, voteAndFixDateType){
         id tmpObj = inviteeFriendArr[i];
         if ([tmpObj isKindOfClass:[UserInfo class]]) {
             UserInfo * currUse = (UserInfo *) tmpObj;
-            [inviteeDic setObject:currUse.Id==nil?@"99":currUse.Id forKey:@"uid"];//这里要修改 标记好找
+            [inviteeDic setObject:currUse.Id forKey:@"uid"];//这里要修改 标记好找
         }else if ([tmpObj isKindOfClass:[Friend class]]){
            Friend * currUse = (Friend *) tmpObj;
            [inviteeDic setObject:currUse.fid forKey:@"uid"];

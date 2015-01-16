@@ -14,6 +14,7 @@
 @property (nonatomic, copy)   NSString * name;
 @property (nonatomic, strong) NSArray  * friends;
 @property (nonatomic, assign) NSInteger  online;
+@property (nonatomic, retain) NSString * defaultTeam ;
 
 @property (nonatomic, assign, getter = isOpened) BOOL opened;
 

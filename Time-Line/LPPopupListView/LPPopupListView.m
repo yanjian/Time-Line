@@ -118,10 +118,11 @@ static BOOL isShown = false;
     
     
     if ([self.arrayList count]<=0) {
-        __block ASIHTTPRequest *request = [t_Network httpGet:nil Url:anyTime_GetFTlist Delegate:nil Tag:anyTime_GetFTlist_tag];
+         ASIHTTPRequest *request = [t_Network httpGet:nil Url:anyTime_GetFTlist Delegate:nil Tag:anyTime_GetFTlist_tag];
+        __block ASIHTTPRequest *getFRequest = request ;
         [request setCompletionBlock:^{
-            NSString *responeStr = [request responseString];
-            NSLog(@"%@",[request responseString]);
+            NSString *responeStr = [getFRequest responseString];
+            NSLog(@"%@",[getFRequest responseString]);
             id groupObj = [responeStr objectFromJSONString];
             NSMutableArray *fgArray = [NSMutableArray array];
             if ([groupObj isKindOfClass:[NSDictionary class]]) {
@@ -134,13 +135,15 @@ static BOOL isShown = false;
                     }
                 }
             }
-            [request setFailedBlock:^{
-                NSLog(@"%@",[request error]);
-                [MBProgressHUD showError:@"Error"];
-            }];
             self.arrayList = fgArray;
             [self.tableView reloadData];
         }];
+        
+        [request setFailedBlock:^{
+            NSLog(@"%@",[getFRequest error]);
+            [MBProgressHUD showError:@"Error"];
+        }];
+
         [request startAsynchronous];
     }
 }

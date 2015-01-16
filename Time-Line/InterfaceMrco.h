@@ -287,7 +287,17 @@ typedef NS_ENUM(NSInteger , AccountType){
 #define anyTime_UpdateEvents [NSString stringWithFormat:@"%@/servlet/UpdateEvents",BASEURL_IP]
 #define anyTime_UpdateEvents_tag 51
 
+//退出社交活动 QuitEvent
+#define anyTime_QuitEvent [NSString stringWithFormat:@"%@/servlet/QuitEvent",BASEURL_IP]
+#define anyTime_QuitEvent_tag 52
 
+//删除社交活动 DelEvents
+#define anyTime_DelEvents [NSString stringWithFormat:@"%@/servlet/DelEvents",BASEURL_IP]
+#define anyTime_DelEvents_tag 53
+
+//社交活动显示设置 ViewEvent
+#define anyTime_ViewEvent [NSString stringWithFormat:@"%@/servlet/ViewEvent",BASEURL_IP]
+#define anyTime_ViewEvent_tag 54
 
 
 

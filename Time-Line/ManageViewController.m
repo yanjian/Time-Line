@@ -14,13 +14,26 @@
 #import "CalendarDateUtil.h"
 #import "ActivedetailsViewController.h"
 
+typedef NS_ENUM(NSInteger, ShowActiveType){
+    ShowActiveType_All    = 0 ,
+    ShowActiveType_Create = 1 ,
+    ShowActiveType_Join   = 2 ,
+    ShowActiveType_Hide   = 3
+    
+} ;
+
 @interface ManageViewController ()<UITableViewDelegate, UITableViewDataSource,
-EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate,UIActionSheetDelegate>
+EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
 {
-    EGORefreshTableHeaderView *_refreshHeaderView;
+    EGORefreshTableHeaderView * _refreshHeaderView;
     BOOL _reloading;
-    NSArray * _activeArr;
-    NSMutableArray *_tmpActiveArr ;
+    NSMutableArray * _activeArr;
+    NSMutableArray * _tmpActiveArr ;
+    
+    NSString       * currId ;
+    
+    ShowActiveType   _showActiveType ;
+    NSMutableArray * _selectActiveBtnArr ;
 
 }
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
@@ -33,16 +46,48 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
     CGRect frame = CGRectMake(0, naviHigth, kScreen_Width, kScreen_Height);
     self.view.frame=frame;
     
-    self.tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height-frame.origin.y) style:UITableViewStyleGrouped];
-    self.tableView.delegate=self;
-    self.tableView.dataSource=self;
-    [self.view  addSubview:self.tableView];
-    
-    _activeArr=[self loadActiveData:^{
+    currId = [UserInfo currUserInfo].Id;
+    _activeArr = [self loadActiveData:^{
         [MBProgressHUD showMessage:@"Loading..." toView:self.view];
     }];
     
+    _showActiveType = ShowActiveType_All ;
+    _selectActiveBtnArr = [NSMutableArray array];
     
+    UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, 1, frame.size.width, 25)];
+    for (int i=0; i<4; i++) {
+        UIButton *allBtn = [[UIButton alloc] initWithFrame:CGRectMake(frame.size.width/4*i, 0, frame.size.width/4, 25)];
+        [allBtn setBackgroundImage:[UIImage imageNamed:@"TIme_Start"] forState:UIControlStateSelected];
+         allBtn.titleLabel.font = [UIFont systemFontOfSize:12.f];
+        if ( i == 0 ) {
+            [allBtn setSelected:YES];
+            _showActiveType = ShowActiveType_All ;
+            [allBtn setTitle:@"ALL" forState:UIControlStateNormal];
+        }else if(i == 1){
+            [allBtn setTitle:@"Create" forState:UIControlStateNormal];
+        }else if( i == 2){
+            [allBtn setTitle:@"Join" forState:UIControlStateNormal];
+        }else if( i==3 ){
+            [allBtn setTitle:@"Hide" forState:UIControlStateNormal];
+        }
+        allBtn.tag = i ;
+        [allBtn addTarget:self action:@selector(clickTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
+        [selectView addSubview:allBtn];
+        [_selectActiveBtnArr addObject:allBtn];
+    }
+    
+    [selectView setBackgroundColor:blueColor];
+    [self.view addSubview:selectView];
+    
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
+                                                                   selectView.frame.size.height+selectView.frame.origin.y,
+                                                                   frame.size.width,
+                                                                   frame.size.height-(frame.origin.y+selectView.frame.size.height+selectView.frame.origin.y))
+                                                  style:UITableViewStyleGrouped];
+    self.tableView.delegate=self;
+    self.tableView.dataSource=self;
+    [self.view  addSubview:self.tableView];
+
     if (_refreshHeaderView == nil) {
         //初始化下拉刷新控件
         EGORefreshTableHeaderView *refreshView = [[EGORefreshTableHeaderView alloc] initWithFrame:CGRectMake(0.0f, 0.0f - self.tableView.bounds.size.height, self.view.frame.size.width, self.tableView.bounds.size.height)];
@@ -61,19 +106,20 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;{
+    [self showActiveWhatWithActiveType:_showActiveType];
     return _activeArr.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1;
+   return 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 215.f;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    return 10.f;
+    return 2.f;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
     return 0.1f;
@@ -88,6 +134,25 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
     }
     if (_activeArr.count>0) {
         ActiveEventMode *activeEvent = _activeArr[indexPath.section];
+        
+        for (NSDictionary * member in activeEvent.member) {
+            if ([currId isEqualToString:[[member objectForKey:@"uid"] stringValue]]) {
+                NSInteger view = [[member objectForKey:@"view"] integerValue];
+                NSInteger not = [[member objectForKey:@"notification"] integerValue];
+                if ( view == 1 ) {//1 表示显示活动
+                    activeCell.isView = YES;
+                }else{
+                    activeCell.isView = NO;
+                }
+                if (not == 1) {
+                     activeCell.isNotification = YES;
+                }else{
+                    activeCell.isNotification = NO;
+                }
+            }
+        }
+
+        activeCell.activeEvent = activeEvent ;
         
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateStyle:NSDateFormatterMediumStyle];
@@ -112,11 +177,6 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
         NSURL *url=[NSURL URLWithString:_urlStr];
         [activeCell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018"]];
         activeCell.activeNameLab.text = activeEvent.title;
-        
-        UILongPressGestureRecognizer * longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressWithFriendGroup:)];
-        [activeCell addGestureRecognizer:longPressGesture];
-        
-        
     }
     
     return activeCell;
@@ -140,21 +200,81 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
     [super didReceiveMemoryWarning];
 }
 
-
-
--(NSArray *) loadActiveData:(void(^)())AddHUD{
+-(NSMutableArray *) loadActiveData:(void(^)())AddHUD{
      _tmpActiveArr= [NSMutableArray arrayWithCapacity:0];
+    if (AddHUD) {
+        AddHUD();
+    }
     ASIHTTPRequest * activeRequest = [t_Network httpGet:nil Url:anyTime_Events Delegate:self Tag:anyTime_Events_tag];
     [activeRequest setDownloadCache:g_AppDelegate.anyTimeCache] ;
     [activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
     [activeRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
-    [activeRequest startAsynchronous];
-    if (AddHUD) {
-        AddHUD();
-    }
-    return _tmpActiveArr;
+    [activeRequest startSynchronous];
+    return [NSMutableArray arrayWithArray:_tmpActiveArr] ;
 }
 
+-(void)clickTouchUpInside:(UIButton *) sender {
+    for (UIButton *button in _selectActiveBtnArr) {
+        button.selected = NO;
+    }
+    sender.selected = YES;
+    if (_showActiveType != sender.tag) {//这里tag 的值 要与 _showActiveType的值一致 好处理
+        [self showActiveWhatWithActiveType:sender.tag];
+        [_tableView reloadData];
+    }
+}
+
+#pragma mark -对数据进行过滤 --如
+-(void)showActiveWhatWithActiveType:(NSInteger) activeType{
+     [_activeArr removeAllObjects];
+    switch (activeType) {
+        case 0:{
+            _showActiveType = ShowActiveType_All ;
+            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示create的活动
+                [_activeArr addObject:eventMode];
+            }
+        }break;
+        case 1:{
+            _showActiveType = ShowActiveType_Create ;
+            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示create的活动
+                NSString * create =[NSString stringWithFormat:@"%@",eventMode.create ] ;
+                if ([create isEqualToString:currId]) {
+                    [_activeArr addObject:eventMode];
+                }
+            }
+        }break;
+        case 2:{
+            _showActiveType = ShowActiveType_Join ;
+            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示join的活动===这里显示的时别人邀请我参加的活动
+                NSString *create = [NSString stringWithFormat:@"%@",eventMode.create];
+                if (![currId isEqualToString:create]) {//创建活动的用户不是当前用户就是别人邀请的
+                     [_activeArr addObject:eventMode];
+                 }
+//                for (NSDictionary * member in eventMode.member) {
+//                    NSString * join = [[member objectForKey:@"join"] stringValue];
+//                    if ([@"1" isEqualToString:join]) {
+//                        [_activeArr addObject:eventMode];
+//                    }
+//                }
+            }
+        }break;
+        case 3:{
+            _showActiveType = ShowActiveType_Hide ;
+            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示hide的活动
+                for (NSDictionary * member in eventMode.member) {
+                    if ([currId isEqualToString:[[member objectForKey:@"uid"] stringValue]]) {
+                        NSString * view = [[member objectForKey:@"view"] stringValue];
+                        if ([@"2" isEqualToString:view]) {
+                            [_activeArr addObject:eventMode];
+                        }
+                 }
+               }
+            }
+        }break;
+        default:
+            break;
+    }
+}
 
 - (void)requestFinished:(ASIHTTPRequest *)request{
     NSError *error = [request error];
@@ -207,18 +327,22 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
     NSLog(@"start");
     _reloading = YES;
     //打开线程，读取下一页数据
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-         _activeArr=[self loadActiveData:nil];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_tableView reloadData];
-            [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:0];
-        });
-    });
+    [NSThread detachNewThreadSelector:@selector(requestNext) toTarget:self withObject:nil];
 }
 
+- (void)requestNext
+{
+    //回到主线程跟新界面
+   
+    [self performSelectorOnMainThread:@selector(doneLoadingTableViewData) withObject:nil waitUntilDone:YES];
+}
+
+
 - (void)doneLoadingTableViewData{
+     _tmpActiveArr=[self loadActiveData:nil];//刷新数据
     _reloading = NO;
     [_refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
+   // [_tableView reloadData];
     NSLog(@"end");
 }
 
@@ -260,23 +384,10 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
 
 
 -(void)cancelActivedetailsViewController:(ActivedetailsViewController *)activeDetailsViewVontroller{
-    _activeArr=[self loadActiveData:nil];//刷新数据
+    _tmpActiveArr=[self loadActiveData:nil];//刷新数据
     [activeDetailsViewVontroller dismissViewControllerAnimated:YES completion:nil];
-    
 }
 
-
--(void)handleLongPressWithFriendGroup:(UIGestureRecognizer *) gestureRecognizer {
-    if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
-        UIActionSheet * asActiveSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Hide",@"Quit",@"Delete", nil];
-        [asActiveSheet showInView:self.view];
-    }
-}
-
-// Called when a button is clicked. The view will be automatically dismissed after this call returns
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
-    
-}
 
 -(NSString *)monthStringWithInteger:(NSUInteger)month{
     NSString *monthStr;
