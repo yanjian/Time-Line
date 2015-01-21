@@ -36,4 +36,7 @@ typedef enum{
 @property (nonatomic,assign) AccountType  accountType;//登陆账号的类型
 
 +(instancetype)currUserInfo;
+//将用户归档
++(void)userInfoWithArchive:(UserInfo *) userInfo;
+
 @end

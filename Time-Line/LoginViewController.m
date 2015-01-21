@@ -192,11 +192,11 @@
                     uInfo=[UserInfo currUserInfo];//当前用户信息对象
                     [uInfo parseDictionary:userInfoDic];
                     uInfo.gender=[[userInfoDic objectForKey:@"gender"] intValue]==0?gender_woman:gender_man;
-                    if (uInfo.imgUrl) {
-                        uInfo.imgUrl=[uInfo.imgUrl stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                    if (!uInfo.imgUrl) {
+                        uInfo.imgUrl=[[userInfoDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
                     }
-                    if (uInfo.imgUrlSmall) {
-                        uInfo.imgUrlSmall=[uInfo.imgUrlSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                    if (!uInfo.imgUrlSmall) {
+                        uInfo.imgUrlSmall=[[userInfoDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
                     }
                     
                     //accountBinds =     ({account = "yanjaya5201314@gmail.com";type = 1;uid = 76;})

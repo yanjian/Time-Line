@@ -215,6 +215,7 @@
 		A8B95C1D1A0534F800C6B037 /* YQNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B95C181A0534F800C6B037 /* YQNavigationController.m */; };
 		A8B95C1E1A0534F800C6B037 /* YQNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B95C1A1A0534F800C6B037 /* YQNavigationBar.m */; };
 		A8B95C1F1A0534F800C6B037 /* YQViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B95C1C1A0534F800C6B037 /* YQViewController.m */; };
+		A8B9AD271A6E4CC500205A24 /* NoticesMsgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8B9AD261A6E4CC500205A24 /* NoticesMsgModel.m */; };
 		A8B9CBDA1A37FB3C00DA0C54 /* checkMark.png in Resources */ = {isa = PBXBuildFile; fileRef = A8B9CBD21A37FB3C00DA0C54 /* checkMark.png */; };
 		A8B9CBDB1A37FB3C00DA0C54 /* checkMark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A8B9CBD31A37FB3C00DA0C54 /* checkMark@2x.png */; };
 		A8B9CBDC1A37FB3C00DA0C54 /* closeButton.png in Resources */ = {isa = PBXBuildFile; fileRef = A8B9CBD41A37FB3C00DA0C54 /* closeButton.png */; };
@@ -237,6 +238,7 @@
 		A8BBD7951A35EACA0036CB9E /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BBD7941A35EACA0036CB9E /* Friend.m */; };
 		A8BBD79A1A35ED580036CB9E /* friends.plist in Resources */ = {isa = PBXBuildFile; fileRef = A8BBD7991A35ED580036CB9E /* friends.plist */; };
 		A8BBD79C1A35EED30036CB9E /* buddy_header_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = A8BBD79B1A35EED30036CB9E /* buddy_header_arrow.png */; };
+		A8BCB4681A6C099700AC03DD /* SJAvatarBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCB4671A6C099700AC03DD /* SJAvatarBrowser.m */; };
 		A8BCF23E1A5D12950062F386 /* ActiveFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCF23D1A5D12950062F386 /* ActiveFooterView.m */; };
 		A8BD34311A1303A1005A38FE /* RepeatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BD34301A1303A1005A38FE /* RepeatViewController.m */; };
 		A8BD34341A1313D3005A38FE /* RepeatCalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BD34331A1313D3005A38FE /* RepeatCalViewController.m */; };
@@ -261,6 +263,10 @@
 		A8C21DBF1A52798F00072757 /* 018.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A8C21DBE1A52798F00072757 /* 018.jpg */; };
 		A8C21DC31A529CFF00072757 /* ActiveVoteDateTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C21DC11A529CFF00072757 /* ActiveVoteDateTableViewCell.m */; };
 		A8C21DC41A529CFF00072757 /* ActiveVoteDateTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C21DC21A529CFF00072757 /* ActiveVoteDateTableViewCell.xib */; };
+		A8C31A041A6CA86B0076CC61 /* FriendsInfoTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C31A021A6CA86B0076CC61 /* FriendsInfoTableViewController.m */; };
+		A8C31A051A6CA86B0076CC61 /* FriendsInfoTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C31A031A6CA86B0076CC61 /* FriendsInfoTableViewController.xib */; };
+		A8C31A091A6CE3F10076CC61 /* AliasModifyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C31A071A6CE3F10076CC61 /* AliasModifyViewController.m */; };
+		A8C31A0A1A6CE3F10076CC61 /* AliasModifyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C31A081A6CE3F10076CC61 /* AliasModifyViewController.xib */; };
 		A8C60F061A15B652000FAC7F /* RecurrenceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C60F051A15B652000FAC7F /* RecurrenceModel.m */; };
 		A8C668081A3E88010017605A /* AddActiveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C668061A3E88010017605A /* AddActiveViewController.m */; };
 		A8C668091A3E88010017605A /* AddActiveViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C668071A3E88010017605A /* AddActiveViewController.xib */; };
@@ -613,6 +619,8 @@
 		A8B95C1A1A0534F800C6B037 /* YQNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YQNavigationBar.m; sourceTree = "<group>"; };
 		A8B95C1B1A0534F800C6B037 /* YQViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YQViewController.h; sourceTree = "<group>"; };
 		A8B95C1C1A0534F800C6B037 /* YQViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YQViewController.m; sourceTree = "<group>"; };
+		A8B9AD251A6E4CC500205A24 /* NoticesMsgModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoticesMsgModel.h; sourceTree = "<group>"; };
+		A8B9AD261A6E4CC500205A24 /* NoticesMsgModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoticesMsgModel.m; sourceTree = "<group>"; };
 		A8B9CBD21A37FB3C00DA0C54 /* checkMark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = checkMark.png; sourceTree = "<group>"; };
 		A8B9CBD31A37FB3C00DA0C54 /* checkMark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkMark@2x.png"; sourceTree = "<group>"; };
 		A8B9CBD41A37FB3C00DA0C54 /* closeButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeButton.png; sourceTree = "<group>"; };
@@ -647,6 +655,8 @@
 		A8BBD7941A35EACA0036CB9E /* Friend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Friend.m; sourceTree = "<group>"; };
 		A8BBD7991A35ED580036CB9E /* friends.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = friends.plist; sourceTree = "<group>"; };
 		A8BBD79B1A35EED30036CB9E /* buddy_header_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buddy_header_arrow.png; sourceTree = "<group>"; };
+		A8BCB4661A6C099700AC03DD /* SJAvatarBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJAvatarBrowser.h; sourceTree = "<group>"; };
+		A8BCB4671A6C099700AC03DD /* SJAvatarBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJAvatarBrowser.m; sourceTree = "<group>"; };
 		A8BCF23C1A5D12950062F386 /* ActiveFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveFooterView.h; sourceTree = "<group>"; };
 		A8BCF23D1A5D12950062F386 /* ActiveFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveFooterView.m; sourceTree = "<group>"; };
 		A8BD342F1A1303A1005A38FE /* RepeatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RepeatViewController.h; sourceTree = "<group>"; };
@@ -689,6 +699,12 @@
 		A8C21DC01A529CFF00072757 /* ActiveVoteDateTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveVoteDateTableViewCell.h; sourceTree = "<group>"; };
 		A8C21DC11A529CFF00072757 /* ActiveVoteDateTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveVoteDateTableViewCell.m; sourceTree = "<group>"; };
 		A8C21DC21A529CFF00072757 /* ActiveVoteDateTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActiveVoteDateTableViewCell.xib; sourceTree = "<group>"; };
+		A8C31A011A6CA86B0076CC61 /* FriendsInfoTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsInfoTableViewController.h; sourceTree = "<group>"; };
+		A8C31A021A6CA86B0076CC61 /* FriendsInfoTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendsInfoTableViewController.m; sourceTree = "<group>"; };
+		A8C31A031A6CA86B0076CC61 /* FriendsInfoTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FriendsInfoTableViewController.xib; sourceTree = "<group>"; };
+		A8C31A061A6CE3F10076CC61 /* AliasModifyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AliasModifyViewController.h; sourceTree = "<group>"; };
+		A8C31A071A6CE3F10076CC61 /* AliasModifyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AliasModifyViewController.m; sourceTree = "<group>"; };
+		A8C31A081A6CE3F10076CC61 /* AliasModifyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AliasModifyViewController.xib; sourceTree = "<group>"; };
 		A8C60F041A15B652000FAC7F /* RecurrenceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecurrenceModel.h; sourceTree = "<group>"; };
 		A8C60F051A15B652000FAC7F /* RecurrenceModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecurrenceModel.m; sourceTree = "<group>"; };
 		A8C668051A3E88010017605A /* AddActiveViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddActiveViewController.h; sourceTree = "<group>"; };
@@ -790,15 +806,11 @@
 		A836D1401A31A01D00AA6A09 /* NoticesViewController */ = {
 			isa = PBXGroup;
 			children = (
+				A8B9AD201A6E492500205A24 /* model */,
+				A8B9AD231A6E49DF00205A24 /* view */,
 				A8BB2E7F1A315E550046E1E9 /* NoticesViewController.h */,
 				A8BB2E801A315E550046E1E9 /* NoticesViewController.m */,
 				A8BB2E811A315E550046E1E9 /* NoticesViewController.xib */,
-				A8B8D0431A330A390040C00D /* ActiveTableViewCell.h */,
-				A8B8D0441A330A390040C00D /* ActiveTableViewCell.m */,
-				A8B8D0451A330A390040C00D /* ActiveTableViewCell.xib */,
-				A8B8D0481A330D640040C00D /* UserApplyTableViewCell.h */,
-				A8B8D0491A330D640040C00D /* UserApplyTableViewCell.m */,
-				A8B8D04A1A330D640040C00D /* UserApplyTableViewCell.xib */,
 			);
 			name = NoticesViewController;
 			sourceTree = "<group>";
@@ -806,10 +818,9 @@
 		A836D1411A31A06700AA6A09 /* FriendViewController */ = {
 			isa = PBXGroup;
 			children = (
+				A8B9AD221A6E499300205A24 /* model */,
+				A8B9AD211A6E496300205A24 /* view */,
 				A8403A6B1A372EA000F8444D /* FriendsSearchViewController */,
-				A8B8D04D1A33166D0040C00D /* FriendInfoTableViewCell.h */,
-				A8B8D04E1A33166D0040C00D /* FriendInfoTableViewCell.m */,
-				A8B8D04F1A33166D0040C00D /* FriendInfoTableViewCell.xib */,
 				A8E5C38C1A50FB1000226FD9 /* FriendInfoViewController.h */,
 				A8E5C38D1A50FB1000226FD9 /* FriendInfoViewController.m */,
 			);
@@ -819,6 +830,7 @@
 		A836D1421A31A07E00AA6A09 /* ManageViewController */ = {
 			isa = PBXGroup;
 			children = (
+				A8B9AD241A6E4B6600205A24 /* model */,
 				A8BCF23B1A5D12570062F386 /* view */,
 				A8C6CA3D1A53DDA8005F6E6F /* memberListViewController */,
 				A8BB2E7A1A315E220046E1E9 /* ManageViewController.h */,
@@ -827,9 +839,6 @@
 				A8E5C3991A51510800226FD9 /* ActivedetailsViewController.h */,
 				A8E5C39A1A51510800226FD9 /* ActivedetailsViewController.m */,
 				A8E5C39B1A51510800226FD9 /* ActivedetailsViewController.xib */,
-				A8C21DC01A529CFF00072757 /* ActiveVoteDateTableViewCell.h */,
-				A8C21DC11A529CFF00072757 /* ActiveVoteDateTableViewCell.m */,
-				A8C21DC21A529CFF00072757 /* ActiveVoteDateTableViewCell.xib */,
 			);
 			name = ManageViewController;
 			sourceTree = "<group>";
@@ -1027,6 +1036,7 @@
 		A88F0BB719D2C4FD002D0C4C /* public */ = {
 			isa = PBXGroup;
 			children = (
+				A8BCB4651A6C098900AC03DD /* SJAvatarBrowser */,
 				A8BA605A1A42D57700992603 /* popView */,
 				A8C0C97A1A3AA44700A0D6EB /* RASlideInViewController.h */,
 				A8C0C97B1A3AA44700A0D6EB /* RASlideInViewController.m */,
@@ -1240,8 +1250,6 @@
 				A8B7E72F19FF2F1B0097ABE3 /* CircleDrawView.m */,
 				A8BF229A1A0A23AE00E42F25 /* DayShowView.h */,
 				A8BF229B1A0A23AE00E42F25 /* DayShowView.m */,
-				A8BBD78D1A35E9420036CB9E /* HeadView.h */,
-				A8BBD78E1A35E9420036CB9E /* HeadView.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -1412,6 +1420,12 @@
 				A8B7F3831A2EF752000F7EC5 /* UserInfoTableViewController.h */,
 				A8B7F3841A2EF752000F7EC5 /* UserInfoTableViewController.m */,
 				A8B7F3851A2EF752000F7EC5 /* UserInfoTableViewController.xib */,
+				A8C31A011A6CA86B0076CC61 /* FriendsInfoTableViewController.h */,
+				A8C31A021A6CA86B0076CC61 /* FriendsInfoTableViewController.m */,
+				A8C31A031A6CA86B0076CC61 /* FriendsInfoTableViewController.xib */,
+				A8C31A061A6CE3F10076CC61 /* AliasModifyViewController.h */,
+				A8C31A071A6CE3F10076CC61 /* AliasModifyViewController.m */,
+				A8C31A081A6CE3F10076CC61 /* AliasModifyViewController.xib */,
 			);
 			name = UserInfoViewController;
 			sourceTree = "<group>";
@@ -1464,14 +1478,62 @@
 				A898C8F819B4635900559F53 /* CLEvent.m */,
 				A8B54FE01A1791230011C90D /* AT_Event.h */,
 				A8B54FE11A1791230011C90D /* AT_Event.m */,
+			);
+			name = showDataModel;
+			sourceTree = "<group>";
+		};
+		A8B9AD201A6E492500205A24 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				A8B9AD251A6E4CC500205A24 /* NoticesMsgModel.h */,
+				A8B9AD261A6E4CC500205A24 /* NoticesMsgModel.m */,
+			);
+			name = model;
+			sourceTree = "<group>";
+		};
+		A8B9AD211A6E496300205A24 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				A8B8D04D1A33166D0040C00D /* FriendInfoTableViewCell.h */,
+				A8B8D04E1A33166D0040C00D /* FriendInfoTableViewCell.m */,
+				A8B8D04F1A33166D0040C00D /* FriendInfoTableViewCell.xib */,
+				A8BBD78D1A35E9420036CB9E /* HeadView.h */,
+				A8BBD78E1A35E9420036CB9E /* HeadView.m */,
+			);
+			name = view;
+			sourceTree = "<group>";
+		};
+		A8B9AD221A6E499300205A24 /* model */ = {
+			isa = PBXGroup;
+			children = (
 				A8BBD7901A35E9DC0036CB9E /* FriendGroup.h */,
 				A8BBD7911A35E9DC0036CB9E /* FriendGroup.m */,
 				A8BBD7931A35EACA0036CB9E /* Friend.h */,
 				A8BBD7941A35EACA0036CB9E /* Friend.m */,
+			);
+			name = model;
+			sourceTree = "<group>";
+		};
+		A8B9AD231A6E49DF00205A24 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				A8B8D0431A330A390040C00D /* ActiveTableViewCell.h */,
+				A8B8D0441A330A390040C00D /* ActiveTableViewCell.m */,
+				A8B8D0451A330A390040C00D /* ActiveTableViewCell.xib */,
+				A8B8D0481A330D640040C00D /* UserApplyTableViewCell.h */,
+				A8B8D0491A330D640040C00D /* UserApplyTableViewCell.m */,
+				A8B8D04A1A330D640040C00D /* UserApplyTableViewCell.xib */,
+			);
+			name = view;
+			sourceTree = "<group>";
+		};
+		A8B9AD241A6E4B6600205A24 /* model */ = {
+			isa = PBXGroup;
+			children = (
 				A8C02E8F1A4A5ECE00191528 /* ActiveEventMode.h */,
 				A8C02E901A4A5ECE00191528 /* ActiveEventMode.m */,
 			);
-			name = showDataModel;
+			name = model;
 			sourceTree = "<group>";
 		};
 		A8B9CBD01A37FB3C00DA0C54 /* LPPopupListView */ = {
@@ -1543,9 +1605,21 @@
 			name = MBProgressHUD;
 			sourceTree = "<group>";
 		};
+		A8BCB4651A6C098900AC03DD /* SJAvatarBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				A8BCB4661A6C099700AC03DD /* SJAvatarBrowser.h */,
+				A8BCB4671A6C099700AC03DD /* SJAvatarBrowser.m */,
+			);
+			name = SJAvatarBrowser;
+			sourceTree = "<group>";
+		};
 		A8BCF23B1A5D12570062F386 /* view */ = {
 			isa = PBXGroup;
 			children = (
+				A8C21DC01A529CFF00072757 /* ActiveVoteDateTableViewCell.h */,
+				A8C21DC11A529CFF00072757 /* ActiveVoteDateTableViewCell.m */,
+				A8C21DC21A529CFF00072757 /* ActiveVoteDateTableViewCell.xib */,
 				A8BCF23C1A5D12950062F386 /* ActiveFooterView.h */,
 				A8BCF23D1A5D12950062F386 /* ActiveFooterView.m */,
 			);
@@ -1572,15 +1646,15 @@
 		A8C077A41A30A92900F7C014 /* SegmentedControlCustom */ = {
 			isa = PBXGroup;
 			children = (
-				A8C1785B1A3C1F4000F41E4A /* JCMSegmentPageController.h */,
-				A8C1785C1A3C1F4000F41E4A /* JCMSegmentPageController.m */,
 				A8C077A51A30A97800F7C014 /* SegmentedControl.h */,
 				A8C077A61A30A97800F7C014 /* SegmentedControl.m */,
+				A8C1785B1A3C1F4000F41E4A /* JCMSegmentPageController.h */,
+				A8C1785C1A3C1F4000F41E4A /* JCMSegmentPageController.m */,
+				A8C0C97D1A3AA58E00A0D6EB /* NoticeAndFriendAndManageViewController.h */,
+				A8C0C97E1A3AA58E00A0D6EB /* NoticeAndFriendAndManageViewController.m */,
 				A836D1421A31A07E00AA6A09 /* ManageViewController */,
 				A836D1411A31A06700AA6A09 /* FriendViewController */,
 				A836D1401A31A01D00AA6A09 /* NoticesViewController */,
-				A8C0C97D1A3AA58E00A0D6EB /* NoticeAndFriendAndManageViewController.h */,
-				A8C0C97E1A3AA58E00A0D6EB /* NoticeAndFriendAndManageViewController.m */,
 			);
 			name = SegmentedControlCustom;
 			sourceTree = "<group>";
@@ -1747,6 +1821,8 @@
 				A8B8D0511A33166D0040C00D /* FriendInfoTableViewCell.xib in Resources */,
 				A8B7F37C1A2ED166000F7EC5 /* bell_press.png in Resources */,
 				A894D85B19B5BACC0088E522 /* Icon_Edit.png in Resources */,
+				A8C31A051A6CA86B0076CC61 /* FriendsInfoTableViewController.xib in Resources */,
+				A8C31A0A1A6CE3F10076CC61 /* AliasModifyViewController.xib in Resources */,
 				A894D8AF19B5BB150088E522 /* Time_End.png in Resources */,
 				A8B9CBDA1A37FB3C00DA0C54 /* checkMark.png in Resources */,
 				A894D8B119B5BB150088E522 /* go_back_today.png in Resources */,
@@ -1863,6 +1939,7 @@
 				A877C95A19B450C50075D9E8 /* AppDelegate.m in Sources */,
 				A894D71019B57F9C0088E522 /* NotesViewController.m in Sources */,
 				A886548D19D3E5C800EEC0A8 /* MAWeekView.m in Sources */,
+				A8C31A091A6CE3F10076CC61 /* AliasModifyViewController.m in Sources */,
 				A8B7F38A1A2F0C5E000F7EC5 /* camera.m in Sources */,
 				A8B529B819F635B9009286AA /* NSEntityDescription+MagicalDataImport.m in Sources */,
 				A8B9CBDF1A37FB3C00DA0C54 /* LPPopupListViewCell.m in Sources */,
@@ -1932,6 +2009,7 @@
 				A89AAFCA19EEA0270023742E /* EventAlertsViewController.m in Sources */,
 				A8BDABB71A47D4B000545EC4 /* NewVoteActionViewController.m in Sources */,
 				A8B529CE19F635B9009286AA /* MagicalRecord+ShorthandSupport.m in Sources */,
+				A8BCB4681A6C099700AC03DD /* SJAvatarBrowser.m in Sources */,
 				A8B529C219F635B9009286AA /* NSManagedObjectContext+MagicalObserving.m in Sources */,
 				A8974F4E19D8524C006AD5C0 /* LoginRegisterViewController.m in Sources */,
 				A8B7F38D1A2F0F2D000F7EC5 /* utilities.m in Sources */,
@@ -1973,6 +2051,7 @@
 				A8E5C39C1A51510800226FD9 /* ActivedetailsViewController.m in Sources */,
 				A898FA7D19D964D7008CD862 /* GoogleCalendarData.m in Sources */,
 				A8E5C3951A50FD1000226FD9 /* FriendInformationView.m in Sources */,
+				A8C31A041A6CA86B0076CC61 /* FriendsInfoTableViewController.m in Sources */,
 				A898C8FF19B463E700559F53 /* CalendarDateUtil.m in Sources */,
 				A894D6E019B578270088E522 /* JCDatePicker.m in Sources */,
 				A8C60F061A15B652000FAC7F /* RecurrenceModel.m in Sources */,
@@ -1980,6 +2059,7 @@
 				A89B676E19D98A7000415108 /* CalendarListViewController.m in Sources */,
 				A8B867E419E296E20004875F /* NSManagedObject+Magic.m in Sources */,
 				A8BD343A1A134F47005A38FE /* RepearOnDaysViewController.m in Sources */,
+				A8B9AD271A6E4CC500205A24 /* NoticesMsgModel.m in Sources */,
 				A8B529CD19F635B9009286AA /* MagicalRecord+Setup.m in Sources */,
 				A886549319D3E61700EEC0A8 /* WeekViewController.m in Sources */,
 				A8975B7019EA8D17006DFDC3 /* DefaultCalendarViewController.m in Sources */,

@@ -7,6 +7,7 @@
 //
 
 #import "FriendSearchViewController.h"
+#import "FriendInfoTableViewCell.h"
 #import "Friend.h"
 #import "UIImageView+WebCache.h"
 #import "LPPopupListView.h"
@@ -70,6 +71,7 @@
     [self.searchBtn setBackgroundColor:purple];
     [self.searchBtn addTarget:self action:@selector(searchFriendAdd:) forControlEvents:UIControlEventTouchUpInside];
     [headView addSubview:self.searchBtn];
+    [headView setBackgroundColor:[UIColor whiteColor]];
     return headView;
 }
 
@@ -84,10 +86,10 @@
 }
 
 - (IBAction)searchFriendAdd:(UIButton *)sender {
-    
     searchFriendArr = [NSMutableArray array];
-    [MBProgressHUD showMessage:@"Search..."];
-    if (self.searchText.text&&![self.searchText.text isEqualToString:@""]) {
+   
+    if (self.searchText.text && ![self.searchText.text isEqualToString:@""]) {
+         [MBProgressHUD showMessage:@"Search..."];
         ASIHTTPRequest *request = [t_Network httpGet:@{@"uid":self.searchText.text}.mutableCopy Url:anyTime_FindUser Delegate:nil Tag:anyTime_FindUser_tag];
         __block ASIHTTPRequest *searchRequest = request ;
         [request setCompletionBlock:^{
@@ -103,7 +105,8 @@
                         NSString * nickName = [dic objectForKeyedSubscript:@"nickName"];
                         NSMutableDictionary *ndic = [NSMutableDictionary dictionaryWithDictionary:dic];
                         [ndic removeObjectForKey:@"nickName"];
-                        [ndic setObject:nickName forKey:@"nickname"];
+                        if(nickName)
+                           [ndic setObject:nickName forKey:@"nickname"];
                         Friend * friend = [Friend friendWithDict:ndic];
                         friend.imgBig=[friend.imgBig stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
                         friend.imgSmall=[friend.imgSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
@@ -113,7 +116,10 @@
             }
             [MBProgressHUD hideHUD];
         }];
-        
+        [request setFailedBlock:^{
+            [MBProgressHUD hideHUD];
+            [MBProgressHUD showError:@"Network error!"];
+        }];
         [request startSynchronous];
         [self.tableView reloadData];
     }
@@ -130,7 +136,9 @@
 {
     return searchFriendArr.count;
 }
-
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 55.f;
+}
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     return 40.f;
 }
@@ -145,28 +153,24 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *cellIdentifier = @"cell";
+    static NSString *cellIdentifier = @"cellFriendId";
 
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellIdentifier];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    FriendInfoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell) {
+        cell = (FriendInfoTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"FriendInfoTableViewCell" owner:self options:nil] lastObject];
     }
+
     Friend *friend = searchFriendArr[indexPath.row];
     
     
     NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,friend.imgSmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSLog(@"%@",_urlStr);
     NSURL *url=[NSURL URLWithString:_urlStr];
-    [cell.imageView sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-   
-    cell.imageView.layer.cornerRadius = cell.imageView.frame.size.width / 2;
-    cell.imageView.layer.masksToBounds = YES;
+    [cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
     
-    cell.textLabel.textColor = friend.isVip ? [UIColor redColor] : [UIColor blackColor];
-    cell.textLabel.text = friend.nickname;
-    cell.detailTextLabel.text = friend.alias;
+    //cell.textLabel.textColor = friend.isVip ? [UIColor redColor] : [UIColor blackColor];
+    cell.nickName.text = friend.nickname;
+    cell.userNote.text = friend.alias;
     return cell;
 }
 
@@ -192,11 +196,13 @@
         id  objTmp = [responseStr objectFromJSONString];
         NSString *statusCode = [objTmp objectForKey:@"statusCode"];
         if ([statusCode isEqualToString:@"1"]) {
-            [MBProgressHUD showSuccess:@"Success"];
+            [MBProgressHUD showSuccess:@"Friend request sent. Please wait for confirmation"];
+        }else{
+             [MBProgressHUD showError:@"Fail to send friend request"];
         }
     }];
     [addFriendRequest setFailedBlock:^{
-        NSLog(@"添加失败！》》》》》》》》》》》》》%@",[friendRequest error]);
+       [MBProgressHUD showError:@"Fail to send friend request"];
     }];
     [addFriendRequest startAsynchronous];
 }

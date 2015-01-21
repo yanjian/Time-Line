@@ -193,6 +193,32 @@
         [ibActionSheet showInView:self.navigationController.view];
     }else if(selectCell.tag==20){
         UserInfoTableViewController *userInfoVC=[[UserInfoTableViewController alloc] initWithNibName:@"UserInfoTableViewController" bundle:nil];
+        userInfoVC.userInfoBlank=^(UserInfoTableViewController * userInfoViewController,UserInfo * userInfo){
+            
+            ASIHTTPRequest *userRequest=[t_Network httpGet:@{@"tel":(userInfo.phone==nil?@"":userInfo.phone),@"name":(userInfo.nickName==nil?@"":userInfo.nickName),@"gender":@(userInfo.gender)}.mutableCopy Url:UserInfo_UpdateUserInfo Delegate:nil Tag:UserInfo_UpdateUserInfo_tag ];
+            
+            __block  ASIHTTPRequest *request = userRequest ;
+            [userRequest setCompletionBlock:^{
+                NSLog(@"数据更新成功：%@",[request responseString]);
+                NSDictionary * tmpObj = [[request responseString] objectFromJSONString];
+                if ([@"1" isEqualToString:[tmpObj objectForKey:@"statusCode"]]) {
+                    [MBProgressHUD showSuccess:@"Operation success"];
+                    [UserInfo userInfoWithArchive:userInfo];
+                }
+            }];
+            
+            [userRequest setFailedBlock:^{
+                NSLog(@"请求失败：%@",[request responseString]);
+            }];
+            [userRequest startAsynchronous];
+            
+            for (UIViewController * viewController in userInfoViewController.navigationController.viewControllers) {
+                if ([viewController isKindOfClass:[SetingViewController class]]) {
+                    [userInfoViewController.navigationController popToViewController:viewController animated:YES] ;
+                    break ;
+                }
+            }
+        };
         [self.navigationController pushViewController:userInfoVC animated:YES];
     }else {
         id rowData=[[dataArr objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];

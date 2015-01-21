@@ -11,6 +11,7 @@
 #import "Friend.h"
 #import "HeadView.h"
 #import "FriendSearchViewController.h"
+#import "FriendsInfoTableViewController.h"
 #import "UIImageView+WebCache.h"
 #import "FriendInfoTableViewCell.h"
 @interface FriendInfoViewController ()<HeadViewDelegate,UITableViewDelegate,UITableViewDataSource,UIActionSheetDelegate,ASIHTTPRequestDelegate>
@@ -29,6 +30,8 @@
     [super viewDidLoad];
     CGRect frame = CGRectMake(0, naviHigth, kScreen_Width, kScreen_Height);
     self.view.frame=frame;
+    
+    [self loadData];//加载数据
     
     self.tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height-frame.origin.y) style:UITableViewStyleGrouped];
     self.tableView.dataSource=self;
@@ -51,9 +54,6 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    
-    [self loadData];
-    [self.tableView reloadData];
 }
 
 
@@ -64,13 +64,7 @@
     [_friendGroups setDownloadCache:g_AppDelegate.anyTimeCache] ;
     [_friendGroups setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
     [_friendGroups setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
-    [_friendGroups startSynchronous];
-    
-    ASIHTTPRequest *_friend = [t_Network httpGet:nil Url:anyTime_GetFriendList Delegate:self Tag:anyTime_GetFriendList_tag];
-    [_friend setDownloadCache:g_AppDelegate.anyTimeCache] ;
-    [_friend setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
-    [_friend setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
-    [_friend startSynchronous];
+    [_friendGroups startAsynchronous];
 }
 
 
@@ -81,8 +75,9 @@
     id groupObj = [responeStr objectFromJSONString];
     switch (request.tag) {
         case anyTime_GetFTlist_tag:{
-            NSMutableArray *fgArray = [NSMutableArray array];
             if ([groupObj isKindOfClass:[NSDictionary class]]) {
+                NSMutableArray *fgArray = [NSMutableArray array];
+                
                 NSString *statusCode = [groupObj objectForKey:@"statusCode"];
                 if ([statusCode isEqualToString:@"1"]) {
                     NSArray *groupArr = [groupObj objectForKey:@"data"];
@@ -90,9 +85,16 @@
                         FriendGroup *friendGroup = [FriendGroup friendGroupWithDict:dic];
                         [fgArray addObject:friendGroup];
                     }
+                    //发送得到好友
+                    ASIHTTPRequest *_friend = [t_Network httpGet:nil Url:anyTime_GetFriendList Delegate:self Tag:anyTime_GetFriendList_tag];
+                    [_friend setDownloadCache:g_AppDelegate.anyTimeCache] ;
+                    [_friend setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
+                    [_friend setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
+                    [_friend startAsynchronous];
                 }
+                 _groupArr = fgArray;
             }
-            _groupArr = fgArray;
+            [self.tableView reloadData];
         }
             break;
         case anyTime_GetFriendList_tag:{
@@ -112,6 +114,7 @@
                         fg.friends=frArray;
                     }
                 }
+                [self.tableView reloadData];
             }
         }
             break;
@@ -216,7 +219,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *cellIdentifier = @"cell";
+    static NSString *cellIdentifier = @"cellFriendId";
     
     FriendInfoTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (!cell) {
@@ -233,8 +236,17 @@
     [cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
     
     cell.textLabel.textColor = friend.isVip ? [UIColor redColor] : [UIColor blackColor];
-    cell.nickName.text = friend.nickname;
-    cell.userNote.text = friend.alias;
+    if (friend.alias && ![ @"" isEqualToString:friend.alias]) {//如果有别名就显示别名
+        cell.nickName.text = friend.alias;
+    }else{
+        if(friend.nickname && ![@"" isEqualToString:friend.nickname ]){
+             cell.nickName.text = friend.nickname;
+        }else{
+            cell.nickName.text = friend.username;
+        }
+    }
+    
+   // cell.userNote.text = friend.alias;
     return cell;
 }
 
@@ -249,8 +261,16 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //    ViewController *viewController = [[ViewController alloc] init];
-    //    [self.navigationController pushViewController:viewController animated:YES];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    FriendsInfoTableViewController *fiVC = [[FriendsInfoTableViewController alloc] initWithNibName:@"FriendsInfoTableViewController" bundle:nil];
+    FriendGroup *friendGroup = _groupArr[indexPath.section];
+    Friend *friend = friendGroup.friends[indexPath.row];
+    fiVC.friendInfo = friend ;
+    
+    UINavigationController * nav=[[UINavigationController alloc] initWithRootViewController:fiVC];
+    nav.navigationBar.translucent=NO;
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 - (void)clickHeadView

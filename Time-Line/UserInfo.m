@@ -52,6 +52,16 @@
     }
     return userInfo;
 }
+//将用户归档
++(void)userInfoWithArchive:(UserInfo *) userInfo {
+    if(userInfo){
+     [USER_DEFAULT removeObjectForKey:CURRENTUSERINFO];//先移除当前的用户
+     NSData * userInfoData = [NSKeyedArchiver archivedDataWithRootObject:userInfo];
+     [USER_DEFAULT setObject:userInfoData forKey:CURRENTUSERINFO];
+     [USER_DEFAULT synchronize];
+    }
+}
+
 
 - (instancetype)initWithCoder:(NSCoder *) deCoder
 {

@@ -299,6 +299,9 @@ typedef NS_ENUM(NSInteger , AccountType){
 #define anyTime_ViewEvent [NSString stringWithFormat:@"%@/servlet/ViewEvent",BASEURL_IP]
 #define anyTime_ViewEvent_tag 54
 
+//更新好友备注   UpdateFriendNickName
+#define anyTime_UpdateFriendNickName [NSString stringWithFormat:@"%@/servlet/UpdateFriendNickName",BASEURL_IP]
+#define anyTime_UpdateFriendNickName_tag 54
 
 
 

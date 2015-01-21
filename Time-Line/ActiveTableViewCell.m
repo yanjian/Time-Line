@@ -66,12 +66,6 @@
         tag = anyTime_QuitEvent_tag;
         request = [t_Network httpPostValue:paramDic Url:urlStr Delegate:nil Tag:tag];
     }
-//    else if(buttonIndex == 2){
-//        NSLog(@"%@",[@[@{@"eid":self.activeEvent.Id}] JSONString]);
-//        paramDic = @{@"eid":@[@{@"eid":self.activeEvent.Id}] }.mutableCopy ;
-//        urlStr = anyTime_DelEvents ;
-//        tag = anyTime_DelEvents_tag ;
-//    }
     
     __block ASIHTTPRequest *  deleteRequest = request ;
     [request setCompletionBlock:^{

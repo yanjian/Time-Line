@@ -7,6 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+@ class UserInfoTableViewController ;
+typedef void (^UserInfoBlank)(UserInfoTableViewController * userInfoViewController,UserInfo * userInfo) ;
 @interface UserInfoTableViewController : UITableViewController
 
+@property (nonatomic,copy) UserInfoBlank userInfoBlank ;
 @end

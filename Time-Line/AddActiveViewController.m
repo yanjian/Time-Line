@@ -499,9 +499,7 @@ NS_ENUM(NSInteger, voteAndFixDateType){
 - (void)saveButtonClicked:(SetFriendViewController*)secondSetFriendViewController didSelectFriend:(NSArray *) friendArr{
     inviteeFriendArr =[NSMutableArray arrayWithArray:friendArr];
     [inviteeFriendArr insertObject:[UserInfo currUserInfo] atIndex:0];
-    
-   
-    
+
     for (NSUInteger i = 0; i<inviteeFriendArr.count; i++) {
         NSMutableDictionary *inviteeDic = [NSMutableDictionary dictionary];
         

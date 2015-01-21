@@ -65,7 +65,7 @@
     _friendGroup = friendGroup;
     
     [_bgButton setTitle:friendGroup.name forState:UIControlStateNormal];
-    _numLabel.text = [NSString stringWithFormat:@"%d/%d", friendGroup.online, friendGroup.friends.count];
+    _numLabel.text = [NSString stringWithFormat:@"%d", /*friendGroup.online,*/ friendGroup.friends.count];
 }
 
 - (void)didMoveToSuperview
@@ -109,9 +109,10 @@
     if (buttonIndex == 1) {
         if (!isDelete) {//不是删除组而是更新组
             _friendGroup.name = [alertView textFieldAtIndex:0].text;
-            __block ASIHTTPRequest *updateGroupsRequest = [t_Network httpPostValue:@{@"tid": _friendGroup.Id,@"name":_friendGroup.name}.mutableCopy Url:anyTime_FriendTeam Delegate:nil Tag:anyTime_FriendTeam_tag];
+            ASIHTTPRequest *updateGroupsRequest = [t_Network httpPostValue:@{@"tid": _friendGroup.Id,@"name":_friendGroup.name}.mutableCopy Url:anyTime_FriendTeam Delegate:nil Tag:anyTime_FriendTeam_tag];
+            __block ASIHTTPRequest *updateGroupsReq = updateGroupsRequest ;
             [updateGroupsRequest setCompletionBlock:^{//请求成功
-                NSString * responseStr = [updateGroupsRequest responseString];
+                NSString * responseStr = [updateGroupsReq responseString];
                 NSLog(@"%@",responseStr);
                 id objGroup = [responseStr objectFromJSONString];
                 if ([objGroup isKindOfClass:[NSDictionary class]]) {
@@ -126,14 +127,19 @@
             }];
             
             [updateGroupsRequest setFailedBlock:^{//请求失败
-                NSLog(@"%@",[updateGroupsRequest responseString]);
+                NSLog(@"%@",[updateGroupsReq responseString]);
             }];
             [updateGroupsRequest startAsynchronous];
 
         }else{//删除组
-            __block ASIHTTPRequest *deleteGroupsRequest = [t_Network  httpGet:@{@"tid": _friendGroup.Id}.mutableCopy Url:anyTime_DeleteFTeam Delegate:nil Tag:anyTime_DeleteFTeam_tag];
+            if ([@"1" isEqualToString:_friendGroup.defaultTeam]) {
+                [MBProgressHUD showError:@"Default group cannot be deleted!"];
+                return ;
+            }
+            ASIHTTPRequest *deleteGroupsRequest = [t_Network  httpGet:@{@"tid": _friendGroup.Id}.mutableCopy Url:anyTime_DeleteFTeam Delegate:nil Tag:anyTime_DeleteFTeam_tag];
+             __block ASIHTTPRequest *delGroupsRequest = deleteGroupsRequest;
             [deleteGroupsRequest setCompletionBlock:^{//请求成功
-                NSString * responseStr = [deleteGroupsRequest responseString];
+                NSString * responseStr = [delGroupsRequest responseString];
                 NSLog(@"%@",responseStr);
                 id objGroup = [responseStr objectFromJSONString];
                 if ([objGroup isKindOfClass:[NSDictionary class]]) {
@@ -149,10 +155,9 @@
             }];
             
             [deleteGroupsRequest setFailedBlock:^{//请求失败
-                NSLog(@"%@",[deleteGroupsRequest responseString]);
+                NSLog(@"%@",[delGroupsRequest responseString]);
             }];
             [deleteGroupsRequest startAsynchronous];
-
         }
     }
 

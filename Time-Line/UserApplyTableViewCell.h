@@ -14,4 +14,5 @@
 @property (weak, nonatomic) IBOutlet UIButton *acceptBtn;
 @property (weak, nonatomic) IBOutlet UIButton *denyBtn;
 
+-(void)setFriendRequestInfo:(NSString *) str ;
 @end
