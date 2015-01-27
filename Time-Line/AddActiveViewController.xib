@@ -11,6 +11,7 @@
                 <outlet property="innsertScorllView" destination="jHj-DY-3XD" id="mAO-fC-Fz0"/>
                 <outlet property="inviteeCell" destination="jJ1-Ds-hVJ" id="eCD-oR-dec"/>
                 <outlet property="inviteeLab" destination="QYH-Dd-1Pc" id="33H-Xa-UlL"/>
+                <outlet property="moreBtn" destination="gK5-im-8EZ" id="OOr-xI-gB7"/>
                 <outlet property="outsideView" destination="7is-cO-1ey" id="Yfy-Az-RyQ"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -56,9 +57,19 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </view>
+                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gK5-im-8EZ">
+                        <rect key="frame" x="266" y="0.0" width="46" height="23"/>
+                        <state key="normal" title="More">
+                            <color key="titleColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                        <connections>
+                            <action selector="showMoreMember:" destination="-1" eventType="touchUpInside" id="ZI8-8r-kFf"/>
+                        </connections>
+                    </button>
                 </subviews>
             </tableViewCellContentView>
-            <point key="canvasLocation" x="-111" y="159"/>
+            <point key="canvasLocation" x="-111" y="156"/>
         </tableViewCell>
     </objects>
     <resources>

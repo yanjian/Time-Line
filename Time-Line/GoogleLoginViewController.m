@@ -320,12 +320,6 @@
                     [uInfo parseDictionary:userInfoDic];
                     uInfo.authCode = [oauthDic objectForKey:@"authCode"];
                     uInfo.gender = [[userInfoDic objectForKey:@"gender"] intValue]==0?gender_woman:gender_man;
-                    if (uInfo.imgUrl) {
-                        uInfo.imgUrl = [uInfo.imgUrl stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                    }
-                    if (uInfo.imgUrlSmall) {
-                        uInfo.imgUrlSmall = [uInfo.imgUrlSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                    }
                     uInfo.loginStatus = UserLoginStatus_YES ;
                     uInfo.accountType = AccountTypeGoogle ;
                     

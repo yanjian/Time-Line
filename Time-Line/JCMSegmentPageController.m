@@ -19,10 +19,9 @@
 #import "SetingViewController.h"
 #import "SloppySwiper.h"
 
-static const float TAB_BAR_HEIGHT = 64.0f;
+static const float TAB_BAR_HEIGHT = 0.f;//64.0f;
 
 @implementation JCMSegmentPageController {
-	UIView *headerContainerView;
   UISegmentedControl *segmentedControl;
 	UIView *contentContainerView;
     UIColor *tintColor;
@@ -67,7 +66,7 @@ static const float TAB_BAR_HEIGHT = 64.0f;
 }
 
 - (void)layoutHeaderView {
-  segmentedControl.frame =CGRectMake(50, 25, 220, 30);
+  segmentedControl.frame =CGRectMake(0, 0, 220, 30);
 }
 
 /**
@@ -76,40 +75,33 @@ static const float TAB_BAR_HEIGHT = 64.0f;
  */
 - (void)viewDidLoad {
 	[super viewDidLoad];
-
+    self.navigationItem.hidesBackButton = YES ;
 	self.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.view.backgroundColor = [UIColor whiteColor];
 	CGRect rect = CGRectMake(0, 0, self.view.bounds.size.width, TAB_BAR_HEIGHT);
-	headerContainerView = [[UIView alloc] initWithFrame:rect];
-    headerContainerView.backgroundColor = blueColor;
-	headerContainerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    
-    
+
     // 右边xiew上返回button
     _rbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     _rbutton.frame = CGRectMake(280, 30, 21, 25);
     [_rbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow1"] forState:UIControlStateNormal];
     [_rbutton addTarget:self action:@selector(setrbutton) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_rbutton];
     
     //左边的按钮
     _ZVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     _ZVbutton.frame = CGRectMake(0, 20, 45, 45);
     [_ZVbutton setBackgroundImage:[UIImage imageNamed:@"setting_default"] forState:UIControlStateNormal];
     [_ZVbutton addTarget:self action:@selector(setZVbutton) forControlEvents:UIControlEventTouchUpInside];
-    [headerContainerView addSubview:_ZVbutton];
-    [headerContainerView addSubview:_rbutton];
-
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_ZVbutton];
     
-    
-    CGRect segmentedControlRect =CGRectMake(50, 25, 220, 30);
+    CGRect segmentedControlRect =CGRectMake(0, 0, 220, 30);
     segmentedControl = [[UISegmentedControl alloc] initWithFrame:segmentedControlRect];
     segmentedControl.momentary = NO;
     [segmentedControl addTarget:self action:@selector(tabButtonPressed:) forControlEvents:UIControlEventValueChanged];
     if (tintColor) {
         [segmentedControl setTintColor:tintColor];
     }
-    [headerContainerView addSubview:segmentedControl];
-	[self.view addSubview:headerContainerView];
+    self.navigationItem.titleView = segmentedControl ;
     
 	rect.origin.y = TAB_BAR_HEIGHT;
 	rect.size.height = self.view.bounds.size.height - TAB_BAR_HEIGHT;
@@ -122,14 +114,13 @@ static const float TAB_BAR_HEIGHT = 64.0f;
 
 - (void)viewDidUnload {
 	[super viewDidUnload];
-	headerContainerView = nil;
 	contentContainerView = nil;
 	segmentedControl = nil;
 }
 
 - (void)viewWillLayoutSubviews {
 	[super viewWillLayoutSubviews];
-	[self layoutHeaderView];
+	//[self layoutHeaderView];
 }
 
 - (void)dealloc {
@@ -224,8 +215,6 @@ static const float TAB_BAR_HEIGHT = 64.0f;
 				rect.origin.x = -rect.size.width;
 
 			toViewController.view.frame = rect;
-			headerContainerView.userInteractionEnabled = NO;
-
 			[self transitionFromViewController:fromViewController
 				toViewController:toViewController
 				duration:0.3
@@ -241,8 +230,6 @@ static const float TAB_BAR_HEIGHT = 64.0f;
 					toViewController.view.frame = contentContainerView.bounds;
 				}
 				completion:^(BOOL finished) {
-					headerContainerView.userInteractionEnabled = YES;
-
 					if ([self.delegate respondsToSelector:@selector(segmentPageController:didSelectViewController:atIndex:)])
 						[self.delegate segmentPageController:self didSelectViewController:toViewController atIndex:newSelectedIndex];
 				}];
@@ -300,25 +287,12 @@ static const float TAB_BAR_HEIGHT = 64.0f;
     nc.navigationBar.barTintColor=blueColor;
     swiper = [[SloppySwiper alloc] initWithNavigationController:nc];
     nc.delegate = swiper;
-    [self presentViewController:nc animated:NO completion:nil];
+    [self presentViewController:nc animated:YES completion:nil];
 }
 
 #pragma mark -－－ 所有点击事件
 - (void)setrbutton
 {
-    //    [UIView beginAnimations:nil context:nil];
-    //    [UIView setAnimationDuration:.2];
-    //    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
-    //    _scrollview.contentOffset = CGPointMake(kScreen_Width, 0);
-    //    [UIView commitAnimations];
-    
-    if (self.presentingViewController) {
-        [self dismissViewControllerAnimated:NO completion:nil];
-    }else {
-        self.view.window.backgroundColor = [UIColor colorWithWhite:0 alpha:0];
-        self.view.window.hidden = YES;
-    }
-    
-    
+   [self.navigationController popViewControllerAnimated:YES];
 }
 @end

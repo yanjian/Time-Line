@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *userHead;
 @property (weak, nonatomic) IBOutlet UILabel *nickName;
 @property (weak, nonatomic) IBOutlet UILabel *userNote;
+@property (weak, nonatomic) IBOutlet UILabel *joinDes;
 
 @end

@@ -583,11 +583,7 @@
 //取消返回
 - (void)onClickCancel
 {
-    if ([state isEqualToString:@"edit"]) {
-        [self.navigationController popViewControllerAnimated:YES];
-        return;
-    }
-    [self dismissViewControllerAnimated:YES completion:nil];
+   [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void)dissViewcontroller{

@@ -96,16 +96,18 @@
         [self presentViewController:googleNav animated:YES completion:nil];
     }else if (sender.tag==11){//Login button
         NSMutableDictionary *paramDic=[NSMutableDictionary dictionaryWithCapacity:0];
-        if ([@"" isEqualToString:self.username.text]) {
+        NSString * usernsme = [self.username.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];//去掉左右空格
+         NSString * password = [self.passwordBtn.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        if ([ @"" isEqualToString:usernsme ]) {
             [MBProgressHUD showError:@"Please enter your user name"];
             return;
         }
-        if ([@"" isEqualToString:self.passwordBtn.text]) {
+        if ([ @"" isEqualToString:password ]) {
             [MBProgressHUD showError:@"Please enter the password"];
             return;
         }
-        [paramDic setObject:self.username.text forKey:@"uName"];
-        NSString *md5Pw= [[NSString stringWithString:self.passwordBtn.text] md5];
+        [paramDic setObject:usernsme forKey:@"uName"];
+        NSString *md5Pw= [[NSString stringWithString:password] md5];
         [paramDic setObject:md5Pw forKey:@"uPw"];
         [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
         [self addNetWorkRequest:paramDic];
@@ -193,12 +195,11 @@
                     [uInfo parseDictionary:userInfoDic];
                     uInfo.gender=[[userInfoDic objectForKey:@"gender"] intValue]==0?gender_woman:gender_man;
                     if (!uInfo.imgUrl) {
-                        uInfo.imgUrl=[[userInfoDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                        uInfo.imgUrl=[userInfoDic objectForKey:@"imgBig"];
                     }
                     if (!uInfo.imgUrlSmall) {
-                        uInfo.imgUrlSmall=[[userInfoDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                        uInfo.imgUrlSmall=[userInfoDic objectForKey:@"imgBig"];
                     }
-                    
                     //accountBinds =     ({account = "yanjaya5201314@gmail.com";type = 1;uid = 76;})
                     NSArray *accountBinds=uInfo.accountBinds ;
                     if (accountBinds.count>0) {

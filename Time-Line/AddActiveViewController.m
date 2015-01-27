@@ -31,6 +31,7 @@ NS_ENUM(NSInteger, voteAndFixDateType){
 #import "utilities.h"
 #import "PECropViewController.h"
 #import "UIImageView+WebCache.h"
+#import "MemberListViewController.h"
 
 
 #define SPACING  0
@@ -110,11 +111,12 @@ NS_ENUM(NSInteger, voteAndFixDateType){
 @property (weak, nonatomic) IBOutlet UIButton *addFriendBtn;
 
 @property (nonatomic) UIPopoverController *popover;
+@property (weak, nonatomic) IBOutlet UIButton *moreBtn;
 
 //生成一个临时的唯一id
 -(NSString *) generateUniqueOptonId;
 //向voteDateArr中添加一个时间
--(void)addVoteDateWithEvent;
+-(void)addVoteDateWithEventStartTime:(NSString *)start endTime:(NSString *)end;
 @end
 
 @implementation AddActiveViewController
@@ -136,8 +138,8 @@ NS_ENUM(NSInteger, voteAndFixDateType){
 {
     [super viewDidLoad];
     
-    self.navigationController.navigationBarHidden=NO;
-    self.navigationController.navigationBar.barTintColor =blueColor;
+  //  self.navigationController.navigationBarHidden=NO;
+   // self.navigationController.navigationBar.barTintColor =blueColor;
     
     voteDateArr = [NSMutableArray arrayWithCapacity:0];
     fixDateArr = [NSMutableArray arrayWithCapacity:0];
@@ -158,8 +160,8 @@ NS_ENUM(NSInteger, voteAndFixDateType){
         for (NSDictionary * dic in activeEventMode.member) {
             Friend  * friend = [[Friend alloc] init];
             friend.fid = [dic objectForKey:@"uid"];
-            friend.imgBig =  [[dic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];;
-            friend.imgSmall = [[dic objectForKey:@"imgSmall"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+            friend.imgBig =  [dic objectForKey:@"imgBig"];
+            friend.imgSmall = [dic objectForKey:@"imgSmall"];
             friend.nickname = [dic objectForKey:@"nickname"];
             friend.username = [dic objectForKey:@"username"];
             [inviteeFriendArr addObject:friend];
@@ -289,7 +291,9 @@ NS_ENUM(NSInteger, voteAndFixDateType){
             _selectedBtnIndex = 1;
             voteDateOfSections = 2 ;//如果时间是固定的--》用户点击了要投票的的事件： 就  默认显示2个表格cell
             for (NSInteger i = 0; i<voteDateOfSections; i++) {
-                [self addVoteDateWithEvent];
+               NSString * start = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"YYYY年 M月d日 HH:mm" interval:i+1];
+                NSString * end = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"YYYY年 M月d日 HH:mm" interval:(i+1)*12];
+                [self addVoteDateWithEventStartTime:start endTime:end];
             }
         }else if([@"2" isEqualToString:type]){//可以投票时间
             _voteBtn.selected = YES;
@@ -301,7 +305,9 @@ NS_ENUM(NSInteger, voteAndFixDateType){
         [_voteBtn setSelected:YES];
         voteDateOfSections = 2 ;//默认显示2个表格cell ；
         for (NSInteger i = 0; i<voteDateOfSections; i++) {
-            [self addVoteDateWithEvent];
+            NSString * start = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"YYYY年 M月d日 HH:mm" interval:i+1];
+            NSString * end = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"YYYY年 M月d日 HH:mm" interval:(i+1)*12];
+            [self addVoteDateWithEventStartTime:start endTime:end];//---------------------------------------
         }
     }
 
@@ -480,11 +486,7 @@ NS_ENUM(NSInteger, voteAndFixDateType){
 //取消返回
 - (void)onClickCancel
 {
-    if (isEdit) {
-        [self.navigationController popViewControllerAnimated:YES];
-        return;
-    }
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)addFriendToActive:(UIButton *)sender {
@@ -492,7 +494,6 @@ NS_ENUM(NSInteger, voteAndFixDateType){
     setFirVc.delegate=self;
     [self presentPopupViewController:setFirVc animationType:MJPopupViewAnimationFade];
 }
-
 
 
 #pragma mark - SetFriendViewController的代理方法？用于存储选择的用户
@@ -645,12 +646,21 @@ NS_ENUM(NSInteger, voteAndFixDateType){
         }
         NSDictionary * timeDic = [voteDateArr objectAtIndex:indexPath.section];
         NSString *isAllDay = [timeDic objectForKey:@"allDay"];//是否全天时间
-        NSDate * startDate = [[PublicMethodsViewController getPublicMethods] stringToDate:[timeDic objectForKey:@"startTime"]];
+        
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateStyle:NSDateFormatterMediumStyle];
+        [formatter setTimeStyle:NSDateFormatterShortStyle];
+        [formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
+        NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
+        [formatter setTimeZone:timeZone];
+
+        
+        NSDate * startDate = [formatter dateFromString:[timeDic objectForKey:@"startTime"]];
         fixStartTime = [[PublicMethodsViewController getPublicMethods] stringformatWithDate:startDate];
          NSString *startTime = [[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: fixStartTime];
         CLDay *now = [[CLDay alloc] initWithDate:startDate];
         
-        NSDate * endDate = [[PublicMethodsViewController getPublicMethods] stringToDate:[timeDic objectForKey:@"endTime"]];
+        NSDate * endDate = [formatter dateFromString:[timeDic objectForKey:@"endTime"]];
         
         fixEndTime = [[PublicMethodsViewController getPublicMethods] stringformatWithDate:endDate];
         NSString *endTime = [[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: fixEndTime];
@@ -767,15 +777,27 @@ NS_ENUM(NSInteger, voteAndFixDateType){
                         [view  removeFromSuperview];
                     }
                 }
-                
+                NSInteger  showCount = 0 ;//要显示多少人数
                 self.inviteeLab.text = [NSString stringWithFormat:@"%d Invitee",inviteeFriendArr.count];
-                for (int i=0; i<inviteeFriendArr.count; i++) {
+                if (inviteeFriendArr.count>5) {
+                    [self.moreBtn setHidden:NO] ;
+                    showCount = 5 ;
+                }else{
+                    [self.moreBtn setHidden:YES] ;
+                    showCount = inviteeFriendArr.count ;
+                }
+                for (int i = 0; i < showCount; i++) {
                     FriendInformationView * fiv =  [FriendInformationView initFriendInfoView];
                     fiv.frame=CGRectMake(52*i, 10, 50, 80);
                     id personInfo = inviteeFriendArr[i];
                     if ([personInfo isKindOfClass:[UserInfo class]]) {
                         UserInfo * currUse = (UserInfo *) personInfo;
-                         fiv.friendNameLab.text=currUse.nickName;
+                        if (currUse.nickname && ! [currUse.nickname isEqualToString:@""]) {
+                            fiv.friendNameLab.text = currUse.nickname;
+                        }else {
+                            fiv.friendNameLab.text = currUse.username;
+                        }
+                        
                          NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,currUse.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                         NSURL *url = [NSURL URLWithString:_urlStr];
                         [fiv.friendHeadimg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
@@ -784,7 +806,11 @@ NS_ENUM(NSInteger, voteAndFixDateType){
                         NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,friend.imgBig] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                         NSURL *url = [NSURL URLWithString:_urlStr];
                         [fiv.friendHeadimg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-                         fiv.friendNameLab.text=friend.nickname;
+                        if (friend.nickname && ![@"" isEqualToString:friend.nickname]) {
+                            fiv.friendNameLab.text = friend.nickname ;
+                        }else{
+                             fiv.friendNameLab.text = friend.username ;
+                        }
                     }
                     [self.innsertScorllView addSubview:fiv];
                 }
@@ -1116,41 +1142,18 @@ NS_ENUM(NSInteger, voteAndFixDateType){
 
 #pragma mark -添加投票的时间
 -(void)addMutableDateVote{
-    voteDateOfSections=voteDateOfSections+1;
-    [self addVoteDateWithEvent];
-    UIView *voteView = (UIView *)_voteAndFixViewArr[0];
-    [voteTableView setFrame:CGRectMake(0, 0, kScreen_Width, voteDateOfSections * voteTableViewCellHight+footerCellHeight)];
-    [voteView setFrame:CGRectMake(0, voteAndFixHeight, kScreen_Width, voteDateOfSections * voteTableViewCellHight+footerCellHeight)] ;
-    [voteTableView reloadData];
-    [_tableView    reloadData];
-}
-
--(void)addVoteDateWithEvent{
-    NSMutableDictionary * voteDateDic = [NSMutableDictionary dictionary];
-    //开始时间
+    
+    ViewController* controler=[[ViewController alloc]initWithNibName:@"ViewController" bundle:nil];
+    AnyEvent * eventData=[AnyEvent MR_createEntity];
     NSDate * startDate = [[NSDate date] dateByAddingTimeInterval:5*60];
-    fixStartTime = [[PublicMethodsViewController getPublicMethods] stringformatWithDate:startDate];
-    //结束时间
-    NSDate * endDate =[startDate dateByAddingTimeInterval:60*60];
-    fixEndTime = [[PublicMethodsViewController getPublicMethods] stringformatWithDate:endDate];
-    
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateStyle:NSDateFormatterMediumStyle];
-    [formatter setTimeStyle:NSDateFormatterShortStyle];
-    [formatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
-    NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
-    [formatter setTimeZone:timeZone];
-    
-    [voteDateDic setObject:[formatter stringFromDate:startDate] forKey:@"startTime"];
-    [voteDateDic setObject:[formatter stringFromDate:endDate] forKey:@"endTime"];
-    [voteDateDic setObject:@(0) forKey:@"allDay"];
-    [voteDateArr addObject:voteDateDic];
-    
-    if (isEdit) {//是修改数据才记录新增的数据
-        [addvoteTimeArr addObject:voteDateDic];
-    }
+    eventData.startDate= [[PublicMethodsViewController getPublicMethods] stringformatWithDate:startDate];
+    NSDate * endDate =[startDate dateByAddingTimeInterval:1*60*60];
+    eventData.endDate= [[PublicMethodsViewController getPublicMethods] stringformatWithDate:endDate];
+    eventData.isAllDay=@(0);//全天事件 标记
+    [controler addEventViewControler:self anyEvent:eventData];
+    controler.detelegate=self;
+    [self.navigationController pushViewController:controler animated:YES ];
 }
-
 
 #pragma mark -添加投票的具体内容
 -(void)addMutableNewVote{
@@ -1181,6 +1184,12 @@ NS_ENUM(NSInteger, voteAndFixDateType){
     //Do something else
 }
 
+- (IBAction)showMoreMember:(UIButton *)sender {
+    MemberListViewController * memberListVc = [[MemberListViewController alloc] init];
+    memberListVc.isMemberObj = YES ; //表示数组中专递的是封装的对象 不是字典
+    memberListVc.memberArr = inviteeFriendArr;
+    [self presentViewController:memberListVc animated:YES completion:nil];
+}
 
 -(void)onClickAddActiveEvent{
     if (!_activeEventTitle.text||[@"" isEqualToString:_activeEventTitle.text]) {
@@ -1370,8 +1379,43 @@ NS_ENUM(NSInteger, voteAndFixDateType){
 
 #pragma mark - 时间选择viewController的代理方法 settimedelegate
 -(void)getstarttime:(NSString *)start getendtime:(NSString *)end isAllDay:(BOOL)isAll{
-    
+    if (start && end) {
+        voteDateOfSections=voteDateOfSections+1;
+        [self addVoteDateWithEventStartTime:start endTime:end];
+        UIView *voteView = (UIView *)_voteAndFixViewArr[0];
+        [voteTableView setFrame:CGRectMake(0, 0, kScreen_Width, voteDateOfSections * voteTableViewCellHight+footerCellHeight)];
+        [voteView setFrame:CGRectMake(0, voteAndFixHeight, kScreen_Width, voteDateOfSections * voteTableViewCellHight+footerCellHeight)] ;
+        [voteTableView reloadData];
+        [_tableView    reloadData];
+    }
 }
+
+-(void)addVoteDateWithEventStartTime:(NSString *)start endTime:(NSString *)end{
+    NSMutableDictionary * voteDateDic = [NSMutableDictionary dictionary];
+    //开始时间
+    NSDate * startDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:start];
+    fixStartTime = [[PublicMethodsViewController getPublicMethods] stringformatWithDate:startDate];
+    //结束时间
+    NSDate * endDate =[[PublicMethodsViewController getPublicMethods] formatWithStringDate:end ];
+    fixEndTime = [[PublicMethodsViewController getPublicMethods] stringformatWithDate:endDate];
+    
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    [formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
+    NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
+    [formatter setTimeZone:timeZone];
+    
+    [voteDateDic setObject:[formatter stringFromDate:startDate] forKey:@"startTime"];
+    [voteDateDic setObject:[formatter stringFromDate:endDate] forKey:@"endTime"];
+    [voteDateDic setObject:@(0) forKey:@"allDay"];
+    [voteDateArr addObject:voteDateDic];
+    
+    if (isEdit) {//是修改数据才记录新增的数据
+        [addvoteTimeArr addObject:voteDateDic];
+    }
+}
+
 
 #pragma mark -代理方法 -- getlocation:coordinate:
 -(void)getlocation:(NSString*) name coordinate:(NSDictionary *) coordinatesDic{

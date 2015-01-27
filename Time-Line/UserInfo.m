@@ -63,6 +63,18 @@
 }
 
 
+-(void)setImgUrl:(NSString *)imgUrl{
+    if (imgUrl) {
+        _imgUrl = [imgUrl stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+    }
+}
+
+-(void)setImgUrlSmall:(NSString *)imgUrlSmall{
+    if (imgUrlSmall) {
+        _imgUrlSmall = [imgUrlSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+    }
+}
+
 - (instancetype)initWithCoder:(NSCoder *) deCoder
 {
     self = [super init];
@@ -76,7 +88,7 @@
         self.googleToken = [deCoder decodeObjectForKey:GOOGLETOKEN] ;
         self.imgUrl = [deCoder decodeObjectForKey:IMGURL] ;
         self.imgUrlSmall = [deCoder decodeObjectForKey:IMGURLSMALL] ;
-        self.nickName = [deCoder decodeObjectForKey:NICKNAME] ;
+        self.nickname = [deCoder decodeObjectForKey:NICKNAME] ;
         self.password = [deCoder decodeObjectForKey:PWD] ;
         self.phone = [deCoder decodeObjectForKey:PHONE] ;
         self.registerTime = [deCoder decodeObjectForKey:REGISTERTIME] ;
@@ -100,7 +112,7 @@
     [enCoder encodeObject:self.googleToken forKey:GOOGLETOKEN];
     [enCoder encodeObject:self.imgUrl forKey:IMGURL];
     [enCoder encodeObject:self.imgUrlSmall forKey:IMGURLSMALL];
-    [enCoder encodeObject:self.nickName forKey:NICKNAME];
+    [enCoder encodeObject:self.nickname forKey:NICKNAME];
     [enCoder encodeObject:self.password forKey:PWD];
     [enCoder encodeObject:self.phone forKey:PHONE];
     [enCoder encodeObject:self.registerTime forKey:REGISTERTIME];

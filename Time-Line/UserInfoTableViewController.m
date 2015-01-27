@@ -100,7 +100,7 @@
     if (indexPath.row == 0) {
          userCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         userCell.textLabel.text = titleStr ;
-        userCell.detailTextLabel.text = self.userInfo.nickName ;
+        userCell.detailTextLabel.text = self.userInfo.nickname ;
     }else if(indexPath.row == 1) {
         userCell.textLabel.text = titleStr ;
         userCell.detailTextLabel.text = self.userInfo.username;
@@ -154,11 +154,11 @@
                 NSDictionary *dicData= [tmpDic objectForKey:@"data"];
                 NSString *smallPath = [dicData objectForKey:SMALL];
                 if (smallPath) {
-                    self.userInfo.imgUrlSmall=[smallPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                    self.userInfo.imgUrlSmall = smallPath ;
                 }
                 NSString *bigPath = [dicData objectForKey:BIG];
                 if (bigPath) {
-                    self.userInfo.imgUrl = [bigPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                    self.userInfo.imgUrl = bigPath ;
                 }
                 [UserInfo userInfoWithArchive:self.userInfo];
             }
@@ -240,7 +240,7 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if(buttonIndex==1){
         if (isClickNick) {
-             self.userInfo.nickName = [alertView textFieldAtIndex:0].text;
+             self.userInfo.nickname = [alertView textFieldAtIndex:0].text;
         }else{
            self.userInfo.phone = [alertView textFieldAtIndex:0].text;
         }

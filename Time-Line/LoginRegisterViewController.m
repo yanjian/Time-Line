@@ -64,7 +64,7 @@
     if (sender.tag==12) {
         [self.navigationController popViewControllerAnimated:YES];
     }else if (sender.tag==11){
-       
+        
         if ([@"" isEqualToString:self.userNameTextField.text ]) {
             [MBProgressHUD showError:@"UserName empty"];
             return;

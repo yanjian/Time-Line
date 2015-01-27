@@ -8,10 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import "Friend.h"
+@ class FriendsInfoTableViewController ;
+
+typedef void(^FriendDeleteBlock)(FriendsInfoTableViewController * selfTabeViewController);
 @interface FriendsInfoTableViewController : UITableViewController
 
 
 @property  (nonatomic,strong) Friend * friendInfo ;
+
+@property  (nonatomic,copy) FriendDeleteBlock friendDeleteBlock;
 
 
 @end

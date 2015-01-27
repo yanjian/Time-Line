@@ -27,9 +27,7 @@
 @interface HomeViewController () <ASIHTTPRequestDelegate,JCMSegmentPageControllerDelegate,UIActionSheetDelegate>{
     UILabel *titleLabel;
     BOOL ison;
-    UIButton* rightBtn_arrow;
     BOOL isSuccess;
-    UINavigationController *nav;
 }
 @property (nonatomic, strong) UIWindow *subWindow;
 
@@ -42,7 +40,8 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+//        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+//        self.navigationController.navigationBarHidden = YES;
     }
     return self;
 }
@@ -56,8 +55,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    self.navigationController.navigationBarHidden = YES;
    
     NSArray *calendararr=[Calendar MR_findAll];
     NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
@@ -861,6 +858,20 @@
 - (void)initNavigationItem
 {
     ison=YES;
+    self.navigationController.navigationBar.barTintColor = blueColor;
+    
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"bell_default"] forState:UIControlStateNormal];
+    [leftBtn setFrame:CGRectMake(0, 2, 30, 30)];
+    [leftBtn addTarget:self action:@selector(skipNotificationView) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
+    
+    
+    UIButton*  rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rightBtn setBackgroundImage:[UIImage imageNamed:@"add_action"] forState:UIControlStateNormal];
+    [rightBtn setFrame:CGRectMake(0, 2, 30, 25)];
+    [rightBtn addTarget:self action:@selector(setYVbutton) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn];
     
     _scrollview = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
     _scrollview .contentSize = CGSizeMake(0, kScreen_Height);
@@ -872,116 +883,22 @@
     [self.view addSubview:_scrollview];
     
     calendarView = [[CLCalendarView alloc] init];
-    calendarView.frame = CGRectMake (0, 40, kScreen_Width, kScreen_Height);
+    calendarView.frame = CGRectMake (0, 0, kScreen_Width, kScreen_Height);
     calendarView.dataSuorce = self;
     calendarView.delegate = self;
     calendarView.time=@"time";
     [_scrollview addSubview:calendarView];
 
     titleLabel.text=[NSString stringWithFormat:@"Today %@",[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"dd/M"]];
-
-    //主页面
-    UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 64)];
-    rview.backgroundColor = blueColor;
-
-//   导航： 右边的按钮
-    _YVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    _YVbutton.frame = CGRectMake(280, 32, 27, 25);
-    [_YVbutton setBackgroundImage:[UIImage imageNamed:@"add_action"] forState:UIControlStateNormal];
-    [_YVbutton addTarget:self action:@selector(setYVbutton) forControlEvents:UIControlEventTouchUpInside];
-    [rview addSubview:_YVbutton];
-    
-//  箭头图标
-    rightBtn_arrow = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn_arrow setImage:[UIImage imageNamed:@"bell_default"] forState:UIControlStateNormal];
-    [rightBtn_arrow setFrame:CGRectMake(0, 20, 50, 50)];
-    [rightBtn_arrow addTarget:self action:@selector(skipNotificationView) forControlEvents:UIControlEventTouchUpInside];
-    [rview addSubview:rightBtn_arrow];
-//  中间的标题
-    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(80, 30, 180, 30)];
-    [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
-    [rview addSubview:titleView];
-    
-    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 170, 30)];
+    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 180, 30)];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.font=[UIFont boldSystemFontOfSize:20.0f];
     titleLabel.textColor = [UIColor whiteColor];
+    
+    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(0, 0, 180, 30)];
+    [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
     [titleView addSubview:titleLabel];
-    [_scrollview addSubview:rview];
-   
-    
-    // 左间view
-//    UIView *zview = [[UIView alloc] initWithFrame:CGRectMake(0, -20, kScreen_Width, 64)];
-//    zview.backgroundColor = blueColor;
-//    
-//    UIControl *segmentedView = [[UIControl alloc]initWithFrame:CGRectMake(55, 27, 210, 30)];
-//    SegmentedControl *segmentedControl = [[SegmentedControl alloc] init];
-//    [segmentedControl addTarget:self action:@selector(typeAction:) forControlEvents:UIControlEventValueChanged];
-//    
-//    segmentedControl.selectedSegmentIndex = 0;//默认显示那个视图
-//    self.lastSelectedSegmentIndex = segmentedControl.selectedSegmentIndex;
-//    
-//    self.notivesView = [[NoticesViewController alloc] init];//初始化通知视图控制器
-//    [_scrollview addSubview:self.notivesView.view];
-//    
-//    self.manageView = [[ManageViewController alloc] init];//初始化管理控制器
-//    [_scrollview addSubview:self.manageView.view];
-//    
-//    self.friendView = [[FriendInfoViewController  alloc] init];
-//    [_scrollview addSubview:self.friendView.view];
-//    
-//    self.viewsControllers = @[self.notivesView, self.manageView, self.friendView];
-//    
-//    [segmentedView addSubview:segmentedControl];
-//    [zview addSubview:segmentedView];
-//    
-//    self.notivesView.view.hidden = NO;//默认显示那个视图就让其他视图隐藏
-//    self.manageView.view.hidden = YES;
-//    self.friendView.view.hidden = YES;
-    
-//    // 右边xiew上返回button
-//    _rbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-//    _rbutton.frame = CGRectMake(280, 30, 21, 25);
-//    [_rbutton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow1"] forState:UIControlStateNormal];
-//    [_rbutton addTarget:self action:@selector(setrbutton) forControlEvents:UIControlEventTouchUpInside];
-//    
-//    //左边的按钮
-//    _ZVbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-//    _ZVbutton.frame = CGRectMake(0, 20, 45, 45);
-//    [_ZVbutton setBackgroundImage:[UIImage imageNamed:@"setting_default"] forState:UIControlStateNormal];
-//    [_ZVbutton addTarget:self action:@selector(setZVbutton) forControlEvents:UIControlEventTouchUpInside];
-//    [zview addSubview:_ZVbutton];
-//    [zview addSubview:_rbutton];
-//    [_scrollview addSubview:zview];
-    
-
-//    //    右边view
-//    UIView *xview = [[UIView alloc] initWithFrame:CGRectMake(640, -20, kScreen_Width, kScreen_Height)];
-//    xview.backgroundColor = [UIColor orangeColor];
-//    
-//    float topHeight = (200.0f/480.0f)*kScreen_Height;
-//    //    上
-//    UIButton *Sbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-//    [Sbutton setTitle:@"Porsonal Event" forState:UIControlStateNormal];
-//    [Sbutton addTarget:self action:@selector(oClickAdd) forControlEvents:UIControlEventTouchUpInside];
-//    Sbutton.frame = CGRectMake(0, 0, kScreen_Width, topHeight);
-//    Sbutton.backgroundColor = [UIColor colorWithRed:0.0f/255.0f green:93.0f/255.0f blue:123.0f/255.0f alpha:1];
-//    [xview addSubview:Sbutton];
-//    //    中
-//    UIButton *Zbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-//    [Zbutton setTitle:@"Concel" forState:UIControlStateNormal];
-//    [Zbutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-//    Zbutton.frame = CGRectMake(0, topHeight, kScreen_Width, kScreen_Height - 2*topHeight);
-//    Zbutton.backgroundColor = [UIColor whiteColor];
-//    [xview addSubview:Zbutton];
-//    //    下
-//    UIButton *Xbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-//    [Xbutton setTitle:@"Social Event" forState:UIControlStateNormal];
-//    Xbutton.frame = CGRectMake(0, kScreen_Height - topHeight, kScreen_Width, topHeight);
-//    Xbutton.backgroundColor = [UIColor colorWithRed:244.0f/255.0f green:10.0f/255.0f blue:115.0f/255.0f alpha:1];
-//    [xview addSubview:Xbutton];
-//    [_scrollview addSubview:xview];
-//
+    self.navigationItem.titleView = titleView ;
 }
 
 
@@ -998,14 +915,17 @@
     JCMSegmentPageController *segmentPageController = [[JCMSegmentPageController alloc] initWithTintColor:[UIColor whiteColor]];
     segmentPageController.delegate = self;
     segmentPageController.viewControllers = viewsControllers;
-    segmentPageController.slideInDirection = RASlideInDirectionLeftToRight;
-    self.modalPresentationStyle = UIModalPresentationCurrentContext;  //***
     
-   // [self presentViewController:segmentPageController animated:NO completion:nil];
-    _subWindow = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    _subWindow.backgroundColor = [UIColor whiteColor];
-    _subWindow.rootViewController = segmentPageController;
-    [_subWindow makeKeyAndVisible];
+    CATransition *transition = [CATransition animation];
+    transition.duration = 0.45;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+    transition.type = kCATransitionMoveIn;
+    transition.subtype = kCATransitionFromLeft;
+    transition.delegate = self;
+    [self.navigationController.view.layer addAnimation:transition forKey:nil];
+    self.navigationController.navigationBarHidden = NO;
+    
+    [self.navigationController pushViewController:segmentPageController animated:YES];
 }
 
 #pragma mark - JCMSegmentPageController的代理
@@ -1193,22 +1113,13 @@
     
     if (buttonIndex == 0) {
         AddActiveViewController *addActiveVC = [[AddActiveViewController alloc] init];
-        nav=[[UINavigationController alloc] initWithRootViewController:addActiveVC];
-        nav.navigationBarHidden=YES;
-        nav.navigationBar.translucent=NO;
-        
-        [self presentViewController:nav animated:YES completion:nil];
+        [self.navigationController  pushViewController:addActiveVC animated:YES ] ;
         self.isRefreshUIData=NO;
 
     }else if (buttonIndex == 1){
         AddEventViewController *addVC = [[AddEventViewController alloc] init];
-        nav=[[UINavigationController alloc] initWithRootViewController:addVC];
-        nav.navigationBarHidden=YES;
-        nav.navigationBar.translucent=NO;
-        
-        [self presentViewController:nav animated:YES completion:nil];
+        [self.navigationController  pushViewController:addVC animated:YES ] ;
         self.isRefreshUIData=NO;
-
     }
     
 }
@@ -1256,22 +1167,15 @@
 //点击事件tableview，添加或查询事件详细
 - (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AT_Event*)event AllEvent:(NSArray *)events {
     if (!event) {  //没有事件添加
-        
         AddEventViewController *addVC = [[AddEventViewController alloc] init];
         addVC.nowTimeDay=day;
-        nav=[[UINavigationController alloc] initWithRootViewController:addVC];
-        nav.navigationBarHidden=YES;
-        nav.navigationBar.translucent=NO;
-        [self presentViewController:nav animated:YES completion:nil];
+        [self.navigationController pushViewController:addVC animated:YES ];
         self.isRefreshUIData=NO;
     }else {  //有事件查看详细
         DateDetailsViewController* dateDetails=[[DateDetailsViewController alloc] init];
         dateDetails.event=event;
         dateDetails.dateArr=events;
-        nav=[[UINavigationController alloc] initWithRootViewController:dateDetails];
-        nav.navigationBarHidden=YES;
-        nav.navigationBar.translucent=NO;
-        [self presentViewController:nav animated:YES completion:nil];
+        [self.navigationController pushViewController:dateDetails animated:YES];
         self.isRefreshUIData=NO;
     }
 }

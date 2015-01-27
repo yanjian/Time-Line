@@ -14,7 +14,7 @@
  See the License for the specific language governing permissions and
  limitations under the License. 
  */
-#import "RASlideInViewController.h"
+
 @protocol JCMSegmentPageControllerDelegate;
 
 /**
@@ -22,7 +22,7 @@
  * UITabBarController, but the way to switch tabs is through a 
  * UISegmentedControl on top.
  */
-@interface JCMSegmentPageController : RASlideInViewController
+@interface JCMSegmentPageController : UIViewController
 
 /// Keeps an array of the controllers managed by this container controller
 @property (nonatomic, copy) NSArray *viewControllers;

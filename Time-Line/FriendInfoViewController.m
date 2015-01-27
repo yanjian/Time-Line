@@ -7,6 +7,7 @@
 //
 
 #import "FriendInfoViewController.h"
+#import "MJRefresh.h"
 #import "FriendGroup.h"
 #import "Friend.h"
 #import "HeadView.h"
@@ -28,17 +29,44 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    CGRect frame = CGRectMake(0, naviHigth, kScreen_Width, kScreen_Height);
+    CGRect frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
     self.view.frame=frame;
     
     [self loadData];//加载数据
     
-    self.tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height-frame.origin.y) style:UITableViewStyleGrouped];
+    self.tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height-naviHigth) style:UITableViewStyleGrouped];
     self.tableView.dataSource=self;
     self.tableView.delegate=self;
     [self.view addSubview:self.tableView] ;
+    [self setupRefresh] ;
     [self createAddFriendBtn];
 }
+
+
+/**
+ *  集成刷新控件
+ */
+- (void)setupRefresh
+{
+    // 1.下拉刷新(进入刷新状态就会调用self的headerRereshing)
+    //    [self.tableView addHeaderWithTarget:self action:@selector(headerRereshing)];
+    // dateKey用于存储刷新时间，可以保证不同界面拥有不同的刷新时间
+    [self.tableView addHeaderWithTarget:self action:@selector(headerRereshing) dateKey:@"friendView"];
+}
+
+
+#pragma mark 开始进入刷新状态
+- (void)headerRereshing
+{
+    [self loadData];//刷新数据
+    [self.tableView headerEndRefreshing];
+}
+
+- (void)footerRereshing
+{
+    [self.tableView footerEndRefreshing];
+}
+
 
 
 #pragma mark -创建一个添加组或添加好友的按钮
@@ -107,8 +135,6 @@
                         NSArray *frArr = [friendDic objectForKey:[NSString stringWithFormat:@"%@",fg.Id]];
                         for (NSDictionary *dic in frArr) {
                             Friend *friend = [Friend friendWithDict:dic];
-                            friend.imgBig=[friend.imgBig stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                            friend.imgSmall=[friend.imgSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
                             [frArray addObject:friend];
                         }
                         fg.friends=frArray;
@@ -148,7 +174,7 @@
     if(buttonIndex == 0){//add friends
         FriendSearchViewController *searchVc = [[FriendSearchViewController alloc] init];
         self.modalPresentationStyle = UIModalPresentationCurrentContext;
-        [self presentViewController:searchVc animated:NO completion:nil];
+        [self presentViewController:searchVc animated:YES completion:nil];
         
     }else if (buttonIndex == 1){//add groups
         UIAlertView *gAlertView = [[UIAlertView alloc] initWithTitle:@"Add Groups" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
@@ -237,12 +263,12 @@
     
     cell.textLabel.textColor = friend.isVip ? [UIColor redColor] : [UIColor blackColor];
     if (friend.alias && ![ @"" isEqualToString:friend.alias]) {//如果有别名就显示别名
-        cell.nickName.text = friend.alias;
+             cell.nickName.text = friend.alias;
     }else{
-        if(friend.nickname && ![@"" isEqualToString:friend.nickname ]){
+        if( friend.nickname && ! [ @"" isEqualToString:friend.nickname ]){
              cell.nickName.text = friend.nickname;
         }else{
-            cell.nickName.text = friend.username;
+             cell.nickName.text = friend.username;
         }
     }
     
@@ -268,9 +294,29 @@
     Friend *friend = friendGroup.friends[indexPath.row];
     fiVC.friendInfo = friend ;
     
-    UINavigationController * nav=[[UINavigationController alloc] initWithRootViewController:fiVC];
-    nav.navigationBar.translucent=NO;
-    [self presentViewController:nav animated:YES completion:nil];
+    fiVC.friendDeleteBlock = ^(FriendsInfoTableViewController * selfTabeViewController){
+        ASIHTTPRequest * acceptFriendRequest = [t_Network httpPostValue:@{@"fid":friend.fid,@"fname":friend.username}.mutableCopy Url:anyTime_DeleteFriend Delegate:nil Tag:anyTime_DeleteFriend_tag];
+        __block  ASIHTTPRequest * acceptRequest = acceptFriendRequest ;
+        [acceptFriendRequest setCompletionBlock:^{
+            NSString * responseStr = [acceptRequest responseString];
+            id  obtTmp =  [responseStr objectFromJSONString];
+            if([obtTmp isKindOfClass:[NSDictionary class]]){
+                NSString * statusCode = [obtTmp objectForKey:@"statusCode"] ;
+                if ([statusCode isEqualToString:@"1"]) {
+                    [MBProgressHUD showSuccess:@"Delete success"];
+                    [friendGroup.friends removeObject:friend] ; //删除数据；
+                    [self.tableView reloadData] ;
+                    [selfTabeViewController.navigationController popViewControllerAnimated:YES];
+                }
+            }
+        }];
+        
+        [acceptFriendRequest setFailedBlock:^{
+            [MBProgressHUD showError:@"Network error"];
+        }];
+        [acceptFriendRequest startAsynchronous];
+    };
+    [self.navigationController pushViewController:fiVC animated:YES];
 }
 
 - (void)clickHeadView

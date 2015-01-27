@@ -15,7 +15,8 @@
 
 
 
-@property (nonatomic,retain)  ActiveEventMode * activeEvent;
+@property (nonatomic,retain)  ActiveBaseInfoMode * activeEventInfo;
+
 @property (nonatomic,retain)  id<ActivedetailsViewControllerDelegate> delegate;
 @end
 

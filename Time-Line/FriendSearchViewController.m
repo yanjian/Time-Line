@@ -108,8 +108,6 @@
                         if(nickName)
                            [ndic setObject:nickName forKey:@"nickname"];
                         Friend * friend = [Friend friendWithDict:ndic];
-                        friend.imgBig=[friend.imgBig stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                        friend.imgSmall=[friend.imgSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
                         [searchFriendArr addObject:friend];
                     }
                 }

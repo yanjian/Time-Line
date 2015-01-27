@@ -64,7 +64,7 @@
 
 - (id)init
 {
-    self = [super initWithFrame:CGRectMake(0, 64, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height)];
+    self = [super initWithFrame:CGRectMake(0, naviHigth,kScreen_Width, kScreen_Height)];
     return [self initByMode:CLCalendarViewModeWeek];
 }
 //calendartimeline

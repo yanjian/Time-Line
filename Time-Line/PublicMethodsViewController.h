@@ -13,6 +13,7 @@
 +(PublicMethodsViewController *)getPublicMethods;
 
 -(NSString*)getcurrentTime:(NSString*)format;
+-(NSString*)getcurrentTime:(NSString*)format interval:(NSInteger ) interval ;
 
 -(NSString*)getonehourstime:(NSString*)format;
 

@@ -10,5 +10,6 @@
 
 @interface MemberListViewController : UIViewController
 
-@property (nonatomic,retain) NSArray *memberArr;
+@property (nonatomic,assign) BOOL isMemberObj ;
+@property (nonatomic,retain) NSArray *memberArr; //这里面放的数据不同，如果 isMemberObj：YES 表示是成员对象，为no是NSDictionary
 @end

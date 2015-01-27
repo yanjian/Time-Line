@@ -10,7 +10,7 @@
 #import "UIImageView+WebCache.h"
 #import "SJAvatarBrowser.h"
 #import "AliasModifyViewController.h"
-@interface FriendsInfoTableViewController (){
+@interface FriendsInfoTableViewController ()<UIActionSheetDelegate>{
     NSString * _modifyAlias;
 }
 @property (strong, nonatomic) IBOutlet UIView *tableHead;
@@ -25,7 +25,6 @@
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height) ;
     self.title = @"Profile" ;
-    
     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
                                 
                                 [UIColor whiteColor],NSForegroundColorAttributeName,nil];
@@ -45,7 +44,22 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftButton];
     
     
-    self.tableView.tableFooterView = [UIView new];
+    if (self.friendDeleteBlock){
+        UIView* footerView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 45)];
+        UIButton* button=[UIButton buttonWithType:UIButtonTypeCustom];
+        button.backgroundColor=purple;
+        button.frame=CGRectMake(20, 5, 280, 40);
+        [button setTitle:@"Delete friend" forState:UIControlStateNormal];
+        [button.layer setMasksToBounds:YES];
+        [button.layer setCornerRadius:5.f];
+        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(deleteSelectFriendTouchUpInside) forControlEvents:UIControlEventTouchUpInside];
+        [footerView addSubview:button];
+        self.tableView.tableFooterView = footerView ;
+    }else{
+        self.tableView.tableFooterView = [UIView new];
+    }
+    
     self.tableView.tableHeaderView = self.tableHead ;
     self.tableView.separatorInset  = UIEdgeInsetsZero;
     
@@ -117,7 +131,7 @@
     switch (sender.tag) {
         case 1:{
            // [self.navigationController popViewControllerAnimated:YES] ;
-            [self dismissViewControllerAnimated:YES completion:nil];
+            [self.navigationController popViewControllerAnimated:YES];
         }break;
             
         default:
@@ -155,6 +169,19 @@
     }
 }
 
+-(void) deleteSelectFriendTouchUpInside{
+    UIActionSheet * deleteSheet = [[UIActionSheet alloc] initWithTitle:@"Delete friend" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Confirm" otherButtonTitles:nil, nil];
+    [deleteSheet showInView:self.view];
+}
+
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if ( buttonIndex == 0 ) {
+        if (self.friendDeleteBlock) {
+            self.friendDeleteBlock(self);
+        }
+    }
+}
 
 /*
 // Override to support conditional editing of the table view.

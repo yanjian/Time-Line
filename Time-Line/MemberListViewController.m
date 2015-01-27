@@ -9,6 +9,8 @@
 #import "MemberListViewController.h"
 #import "FriendInfoTableViewCell.h"
 #import "UIImageView+WebCache.h"
+#import "Friend.h"
+#import "UserInfo.h"
 
 @interface MemberListViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
@@ -67,22 +69,59 @@
         cell = (FriendInfoTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"FriendInfoTableViewCell" owner:self options:nil] lastObject];
         //  cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
-    NSDictionary *memberDic = [self.memberArr objectAtIndex:indexPath.row];
-    
-    cell.nickName.text =[memberDic objectForKey:@"name"];
-
-    NSString *imgPath = [memberDic objectForKey:@"imgBig"];
-    if (imgPath) {
-        imgPath=[imgPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+    if ( self.isMemberObj ) {
+        id personInfo = self.memberArr[indexPath.row];
+        if ([personInfo isKindOfClass:[UserInfo class]]) {
+            UserInfo * currUse = (UserInfo *) personInfo;
+            if (currUse.nickname) {
+                cell.nickName.text = currUse.nickname;
+            }else {
+               cell.nickName.text  = currUse.username;
+            }
+            
+            NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,currUse.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSURL *url = [NSURL URLWithString:_urlStr];
+            [cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
+        }else if ([personInfo isKindOfClass:[Friend class]]){
+            Friend * friend = (Friend *) personInfo;
+            NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,friend.imgBig] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSURL *url = [NSURL URLWithString:_urlStr];
+            [cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
+            if (friend.nickname && ![@"" isEqualToString:friend.nickname]) {
+                cell.nickName.text = friend.nickname ;
+            }else{
+                cell.nickName.text = friend.username ;
+            }
+        }
+     }else{
+        NSDictionary *memberDic = [self.memberArr objectAtIndex:indexPath.row];
+         NSString *nickname = [memberDic objectForKey:@"nickname"];
+         if ( nickname && ![@"" isEqualToString:nickname] ) {
+             cell.nickName.text = nickname ;
+         } else {
+              NSString *username = [memberDic objectForKey:@"username"];
+              cell.nickName.text = username ;
+         }
+         NSInteger  join = [[memberDic objectForKey:@"join"] integerValue];
+         if (join == 1) { //表示用户参加
+             cell.joinDes.text = @"Join";
+         }else{
+             cell.joinDes.text = @"No" ;
+         }
+         NSString *imgPath = [memberDic objectForKey:@"imgBig"];
+        if (imgPath) {
+            imgPath=[imgPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+        }
+        NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,imgPath]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSURL *url = [NSURL URLWithString:_urlStr];
+        [cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
     }
-    NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,imgPath]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL *url = [NSURL URLWithString:_urlStr];
-    [cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-
     return cell;
 }
 
-
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
 
 
 - (void)didReceiveMemoryWarning {

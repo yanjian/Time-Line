@@ -53,12 +53,13 @@
             [self.navigationController popViewControllerAnimated:YES ] ;
         }break;
         case 2:{
-            if (!self.aliasText.text || [@"" isEqualToString:self.aliasText.text]) {
+            NSString *aliasName = [self.aliasText.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+            if (!self.aliasText.text || [@"" isEqualToString:aliasName]) {
                 [MBProgressHUD showError:@"Please enter an alias"];
                 return;
             }
             
-            ASIHTTPRequest * request = [t_Network httpGet:@{@"fid":self.fid,@"name":self.aliasText.text }.mutableCopy Url:anyTime_UpdateFriendNickName Delegate:nil Tag:anyTime_UpdateFriendNickName_tag] ;
+            ASIHTTPRequest * request = [t_Network httpGet:@{@"fid":self.fid,@"name":aliasName }.mutableCopy Url:anyTime_UpdateFriendNickName Delegate:nil Tag:anyTime_UpdateFriendNickName_tag] ;
             __block ASIHTTPRequest * aliasRequest = request;
             [request setCompletionBlock:^{
                 NSString * responseStr = [aliasRequest responseString];
@@ -67,7 +68,7 @@
                     NSString *statusCode = [objGroup objectForKey:@"statusCode"];
                     if ([statusCode isEqualToString:@"1"]) {
                         if (self.aliasModify) {
-                            self.aliasModify(self,self.aliasText.text);
+                            self.aliasModify(self,aliasName);
                         }
                     }
                 }

@@ -23,4 +23,16 @@
     return self;
 }
 
+-(void)setImgBig:(NSString *)imgBig{
+    if (imgBig) {
+         _imgBig= [imgBig stringByReplacingOccurrencesOfString:@"\\" withString:@"/"] ;
+    }
+}
+
+-(void)setImgSmall:(NSString *)imgSmall{
+    if (imgSmall) {
+        _imgSmall = [imgSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"] ;
+    }
+}
+
 @end

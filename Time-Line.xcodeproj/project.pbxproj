@@ -39,6 +39,14 @@
 		A886549319D3E61700EEC0A8 /* WeekViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A886549019D3E61700EEC0A8 /* WeekViewController.m */; };
 		A886549419D3E61700EEC0A8 /* DayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A886549219D3E61700EEC0A8 /* DayViewController.m */; };
 		A886549819D3E6BD00EEC0A8 /* MAEventKitDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A886549719D3E6BD00EEC0A8 /* MAEventKitDataSource.m */; };
+		A8873A821A75177B0014CD26 /* MJRefresh.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A8873A721A75177B0014CD26 /* MJRefresh.bundle */; };
+		A8873A831A75177B0014CD26 /* MJRefreshBaseView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8873A751A75177B0014CD26 /* MJRefreshBaseView.m */; };
+		A8873A841A75177B0014CD26 /* MJRefreshConst.m in Sources */ = {isa = PBXBuildFile; fileRef = A8873A771A75177B0014CD26 /* MJRefreshConst.m */; };
+		A8873A851A75177B0014CD26 /* MJRefreshFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8873A791A75177B0014CD26 /* MJRefreshFooterView.m */; };
+		A8873A861A75177B0014CD26 /* MJRefreshHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8873A7B1A75177B0014CD26 /* MJRefreshHeaderView.m */; };
+		A8873A871A75177B0014CD26 /* UIScrollView+MJRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = A8873A7D1A75177B0014CD26 /* UIScrollView+MJRefresh.m */; };
+		A8873A881A75177B0014CD26 /* UIView+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = A8873A7F1A75177B0014CD26 /* UIView+MJExtension.m */; };
+		A8873A891A75177B0014CD26 /* UIScrollView+MJExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = A8873A811A75177B0014CD26 /* UIScrollView+MJExtension.m */; };
 		A88E35A319E9767C0025CAFB /* NotificationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A88E35A219E9767C0025CAFB /* NotificationViewController.m */; };
 		A88E35A619E979180025CAFB /* PreferenceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A88E35A519E979180025CAFB /* PreferenceViewController.m */; };
 		A88EF52E19ECC00400AB15B5 /* IBActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = A88EF52D19ECC00400AB15B5 /* IBActionSheet.m */; };
@@ -250,7 +258,10 @@
 		A8BDABB71A47D4B000545EC4 /* NewVoteActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BDABB51A47D4B000545EC4 /* NewVoteActionViewController.m */; };
 		A8BDABB81A47D4B100545EC4 /* NewVoteActionViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8BDABB61A47D4B000545EC4 /* NewVoteActionViewController.xib */; };
 		A8BDABBB1A47F35C00545EC4 /* PlaceholderTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BDABBA1A47F35C00545EC4 /* PlaceholderTextView.m */; };
+		A8BDB8471A75E64800967677 /* FriendGroupShowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BDB8451A75E64800967677 /* FriendGroupShowViewController.m */; };
+		A8BDB8481A75E64800967677 /* FriendGroupShowViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8BDB8461A75E64800967677 /* FriendGroupShowViewController.xib */; };
 		A8BF229C1A0A23AE00E42F25 /* DayShowView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BF229B1A0A23AE00E42F25 /* DayShowView.m */; };
+		A8BFB5941A70ED6E002741D4 /* ActiveBaseInfoMode.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BFB5931A70ED6E002741D4 /* ActiveBaseInfoMode.m */; };
 		A8BFCE641A2F4FD80081CEE8 /* UserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BFCE631A2F4FD80081CEE8 /* UserInfo.m */; };
 		A8C02E911A4A5ECE00191528 /* ActiveEventMode.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C02E901A4A5ECE00191528 /* ActiveEventMode.m */; };
 		A8C02E941A4AB6B400191528 /* JsonFromObject.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C02E931A4AB6B400191528 /* JsonFromObject.m */; };
@@ -270,6 +281,7 @@
 		A8C60F061A15B652000FAC7F /* RecurrenceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C60F051A15B652000FAC7F /* RecurrenceModel.m */; };
 		A8C668081A3E88010017605A /* AddActiveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C668061A3E88010017605A /* AddActiveViewController.m */; };
 		A8C668091A3E88010017605A /* AddActiveViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C668071A3E88010017605A /* AddActiveViewController.xib */; };
+		A8C683B41A74EDB600384FE1 /* NotiveMsgPageBaseMode.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C683B31A74EDB600384FE1 /* NotiveMsgPageBaseMode.m */; };
 		A8C6CA411A53DFE4005F6E6F /* MemberListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C6CA3F1A53DFE4005F6E6F /* MemberListViewController.m */; };
 		A8C6CA421A53DFE4005F6E6F /* MemberListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C6CA401A53DFE4005F6E6F /* MemberListViewController.xib */; };
 		A8E5C38E1A50FB1000226FD9 /* FriendInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E5C38D1A50FB1000226FD9 /* FriendInfoViewController.m */; };
@@ -340,6 +352,22 @@
 		A886549219D3E61700EEC0A8 /* DayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DayViewController.m; sourceTree = "<group>"; };
 		A886549619D3E6BD00EEC0A8 /* MAEventKitDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAEventKitDataSource.h; sourceTree = "<group>"; };
 		A886549719D3E6BD00EEC0A8 /* MAEventKitDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAEventKitDataSource.m; sourceTree = "<group>"; };
+		A8873A721A75177B0014CD26 /* MJRefresh.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MJRefresh.bundle; sourceTree = "<group>"; };
+		A8873A731A75177B0014CD26 /* MJRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefresh.h; sourceTree = "<group>"; };
+		A8873A741A75177B0014CD26 /* MJRefreshBaseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefreshBaseView.h; sourceTree = "<group>"; };
+		A8873A751A75177B0014CD26 /* MJRefreshBaseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJRefreshBaseView.m; sourceTree = "<group>"; };
+		A8873A761A75177B0014CD26 /* MJRefreshConst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefreshConst.h; sourceTree = "<group>"; };
+		A8873A771A75177B0014CD26 /* MJRefreshConst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJRefreshConst.m; sourceTree = "<group>"; };
+		A8873A781A75177B0014CD26 /* MJRefreshFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefreshFooterView.h; sourceTree = "<group>"; };
+		A8873A791A75177B0014CD26 /* MJRefreshFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJRefreshFooterView.m; sourceTree = "<group>"; };
+		A8873A7A1A75177B0014CD26 /* MJRefreshHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MJRefreshHeaderView.h; sourceTree = "<group>"; };
+		A8873A7B1A75177B0014CD26 /* MJRefreshHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MJRefreshHeaderView.m; sourceTree = "<group>"; };
+		A8873A7C1A75177B0014CD26 /* UIScrollView+MJRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+MJRefresh.h"; sourceTree = "<group>"; };
+		A8873A7D1A75177B0014CD26 /* UIScrollView+MJRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MJRefresh.m"; sourceTree = "<group>"; };
+		A8873A7E1A75177B0014CD26 /* UIView+MJExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+MJExtension.h"; sourceTree = "<group>"; };
+		A8873A7F1A75177B0014CD26 /* UIView+MJExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+MJExtension.m"; sourceTree = "<group>"; };
+		A8873A801A75177B0014CD26 /* UIScrollView+MJExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+MJExtension.h"; sourceTree = "<group>"; };
+		A8873A811A75177B0014CD26 /* UIScrollView+MJExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+MJExtension.m"; sourceTree = "<group>"; };
 		A88E35A119E9767C0025CAFB /* NotificationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationViewController.h; sourceTree = "<group>"; };
 		A88E35A219E9767C0025CAFB /* NotificationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationViewController.m; sourceTree = "<group>"; };
 		A88E35A419E979180025CAFB /* PreferenceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferenceViewController.h; sourceTree = "<group>"; };
@@ -677,8 +705,13 @@
 		A8BDABB61A47D4B000545EC4 /* NewVoteActionViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NewVoteActionViewController.xib; sourceTree = "<group>"; };
 		A8BDABB91A47F35C00545EC4 /* PlaceholderTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceholderTextView.h; sourceTree = "<group>"; };
 		A8BDABBA1A47F35C00545EC4 /* PlaceholderTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceholderTextView.m; sourceTree = "<group>"; };
+		A8BDB8441A75E64700967677 /* FriendGroupShowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendGroupShowViewController.h; sourceTree = "<group>"; };
+		A8BDB8451A75E64800967677 /* FriendGroupShowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendGroupShowViewController.m; sourceTree = "<group>"; };
+		A8BDB8461A75E64800967677 /* FriendGroupShowViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FriendGroupShowViewController.xib; sourceTree = "<group>"; };
 		A8BF229A1A0A23AE00E42F25 /* DayShowView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DayShowView.h; sourceTree = "<group>"; };
 		A8BF229B1A0A23AE00E42F25 /* DayShowView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DayShowView.m; sourceTree = "<group>"; };
+		A8BFB5921A70ED6E002741D4 /* ActiveBaseInfoMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveBaseInfoMode.h; sourceTree = "<group>"; };
+		A8BFB5931A70ED6E002741D4 /* ActiveBaseInfoMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveBaseInfoMode.m; sourceTree = "<group>"; };
 		A8BFCE621A2F4FD80081CEE8 /* UserInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserInfo.h; sourceTree = "<group>"; };
 		A8BFCE631A2F4FD80081CEE8 /* UserInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserInfo.m; sourceTree = "<group>"; };
 		A8C02E8F1A4A5ECE00191528 /* ActiveEventMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveEventMode.h; sourceTree = "<group>"; };
@@ -710,6 +743,8 @@
 		A8C668051A3E88010017605A /* AddActiveViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddActiveViewController.h; sourceTree = "<group>"; };
 		A8C668061A3E88010017605A /* AddActiveViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddActiveViewController.m; sourceTree = "<group>"; };
 		A8C668071A3E88010017605A /* AddActiveViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddActiveViewController.xib; sourceTree = "<group>"; };
+		A8C683B21A74EDB500384FE1 /* NotiveMsgPageBaseMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotiveMsgPageBaseMode.h; sourceTree = "<group>"; };
+		A8C683B31A74EDB600384FE1 /* NotiveMsgPageBaseMode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotiveMsgPageBaseMode.m; sourceTree = "<group>"; };
 		A8C6CA3E1A53DFE4005F6E6F /* MemberListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemberListViewController.h; sourceTree = "<group>"; };
 		A8C6CA3F1A53DFE4005F6E6F /* MemberListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemberListViewController.m; sourceTree = "<group>"; };
 		A8C6CA401A53DFE4005F6E6F /* MemberListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MemberListViewController.xib; sourceTree = "<group>"; };
@@ -784,6 +819,7 @@
 		A8116A2119B9A24B003EB3ED /* ThirdLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				A8873A711A75175A0014CD26 /* MJRefresh */,
 				A8BBB1911A660EB6001522B2 /* MBProgressHUD */,
 				A8B9CBD01A37FB3C00DA0C54 /* LPPopupListView */,
 				A89117F919C1F03D00A0960B /* MacroDefinition.h */,
@@ -811,6 +847,9 @@
 				A8BB2E7F1A315E550046E1E9 /* NoticesViewController.h */,
 				A8BB2E801A315E550046E1E9 /* NoticesViewController.m */,
 				A8BB2E811A315E550046E1E9 /* NoticesViewController.xib */,
+				A8BDB8441A75E64700967677 /* FriendGroupShowViewController.h */,
+				A8BDB8451A75E64800967677 /* FriendGroupShowViewController.m */,
+				A8BDB8461A75E64800967677 /* FriendGroupShowViewController.xib */,
 			);
 			name = NoticesViewController;
 			sourceTree = "<group>";
@@ -1012,6 +1051,29 @@
 				A886548219D3E5C800EEC0A8 /* MAEvent.m */,
 			);
 			name = Mode;
+			sourceTree = "<group>";
+		};
+		A8873A711A75175A0014CD26 /* MJRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				A8873A721A75177B0014CD26 /* MJRefresh.bundle */,
+				A8873A731A75177B0014CD26 /* MJRefresh.h */,
+				A8873A741A75177B0014CD26 /* MJRefreshBaseView.h */,
+				A8873A751A75177B0014CD26 /* MJRefreshBaseView.m */,
+				A8873A761A75177B0014CD26 /* MJRefreshConst.h */,
+				A8873A771A75177B0014CD26 /* MJRefreshConst.m */,
+				A8873A781A75177B0014CD26 /* MJRefreshFooterView.h */,
+				A8873A791A75177B0014CD26 /* MJRefreshFooterView.m */,
+				A8873A7A1A75177B0014CD26 /* MJRefreshHeaderView.h */,
+				A8873A7B1A75177B0014CD26 /* MJRefreshHeaderView.m */,
+				A8873A7C1A75177B0014CD26 /* UIScrollView+MJRefresh.h */,
+				A8873A7D1A75177B0014CD26 /* UIScrollView+MJRefresh.m */,
+				A8873A7E1A75177B0014CD26 /* UIView+MJExtension.h */,
+				A8873A7F1A75177B0014CD26 /* UIView+MJExtension.m */,
+				A8873A801A75177B0014CD26 /* UIScrollView+MJExtension.h */,
+				A8873A811A75177B0014CD26 /* UIScrollView+MJExtension.m */,
+			);
+			name = MJRefresh;
 			sourceTree = "<group>";
 		};
 		A88EF52B19ECBFC600AB15B5 /* IBActionSheet */ = {
@@ -1487,6 +1549,8 @@
 			children = (
 				A8B9AD251A6E4CC500205A24 /* NoticesMsgModel.h */,
 				A8B9AD261A6E4CC500205A24 /* NoticesMsgModel.m */,
+				A8C683B21A74EDB500384FE1 /* NotiveMsgPageBaseMode.h */,
+				A8C683B31A74EDB600384FE1 /* NotiveMsgPageBaseMode.m */,
 			);
 			name = model;
 			sourceTree = "<group>";
@@ -1530,6 +1594,8 @@
 		A8B9AD241A6E4B6600205A24 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				A8BFB5921A70ED6E002741D4 /* ActiveBaseInfoMode.h */,
+				A8BFB5931A70ED6E002741D4 /* ActiveBaseInfoMode.m */,
 				A8C02E8F1A4A5ECE00191528 /* ActiveEventMode.h */,
 				A8C02E901A4A5ECE00191528 /* ActiveEventMode.m */,
 			);
@@ -1784,6 +1850,7 @@
 				A8E5C39D1A51510800226FD9 /* ActivedetailsViewController.xib in Resources */,
 				A894D71719B5932D0088E522 /* BackGroundViewController.xib in Resources */,
 				A894D85719B5BACC0088E522 /* Icon_TickBlack.png in Resources */,
+				A8873A821A75177B0014CD26 /* MJRefresh.bundle in Resources */,
 				A894D85D19B5BACC0088E522 /* daybackgrd1@2x.png in Resources */,
 				A894D72119B59A930088E522 /* MapViewController.xib in Resources */,
 				A894D85E19B5BACC0088E522 /* daybackgrd2@2x.png in Resources */,
@@ -1821,6 +1888,7 @@
 				A8B8D0511A33166D0040C00D /* FriendInfoTableViewCell.xib in Resources */,
 				A8B7F37C1A2ED166000F7EC5 /* bell_press.png in Resources */,
 				A894D85B19B5BACC0088E522 /* Icon_Edit.png in Resources */,
+				A8BDB8481A75E64800967677 /* FriendGroupShowViewController.xib in Resources */,
 				A8C31A051A6CA86B0076CC61 /* FriendsInfoTableViewController.xib in Resources */,
 				A8C31A0A1A6CE3F10076CC61 /* AliasModifyViewController.xib in Resources */,
 				A894D8AF19B5BB150088E522 /* Time_End.png in Resources */,
@@ -1924,6 +1992,7 @@
 				A8B6533519F6B5D5007E8A26 /* Calendar.m in Sources */,
 				A8C077A71A30A97800F7C014 /* SegmentedControl.m in Sources */,
 				A8B529C819F635B9009286AA /* NSPersistentStoreCoordinator+MagicalRecord.m in Sources */,
+				A8873A871A75177B0014CD26 /* UIScrollView+MJRefresh.m in Sources */,
 				A8BB2E821A315E550046E1E9 /* NoticesViewController.m in Sources */,
 				A8B867F519E2A1840004875F /* TimeLine.xcdatamodeld in Sources */,
 				A8B95C1F1A0534F800C6B037 /* YQViewController.m in Sources */,
@@ -1952,9 +2021,11 @@
 				A8B867E719E297CF0004875F /* NSString+StringManageMd5.m in Sources */,
 				A8BD34341A1313D3005A38FE /* RepeatCalViewController.m in Sources */,
 				A8C668081A3E88010017605A /* AddActiveViewController.m in Sources */,
+				A8873A861A75177B0014CD26 /* MJRefreshHeaderView.m in Sources */,
 				A894D70A19B57F890088E522 /* MapViewController.m in Sources */,
 				A8BBB1941A660EDA001522B2 /* MBProgressHUD+MJ.m in Sources */,
 				A8BBB1971A660EE5001522B2 /* MBProgressHUD.m in Sources */,
+				A8BDB8471A75E64800967677 /* FriendGroupShowViewController.m in Sources */,
 				A8BDABBB1A47F35C00545EC4 /* PlaceholderTextView.m in Sources */,
 				A8BBD7921A35E9DC0036CB9E /* FriendGroup.m in Sources */,
 				A8BA60601A42D6F100992603 /* UIViewController+MJPopupViewController.m in Sources */,
@@ -1989,14 +2060,17 @@
 				A886549419D3E61700EEC0A8 /* DayViewController.m in Sources */,
 				A8BBD7951A35EACA0036CB9E /* Friend.m in Sources */,
 				A8BD343D1A1359C2005A38FE /* RepeatUntilViewController.m in Sources */,
+				A8C683B41A74EDB600384FE1 /* NotiveMsgPageBaseMode.m in Sources */,
 				A88EF52E19ECC00400AB15B5 /* IBActionSheet.m in Sources */,
 				A8116A2419B9B7EF003EB3ED /* FlipBoardNavigationController.m in Sources */,
 				A894D70D19B57F920088E522 /* LocationViewController.m in Sources */,
 				A8975B7619EA8D47006DFDC3 /* DirectionsViewController.m in Sources */,
 				A88E35A619E979180025CAFB /* PreferenceViewController.m in Sources */,
 				A8B529BA19F635B9009286AA /* NSObject+MagicalDataImport.m in Sources */,
+				A8873A881A75177B0014CD26 /* UIView+MJExtension.m in Sources */,
 				A8B862501A43CA6A00D1DEC4 /* SetFriendTableViewCell.m in Sources */,
 				A894D70719B57F7F0088E522 /* DateDetailsViewController.m in Sources */,
+				A8873A831A75177B0014CD26 /* MJRefreshBaseView.m in Sources */,
 				A89F91DB19C5D73A00CB7FAE /* AutocompletionTableView.m in Sources */,
 				A89B676B19D980DA00415108 /* BaseMode.m in Sources */,
 				A894D6F419B5786A0088E522 /* PublicMethodsViewController.m in Sources */,
@@ -2046,14 +2120,17 @@
 				A886548A19D3E5C800EEC0A8 /* MAEvent.m in Sources */,
 				A8BD34371A133DF1005A38FE /* RepearIntervalViewController.m in Sources */,
 				A894D6CF19B56B200088E522 /* HomeViewController.m in Sources */,
+				A8873A851A75177B0014CD26 /* MJRefreshFooterView.m in Sources */,
 				A886549819D3E6BD00EEC0A8 /* MAEventKitDataSource.m in Sources */,
 				A886548C19D3E5C800EEC0A8 /* MAGridView.m in Sources */,
+				A8873A891A75177B0014CD26 /* UIScrollView+MJExtension.m in Sources */,
 				A8E5C39C1A51510800226FD9 /* ActivedetailsViewController.m in Sources */,
 				A898FA7D19D964D7008CD862 /* GoogleCalendarData.m in Sources */,
 				A8E5C3951A50FD1000226FD9 /* FriendInformationView.m in Sources */,
 				A8C31A041A6CA86B0076CC61 /* FriendsInfoTableViewController.m in Sources */,
 				A898C8FF19B463E700559F53 /* CalendarDateUtil.m in Sources */,
 				A894D6E019B578270088E522 /* JCDatePicker.m in Sources */,
+				A8873A841A75177B0014CD26 /* MJRefreshConst.m in Sources */,
 				A8C60F061A15B652000FAC7F /* RecurrenceModel.m in Sources */,
 				A8B529C719F635B9009286AA /* NSPersistentStore+MagicalRecord.m in Sources */,
 				A89B676E19D98A7000415108 /* CalendarListViewController.m in Sources */,
@@ -2063,6 +2140,7 @@
 				A8B529CD19F635B9009286AA /* MagicalRecord+Setup.m in Sources */,
 				A886549319D3E61700EEC0A8 /* WeekViewController.m in Sources */,
 				A8975B7019EA8D17006DFDC3 /* DefaultCalendarViewController.m in Sources */,
+				A8BFB5941A70ED6E002741D4 /* ActiveBaseInfoMode.m in Sources */,
 				A8956F2519EC222F0016674E /* AccountViewController.m in Sources */,
 				A8B529CA19F635B9009286AA /* MagicalRecord+ErrorHandling.m in Sources */,
 			);

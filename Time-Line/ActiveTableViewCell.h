@@ -17,7 +17,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *activeNameLab;
 @property (weak, nonatomic) IBOutlet UILabel *activeDesLab;
 
-@property (strong, nonatomic) ActiveEventMode *activeEvent;
+@property (strong, nonatomic) ActiveBaseInfoMode *activeEvent;
 @property (assign, nonatomic) BOOL isView;
 @property (assign, nonatomic) BOOL isNotification ;
 

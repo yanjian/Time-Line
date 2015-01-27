@@ -195,7 +195,7 @@
         UserInfoTableViewController *userInfoVC=[[UserInfoTableViewController alloc] initWithNibName:@"UserInfoTableViewController" bundle:nil];
         userInfoVC.userInfoBlank=^(UserInfoTableViewController * userInfoViewController,UserInfo * userInfo){
             
-            ASIHTTPRequest *userRequest=[t_Network httpGet:@{@"tel":(userInfo.phone==nil?@"":userInfo.phone),@"name":(userInfo.nickName==nil?@"":userInfo.nickName),@"gender":@(userInfo.gender)}.mutableCopy Url:UserInfo_UpdateUserInfo Delegate:nil Tag:UserInfo_UpdateUserInfo_tag ];
+            ASIHTTPRequest *userRequest=[t_Network httpGet:@{@"tel":(userInfo.phone==nil?@"":userInfo.phone),@"name":(userInfo.nickname==nil?@"":userInfo.nickname),@"gender":@(userInfo.gender)}.mutableCopy Url:UserInfo_UpdateUserInfo Delegate:nil Tag:UserInfo_UpdateUserInfo_tag ];
             
             __block  ASIHTTPRequest *request = userRequest ;
             [userRequest setCompletionBlock:^{

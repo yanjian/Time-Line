@@ -67,6 +67,8 @@
     [rview addSubview:titlelabel];
     
     
+    [self loadData];
+    
     self.tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, naviHigth, frame.size.width, frame.size.height-naviHigth) style:UITableViewStyleGrouped];
     self.tableView.dataSource=self;
     self.tableView.delegate=self;
@@ -78,8 +80,6 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
-    [self loadData];
-    [self.tableView reloadData];
 }
 
 
@@ -87,10 +87,10 @@
 - (void)loadData
 {
     ASIHTTPRequest *_friendGroups = [t_Network httpGet:nil Url:anyTime_GetFTlist Delegate:self Tag:anyTime_GetFTlist_tag];
-    [_friendGroups startSynchronous];
-    
-    ASIHTTPRequest *_friend = [t_Network httpGet:nil Url:anyTime_GetFriendList Delegate:self Tag:anyTime_GetFriendList_tag];
-    [_friend startAsynchronous];
+    [_friendGroups setDownloadCache:g_AppDelegate.anyTimeCache] ;
+    [_friendGroups setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
+    [_friendGroups setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
+    [_friendGroups startAsynchronous];
 }
 
 #pragma mark - 保存数据关闭弹出窗口
@@ -117,9 +117,16 @@
                         FriendGroup *friendGroup = [FriendGroup friendGroupWithDict:dic];
                         [fgArray addObject:friendGroup];
                     }
+                     _groupArr = fgArray;
+                    
+                    ASIHTTPRequest *_friend = [t_Network httpGet:nil Url:anyTime_GetFriendList Delegate:self Tag:anyTime_GetFriendList_tag];
+                    [_friend setDownloadCache:g_AppDelegate.anyTimeCache] ;
+                    [_friend setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
+                    [_friend setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
+                    [_friend startAsynchronous];
+                    [_tableView reloadData] ;
                 }
             }
-            _groupArr = fgArray;
         }
             break;
         case anyTime_GetFriendList_tag:{
@@ -132,11 +139,10 @@
                         NSArray *frArr = [friendDic objectForKey:[NSString stringWithFormat:@"%@",fg.Id]];
                         for (NSDictionary *dic in frArr) {
                             Friend *friend = [Friend friendWithDict:dic];
-                            friend.imgBig=[friend.imgBig stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                            friend.imgSmall=[friend.imgSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
                             [frArray addObject:friend];
                         }
                         fg.friends=frArray;
+                        [_tableView reloadData] ;
                     }
                 }
             }
@@ -149,8 +155,10 @@
 
 
 - (void)requestFailed:(ASIHTTPRequest *)request{
-    
-    
+    NSError *error = [request error];
+    if (error) {
+        [MBProgressHUD showError:@"Newwork error"];
+    }
 }
 
 /**

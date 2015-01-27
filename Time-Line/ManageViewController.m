@@ -7,12 +7,13 @@
 //
 
 #import "ManageViewController.h"
-#import "EGORefreshTableHeaderView.h"
+#import "MJRefresh.h"
 #import "ActiveEventMode.h"
 #import "ActiveTableViewCell.h"
 #import "UIImageView+WebCache.h"
 #import "CalendarDateUtil.h"
 #import "ActivedetailsViewController.h"
+#import "JCMSegmentPageController.h"
 
 typedef NS_ENUM(NSInteger, ShowActiveType){
     ShowActiveType_All    = 0 ,
@@ -22,12 +23,20 @@ typedef NS_ENUM(NSInteger, ShowActiveType){
     
 } ;
 
+
+typedef NS_ENUM(NSInteger, ActiveStatus){
+    ActiveStatus_upcoming       = 0 ,
+    ActiveStatus_toBeConfirm    = 1 ,
+    ActiveStatus_confirmed      = 2 ,
+    ActiveStatus_past           = 3
+} ;
+
+
+
 @interface ManageViewController ()<UITableViewDelegate, UITableViewDataSource,
-EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
+UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
 {
-    EGORefreshTableHeaderView * _refreshHeaderView;
-    BOOL _reloading;
-    NSMutableArray * _activeArr;
+    NSMutableArray * _activeArr; //暂时没有用
     NSMutableArray * _tmpActiveArr ;
     
     NSString       * currId ;
@@ -43,15 +52,13 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    CGRect frame = CGRectMake(0, naviHigth, kScreen_Width, kScreen_Height);
+    CGRect frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
     self.view.frame=frame;
     
     currId = [UserInfo currUserInfo].Id;
-    _activeArr = [self loadActiveData:^{
-        [MBProgressHUD showMessage:@"Loading..." toView:self.view];
-    }];
     
     _showActiveType = ShowActiveType_All ;
+    
     _selectActiveBtnArr = [NSMutableArray array];
     
     UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, 1, frame.size.width, 25)];
@@ -80,24 +87,46 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
     [self.view addSubview:selectView];
     
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
-                                                                   selectView.frame.size.height+selectView.frame.origin.y,
+                                                                   selectView.frame.size.height,
                                                                    frame.size.width,
-                                                                   frame.size.height-(frame.origin.y+selectView.frame.size.height+selectView.frame.origin.y))
+                                                                   frame.size.height-(selectView.frame.size.height+selectView.frame.origin.y+naviHigth))
                                                   style:UITableViewStyleGrouped];
     self.tableView.delegate=self;
     self.tableView.dataSource=self;
     [self.view  addSubview:self.tableView];
-
-    if (_refreshHeaderView == nil) {
-        //初始化下拉刷新控件
-        EGORefreshTableHeaderView *refreshView = [[EGORefreshTableHeaderView alloc] initWithFrame:CGRectMake(0.0f, 0.0f - self.tableView.bounds.size.height, self.view.frame.size.width, self.tableView.bounds.size.height)];
-        refreshView.delegate = self;
-        //将下拉刷新控件作为子控件添加到UITableView中
-        [self.tableView addSubview:refreshView];
-        _refreshHeaderView = refreshView;
-    }
-    [_refreshHeaderView refreshLastUpdatedDate];
+    
+    [self setupRefresh];
 }
+
+
+/**
+ *  集成刷新控件
+ */
+- (void)setupRefresh
+{
+    // 1.下拉刷新(进入刷新状态就会调用self的headerRereshing)
+    // dateKey用于存储刷新时间，可以保证不同界面拥有不同的刷新时间
+    [self.tableView addHeaderWithTarget:self action:@selector(headerRereshing) dateKey:@"mamageV"];
+    
+    [self.tableView headerBeginRefreshing];
+    
+    // 2.上拉加载更多(进入刷新状态就会调用self的footerRereshing)
+    [self.tableView addFooterWithTarget:self action:@selector(footerRereshing)];
+    
+}
+
+#pragma mark 开始进入刷新状态
+- (void)headerRereshing
+{
+     [self loadActiveData:nil];//刷新数据
+     [self.tableView headerEndRefreshing];
+}
+
+- (void)footerRereshing
+{
+  [self.tableView footerEndRefreshing];
+}
+
 
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -106,8 +135,7 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;{
-    [self showActiveWhatWithActiveType:_showActiveType];
-    return _activeArr.count;
+    return _tmpActiveArr.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -132,40 +160,47 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
     if (!activeCell) {
         activeCell = (ActiveTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"ActiveTableViewCell" owner:self options:nil] firstObject];
     }
-    if (_activeArr.count>0) {
-        ActiveEventMode *activeEvent = _activeArr[indexPath.section];
+    if (_tmpActiveArr.count>0) {
+        ActiveBaseInfoMode *activeEvent = _tmpActiveArr[indexPath.section];
         
-        for (NSDictionary * member in activeEvent.member) {
-            if ([currId isEqualToString:[[member objectForKey:@"uid"] stringValue]]) {
-                NSInteger view = [[member objectForKey:@"view"] integerValue];
-                NSInteger not = [[member objectForKey:@"notification"] integerValue];
-                if ( view == 1 ) {//1 表示显示活动
-                    activeCell.isView = YES;
-                }else{
-                    activeCell.isView = NO;
-                }
-                if (not == 1) {
-                     activeCell.isNotification = YES;
-                }else{
-                    activeCell.isNotification = NO;
-                }
-            }
-        }
+//        for (NSDictionary * member in activeEvent.member) {
+//            if ([currId isEqualToString:[[member objectForKey:@"uid"] stringValue]]) {
+//                NSInteger view = [[member objectForKey:@"view"] integerValue];
+//                NSInteger not = [[member objectForKey:@"notification"] integerValue];
+//                if ( view == 1 ) {//1 表示显示活动
+//                    activeCell.isView = YES;
+//                }else{
+//                    activeCell.isView = NO;
+//                }
+//                if (not == 1) {
+//                     activeCell.isNotification = YES;
+//                }else{
+//                    activeCell.isNotification = NO;
+//                }
+//            }
+//        }
 
         activeCell.activeEvent = activeEvent ;
         
+        if([activeEvent.status integerValue] == ActiveStatus_upcoming ){
+            if ([activeEvent.type integerValue]== 2) {
+                activeCell.activeStateLab.text = @"UpComing(Voting)" ;
+            }else{
+                activeCell.activeStateLab.text = @"UpComing" ;
+            }
+        }else if  ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm ){
+            activeCell.activeStateLab.text = @"To be Confirm" ;
+        }else if  ([activeEvent.status integerValue] == ActiveStatus_confirmed ){
+            activeCell.activeStateLab.text = @"Confirmed" ;
+        }else if  ([activeEvent.status integerValue] == ActiveStatus_past ){
+            activeCell.activeStateLab.text = @"Past" ;
+        }
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateStyle:NSDateFormatterMediumStyle];
         [formatter setTimeStyle:NSDateFormatterShortStyle];
-        [formatter setDateFormat:@"YYYY-MM-dd HH:mm:sss"];
+        [formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
         NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
         [formatter setTimeZone:timeZone];
-        if (activeEvent.createTime) {
-            NSRange strPoint = [activeEvent.createTime rangeOfString:@"."];
-            if (strPoint.location != NSNotFound) {
-                activeEvent.createTime = [activeEvent.createTime substringToIndex:strPoint.location];
-            }
-        }
         
         NSDate * createTime = [formatter dateFromString:activeEvent.createTime];
         NSInteger currMonth = [CalendarDateUtil getMonthWithDate:createTime];
@@ -186,31 +221,26 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
      [tableView deselectRowAtIndexPath:indexPath animated:YES];
      ActivedetailsViewController *activeDetailVC = [[ActivedetailsViewController alloc] init];
-     ActiveEventMode * activeEvent = _activeArr[indexPath.section];
+     ActiveBaseInfoMode * activeEvent = _tmpActiveArr[indexPath.section];
      activeDetailVC.delegate = self;
-     activeDetailVC.activeEvent = activeEvent;
-     activeDetailVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    
-     UINavigationController * nav=[[UINavigationController alloc] initWithRootViewController:activeDetailVC];
-     nav.navigationBar.translucent=NO;
-     [self presentViewController:nav animated:YES completion:nil];
+     activeDetailVC.activeEventInfo = activeEvent;
+    [self.navigationController pushViewController:activeDetailVC animated:YES];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
--(NSMutableArray *) loadActiveData:(void(^)())AddHUD{
+-(void) loadActiveData:(void(^)())AddHUD{
      _tmpActiveArr= [NSMutableArray arrayWithCapacity:0];
     if (AddHUD) {
         AddHUD();
     }
-    ASIHTTPRequest * activeRequest = [t_Network httpGet:nil Url:anyTime_Events Delegate:self Tag:anyTime_Events_tag];
+    ASIHTTPRequest * activeRequest = [t_Network httpGet:nil Url:anyTime_GetEventBasicInfo Delegate:self Tag:anyTime_GetEventBasicInfo_tag];
     [activeRequest setDownloadCache:g_AppDelegate.anyTimeCache] ;
     [activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
     [activeRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
-    [activeRequest startSynchronous];
-    return [NSMutableArray arrayWithArray:_tmpActiveArr] ;
+    [activeRequest startAsynchronous];
 }
 
 -(void)clickTouchUpInside:(UIButton *) sender {
@@ -286,26 +316,12 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
     NSString * statusCode = [dic objectForKey:@"statusCode"];
     if ([@"1" isEqualToString:statusCode]) {
         id dataObj = [dic objectForKey:@"data"];
-        if ([dataObj isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *dataDic =(NSDictionary *) dataObj;
-            NSArray * memberArr =  [dataDic objectForKey:@"member"];
-            NSArray * createArr =  [dataDic objectForKey:@"create"];
-            if (memberArr.count>0) {
-                for (int i = 0; i<memberArr.count; i++) {
-                    ActiveEventMode * activeEvent = [[ActiveEventMode alloc ] init];
-                    [activeEvent parseDictionary:memberArr[i]];
-                    activeEvent.imgUrl = [activeEvent.imgUrl stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                    [_tmpActiveArr addObject:activeEvent];
-                }
-            }
-            if (createArr.count>0) {
-                for (int i = 0; i<createArr.count; i++) {
-                    ActiveEventMode * activeEvent = [[ActiveEventMode alloc ] init];
-                    [activeEvent parseDictionary:createArr[i]];
-                    activeEvent.imgUrl = [activeEvent.imgUrl stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                    [_tmpActiveArr addObject:activeEvent];
-                }
-
+        if ([dataObj isKindOfClass:[NSArray class]]) {
+            NSArray * activeArr = (NSArray *) dataObj ;
+            for (int i = 0; i<activeArr.count; i++) {
+                ActiveBaseInfoMode * activeEvent = [[ActiveBaseInfoMode alloc ] init];
+                [activeEvent parseDictionary:activeArr[i]];
+                [_tmpActiveArr addObject:activeEvent];
             }
         }
         [self.tableView reloadData];
@@ -314,78 +330,24 @@ EGORefreshTableHeaderDelegate,UIScrollViewDelegate,ASIHTTPRequestDelegate,Active
     }
      [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
+
 - (void)requestFailed:(ASIHTTPRequest *)request{
     NSError * error = [request error];
     if (error) {
         [MBProgressHUD hideHUDForView:self.view];
+        [MBProgressHUD showError:@"Network error"];
     }
 }
 
 
-- (void)reloadTableViewDataSource
-{
-    NSLog(@"start");
-    _reloading = YES;
-    //打开线程，读取下一页数据
-    [NSThread detachNewThreadSelector:@selector(requestNext) toTarget:self withObject:nil];
-}
-
-- (void)requestNext
-{
-    //回到主线程跟新界面
-   
-    [self performSelectorOnMainThread:@selector(doneLoadingTableViewData) withObject:nil waitUntilDone:YES];
-}
-
-
-- (void)doneLoadingTableViewData{
-     _tmpActiveArr=[self loadActiveData:nil];//刷新数据
-    _reloading = NO;
-    [_refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:self.tableView];
-   // [_tableView reloadData];
-    NSLog(@"end");
-}
-
-
-#pragma mark UIScrollViewDelegate Methods
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView{
-    
-    [_refreshHeaderView egoRefreshScrollViewDidScroll:self.tableView];
-    
-}
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate{
-    
-    [_refreshHeaderView egoRefreshScrollViewDidEndDragging:self.tableView];
-    
-}
-
-
-
-
-- (void)egoRefreshTableHeaderDidTriggerRefresh:(EGORefreshTableHeaderView*)view{
-    
-    [self reloadTableViewDataSource];
-    //[self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:0.5];
-    
-}
-
-- (BOOL)egoRefreshTableHeaderDataSourceIsLoading:(EGORefreshTableHeaderView*)view{
-    
-    return _reloading; // should return if data source model is reloading
-    
-}
-
-
-- (NSDate*)egoRefreshTableHeaderDataSourceLastUpdated:(EGORefreshTableHeaderView*)view{
-    return [NSDate date]; // should return date data source was last changed
-}
-
-
 -(void)cancelActivedetailsViewController:(ActivedetailsViewController *)activeDetailsViewVontroller{
-    _tmpActiveArr=[self loadActiveData:nil];//刷新数据
-    [activeDetailsViewVontroller dismissViewControllerAnimated:YES completion:nil];
+    [self loadActiveData:nil];//刷新数据
+    
+    for (UIViewController *viewController in activeDetailsViewVontroller.navigationController.viewControllers) {
+        if ([viewController isKindOfClass:[JCMSegmentPageController class]]) {
+             [activeDetailsViewVontroller.navigationController popToViewController:viewController animated:YES];
+        }
+    }
 }
 
 

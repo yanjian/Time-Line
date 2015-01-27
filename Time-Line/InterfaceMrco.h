@@ -303,9 +303,21 @@ typedef NS_ENUM(NSInteger , AccountType){
 #define anyTime_UpdateFriendNickName [NSString stringWithFormat:@"%@/servlet/UpdateFriendNickName",BASEURL_IP]
 #define anyTime_UpdateFriendNickName_tag 54
 
+//先取活動基本訊息, 點進才取活動詳細訊息 GetEventBasicInfo 跟（ tag 43 不同要等到详细信息加上eid 请求 ）
+#define anyTime_GetEventBasicInfo [NSString stringWithFormat:@"%@/servlet/GetEventBasicInfo",BASEURL_IP]
+#define anyTime_GetEventBasicInfo_tag 55
 
+//处理好友请求  DisposeFriendRequest
+#define anyTime_DisposeFriendRequest [NSString stringWithFormat:@"%@/servlet/DisposeFriendRequest",BASEURL_IP]
+#define anyTime_DisposeFriendRequest_tag 56
 
+//删除好友(双边删除) DeleteFriend
+#define anyTime_DeleteFriend [NSString stringWithFormat:@"%@/servlet/DeleteFriend",BASEURL_IP]
+#define anyTime_DeleteFriend_tag 57
 
+//删除用户消息 DelMessage
+#define anyTime_DelMessage [NSString stringWithFormat:@"%@/servlet/DelMessage",BASEURL_IP]
+#define anyTime_DelMessage_tag 58
 
 
 

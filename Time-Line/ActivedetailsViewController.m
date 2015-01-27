@@ -26,6 +26,7 @@
 #define voteContentTableViewCellH 44
 
 @interface ActivedetailsViewController ()<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,ActiveVoteDateTableViewCellDelegate,settimeDay,ActiveFooterViewDelegate>{
+    
     UIImageView * _activeImgView;//活动图
     UILabel * _titleLab;//显示活动标题
     UIView  * _joinAndNoJoinView;
@@ -52,12 +53,10 @@
     NSMutableArray * _voteOptionArr;
     int addRowCount ;
 }
-
+@property (nonatomic,retain) ActiveEventMode * activeEvent;
 @property (nonatomic,retain) UITableView *tableView;
-
 @property (strong, nonatomic) IBOutlet UITableViewCell *MemberInviteeView;
 @property (weak, nonatomic) IBOutlet UILabel *inviteeTitleLab;
-
 @property (weak, nonatomic) IBOutlet UIButton *moreBtn;
 @property (weak, nonatomic) IBOutlet UIScrollView *showMemberVIew;
 
@@ -68,11 +67,45 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
-    memberArr = self.activeEvent.member;
     
+    
+    ASIHTTPRequest *activeRequest = [t_Network httpGet:@{@"eid":self.activeEventInfo.Id}.mutableCopy Url:anyTime_Events Delegate:nil Tag:anyTime_Events_tag];
+    [activeRequest setDownloadCache:g_AppDelegate.anyTimeCache] ;
+    [activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
+    [activeRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
+    __block ASIHTTPRequest * request = activeRequest ;
+    [activeRequest setCompletionBlock:^{
+        NSError *error = [request error];
+        if (error) {
+            return;
+        }
+        NSString * responseStr = [request responseString];
+        id objData =  [responseStr objectFromJSONString];
+        if ([objData isKindOfClass:[NSDictionary class]]) {
+            NSDictionary * objDataDic = (NSDictionary *) objData;
+            NSString * statusCode = [objDataDic objectForKey:@"statusCode"] ;
+            if ([statusCode isEqualToString:@"1"]) {
+                id  tmpObj= [objDataDic objectForKey:@"data"];
+                if ([tmpObj isKindOfClass:[NSDictionary class]]) {
+                    NSDictionary * trueDataObj = (NSDictionary *) tmpObj ;
+                    ActiveEventMode * _tmpActiveEvent = [[ActiveEventMode alloc] init] ;
+                    [_tmpActiveEvent parseDictionary:trueDataObj];
+                    self.activeEvent = _tmpActiveEvent ;
+                }
+            }
+        }
+        
+    }];
+    
+    [activeRequest setFailedBlock:^{
+        
+    }];
+    
+    [activeRequest startSynchronous];
+    
+    memberArr = self.activeEvent.member;
     _timeArr = [NSMutableArray arrayWithArray:self.activeEvent.time];
     _voteOptionArr = [NSMutableArray arrayWithArray:self.activeEvent.evList];
-    
     UserInfo * userInfo = [UserInfo currUserInfo];
     for (NSDictionary *dic in memberArr) {
        NSString * uid = [dic objectForKey:@"uid"];
@@ -357,7 +390,6 @@
             titleLab.textAlignment = NSTextAlignmentCenter;
             [titleLab setBackgroundColor:[UIColor whiteColor]];
             [headView addSubview:titleLab];
-
         }
         
     }
@@ -405,18 +437,7 @@
             if (timeDic) {
                 NSString *startTime = [timeDic objectForKey:@"startTime"];
                 NSString *endTime = [timeDic objectForKey:@"endTime"];
-                if (startTime) {
-                    NSRange strPoint = [startTime rangeOfString:@"."];
-                    if (strPoint.location != NSNotFound) {
-                        startTime = [startTime substringToIndex:strPoint.location];
-                    }
-                }
-                if (endTime) {
-                    NSRange strPoint = [endTime rangeOfString:@"."];
-                    if (strPoint.location != NSNotFound) {
-                        endTime = [endTime substringToIndex:strPoint.location];
-                    }
-                }
+            
                 NSMutableArray *memberArray = [NSMutableArray array];
                 int _voteTimeCount=0;//对时间投票的人数
                 if (self.activeEvent.etList) {//用户投票的时间
@@ -443,8 +464,15 @@
                 
                 voteDateCell.showVoteCountLab.text = [NSString stringWithFormat:@"%i",_voteTimeCount];
                 
-                NSDate * startDate = [[PublicMethodsViewController getPublicMethods]  stringToDate:startTime];
-                NSDate * endDate = [[PublicMethodsViewController getPublicMethods]  stringToDate:endTime];
+                NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                [formatter setDateStyle:NSDateFormatterMediumStyle];
+                [formatter setTimeStyle:NSDateFormatterShortStyle];
+                [formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
+                NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
+                [formatter setTimeZone:timeZone];
+                
+                NSDate * startDate = [formatter dateFromString:startTime];
+                NSDate * endDate   = [formatter dateFromString:endTime] ;
                 
                 CLDay *now=[[CLDay alloc] initWithDate:startDate];
                 NSString *startTimeStr = [[PublicMethodsViewController getPublicMethods] shortTimeFromDate: startDate];
@@ -545,29 +573,40 @@
             if (indexPath.row == 0) {
                 int joinCount =0;
                 int memberCount = memberArr.count;
+                int showMemberCount = 0 ;
                 if(memberCount>5){
                     self.moreBtn.hidden = NO;
+                    showMemberCount = 5 ;
                 }else{
                     self.moreBtn.hidden = YES;
+                     showMemberCount = memberCount ;
                 }
-                for (int i=0; i<memberCount; i++) {
+                for (int i=0; i< showMemberCount ; i++) {
                     FriendInformationView * fiv =  [FriendInformationView initFriendInfoView];
-                    fiv.frame=CGRectMake(62*i, 10, 50, 80);
+                    fiv.frame = CGRectMake(62*i, 10, 50, 80);
                     
                     NSDictionary *memberDic = [memberArr objectAtIndex:i];
-                    
-                    fiv.friendNameLab.text=[memberDic objectForKey:@"name"];
+                    NSString * nickname = [memberDic objectForKey:@"nickname"];
+                    if ( nickname && ![@"" isEqualToString:nickname ] ) {//默认显示用户昵称
+                         fiv.friendNameLab.text = nickname ;
+                    } else {
+                        NSString * username = [memberDic objectForKey:@"username"];
+                        if( username )
+                           fiv.friendNameLab.text=[memberDic objectForKey:@"username"];
+                    }
+                
                     NSString *imgPath = [memberDic objectForKey:@"imgBig"];
                     if (imgPath) {
                         imgPath=[imgPath stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
                     }
-                     int join = [[memberDic objectForKey:@"join"] integerValue];//参加的人：1表示已经参加，2表示不参加
+                    int join = [[memberDic objectForKey:@"join"] integerValue];//参加的人：1表示已经参加，2表示不参加
                     if (join == 1) {//参加的人数
                         joinCount++;
                     }
                     NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,imgPath]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                     NSURL *url = [NSURL URLWithString:_urlStr];
                     [fiv.friendHeadimg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
+                    
                     [self.showMemberVIew addSubview:fiv];
                 }
                 self.inviteeTitleLab.text= [NSString stringWithFormat:@"%d Invitees ( %i  joining )",memberArr.count,joinCount];
@@ -758,7 +797,7 @@
                 
             }
         }
-            break;
+        break;
         case anyTime_AddEventTime_tag:{
             NSString *statusCode = [tmpDic objectForKey:@"statusCode"];
             if ([statusCode isEqualToString:@"1"]) {
@@ -773,7 +812,7 @@
                 [_tableView reloadData];
             }
         }
-            break;
+        break;
         default:
             break;
     }

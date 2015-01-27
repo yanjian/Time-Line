@@ -155,10 +155,9 @@ UINavigationController *nav;
     homeVC=[[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
     
     homeVC.isRefreshUIData=YES;//初始化的时候刷新ui加载数据
-//    nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
-//    nav.navigationBarHidden=YES;
-//    nav.navigationBar.translucent=NO;
-    self.window.rootViewController=homeVC;
+    nav=[[UINavigationController alloc] initWithRootViewController:homeVC];
+    nav.navigationBar.translucent=NO;
+    self.window.rootViewController=nav;
     [self.window makeKeyAndVisible];
 }
 

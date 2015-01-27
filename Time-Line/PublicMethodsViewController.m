@@ -41,6 +41,20 @@ static PublicMethodsViewController * PublicMethods = nil;
     return loctime;
 }
 
+-(NSString*)getcurrentTime:(NSString*)format interval:(NSInteger ) interval{
+    NSDate *dates = [NSDate date];
+    dates = [dates dateByAddingTimeInterval:interval *5*60];
+    NSDateFormatter *formatter =  [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:format];
+    NSTimeZone* timeZone = [NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE];
+    [formatter setTimeZone:timeZone];
+    NSString *loctime = [formatter stringFromDate:dates];
+    NSLog(@"%@",loctime);
+    return loctime;
+}
+
+
+
 #pragma -将时间yyyyy年m月d日 hh:mm:sss--->格式化为指定的格式
 -(NSString*)formaterStringfromDate:(NSString*)format dateString:(NSString *) dateString{
     NSDateFormatter *formatter =  [[NSDateFormatter alloc] init];
