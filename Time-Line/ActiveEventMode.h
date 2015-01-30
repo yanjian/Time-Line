@@ -16,7 +16,6 @@
 @property (nonatomic,copy)     NSString       * eventVote;
 @property (nonatomic,copy)     NSString       * veTime;
 @property (nonatomic,retain)   NSArray        * time;
-@property (nonatomic,retain)   NSArray        * member;
 @property (nonatomic,retain)   NSArray        * etList;
 @property (nonatomic,assign)   NSInteger        timeSize;
 @property (nonatomic,copy)     NSString       * voteEndTime;

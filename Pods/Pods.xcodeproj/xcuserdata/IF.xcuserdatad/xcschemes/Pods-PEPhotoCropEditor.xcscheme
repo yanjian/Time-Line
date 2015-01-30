@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "99ADE3ED9D66EAC51C0B57BE"
+               BlueprintIdentifier = "2708A5C5E452EF9D3DF8910F"
                BuildableName = "libPods-PEPhotoCropEditor.a"
                BlueprintName = "Pods-PEPhotoCropEditor"
                ReferencedContainer = "container:Pods.xcodeproj">

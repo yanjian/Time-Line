@@ -39,7 +39,7 @@
     _userRequestInfo.text = str ;
     NSDictionary * tdic = [NSDictionary dictionaryWithObjectsAndKeys:tfont,NSFontAttributeName,nil];
     CGSize  actualsize =[str boundingRectWithSize:CGSizeMake(260,60) options:NSStringDrawingUsesLineFragmentOrigin  attributes:tdic context:nil].size;
-    _userRequestInfo.frame =CGRectMake(75,10, actualsize.width, actualsize.height);
+    _userRequestInfo.frame =CGRectMake(65,15, actualsize.width, actualsize.height);
 }
 
 -(void)touchUpInside:(UIButton *) sender

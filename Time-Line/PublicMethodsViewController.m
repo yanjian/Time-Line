@@ -307,11 +307,11 @@ static PublicMethodsViewController * PublicMethods = nil;
     return [formatter stringFromDate:date];
 }
 
-- (NSString *)timeDifference: (NSString *) theDate getStrart:(NSString*)startdate
+- (NSString *)timeDifference: (NSString *) theDate getStrart:(NSString*)startdate formmtterStyle:(NSString *) formartter
 {
     
     NSDateFormatter *date=[[NSDateFormatter alloc] init];
-    [date setDateFormat:@"YYYY年 M月dd日HH:mm"];
+    [date setDateFormat:formartter];
     [date setTimeZone: [NSTimeZone defaultTimeZone]];
     NSDate *d=[date dateFromString:theDate];
     

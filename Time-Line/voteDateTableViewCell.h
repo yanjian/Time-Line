@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *showDateLab;//显示年月日时间
 @property (weak, nonatomic) IBOutlet UILabel *showTimeLab;//显示小时，分钟
 @property (weak, nonatomic) IBOutlet UILabel *intervalTime;//开始时间和结束时间的差值
+@property (weak, nonatomic) IBOutlet UILabel *allDayLab;
 
 @end

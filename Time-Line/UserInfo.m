@@ -27,6 +27,8 @@
 #define LOGINSTATUS       @"loginStatus"
 #define ACCOUNTTYPE      @"accountType"
 
+static UserInfo *sharedAccountManagerInstance = nil;
+
 @interface UserInfo ()
 +(UserInfo *) initUserInfoWithUserDefault;
 @end
@@ -36,7 +38,6 @@
 
 + (UserInfo *)currUserInfo
 {
-    static UserInfo *sharedAccountManagerInstance = nil;
     static dispatch_once_t predicate;
     dispatch_once(&predicate, ^{
         sharedAccountManagerInstance = [UserInfo initUserInfoWithUserDefault] ;

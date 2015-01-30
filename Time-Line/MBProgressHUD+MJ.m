@@ -14,7 +14,8 @@
     if (view == nil) view = [[UIApplication sharedApplication].windows lastObject];
     // 快速显示一个提示信息
     MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:view animated:YES];
-    hud.labelText = text;
+    hud.detailsLabelFont = [UIFont boldSystemFontOfSize:16.f] ;
+    hud.detailsLabelText = text;
     // 设置图片
     hud.customView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:[NSString stringWithFormat:@"MBProgressHUD.bundle/%@", icon]]];
     // 再设置模式

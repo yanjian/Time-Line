@@ -98,7 +98,7 @@
     }];
     
     [activeRequest setFailedBlock:^{
-        
+        [MBProgressHUD showError:@"Load data failed, please check your network"];
     }];
     
     [activeRequest startSynchronous];
@@ -228,7 +228,14 @@
     
      _timeCount = _timeArr.count==0?1:_timeArr.count;
     varHeight = (_addTime==1?footerCellHeight_AddYes:footerCellHeight_AddNo);
-    _voteDateTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, voteDateCellHeight*_timeCount+varHeight) style:UITableViewStylePlain];
+    int tmpHeight;
+    if([self.activeEvent.type integerValue] == 1){ //是固定时间
+        tmpHeight = voteDateCellHeight+10 ;
+    }else{
+        tmpHeight = voteDateCellHeight*_timeCount+varHeight ;
+    }
+    
+    _voteDateTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width,tmpHeight ) style:UITableViewStylePlain];
     _voteDateTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     _voteDateTableView.bounces=NO;
     _voteDateTableView.showsVerticalScrollIndicator = NO;
@@ -236,34 +243,36 @@
     _voteDateTableView.delegate = self;
     
        //voteTableView 的底部视图
-    if (_addTime ==1) {//表示可用添加时间
-        UIView * footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width
-                                                                          , footerCellHeight_AddYes)];
-        UIButton *addTimeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        addTimeBtn.frame=CGRectMake(20, 10, footerView.frame.size.width-2*20, 40);
-        [addTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        addTimeBtn.layer.borderWidth = 0.5f;
-        addTimeBtn.layer.borderColor = [UIColor lightGrayColor].CGColor;
-        [addTimeBtn setTitle:@"➕    Add a date..." forState:UIControlStateNormal];
-        [addTimeBtn addTarget:self action:@selector(addMutableDateVote) forControlEvents:UIControlEventTouchUpInside];
-        [footerView addSubview:addTimeBtn];
-        UILabel * allowLab = [[UILabel alloc] initWithFrame:CGRectMake(100, 50, kScreen_Width-2*50, 32)];
-        allowLab.text = [NSString stringWithFormat:@"%@",self.activeEvent.voteEndTime];
-        UILabel * deadLineLab = [[UILabel alloc] initWithFrame:CGRectMake(20, 50, 70, 32)];
-        deadLineLab.text = @"Deadline ";
-        [footerView addSubview:allowLab];
-        [footerView addSubview:deadLineLab];
-        _voteDateTableView.tableFooterView = footerView;
-    }else{
-        UIView * footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width
-                                                                          , footerCellHeight_AddNo)];
-        UILabel * allowLab = [[UILabel alloc] initWithFrame:CGRectMake(100, 10, kScreen_Width-2*50, 32)];
-        allowLab.text = [NSString stringWithFormat:@"%@",self.activeEvent.voteEndTime];
-        UILabel * deadLineLab = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 70, 32)];
-        deadLineLab.text = @"Deadline ";
-        [footerView addSubview:allowLab];
-        [footerView addSubview:deadLineLab];
-        _voteDateTableView.tableFooterView = footerView;
+    if ([self.activeEvent.type integerValue] != 1) {//不是固定时间
+        if (_addTime ==1) {//表示可用添加时间
+            UIView * footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width
+                                                                              , footerCellHeight_AddYes)];
+            UIButton *addTimeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+            addTimeBtn.frame=CGRectMake(20, 10, footerView.frame.size.width-2*20, 40);
+            [addTimeBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+            addTimeBtn.layer.borderWidth = 0.5f;
+            addTimeBtn.layer.borderColor = [UIColor lightGrayColor].CGColor;
+            [addTimeBtn setTitle:@"➕    Add a date..." forState:UIControlStateNormal];
+            [addTimeBtn addTarget:self action:@selector(addMutableDateVote) forControlEvents:UIControlEventTouchUpInside];
+            [footerView addSubview:addTimeBtn];
+            UILabel * allowLab = [[UILabel alloc] initWithFrame:CGRectMake(100, 50, kScreen_Width-2*50, 32)];
+            allowLab.text = [NSString stringWithFormat:@"%@",self.activeEvent.voteEndTime];
+            UILabel * deadLineLab = [[UILabel alloc] initWithFrame:CGRectMake(20, 50, 70, 32)];
+            deadLineLab.text = @"Deadline ";
+            [footerView addSubview:allowLab];
+            [footerView addSubview:deadLineLab];
+            _voteDateTableView.tableFooterView = footerView;
+        }else{
+            UIView * footerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width
+                                                                              , footerCellHeight_AddNo)];
+            UILabel * allowLab = [[UILabel alloc] initWithFrame:CGRectMake(100, 10, kScreen_Width-2*50, 32)];
+            allowLab.text = [NSString stringWithFormat:@"%@",self.activeEvent.voteEndTime];
+            UILabel * deadLineLab = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 70, 32)];
+            deadLineLab.text = @"Deadline ";
+            [footerView addSubview:allowLab];
+            [footerView addSubview:deadLineLab];
+            _voteDateTableView.tableFooterView = footerView;
+        }
     }
 }
 
@@ -335,7 +344,11 @@
             }
         } else if(indexPath.section == 3){
             if (indexPath.row ==0 ) {
-                return voteDateCellHeight*_timeCount+(_addTime==1?footerCellHeight_AddYes:footerCellHeight_AddNo);
+                if([self.activeEvent.type integerValue] == 1){ //是固定时间
+                    return voteDateCellHeight+10 ;
+                }else{
+                    return voteDateCellHeight*_timeCount+(_addTime==1?footerCellHeight_AddYes:footerCellHeight_AddNo);
+                }
             }
             
         }else if (indexPath.section == 4){
@@ -423,12 +436,15 @@
         
         if( _timeArr.count>0){
             NSDictionary * timeDic =  _timeArr[indexPath.section];
-            if([_joinStatus isEqualToString:@"0"]){
-                voteDateCell.voteBtn.hidden = YES;
+            if( [self.activeEvent.type integerValue ] != 1){ //不是固定时间
+                if([_joinStatus isEqualToString:@"0"]){
+                    voteDateCell.voteBtn.hidden = YES;
+                }else{
+                    voteDateCell.voteBtn.hidden = NO;
+                }
             }else{
-                voteDateCell.voteBtn.hidden = NO;
+               voteDateCell.voteBtn.hidden = YES;
             }
-            
             voteDateCell.voteTimeOrOption = VOTETIME;
             voteDateCell.voteBtn.tag = indexPath.section;
             voteDateCell.delegate = self;
@@ -438,7 +454,7 @@
                 NSString *startTime = [timeDic objectForKey:@"startTime"];
                 NSString *endTime = [timeDic objectForKey:@"endTime"];
             
-                NSMutableArray *memberArray = [NSMutableArray array];
+                NSMutableArray *memberVoteDateArr = [NSMutableArray array];
                 int _voteTimeCount=0;//对时间投票的人数
                 if (self.activeEvent.etList) {//用户投票的时间
                     NSString * currUserId = [UserInfo currUserInfo].Id;
@@ -451,7 +467,7 @@
                             for (NSDictionary *memberDic in self.activeEvent.member) {
                                int tmpUid = [[memberDic objectForKey:@"uid"] intValue];
                                 if (uid == tmpUid) {
-                                    [memberArray addObject:memberDic];
+                                    [memberVoteDateArr addObject:memberDic];
                                 }
                                 if (tmpUid == [currUserId intValue] ) {
                                     voteDateCell.voteBtn.selected =YES;
@@ -460,7 +476,7 @@
                         }
                     }
                 }
-                voteDateCell.memberArr = memberArray;
+                voteDateCell.memberArr = memberVoteDateArr;
                 
                 voteDateCell.showVoteCountLab.text = [NSString stringWithFormat:@"%i",_voteTimeCount];
                 
@@ -552,7 +568,7 @@
                 NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,self.activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 NSLog(@"%@",_urlStr);
                 NSURL *url=[NSURL URLWithString:_urlStr];
-                [_activeImgView sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018"]];
+                [_activeImgView sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
                 
                 [cell.contentView addSubview:_activeImgView];
             }
@@ -742,7 +758,6 @@
     for (UIButton *btn in _joinAndNoJoinArr) {
         btn.selected = NO;
         [btn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-    
     }
     sender.selected = YES;
     int joinType=0;

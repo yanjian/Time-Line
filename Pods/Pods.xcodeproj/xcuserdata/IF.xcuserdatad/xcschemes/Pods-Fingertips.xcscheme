@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5122D78C339A91182F530359"
+               BlueprintIdentifier = "43D49743A5BD938FD5CA6E1B"
                BuildableName = "libPods-Fingertips.a"
                BlueprintName = "Pods-Fingertips"
                ReferencedContainer = "container:Pods.xcodeproj">

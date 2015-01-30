@@ -138,8 +138,6 @@
 
 - (void)requestFinished:(ASIHTTPRequest *)request
 {
-    
-   // NSUserDefaults *userInfo=[NSUserDefaults standardUserDefaults];
     NSString *responseStr=[request responseString];
     NSLog(@"%@",responseStr);
     switch (request.tag) {
@@ -148,7 +146,7 @@
             if ([@"1" isEqualToString:responseStr]) {
                 [USER_DEFAULT removeObjectForKey:CURRENTUSERINFO];
                 
-                uInfo=[UserInfo currUserInfo];//当前用户信息对象
+                uInfo = [UserInfo currUserInfo];//当前用户信息对象
                 
                 ASIHTTPRequest *userInfoRequest= [t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
                 [g_ASIQuent addOperation:userInfoRequest];
@@ -194,12 +192,8 @@
                     uInfo=[UserInfo currUserInfo];//当前用户信息对象
                     [uInfo parseDictionary:userInfoDic];
                     uInfo.gender=[[userInfoDic objectForKey:@"gender"] intValue]==0?gender_woman:gender_man;
-                    if (!uInfo.imgUrl) {
-                        uInfo.imgUrl=[userInfoDic objectForKey:@"imgBig"];
-                    }
-                    if (!uInfo.imgUrlSmall) {
-                        uInfo.imgUrlSmall=[userInfoDic objectForKey:@"imgBig"];
-                    }
+                    uInfo.imgUrl=[userInfoDic objectForKey:@"imgBig"];
+                    uInfo.imgUrlSmall=[userInfoDic objectForKey:@"imgBig"];
                     //accountBinds =     ({account = "yanjaya5201314@gmail.com";type = 1;uid = 76;})
                     NSArray *accountBinds=uInfo.accountBinds ;
                     if (accountBinds.count>0) {

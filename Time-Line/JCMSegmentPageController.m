@@ -16,11 +16,10 @@
  */
 
 #import "JCMSegmentPageController.h"
-#import "SetingViewController.h"
 #import "SloppySwiper.h"
+#import "HomeViewController.h"
 
 static const float TAB_BAR_HEIGHT = 0.f;//64.0f;
-
 @implementation JCMSegmentPageController {
   UISegmentedControl *segmentedControl;
 	UIView *contentContainerView;
@@ -268,6 +267,18 @@ static const float TAB_BAR_HEIGHT = 0.f;//64.0f;
 }
 
 
+-(void)setingViewControllerDelegate:(SetingViewController *) selfViewController{
+    [UserInfo currUserInfo].loginStatus = UserLoginStatus_NO ; //设置为没有登录状态
+    [USER_DEFAULT removeObjectForKey:CURRENTUSERINFO];
+    [USER_DEFAULT synchronize];
+    [selfViewController dismissViewControllerAnimated:YES completion:nil];
+    for (UIViewController *viewController in self.navigationController.viewControllers) {
+        if ([viewController isKindOfClass:[HomeViewController class]]) {
+            [self.navigationController popToViewController:viewController animated:NO];
+        }
+    }
+}
+
 -(void)setZVbutton
 {
     /**另外一种导航滑动样式！
@@ -281,6 +292,7 @@ static const float TAB_BAR_HEIGHT = 0.f;//64.0f;
     
     
     SetingViewController *setVC=[[SetingViewController alloc] init];
+    setVC.delegate = self ;
     UINavigationController *nc=[[UINavigationController alloc] initWithRootViewController:setVC];
     nc.navigationBar.translucent=NO;
     nc.navigationItem.hidesBackButton=YES;

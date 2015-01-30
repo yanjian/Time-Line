@@ -7,8 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+@class SetingViewController ;
+@protocol SetingViewControllerDelegate <NSObject>
+
+-(void)setingViewControllerDelegate:(SetingViewController *) selfViewController ;
+
+@end
+
 @interface SetingViewController : UIViewController
 
-
+@property (nonatomic,retain) id<SetingViewControllerDelegate> delegate ;
 @property (nonatomic,strong) NSMutableArray *accountDataArr;//用户账号信息
 @end

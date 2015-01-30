@@ -10,14 +10,16 @@
 #import "MJRefresh.h"
 #import "ActiveTableViewCell.h"
 #import "UserApplyTableViewCell.h"
+#import "UserAgreeAndReTableViewCell.h"
 #import "NotiveMsgPageBaseMode.h"
+#import "ActivedetailsViewController.h"
 #import "NoticesMsgModel.h"
+#import "CalendarDateUtil.h"
 #import "UIImageView+WebCache.h"
 #import "FriendGroupShowViewController.h"
 #import "UIViewController+MJPopupViewController.h"
 
-@interface NoticesViewController ()<UITableViewDataSource,UITableViewDelegate,UserApplyTableViewCellDelegate>{
-    
+@interface NoticesViewController ()<UITableViewDataSource,UITableViewDelegate,UserApplyTableViewCellDelegate,ActivedetailsViewControllerDelegate>{
     NSMutableArray * _noticeArr;
     NSInteger currPageNum ; //当前页码
 
@@ -133,14 +135,21 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     NoticesMsgModel * noticeMsg = [_noticeArr objectAtIndex:indexPath.section];
     if ([noticeMsg.type integerValue]<10) {
-        return 110.f;
+         if ([noticeMsg.type integerValue] == 1) {
+              return 100.f;
+         }else if ([noticeMsg.type integerValue] == 2 ||  [noticeMsg.type integerValue] == 3){
+             return 64.f;
+         }else{
+             return 44.f ;
+         }
+        
     }else{
         return 215.f;
     }
     
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    return 10.f;
+    return 5.f;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
     return 0.1f;
@@ -149,61 +158,125 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NoticesMsgModel * noticeMsg = [_noticeArr objectAtIndex:indexPath.section];
     if ([noticeMsg.type integerValue]<10) {
-        static NSString *activeId=@"activeCellId";
-        UserApplyTableViewCell *userApplyCell=[tableView dequeueReusableCellWithIdentifier:activeId];
-        if (!userApplyCell) {
-            userApplyCell = (UserApplyTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"UserApplyTableViewCell" owner:self options:nil] firstObject];
-        }
+       
         if ([noticeMsg.type integerValue] == 1) { //好友请求
-             NSDictionary * msgDic =  noticeMsg.message ;
+            static NSString *activeId =@"activeCellId";
+            UserApplyTableViewCell *userApplyCell=[tableView dequeueReusableCellWithIdentifier:activeId];
+            if (!userApplyCell) {
+                userApplyCell = (UserApplyTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"UserApplyTableViewCell" owner:self options:nil] firstObject];
+            }
+            NSDictionary * msgDic =  noticeMsg.message ;
             if (msgDic) {
                 [userApplyCell setNoticesMsg:noticeMsg] ; //设置信息
                 userApplyCell.delegate = self ;
-                
                 NSString * tmpUrl = [[msgDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
                 NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@",BASEURL_IP,tmpUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 NSLog(@"%@",_urlStr);
                 NSURL *url = [NSURL URLWithString:_urlStr];
-                [userApplyCell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-                    
-                }];
+                [userApplyCell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
                 [userApplyCell setFriendRequestInfo:[msgDic objectForKey:@"msg"]] ;
             }
-        }else if ([noticeMsg.type integerValue] == 2) {//对方同意/no 信息
-
+            return userApplyCell ;
+        }else if ([noticeMsg.type integerValue] == 2 ||  [noticeMsg.type integerValue] == 3) {//对方同意 信息  //对方拒绝添加 你为好友信息
+            static NSString *activeAgreeAndReID =@"activeAgreeAndReId";
+            UserAgreeAndReTableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:activeAgreeAndReID];
+            if (!cell) {
+                cell = (UserAgreeAndReTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"UserAgreeAndReTableViewCell" owner:self options:nil] firstObject];
+            }
             NSDictionary * msgDic =  noticeMsg.message ;
-            [userApplyCell.acceptBtn setHidden:YES];
-            [userApplyCell.denyBtn   setHidden:YES] ;
             if (msgDic) {
                 NSString * tmpUrl = [[msgDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
                 NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@",BASEURL_IP,tmpUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 NSLog(@"%@",_urlStr);
                 NSURL *url = [NSURL URLWithString:_urlStr];
-                [userApplyCell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-                    
-                }];
-                [userApplyCell setFriendRequestInfo:[msgDic objectForKey:@"msg"]] ;
+                [cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
+                [cell setFriendMsgInfo:[msgDic objectForKey:@"msg"] ] ;
             }
+            return cell ;
+        }else{
+            return nil;
         }
-        return userApplyCell;
     }else{
         static NSString *activeCellID=@"activeManagerCellId";
         ActiveTableViewCell *activeCell=[tableView dequeueReusableCellWithIdentifier:activeCellID];
         if (!activeCell) {
             activeCell = (ActiveTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"ActiveTableViewCell" owner:self options:nil] firstObject];
         }
-        if ([noticeMsg.type integerValue] == 10) {
-            NSDictionary * msgDic = noticeMsg.message ;
+        activeCell.isNotice = YES ;//用于区分是manage视图中的cell还是notive中的cell
+        
+        NSDictionary * msgDic = [noticeMsg.message objectForKey:@"event"];
+         ActiveBaseInfoMode * activeEvent = [ActiveBaseInfoMode new] ;
+        if (msgDic) {
+            [activeEvent parseDictionary:msgDic] ;
+        }
+        if ([noticeMsg.type integerValue] == 10) { //活动更新,
             
+        }else if ([noticeMsg.type integerValue] == 11) { //活动新增或邀请成员
+            
+            activeCell.activeEvent = activeEvent ;
+            if([activeEvent.status integerValue] == ActiveStatus_upcoming ){
+                if ([activeEvent.type integerValue]== 2) {
+                    activeCell.activeStateLab.text = @"UpComing(Voting)" ;
+                }else{
+                    activeCell.activeStateLab.text = @"UpComing" ;
+                }
+            }else if  ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm ){
+                activeCell.activeStateLab.text = @"To be Confirm" ;
+            }else if  ([activeEvent.status integerValue] == ActiveStatus_confirmed ){
+                activeCell.activeStateLab.text = @"Confirmed" ;
+            }else if  ([activeEvent.status integerValue] == ActiveStatus_past ){
+                activeCell.activeStateLab.text = @"Past" ;
+            }
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateStyle:NSDateFormatterMediumStyle];
+            [formatter setTimeStyle:NSDateFormatterShortStyle];
+            [formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
+            NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
+            [formatter setTimeZone:timeZone];
+            
+            NSDate * createTime = [formatter dateFromString:activeEvent.createTime];
+            NSInteger currMonth = [CalendarDateUtil getMonthWithDate:createTime];
+            NSInteger currDay = [CalendarDateUtil getDayWithDate:createTime];
+            activeCell.monthLab.text = [self monthStringWithInteger:currMonth];
+            activeCell.dayCountLab.text =[NSString stringWithFormat:@"%ld",(long)currDay];
+            NSURL *url=nil ;
+            if (activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl]) {
+                NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSLog(@"%@",_urlStr);
+                url=[NSURL URLWithString:_urlStr];
+            }
+            [activeCell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+            activeCell.activeNameLab.text = activeEvent.title;
         }
         return activeCell;
     }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+     NoticesMsgModel * noticeMsg = [_noticeArr objectAtIndex:indexPath.section];
+     if ([noticeMsg.type integerValue] == 10 ||[noticeMsg.type integerValue] == 11 ){
+         NSDictionary * msgDic = [noticeMsg.message objectForKey:@"event"];
+         ActiveBaseInfoMode * activeEvent = [ActiveBaseInfoMode new] ;
+         if (msgDic) {
+             [activeEvent parseDictionary:msgDic] ;
+         }else{
+             [MBProgressHUD showError:@"You already out of the activity"] ;
+             return;
+         }
+         
+         ActivedetailsViewController *activeDetailVC = [[ActivedetailsViewController alloc] init];
+         activeDetailVC.delegate = self ;
+         activeDetailVC.activeEventInfo = activeEvent;
+         [self.navigationController pushViewController:activeDetailVC animated:YES];
+     }
 }
 
+
+
+-(void)cancelActivedetailsViewController:(ActivedetailsViewController *)activeDetailsViewVontroller{
+    [activeDetailsViewVontroller.navigationController popViewControllerAnimated:YES];
+}
 
 -(void)userApplyTableViewCell:(UserApplyTableViewCell *)selfCell paramNoticesMsgModel:(NoticesMsgModel *)noticesMsg isAcceptAndDeny:(BOOL)isAccept{
     NSDictionary  * paramDic = noticesMsg.message ;
@@ -297,6 +370,53 @@
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
      
     }
+}
+
+
+-(NSString *)monthStringWithInteger:(NSUInteger)month{
+    NSString *monthStr;
+    switch (month) {
+        case 1:
+            monthStr = @"JAN";
+            break;
+        case 2:
+            monthStr = @"FEB";
+            break;
+        case 3:
+            monthStr = @"MAR";
+            break;
+        case 4:
+            monthStr = @"APR";
+            break;
+        case 5:
+            monthStr = @"MAY";
+            break;
+        case 6:
+            monthStr = @"JUN";
+            break;
+        case 7:
+            monthStr = @"JUL";
+            break;
+        case 8:
+            monthStr = @"AUG";
+            break;
+        case 9:
+            monthStr = @"SEP";
+            break;
+        case 10:
+            monthStr = @"OCT";
+            break;
+        case 11:
+            monthStr = @"NOV";
+            break;
+        case 12:
+            monthStr = @"DEC";
+            break;
+            
+        default:
+            break;
+    }
+    return monthStr;
 }
 
 /*

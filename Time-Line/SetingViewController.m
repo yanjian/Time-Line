@@ -251,10 +251,11 @@
             [atAccount MR_deleteEntity];
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
         }
-        
-        [USER_DEFAULT removeObjectForKey:CURRENTUSERINFO];
-        [USER_DEFAULT synchronize];
-        [self closeNavigation];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(setingViewControllerDelegate:)]) {
+            [self.delegate setingViewControllerDelegate:self] ;
+        }else{
+            [self closeNavigation];
+        }
     }
 }
 

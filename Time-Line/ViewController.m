@@ -277,7 +277,7 @@
 
     CLDay *startday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:startDatStr]];
     CLDay *endday=[[CLDay alloc] initWithDate:[[PublicMethodsViewController getPublicMethods] formatWithStringDate:enddateStr]];
-     NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:enddateStr getStrart:startDatStr ];
+     NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:enddateStr getStrart:startDatStr formmtterStyle:@"YYYY年 M月d日HH:mm" ];
     if ([[startday description] isEqualToString:[endday description]]||[instr isEqualToString:@"1d"]) {//同一天或为1d都是一天
         allDayLable.text=[[startday abbreviationWeekDayMotch] stringByAppendingString:@" (ALL DAY)"];
     }else{

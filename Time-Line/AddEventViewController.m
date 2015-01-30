@@ -698,7 +698,7 @@
                     
                     NSString *startTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: tmpstartTime];
                     NSString *endTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: tmpendTime];
-                     NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:tmpendTime getStrart:tmpstartTime ];
+                     NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:tmpendTime getStrart:tmpstartTime formmtterStyle:@"YYYY年 M月d日HH:mm"];
                     
                     if ([event.isAllDay boolValue]) {
                         [allDayStartLable setHidden:NO];
@@ -753,7 +753,7 @@
                         NSString *startTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: nowDay];
                         NSString *endTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: future];
                         
-                         NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:future getStrart:nowDay ];
+                         NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:future getStrart:nowDay formmtterStyle:@"YYYY年 M月d日HH:mm"];
                         
                         [intervalbtn setTitle:instr forState:UIControlStateNormal];
                         startlabel.text=[now weekDayMotch];
@@ -1076,7 +1076,7 @@
     NSString *startTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: start];
     NSString *endTime=[[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"HH:mm" dateString: end];
     
-    NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:end getStrart:start ];
+    NSString *instr=[[PublicMethodsViewController getPublicMethods] timeDifference:end getStrart:start formmtterStyle:@"YYYY年 M月d日HH:mm"];
     [intervalbtn setTitle:instr forState:UIControlStateNormal];
     [intervalbtn setHidden:NO];
     

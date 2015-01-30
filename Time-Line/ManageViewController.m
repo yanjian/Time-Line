@@ -14,38 +14,33 @@
 #import "CalendarDateUtil.h"
 #import "ActivedetailsViewController.h"
 #import "JCMSegmentPageController.h"
+#import "DXPopover.h"
 
 typedef NS_ENUM(NSInteger, ShowActiveType){
-    ShowActiveType_All    = 0 ,
-    ShowActiveType_Create = 1 ,
-    ShowActiveType_Join   = 2 ,
-    ShowActiveType_Hide   = 3
-    
+    ShowActiveType_upcoming     = 0 ,
+    ShowActiveType_toBeConfirm  = 1 ,
+    ShowActiveType_confirmed    = 2 ,
+    ShowActiveType_past         = 3 ,
+    ShowActiveType_hide         = 4 ,
+    ShowActiveType_All          = 5 ,
+    ShowActiveType_refusedNot   = 6
 } ;
-
-
-typedef NS_ENUM(NSInteger, ActiveStatus){
-    ActiveStatus_upcoming       = 0 ,
-    ActiveStatus_toBeConfirm    = 1 ,
-    ActiveStatus_confirmed      = 2 ,
-    ActiveStatus_past           = 3
-} ;
-
 
 
 @interface ManageViewController ()<UITableViewDelegate, UITableViewDataSource,
 UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
 {
-    NSMutableArray * _activeArr; //暂时没有用
-    NSMutableArray * _tmpActiveArr ;
-    
-    NSString       * currId ;
-    
+    NSMutableArray * _activeArr; //用于显示活动的数组
+    NSMutableArray * _tmpActiveArr ; //抓取到的数据都放在这个里面的（除隐藏的活动，直接放到_activeArr中的）
     ShowActiveType   _showActiveType ;
     NSMutableArray * _selectActiveBtnArr ;
+    NSArray *  _configs;
 
 }
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UITableView *popTableView;
+@property (nonatomic, strong) DXPopover *popover;
+
 @end
 
 @implementation ManageViewController
@@ -55,34 +50,34 @@ UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
     CGRect frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
     self.view.frame=frame;
     
-    currId = [UserInfo currUserInfo].Id;
     
-    _showActiveType = ShowActiveType_All ;
+    _activeArr = [NSMutableArray array]; //创建一个数组
+    
+    _showActiveType = ShowActiveType_All ;//默认查询所有的活动
     
     _selectActiveBtnArr = [NSMutableArray array];
     
     UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, 1, frame.size.width, 25)];
-    for (int i=0; i<4; i++) {
-        UIButton *allBtn = [[UIButton alloc] initWithFrame:CGRectMake(frame.size.width/4*i, 0, frame.size.width/4, 25)];
+    for (int i=0; i<3; i++) {
+        UIButton *allBtn = [[UIButton alloc] initWithFrame:CGRectMake(selectView.frame.size.width/3*i, 0, selectView.frame.size.width/3, 25)];
         [allBtn setBackgroundImage:[UIImage imageNamed:@"TIme_Start"] forState:UIControlStateSelected];
          allBtn.titleLabel.font = [UIFont systemFontOfSize:12.f];
         if ( i == 0 ) {
             [allBtn setSelected:YES];
-            _showActiveType = ShowActiveType_All ;
+            allBtn.tag = ShowActiveType_All ;
             [allBtn setTitle:@"ALL" forState:UIControlStateNormal];
         }else if(i == 1){
-            [allBtn setTitle:@"Create" forState:UIControlStateNormal];
-        }else if( i == 2){
-            [allBtn setTitle:@"Join" forState:UIControlStateNormal];
-        }else if( i==3 ){
-            [allBtn setTitle:@"Hide" forState:UIControlStateNormal];
+            allBtn.tag = ShowActiveType_upcoming ;
+            [allBtn setTitle:@"UpComing" forState:UIControlStateNormal];
+        }else if(i == 2){
+             allBtn.tag = 2 ;
+            [allBtn setTitle:@"More" forState:UIControlStateNormal];
         }
-        allBtn.tag = i ;
+      
         [allBtn addTarget:self action:@selector(clickTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
         [selectView addSubview:allBtn];
         [_selectActiveBtnArr addObject:allBtn];
     }
-    
     [selectView setBackgroundColor:blueColor];
     [self.view addSubview:selectView];
     
@@ -96,6 +91,19 @@ UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
     [self.view  addSubview:self.tableView];
     
     [self setupRefresh];
+    
+    
+    _configs = @[@"To be confirm", @"Confirm", @"Past",@"Hide",@"Refused notification"];
+    
+    self.popTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
+                                                                      0,
+                                                                      200,
+                                                                      220)
+                                                style:UITableViewStylePlain];
+    self.popTableView.delegate   = self;
+    self.popTableView.dataSource = self;
+    
+    self.popover = [DXPopover new];
 }
 
 
@@ -135,16 +143,28 @@ UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView;{
-    return _tmpActiveArr.count;
+    if (self.popTableView == tableView) {
+        return 1 ;
+    }else{
+        [self showActiveWhatWithActiveType:_showActiveType];
+      return _activeArr.count;
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-   return 1;
+    if (self.popTableView == tableView) {
+        return _configs.count ;
+    }else{
+      return 1;
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 215.f;
+    if (tableView== self.popTableView) {
+       return   44.f;
+    }else
+      return 215.f;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     return 2.f;
@@ -155,76 +175,131 @@ UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *activeId=@"activeManagerCellId";
-    ActiveTableViewCell *activeCell=[tableView dequeueReusableCellWithIdentifier:activeId];
-    if (!activeCell) {
-        activeCell = (ActiveTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"ActiveTableViewCell" owner:self options:nil] firstObject];
-    }
-    if (_tmpActiveArr.count>0) {
-        ActiveBaseInfoMode *activeEvent = _tmpActiveArr[indexPath.section];
-        
-//        for (NSDictionary * member in activeEvent.member) {
-//            if ([currId isEqualToString:[[member objectForKey:@"uid"] stringValue]]) {
-//                NSInteger view = [[member objectForKey:@"view"] integerValue];
-//                NSInteger not = [[member objectForKey:@"notification"] integerValue];
-//                if ( view == 1 ) {//1 表示显示活动
-//                    activeCell.isView = YES;
-//                }else{
-//                    activeCell.isView = NO;
-//                }
-//                if (not == 1) {
-//                     activeCell.isNotification = YES;
-//                }else{
-//                    activeCell.isNotification = NO;
-//                }
-//            }
-//        }
-
-        activeCell.activeEvent = activeEvent ;
-        
-        if([activeEvent.status integerValue] == ActiveStatus_upcoming ){
-            if ([activeEvent.type integerValue]== 2) {
-                activeCell.activeStateLab.text = @"UpComing(Voting)" ;
-            }else{
-                activeCell.activeStateLab.text = @"UpComing" ;
-            }
-        }else if  ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm ){
-            activeCell.activeStateLab.text = @"To be Confirm" ;
-        }else if  ([activeEvent.status integerValue] == ActiveStatus_confirmed ){
-            activeCell.activeStateLab.text = @"Confirmed" ;
-        }else if  ([activeEvent.status integerValue] == ActiveStatus_past ){
-            activeCell.activeStateLab.text = @"Past" ;
+    if (self.popTableView == tableView) {
+        static NSString *configId=@"configID";
+        UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:configId];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:configId];
         }
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        [formatter setDateStyle:NSDateFormatterMediumStyle];
-        [formatter setTimeStyle:NSDateFormatterShortStyle];
-        [formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
-        NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
-        [formatter setTimeZone:timeZone];
         
-        NSDate * createTime = [formatter dateFromString:activeEvent.createTime];
-        NSInteger currMonth = [CalendarDateUtil getMonthWithDate:createTime];
-        NSInteger currDay = [CalendarDateUtil getDayWithDate:createTime];
-        activeCell.monthLab.text = [self monthStringWithInteger:currMonth];
-        activeCell.dayCountLab.text =[NSString stringWithFormat:@"%ld",(long)currDay];
-        NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSLog(@"%@",_urlStr);
-        NSURL *url=[NSURL URLWithString:_urlStr];
-        [activeCell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018"]];
-        activeCell.activeNameLab.text = activeEvent.title;
+        cell.textLabel.text = [_configs objectAtIndex:indexPath.row] ;
+        
+        return cell ;
+    }else{
+        static NSString *activeId=@"activeManagerCellId";
+        ActiveTableViewCell *activeCell=[tableView dequeueReusableCellWithIdentifier:activeId];
+        if (!activeCell) {
+            activeCell = (ActiveTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"ActiveTableViewCell" owner:self options:nil] firstObject];
+        }
+        if (_activeArr.count>0) {
+            ActiveBaseInfoMode *activeEvent = _activeArr[indexPath.section];
+            
+            activeCell.activeEvent = activeEvent ;
+            
+            if([activeEvent.status integerValue] == ActiveStatus_upcoming ){
+                if ([activeEvent.type integerValue]== 2) {
+                    activeCell.activeStateLab.text = @"UpComing(Voting)" ;
+                }else{
+                    activeCell.activeStateLab.text = @"UpComing" ;
+                }
+            }else if  ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm ){
+                activeCell.activeStateLab.text = @"To be Confirm" ;
+            }else if  ([activeEvent.status integerValue] == ActiveStatus_confirmed ){
+                activeCell.activeStateLab.text = @"Confirmed" ;
+            }else if  ([activeEvent.status integerValue] == ActiveStatus_past ){
+                activeCell.activeStateLab.text = @"Past" ;
+            }
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateStyle:NSDateFormatterMediumStyle];
+            [formatter setTimeStyle:NSDateFormatterShortStyle];
+            [formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
+            NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
+            [formatter setTimeZone:timeZone];
+            
+            NSDate * createTime = [formatter dateFromString:activeEvent.createTime];
+            NSInteger currMonth = [CalendarDateUtil getMonthWithDate:createTime];
+            NSInteger currDay = [CalendarDateUtil getDayWithDate:createTime];
+            activeCell.monthLab.text = [self monthStringWithInteger:currMonth];
+            activeCell.dayCountLab.text =[NSString stringWithFormat:@"%ld",(long)currDay];
+            NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSLog(@"%@",_urlStr);
+            NSURL *url=[NSURL URLWithString:_urlStr];
+            [activeCell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+            activeCell.activeNameLab.text = activeEvent.title;
+        }
+        
+        return activeCell;
     }
-    
-    return activeCell;
 }
 
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (tableView == self.popTableView) {
+        if (indexPath.row == 0) { //
+            _showActiveType = ShowActiveType_toBeConfirm ;
+            [self.tableView reloadData];
+        }else if ( indexPath.row == 1 ){
+            _showActiveType = ShowActiveType_confirmed ;
+            [self.tableView reloadData];
+        }else if ( indexPath.row == 2 ){
+            _showActiveType = ShowActiveType_past ;
+            [self.tableView reloadData];
+        }else if ( indexPath.row == 3 ){
+            _showActiveType = ShowActiveType_hide ;
+            [self featchHideActivity];
+        }else if ( indexPath.row == 4 ){
+            _showActiveType = ShowActiveType_refusedNot ;
+            [self.tableView reloadData];
+        }
+        return ;
+    }
      [tableView deselectRowAtIndexPath:indexPath animated:YES];
      ActivedetailsViewController *activeDetailVC = [[ActivedetailsViewController alloc] init];
-     ActiveBaseInfoMode * activeEvent = _tmpActiveArr[indexPath.section];
+     ActiveBaseInfoMode * activeEvent = _activeArr[indexPath.section];
      activeDetailVC.delegate = self;
      activeDetailVC.activeEventInfo = activeEvent;
-    [self.navigationController pushViewController:activeDetailVC animated:YES];
+     [self.navigationController pushViewController:activeDetailVC animated:YES];
+}
+
+#pragma mark -抓取隐藏的活动
+-(void)featchHideActivity{
+    ASIHTTPRequest * hideRequest = [t_Network httpGet:nil Url:anyTime_GetEventByNotification Delegate:nil Tag:anyTime_GetEventByNotification_tag] ;
+    [hideRequest setDownloadCache:g_AppDelegate.anyTimeCache] ;
+    [hideRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
+    [hideRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
+    __block  ASIHTTPRequest * request = hideRequest ;
+    [hideRequest setCompletionBlock:^{
+        NSError *error = [request error];
+        if (error) {
+            return;
+        }
+         [_activeArr removeAllObjects];//清理掉数组中得活动添加隐藏的活动
+        
+        NSString * responseStr = [request responseString];
+        id objData =  [responseStr objectFromJSONString];
+        if ([objData isKindOfClass:[NSDictionary class]]) {
+            NSDictionary * objDataDic = (NSDictionary *) objData;
+            NSString * statusCode = [objDataDic objectForKey:@"statusCode"] ;
+            if ([statusCode isEqualToString:@"1"]) {
+                id  tmpObj= [objDataDic objectForKey:@"data"];
+                if ([tmpObj isKindOfClass:[NSArray class]]) {
+                    NSArray * trueDataArr = (NSArray *) tmpObj ;
+                   
+                    for (NSDictionary *trueDataObj in trueDataArr) {
+                        ActiveBaseInfoMode * _tmpActiveEvent = [[ActiveBaseInfoMode alloc] init] ;
+                        [_tmpActiveEvent parseDictionary:trueDataObj];
+                        _tmpActiveEvent.isHide = YES ;//这里的数据都是隐藏的活动
+                        [_activeArr addObject:_tmpActiveEvent];
+                    }
+                }
+                
+            }
+        }
+        [self.tableView reloadData];
+    }];
+    [hideRequest setFailedBlock:^{
+        [MBProgressHUD showError:@"Load data failed, please check your network"];
+    }];
+    [hideRequest startAsynchronous];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -232,15 +307,19 @@ UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
 }
 
 -(void) loadActiveData:(void(^)())AddHUD{
-     _tmpActiveArr= [NSMutableArray arrayWithCapacity:0];
     if (AddHUD) {
         AddHUD();
     }
-    ASIHTTPRequest * activeRequest = [t_Network httpGet:nil Url:anyTime_GetEventBasicInfo Delegate:self Tag:anyTime_GetEventBasicInfo_tag];
-    [activeRequest setDownloadCache:g_AppDelegate.anyTimeCache] ;
-    [activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
-    [activeRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
-    [activeRequest startAsynchronous];
+    if (_showActiveType == ShowActiveType_hide) {//在隐藏的活动页面就单独抓取
+        [self featchHideActivity];
+    }else{
+        _tmpActiveArr= [NSMutableArray arrayWithCapacity:0];
+        ASIHTTPRequest * activeRequest = [t_Network httpGet:nil Url:anyTime_GetEventBasicInfo Delegate:self Tag:anyTime_GetEventBasicInfo_tag];
+        [activeRequest setDownloadCache:g_AppDelegate.anyTimeCache] ;
+        [activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy|ASIAskServerIfModifiedWhenStaleCachePolicy];
+        [activeRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy] ;
+        [activeRequest startAsynchronous];
+    }
 }
 
 -(void)clickTouchUpInside:(UIButton *) sender {
@@ -248,87 +327,123 @@ UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
         button.selected = NO;
     }
     sender.selected = YES;
-    if (_showActiveType != sender.tag) {//这里tag 的值 要与 _showActiveType的值一致 好处理
-        [self showActiveWhatWithActiveType:sender.tag];
-        [_tableView reloadData];
+    if (sender.tag == 2 ) {//more 按钮
+        CGPoint startPoint = CGPointMake(CGRectGetMidX(sender.frame), CGRectGetMaxY(sender.frame) + 20);
+        
+        [self.popover showAtPoint:startPoint popoverPostion:DXPopoverPositionDown withContentView:self.popTableView inView:self.view];
+        __weak typeof(self)weakSelf = self;
+        self.popover.didDismissHandler = ^{
+            [weakSelf bounceTargetView:sender];
+        };
+    }else{
+        if (_showActiveType != sender.tag) {//这里tag 的值 要与 _showActiveType的值一致 好处理
+            [self bounceTargetView:sender] ;
+            _showActiveType = sender.tag ;
+            [_tableView reloadData];
+        }
     }
+    
+}
+
+- (void)bounceTargetView:(UIView *)targetView
+{
+    targetView.transform = CGAffineTransformMakeScale(0.9, 0.9);
+    [UIView animateWithDuration:0.5 delay:0.0 usingSpringWithDamping:0.3 initialSpringVelocity:5 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        targetView.transform = CGAffineTransformIdentity;
+    } completion:nil];
 }
 
 #pragma mark -对数据进行过滤 --如
 -(void)showActiveWhatWithActiveType:(NSInteger) activeType{
-     [_activeArr removeAllObjects];
+    
     switch (activeType) {
-        case 0:{
-            _showActiveType = ShowActiveType_All ;
+        case ShowActiveType_All:{
+             [_activeArr removeAllObjects]; //这里不能移到外面去，否则hide 的活动就不能显示咯
             for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示create的活动
                 [_activeArr addObject:eventMode];
             }
         }break;
-        case 1:{
-            _showActiveType = ShowActiveType_Create ;
-            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示create的活动
-                NSString * create =[NSString stringWithFormat:@"%@",eventMode.create ] ;
-                if ([create isEqualToString:currId]) {
+        case ShowActiveType_upcoming:{
+             [_activeArr removeAllObjects];
+            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示upcoming和（voting）的活动
+                if([eventMode.status integerValue] == ActiveStatus_upcoming ){
                     [_activeArr addObject:eventMode];
                 }
             }
         }break;
-        case 2:{
-            _showActiveType = ShowActiveType_Join ;
-            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示join的活动===这里显示的时别人邀请我参加的活动
-                NSString *create = [NSString stringWithFormat:@"%@",eventMode.create];
-                if (![currId isEqualToString:create]) {//创建活动的用户不是当前用户就是别人邀请的
-                     [_activeArr addObject:eventMode];
-                 }
-//                for (NSDictionary * member in eventMode.member) {
-//                    NSString * join = [[member objectForKey:@"join"] stringValue];
-//                    if ([@"1" isEqualToString:join]) {
-//                        [_activeArr addObject:eventMode];
-//                    }
-//                }
+        case ShowActiveType_toBeConfirm:{
+             [_activeArr removeAllObjects];
+            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示toBeConfirm的活动
+                if([eventMode.status integerValue] == ActiveStatus_toBeConfirm ){
+                    [_activeArr addObject:eventMode];
+                }
             }
         }break;
-        case 3:{
-            _showActiveType = ShowActiveType_Hide ;
-            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示hide的活动
-                for (NSDictionary * member in eventMode.member) {
-                    if ([currId isEqualToString:[[member objectForKey:@"uid"] stringValue]]) {
-                        NSString * view = [[member objectForKey:@"view"] stringValue];
-                        if ([@"2" isEqualToString:view]) {
-                            [_activeArr addObject:eventMode];
-                        }
-                 }
-               }
+        case ShowActiveType_confirmed:{
+             [_activeArr removeAllObjects];
+            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示confirmed的活动
+                if([eventMode.status integerValue] == ActiveStatus_confirmed ){
+                    [_activeArr addObject:eventMode];
+                }
             }
         }break;
+        case ShowActiveType_past:{
+             [_activeArr removeAllObjects];
+            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示confirmed的活动
+                if([eventMode.status integerValue] == ShowActiveType_past ){
+                    [_activeArr addObject:eventMode];
+                }
+            }
+        }break;
+        case ShowActiveType_refusedNot:{
+            [_activeArr removeAllObjects];
+            for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示confirmed的活动
+                if( ! eventMode.isNotification ){
+                    [_activeArr addObject:eventMode];
+                }
+            }
+        }break ;
         default:
             break;
     }
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request{
-    NSError *error = [request error];
-    if (error) {
-        [MBProgressHUD showError:@"error"];
-    }
-    NSString * requestStr =  [request responseString];
-    NSDictionary * dic = [requestStr objectFromJSONString];
-    NSString * statusCode = [dic objectForKey:@"statusCode"];
-    if ([@"1" isEqualToString:statusCode]) {
-        id dataObj = [dic objectForKey:@"data"];
-        if ([dataObj isKindOfClass:[NSArray class]]) {
-            NSArray * activeArr = (NSArray *) dataObj ;
-            for (int i = 0; i<activeArr.count; i++) {
-                ActiveBaseInfoMode * activeEvent = [[ActiveBaseInfoMode alloc ] init];
-                [activeEvent parseDictionary:activeArr[i]];
-                [_tmpActiveArr addObject:activeEvent];
+    
+    switch (request.tag) {
+        case anyTime_GetEventBasicInfo_tag:{
+            NSError *error = [request error];
+            if (error) {
+                [MBProgressHUD showError:@"error"];
             }
-        }
-        [self.tableView reloadData];
-    }else{
-        [MBProgressHUD showError:@"Request Fail"];
+            NSString * requestStr =  [request responseString];
+            NSDictionary * dic = [requestStr objectFromJSONString];
+            NSString * statusCode = [dic objectForKey:@"statusCode"];
+            if ([@"1" isEqualToString:statusCode]) {
+                id dataObj = [dic objectForKey:@"data"];
+                if ([dataObj isKindOfClass:[NSArray class]]) {
+                    NSArray * activeArr = (NSArray *) dataObj ;
+                    for (int i = 0; i<activeArr.count; i++) {
+                        ActiveBaseInfoMode * activeEvent = [[ActiveBaseInfoMode alloc ] init];
+                        [activeEvent parseDictionary:activeArr[i]];
+                        if (activeEvent.member) {
+                            NSDictionary * memberDataDic = [activeEvent.member firstObject] ;//在活动基本信息接口中member只有当前用户
+                            NSInteger notNum =  [[memberDataDic objectForKey:@"notification"] integerValue];
+                            activeEvent.isNotification = notNum==1? YES:NO ;
+                        }
+                        [_tmpActiveArr addObject:activeEvent];
+                    }
+                }
+                [self.tableView reloadData];
+            }else{
+                [MBProgressHUD showError:@"Request Fail"];
+            }
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        }break;
+            
+        default:
+            break;
     }
-     [MBProgressHUD hideHUDForView:self.view animated:YES];
 }
 
 - (void)requestFailed:(ASIHTTPRequest *)request{

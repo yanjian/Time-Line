@@ -117,7 +117,7 @@
          tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
     }
     if (indexPath.section==0&& indexPath.row==0) {
-         NSString *intervalTime=[[PublicMethodsViewController getPublicMethods]  timeDifference:event.endDate getStrart:event.startDate];
+         NSString *intervalTime=[[PublicMethodsViewController getPublicMethods]  timeDifference:event.endDate getStrart:event.startDate formmtterStyle:@"YYYY年 M月d日HH:mm"];
         UIButton *btn=[UIButton buttonWithType:UIButtonTypeCustom];
         btn.frame=CGRectMake(30, 65, 40, 40);
         [btn setBackgroundImage:[UIImage imageNamed:@"Event_time_red"] forState:UIControlStateNormal];

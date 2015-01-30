@@ -102,6 +102,14 @@ typedef NS_ENUM(NSInteger , AccountType){
 
 };
 
+//活动状态
+typedef NS_ENUM(NSInteger, ActiveStatus){
+    ActiveStatus_upcoming       = 0 ,
+    ActiveStatus_toBeConfirm    = 1 ,
+    ActiveStatus_confirmed      = 2 ,
+    ActiveStatus_past           = 3
+} ;
+
 
 
 
@@ -319,12 +327,13 @@ typedef NS_ENUM(NSInteger , AccountType){
 #define anyTime_DelMessage [NSString stringWithFormat:@"%@/servlet/DelMessage",BASEURL_IP]
 #define anyTime_DelMessage_tag 58
 
+//得到所有己隐藏的活动------GetEventByNotification
+#define anyTime_GetEventByNotification [NSString stringWithFormat:@"%@/servlet/GetEventByNotification",BASEURL_IP]
+#define anyTime_GetEventByNotification_tag 59
 
-
-
-
-
-
+// 社交活动通知设置 EventNotification
+#define anyTime_EventNotification [NSString stringWithFormat:@"%@/servlet/EventNotification",BASEURL_IP]
+#define anyTime_EventNotification_tag 60
 
 
 

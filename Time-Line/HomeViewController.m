@@ -401,7 +401,7 @@
 {
     [super viewDidAppear:animated];
     NSInteger loginStatus = [UserInfo currUserInfo].loginStatus;
-    if (1!=loginStatus) {//1表示用户没有登陆
+    if (1!=loginStatus) {//1表示用户登陆
         [g_AppDelegate initLoginView:self];
     }else{
         if (g_NetStatus!=NotReachable){//在有网络的情况下自动登录

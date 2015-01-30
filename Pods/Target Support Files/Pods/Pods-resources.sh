@@ -63,7 +63,6 @@ install_resource()
                     install_resource "EGOTableViewPullRefreshAndLoadMore/EGOTableViewPullRefreshAndLoadMore/Resources/whiteArrow@2x.png"
                     install_resource "EGOTableViewPullRefreshAndLoadMore/EGOTableViewPullRefreshAndLoadMore/Resources/whiteArrowLoadMore.png"
                     install_resource "EGOTableViewPullRefreshAndLoadMore/EGOTableViewPullRefreshAndLoadMore/Resources/whiteArrowLoadMore@2x.png"
-                    install_resource "KVNProgress/KVNProgress/Resources/KVNProgressView.xib"
                     install_resource "PEPhotoCropEditor/Resources/PEPhotoCropEditor.bundle"
           
 rsync -avr --copy-links --no-relative --exclude '*/.svn/*' --files-from="$RESOURCES_TO_COPY" / "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"

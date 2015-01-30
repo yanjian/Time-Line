@@ -367,7 +367,7 @@
             
             cell.starttimelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
             
-            NSString *intervalTime=[[PublicMethodsViewController getPublicMethods]  timeDifference:anyEvent.endDate getStrart:anyEvent.startDate];//得到开始时间和结束时间的差值
+            NSString *intervalTime=[[PublicMethodsViewController getPublicMethods]  timeDifference:anyEvent.endDate getStrart:anyEvent.startDate formmtterStyle:@"YYYY年 M月d日HH:mm"];//得到开始时间和结束时间的差值
             
             cell.timelabel.font=[UIFont fontWithName:@"ProximaNova-Semibold" size:8.0];
             

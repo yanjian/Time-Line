@@ -35,7 +35,8 @@
 -(NSMutableArray*)intervalSinceNow: (NSString *) theDate getStrart:(NSString*)startdate;
 - (NSString *)intervalSinceNow: (NSString *) theDate;
 
-- (NSString *)timeDifference: (NSString *) theDate getStrart:(NSString*)startdate;
+- (NSString *)timeDifference: (NSString *) theDate getStrart:(NSString*)startdate formmtterStyle:(NSString *) formartter
+;
 
 -(void)setCorner:(UIView *)view radius:(float)cornerRadius borderWidth:(float)width;
 
