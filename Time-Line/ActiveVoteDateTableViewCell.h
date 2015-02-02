@@ -9,9 +9,9 @@
 #import <UIKit/UIKit.h>
 
 //定义一个枚举：0表示对时间投票 1表示对选择内容投票
-typedef NS_ENUM(NSInteger, VOTETIMEOROPION) {
-    VOTETIME=0,
-    VOTEOPTION=1
+typedef NS_ENUM (NSInteger, VOTETIMEOROPION) {
+	VOTETIME = 0,
+	VOTEOPTION = 1
 };
 @protocol ActiveVoteDateTableViewCellDelegate;
 @interface ActiveVoteDateTableViewCell : UITableViewCell
@@ -21,17 +21,17 @@ typedef NS_ENUM(NSInteger, VOTETIMEOROPION) {
 @property (weak, nonatomic) IBOutlet UIButton *voteBtn;
 @property (weak, nonatomic) IBOutlet UIButton *showVoteTimeMember;
 @property (weak, nonatomic) IBOutlet UILabel *optionContentLab;
-@property (nonatomic,assign) VOTETIMEOROPION voteTimeOrOption;
-@property (nonatomic,retain) id<ActiveVoteDateTableViewCellDelegate> delegate;
-@property (nonatomic,retain) NSDictionary * paramDic;
-@property (nonatomic,retain) NSArray * memberArr;
+@property (nonatomic, assign) VOTETIMEOROPION voteTimeOrOption;
+@property (nonatomic, retain) id <ActiveVoteDateTableViewCellDelegate> delegate;
+@property (nonatomic, retain) NSDictionary *paramDic;
+@property (nonatomic, retain) NSArray *memberArr;
 @end
 
 @protocol ActiveVoteDateTableViewCellDelegate <NSObject>
 
 @optional
--(void)activeVoteDateTableViewCell:(ActiveVoteDateTableViewCell *) selfCell isVoteTimeOrOption:(VOTETIMEOROPION) voteTimeOrOption ParamDictionnary:(NSDictionary *) paramDic isSelectForBtn:(BOOL) isSelect;
+- (void)activeVoteDateTableViewCell:(ActiveVoteDateTableViewCell *)selfCell isVoteTimeOrOption:(VOTETIMEOROPION)voteTimeOrOption ParamDictionnary:(NSDictionary *)paramDic isSelectForBtn:(BOOL)isSelect;
 
--(void)activeVoteDateTableViewCell:(ActiveVoteDateTableViewCell *) selfCell isVoteTimeOrOption:(VOTETIMEOROPION) voteTimeOrOption ParamArray:(NSArray *) paramArr;
+- (void)activeVoteDateTableViewCell:(ActiveVoteDateTableViewCell *)selfCell isVoteTimeOrOption:(VOTETIMEOROPION)voteTimeOrOption ParamArray:(NSArray *)paramArr;
 
 @end

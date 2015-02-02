@@ -1,10 +1,10 @@
-/* 
-  InterfaceMrco.h
-  Time-Line
+/*
+   InterfaceMrco.h
+   Time-Line
 
-  Created by IF on 14-9-11.
-  Copyright (c) 2014年 zhilifang. All rights reserved.
-*/
+   Created by IF on 14-9-11.
+   Copyright (c) 2014年 zhilifang. All rights reserved.
+ */
 
 #define GOOGLE_STATUS_OK      @"OK"       //OK 表示未出现错误，且至少返回了一个结果。
 #define GOOGLE_STATUS_ZERO_RESULTS  @"ZERO_RESULTS"    //ZERO_RESULTS 表示搜索成功，但未返回任何结果。如果搜索中传递了一个偏远位置的 bounds，就可能会出现这种情况。
@@ -22,7 +22,7 @@
 #define naviHigth 64
 
 #define cancelled @"cancelled" //google的事件状态
-#define confirmed @"confirmed"  
+#define confirmed @"confirmed"
 
 
 
@@ -32,13 +32,13 @@
 
 //===============================================================================================================
 
-typedef NS_ENUM(NSInteger, eventStatus) {
-    eventStatus_confirmed=0,
-    eventStatus_cancelled=1
+typedef NS_ENUM (NSInteger, eventStatus) {
+	eventStatus_confirmed = 0,
+	eventStatus_cancelled = 1
 };
 
 
-#define  calendarDateCount [CalendarDateUtil getCurrentDay] + 2 *30
+#define  calendarDateCount [CalendarDateUtil getCurrentDay] + 2 * 30
 
 //google的apikey
 #define GOOGLE_API_KEY @"AIzaSyAKtISyJ4m99OHW4r_aerSkNgMEQGYzPtM"
@@ -74,269 +74,266 @@ typedef NS_ENUM(NSInteger, eventStatus) {
 #define Google_UserInfo   @"https://www.googleapis.com/auth/userinfo.profile"
 #define Google_User_Email @"https://www.googleapis.com/auth/userinfo.email"
 #define Google_Calendar   @"https://www.googleapis.com/auth/calendar"
-#define Google_redirech   [NSString stringWithFormat:@"%@/servlet/Oauth2callback",BASEURL_IP]
+#define Google_redirech   [NSString stringWithFormat:@"%@/servlet/Oauth2callback", BASEURL_IP]
 //测试环境
 #define Google_Auth_APPID @"124861103249-11bp8t5epj45u5n91li89m4cknvajqrf.apps.googleusercontent.com"
 
 //真实环境
 //#define Google_Auth_APPID @"535796093828-esa2fotq9tjdgf1cbs0lb0jm5q46uv57.apps.googleusercontent.com"
 
-#define Google_OAuth_URL [NSString stringWithFormat:@"%@?scope=%@+%@+%@&redirect_uri=%@&response_type=code&client_id=%@&access_type=offline&approval_prompt=force&include_granted_scopes=true",Google_Base,Google_UserInfo,Google_User_Email,Google_Calendar,Google_redirech,Google_Auth_APPID]
+#define Google_OAuth_URL [NSString stringWithFormat:@"%@?scope=%@+%@+%@&redirect_uri=%@&response_type=code&client_id=%@&access_type=offline&approval_prompt=force&include_granted_scopes=true", Google_Base, Google_UserInfo, Google_User_Email, Google_Calendar, Google_redirech, Google_Auth_APPID]
 
 //
-typedef NS_ENUM(NSInteger, UserLoginType) {
-    UserLoginTypeLocal=1,
-    UserLoginTypeGoogle=2
+typedef NS_ENUM (NSInteger, UserLoginType) {
+	UserLoginTypeLocal = 1,
+	UserLoginTypeGoogle = 2
 };
 
 
-typedef NS_ENUM(NSInteger, UserLoginStatus) {
-    UserLoginStatus_NO=0,//表示没有登陆
-    UserLoginStatus_YES=1
+typedef NS_ENUM (NSInteger, UserLoginStatus) {
+	UserLoginStatus_NO = 0,//表示没有登陆
+	UserLoginStatus_YES = 1
 };
 
 
-typedef NS_ENUM(NSInteger , AccountType){
-    AccountTypeGoogle=0,
-    AccountTypeLocal=1
-
+typedef NS_ENUM (NSInteger, AccountType) {
+	AccountTypeGoogle = 0,
+	AccountTypeLocal = 1
 };
 
 //活动状态
-typedef NS_ENUM(NSInteger, ActiveStatus){
-    ActiveStatus_upcoming       = 0 ,
-    ActiveStatus_toBeConfirm    = 1 ,
-    ActiveStatus_confirmed      = 2 ,
-    ActiveStatus_past           = 3
-} ;
+typedef NS_ENUM (NSInteger, ActiveStatus) {
+	ActiveStatus_upcoming       = 0,
+	ActiveStatus_toBeConfirm    = 1,
+	ActiveStatus_confirmed      = 2,
+	ActiveStatus_past           = 3
+};
 
 
 
 
 //可配置IP
-#define BASE_IP_CHANGE(serviceName) [NSString stringWithFormat:@"%@/servlet/%@",BASEURL_IP,serviceName]
+#define BASE_IP_CHANGE(serviceName) [NSString stringWithFormat : @"%@/servlet/%@", BASEURL_IP, serviceName]
 
 //用户注册
-#define LOGIN_REGISTER_URL [NSString stringWithFormat:@"%@/servlet/Register",BASEURL_IP]
+#define LOGIN_REGISTER_URL [NSString stringWithFormat:@"%@/servlet/Register", BASEURL_IP]
 #define LOGIN_REGISTER_URL_TAG 4
 
 
 //用户登陆接口
-#define LOGIN_USER [NSString stringWithFormat:@"%@/servlet/Login",BASEURL_IP]
+#define LOGIN_USER [NSString stringWithFormat:@"%@/servlet/Login", BASEURL_IP]
 #define LOGIN_USER_TAG 5
 
 //google授权回调url
-#define Google_Oauth2Callback_Url  [NSString stringWithFormat:@"%@/servlet/Oauth2callback",BASEURL_IP]
+#define Google_Oauth2Callback_Url  [NSString stringWithFormat:@"%@/servlet/Oauth2callback", BASEURL_IP]
 
 
 //取得google日历
-#define Get_Google_GetCalendarList   [NSString stringWithFormat:@"%@/servlet/GetCalendarList",BASEURL_IP]
+#define Get_Google_GetCalendarList   [NSString stringWithFormat:@"%@/servlet/GetCalendarList", BASEURL_IP]
 #define Get_Google_GetCalendarList_Tag 6
 
 
 //取得google事件
-#define Get_Google_GetCalendarEvent [NSString stringWithFormat:@"%@/servlet/GetCalendarEventList",BASEURL_IP]
+#define Get_Google_GetCalendarEvent [NSString stringWithFormat:@"%@/servlet/GetCalendarEventList", BASEURL_IP]
 #define Get_Google_GetCalendarEvent_Tag 7
 
 //日历帐号绑定
-#define Google_AccountBind [NSString stringWithFormat:@"%@/servlet/AccountBind",BASEURL_IP]
+#define Google_AccountBind [NSString stringWithFormat:@"%@/servlet/AccountBind", BASEURL_IP]
 #define Google_AccountBind_Tag 8
 
 //得到绑定列表 GetAccountBindList
-#define Google_GetAccountBindList [NSString stringWithFormat:@"%@/servlet/GetAccountBindList",BASEURL_IP]
+#define Google_GetAccountBindList [NSString stringWithFormat:@"%@/servlet/GetAccountBindList", BASEURL_IP]
 #define Google_GetAccountBindList_Tag 9
 
 //本地日历处理  CalendarOperation
-#define Local_CalendarOperation [NSString stringWithFormat:@"%@/servlet/CalendarOperation",BASEURL_IP]
+#define Local_CalendarOperation [NSString stringWithFormat:@"%@/servlet/CalendarOperation", BASEURL_IP]
 #define Local_CalendarOperation_Tag 10
 
 //本地事件处理  SingleEventOperation
-#define Local_SingleEventOperation [NSString stringWithFormat:@"%@/servlet/SingleEventOperation",BASEURL_IP]
+#define Local_SingleEventOperation [NSString stringWithFormat:@"%@/servlet/SingleEventOperation", BASEURL_IP]
 #define Local_SingleEventOperation_Tag 11
 #define Local_SingleEventOperation_fetch_Tag 18
 
 //登陆用户的信息  GetUserInfo
-#define LoginUser_GetUserInfo [NSString stringWithFormat:@"%@/servlet/GetUserInfo",BASEURL_IP]
+#define LoginUser_GetUserInfo [NSString stringWithFormat:@"%@/servlet/GetUserInfo", BASEURL_IP]
 #define LoginUser_GetUserInfo_Tag 12
 
 //得到绑定列表  GetAccountBindList
-#define get_AccountBindList [NSString stringWithFormat:@"%@/servlet/GetAccountBindList",BASEURL_IP]
+#define get_AccountBindList [NSString stringWithFormat:@"%@/servlet/GetAccountBindList", BASEURL_IP]
 #define get_AccountBindList_Tag 13
 
 //注销  Logoff
-#define account_Logoff [NSString stringWithFormat:@"%@/servlet/Logoff",BASEURL_IP]
+#define account_Logoff [NSString stringWithFormat:@"%@/servlet/Logoff", BASEURL_IP]
 #define account_Logoff_Tag 14
 
 //取消绑定  CancelAccountBind
-#define account_CancelAccountBind [NSString stringWithFormat:@"%@/servlet/CancelAccountBind",BASEURL_IP]
+#define account_CancelAccountBind [NSString stringWithFormat:@"%@/servlet/CancelAccountBind", BASEURL_IP]
 #define account_CancelAccountBind_Tag 15
 
 //更新或新增google数据  GoogleCalendarEventOperation
-#define Google_CalendarEventOperation [NSString stringWithFormat:@"%@/servlet/GoogleCalendarEventOperation",BASEURL_IP]
+#define Google_CalendarEventOperation [NSString stringWithFormat:@"%@/servlet/GoogleCalendarEventOperation", BASEURL_IP]
 #define Google_CalendarEventOperation_tag 16
 
 // 删除google数据事件
-#define Google_DeleteCalendarEvent [NSString stringWithFormat:@"%@/servlet/DeleteCalendarEvent",BASEURL_IP]
+#define Google_DeleteCalendarEvent [NSString stringWithFormat:@"%@/servlet/DeleteCalendarEvent", BASEURL_IP]
 #define Google_DeleteCalendarEvent_tag 17
 
 
 // 删除google数据事件
-#define Google_CalendarEventRepeat [NSString stringWithFormat:@"%@/servlet/GoogleCalendarEventRepeat",BASEURL_IP]
+#define Google_CalendarEventRepeat [NSString stringWithFormat:@"%@/servlet/GoogleCalendarEventRepeat", BASEURL_IP]
 #define Google_CalendarEventRepeat_tag 19
 
 
 //***************************************添加好友或组等（第二期）***************************************************//
 
 //更新用户信息
-#define UserInfo_UpdateUserInfo [NSString stringWithFormat:@"%@/servlet/updateUserInfo",BASEURL_IP]
+#define UserInfo_UpdateUserInfo [NSString stringWithFormat:@"%@/servlet/updateUserInfo", BASEURL_IP]
 #define UserInfo_UpdateUserInfo_tag 20
 
 //更新用户头像
-#define UserInfo_UploadImg [NSString stringWithFormat:@"%@/servlet/uploadImg",BASEURL_IP]
+#define UserInfo_UploadImg [NSString stringWithFormat:@"%@/servlet/uploadImg", BASEURL_IP]
 #define UserInfo_UploadImg_tag 21
 
 //新增组
-#define anyTime_AddFTeam [NSString stringWithFormat:@"%@/servlet/AddFTeam",BASEURL_IP]
+#define anyTime_AddFTeam [NSString stringWithFormat:@"%@/servlet/AddFTeam", BASEURL_IP]
 #define anyTime_AddFTeam_tag 30
 
 //取得所有组 GetFTlist
-#define anyTime_GetFTlist [NSString stringWithFormat:@"%@/servlet/GetFTlist",BASEURL_IP]
+#define anyTime_GetFTlist [NSString stringWithFormat:@"%@/servlet/GetFTlist", BASEURL_IP]
 #define anyTime_GetFTlist_tag 31
 
 
 //更新组 FriendTeam
-#define anyTime_FriendTeam [NSString stringWithFormat:@"%@/servlet/FriendTeam",BASEURL_IP]
+#define anyTime_FriendTeam [NSString stringWithFormat:@"%@/servlet/FriendTeam", BASEURL_IP]
 #define anyTime_FriendTeam_tag 32
 
 //删除组 DeleteFTeam
-#define anyTime_DeleteFTeam [NSString stringWithFormat:@"%@/servlet/DeleteFTeam",BASEURL_IP]
+#define anyTime_DeleteFTeam [NSString stringWithFormat:@"%@/servlet/DeleteFTeam", BASEURL_IP]
 #define anyTime_DeleteFTeam_tag 33
 
 
 //查询用户（模糊）  FindUser（增加大小图，性别，昵称）
-#define anyTime_FindUser [NSString stringWithFormat:@"%@/servlet/FindUser",BASEURL_IP]
+#define anyTime_FindUser [NSString stringWithFormat:@"%@/servlet/FindUser", BASEURL_IP]
 #define anyTime_FindUser_tag 34
 
 
 //得到用户所有即时消息 GetUserMessage
-#define anyTime_GetUserMessage [NSString stringWithFormat:@"%@/servlet/GetUserMessage",BASEURL_IP]
+#define anyTime_GetUserMessage [NSString stringWithFormat:@"%@/servlet/GetUserMessage", BASEURL_IP]
 #define anyTime_GetUserMessage_tag 35
 
 //得到用户未读消息 GetUserMessage2
-#define anyTime_GetUserMessage2 [NSString stringWithFormat:@"%@/servlet/GetUserMessage2",BASEURL_IP]
+#define anyTime_GetUserMessage2 [NSString stringWithFormat:@"%@/servlet/GetUserMessage2", BASEURL_IP]
 #define anyTime_GetUserMessage2_tag 36
 
 
 //更新消息为己读 UpdateMessageStatus
-#define anyTime_UpdateMessageStatus [NSString stringWithFormat:@"%@/servlet/UpdateMessageStatus",BASEURL_IP]
+#define anyTime_UpdateMessageStatus [NSString stringWithFormat:@"%@/servlet/UpdateMessageStatus", BASEURL_IP]
 #define anyTime_UpdateMessageStatus_tag 37
 
 
 // 更新消息为己接收 UpdateMessageReceiveStatus
-#define anyTime_UpdateMessageReceiveStatus [NSString stringWithFormat:@"%@/servlet/UpdateMessageReceiveStatus",BASEURL_IP]
+#define anyTime_UpdateMessageReceiveStatus [NSString stringWithFormat:@"%@/servlet/UpdateMessageReceiveStatus", BASEURL_IP]
 #define anyTime_UpdateMessageReceiveStatus_tag 38
 
 //取得所有好友  GetFriendList(增加大小图，性别，昵称)
-#define anyTime_GetFriendList [NSString stringWithFormat:@"%@/servlet/GetFriendList",BASEURL_IP]
+#define anyTime_GetFriendList [NSString stringWithFormat:@"%@/servlet/GetFriendList", BASEURL_IP]
 #define anyTime_GetFriendList_tag 39
 
 //加好友申请  AddFriend
-#define anyTime_AddFriend [NSString stringWithFormat:@"%@/servlet/AddFriend",BASEURL_IP]
+#define anyTime_AddFriend [NSString stringWithFormat:@"%@/servlet/AddFriend", BASEURL_IP]
 #define anyTime_AddFriend_tag 40
 
 
 
 //新增社交活动 AddEvents
-#define anyTime_AddEvents [NSString stringWithFormat:@"%@/servlet/AddEvents",BASEURL_IP]
+#define anyTime_AddEvents [NSString stringWithFormat:@"%@/servlet/AddEvents", BASEURL_IP]
 #define anyTime_AddEvents_tag 41
 
 //上传社交活动图片 EventAddPhoto
-#define anyTime_EventAddPhoto [NSString stringWithFormat:@"%@/servlet/EventAddPhoto",BASEURL_IP]
+#define anyTime_EventAddPhoto [NSString stringWithFormat:@"%@/servlet/EventAddPhoto", BASEURL_IP]
 #define anyTime_EventAddPhoto_tag 42
 
 //得到社交活动 Events
-#define anyTime_Events [NSString stringWithFormat:@"%@/servlet/Events",BASEURL_IP]
+#define anyTime_Events [NSString stringWithFormat:@"%@/servlet/Events", BASEURL_IP]
 #define anyTime_Events_tag 43
 
 
 //更新参加活动状态 JoinEvent
-#define anyTime_JoinEvent [NSString stringWithFormat:@"%@/servlet/JoinEvent",BASEURL_IP]
+#define anyTime_JoinEvent [NSString stringWithFormat:@"%@/servlet/JoinEvent", BASEURL_IP]
 #define anyTime_JoinEvent_tag 44
 
 //社交活动时间投票 VoteTimeForEvent
-#define anyTime_VoteTimeForEvent [NSString stringWithFormat:@"%@/servlet/VoteTimeForEvent",BASEURL_IP]
+#define anyTime_VoteTimeForEvent [NSString stringWithFormat:@"%@/servlet/VoteTimeForEvent", BASEURL_IP]
 #define anyTime_VoteTimeForEvent_tag 45
 
 //投票社交活动中的问题投票 VoteEventOtherOption
 
-#define anyTime_VoteEventOtherOption [NSString stringWithFormat:@"%@/servlet/VoteEventOtherOption",BASEURL_IP]
+#define anyTime_VoteEventOtherOption [NSString stringWithFormat:@"%@/servlet/VoteEventOtherOption", BASEURL_IP]
 #define anyTime_VoteEventOtherOption_tag 46
 
 
 //取消投票社交活动中的问题投票 VoteEventOtherOptionCancel
-#define anyTime_VoteEventOtherOptionCancel [NSString stringWithFormat:@"%@/servlet/VoteEventOtherOptionCancel",BASEURL_IP]
+#define anyTime_VoteEventOtherOptionCancel [NSString stringWithFormat:@"%@/servlet/VoteEventOtherOptionCancel", BASEURL_IP]
 #define anyTime_VoteEventOtherOptionCancel_tag 47
 
 //添加投票时间  AddEventTime
-#define anyTime_AddEventTime [NSString stringWithFormat:@"%@/servlet/AddEventTime",BASEURL_IP]
+#define anyTime_AddEventTime [NSString stringWithFormat:@"%@/servlet/AddEventTime", BASEURL_IP]
 #define anyTime_AddEventTime_tag 48
 
 
 //社交活动增加问题投票 AddEventVote
-#define anyTime_AddEventVote [NSString stringWithFormat:@"%@/servlet/AddEventVote",BASEURL_IP]
+#define anyTime_AddEventVote [NSString stringWithFormat:@"%@/servlet/AddEventVote", BASEURL_IP]
 #define anyTime_AddEventVote_tag 49
 
 
 // 社交活动增加问题投票中的选项 AddEventVoteOption
-#define anyTime_AddEventVoteOption [NSString stringWithFormat:@"%@/servlet/AddEventVoteOption",BASEURL_IP]
+#define anyTime_AddEventVoteOption [NSString stringWithFormat:@"%@/servlet/AddEventVoteOption", BASEURL_IP]
 #define anyTime_AddEventVoteOption_tag 50
 
 //更新社交活动 UpdateEvents
-#define anyTime_UpdateEvents [NSString stringWithFormat:@"%@/servlet/UpdateEvents",BASEURL_IP]
+#define anyTime_UpdateEvents [NSString stringWithFormat:@"%@/servlet/UpdateEvents", BASEURL_IP]
 #define anyTime_UpdateEvents_tag 51
 
 //退出社交活动 QuitEvent
-#define anyTime_QuitEvent [NSString stringWithFormat:@"%@/servlet/QuitEvent",BASEURL_IP]
+#define anyTime_QuitEvent [NSString stringWithFormat:@"%@/servlet/QuitEvent", BASEURL_IP]
 #define anyTime_QuitEvent_tag 52
 
 //删除社交活动 DelEvents
-#define anyTime_DelEvents [NSString stringWithFormat:@"%@/servlet/DelEvents",BASEURL_IP]
+#define anyTime_DelEvents [NSString stringWithFormat:@"%@/servlet/DelEvents", BASEURL_IP]
 #define anyTime_DelEvents_tag 53
 
 //社交活动显示设置 ViewEvent
-#define anyTime_ViewEvent [NSString stringWithFormat:@"%@/servlet/ViewEvent",BASEURL_IP]
+#define anyTime_ViewEvent [NSString stringWithFormat:@"%@/servlet/ViewEvent", BASEURL_IP]
 #define anyTime_ViewEvent_tag 54
 
 //更新好友备注   UpdateFriendNickName
-#define anyTime_UpdateFriendNickName [NSString stringWithFormat:@"%@/servlet/UpdateFriendNickName",BASEURL_IP]
+#define anyTime_UpdateFriendNickName [NSString stringWithFormat:@"%@/servlet/UpdateFriendNickName", BASEURL_IP]
 #define anyTime_UpdateFriendNickName_tag 54
 
 //先取活動基本訊息, 點進才取活動詳細訊息 GetEventBasicInfo 跟（ tag 43 不同要等到详细信息加上eid 请求 ）
-#define anyTime_GetEventBasicInfo [NSString stringWithFormat:@"%@/servlet/GetEventBasicInfo",BASEURL_IP]
+#define anyTime_GetEventBasicInfo [NSString stringWithFormat:@"%@/servlet/GetEventBasicInfo", BASEURL_IP]
 #define anyTime_GetEventBasicInfo_tag 55
 
 //处理好友请求  DisposeFriendRequest
-#define anyTime_DisposeFriendRequest [NSString stringWithFormat:@"%@/servlet/DisposeFriendRequest",BASEURL_IP]
+#define anyTime_DisposeFriendRequest [NSString stringWithFormat:@"%@/servlet/DisposeFriendRequest", BASEURL_IP]
 #define anyTime_DisposeFriendRequest_tag 56
 
 //删除好友(双边删除) DeleteFriend
-#define anyTime_DeleteFriend [NSString stringWithFormat:@"%@/servlet/DeleteFriend",BASEURL_IP]
+#define anyTime_DeleteFriend [NSString stringWithFormat:@"%@/servlet/DeleteFriend", BASEURL_IP]
 #define anyTime_DeleteFriend_tag 57
 
 //删除用户消息 DelMessage
-#define anyTime_DelMessage [NSString stringWithFormat:@"%@/servlet/DelMessage",BASEURL_IP]
+#define anyTime_DelMessage [NSString stringWithFormat:@"%@/servlet/DelMessage", BASEURL_IP]
 #define anyTime_DelMessage_tag 58
 
 //得到所有己隐藏的活动------GetEventByNotification
-#define anyTime_GetEventByNotification [NSString stringWithFormat:@"%@/servlet/GetEventByNotification",BASEURL_IP]
+#define anyTime_GetEventByNotification [NSString stringWithFormat:@"%@/servlet/GetEventByNotification", BASEURL_IP]
 #define anyTime_GetEventByNotification_tag 59
 
 // 社交活动通知设置 EventNotification
-#define anyTime_EventNotification [NSString stringWithFormat:@"%@/servlet/EventNotification",BASEURL_IP]
+#define anyTime_EventNotification [NSString stringWithFormat:@"%@/servlet/EventNotification", BASEURL_IP]
 #define anyTime_EventNotification_tag 60
 
 //得到图片的真实路径  GetImgRealPath =====> type: 1,活动 2,用户  id=(eid或uid)
-#define anyTime_GetImgRealPath [NSString stringWithFormat:@"%@/servlet/GetImgRealPath",BASEURL_IP]
+#define anyTime_GetImgRealPath [NSString stringWithFormat:@"%@/servlet/GetImgRealPath", BASEURL_IP]
 #define anyTime_GetImgRealPath_tag 61
-
-

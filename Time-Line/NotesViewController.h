@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 @protocol getNotesDelegate <NSObject>
--(void)getnotes:(NSString*)notestr;
+- (void)getnotes:(NSString *)notestr;
 @end
-@interface NotesViewController : UIViewController<UITextViewDelegate>
+@interface NotesViewController : UIViewController <UITextViewDelegate>
 
 @property (retain, nonatomic) UITextView *noteText;
-@property (nonatomic, weak) id<getNotesDelegate> delegate;
+@property (nonatomic, weak) id <getNotesDelegate> delegate;
 @end

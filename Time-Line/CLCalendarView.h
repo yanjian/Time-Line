@@ -11,20 +11,20 @@
 #import "CLCalendarCell.h"
 #import "CalendarCell.h"
 typedef enum {
-    CLCalendarViewModeMonth = 0,
-    CLCalendarViewModeWeek = 1,
+	CLCalendarViewModeMonth = 0,
+	CLCalendarViewModeWeek = 1,
 } CLCalendarDisplayMode;
 
 
-@interface CLCalendarView : UIView <UITableViewDataSource, UITableViewDelegate, CLCalendarCellDelegate,CalendarCellDelegate>
+@interface CLCalendarView : UIView <UITableViewDataSource, UITableViewDelegate, CLCalendarCellDelegate, CalendarCellDelegate>
 
 @property (nonatomic, assign) CLCalendarDisplayMode displayMode;
 
-@property (nonatomic, assign) id<CLCalendarDelegate> delegate;
+@property (nonatomic, assign) id <CLCalendarDelegate> delegate;
 
-@property (nonatomic, assign)  id<CLCalendarDataSource> dataSuorce;
+@property (nonatomic, assign)  id <CLCalendarDataSource> dataSuorce;
 
-@property (copy,nonatomic) NSString* time;
+@property (copy, nonatomic) NSString *time;
 - (id)initByMode:(CLCalendarDisplayMode)mode;
 
 - (void)setToDayRow:(int)row Index:(int)index;
@@ -34,8 +34,3 @@ typedef enum {
 
 
 @end
-
-
-
-
-

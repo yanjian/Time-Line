@@ -12,12 +12,12 @@
 
 @interface EventAlertsViewController : UIViewController
 
-@property (nonatomic,strong) id<EventAlertsDelegate> delegate;
+@property (nonatomic, strong) id <EventAlertsDelegate> delegate;
 
 @end
 
 @protocol EventAlertsDelegate <NSObject>
 
--(void)eventsAlertTimeString:(NSString *) alertSt;
+- (void)eventsAlertTimeString:(NSString *)alertSt;
 
 @end

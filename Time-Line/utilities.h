@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-UIImage*		ResizeImage					(UIImage *image, CGFloat width, CGFloat height);
+UIImage *ResizeImage(UIImage *image, CGFloat width, CGFloat height);
 
-void			PostNotification			(NSString *notification);
-
+void PostNotification(NSString *notification);

@@ -13,8 +13,8 @@
 #import "NotesViewController.h"
 #import "ActiveEventMode.h"
 #import "AT_Event.h"
-@interface AddActiveViewController : UIViewController<UITextFieldDelegate>
+@interface AddActiveViewController : UIViewController <UITextFieldDelegate>
 
-@property (nonatomic, assign) BOOL  isEdit;//Yes 标记这是编辑（修改）
-@property (nonatomic,retain)  ActiveEventMode * activeEventMode;
+@property (nonatomic, assign) BOOL isEdit; //Yes 标记这是编辑（修改）
+@property (nonatomic, retain)  ActiveEventMode *activeEventMode;
 @end

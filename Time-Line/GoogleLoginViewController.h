@@ -7,19 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
-@protocol GoogleLoginViewControllerDelegate ;
+@protocol GoogleLoginViewControllerDelegate;
 @interface GoogleLoginViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UIWebView *googleLoginView;
-@property (assign ,nonatomic) BOOL isLogin;
-@property (assign,nonatomic)  BOOL isBind;
-@property (strong,nonatomic) id<GoogleLoginViewControllerDelegate> delegate;
-@property (nonatomic,assign) BOOL isSeting;
-@property (nonatomic,assign) BOOL isSync;
+@property (assign, nonatomic) BOOL isLogin;
+@property (assign, nonatomic)  BOOL isBind;
+@property (strong, nonatomic) id <GoogleLoginViewControllerDelegate> delegate;
+@property (nonatomic, assign) BOOL isSeting;
+@property (nonatomic, assign) BOOL isSync;
 @end
 
 
 @protocol GoogleLoginViewControllerDelegate <NSObject>
 
--(void)setGoogleCalendarListData:(NSArray *) googleArr;
+- (void)setGoogleCalendarListData:(NSArray *)googleArr;
 
 @end

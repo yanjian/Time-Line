@@ -14,24 +14,23 @@
 #import "FlipBoardNavigationController.h"
 #import "XMPPFramework.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate,XMPPRosterDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, XMPPRosterDelegate>
 {
-    XMPPStream *xmppStream;
-    XMPPReconnect *xmppReconnect;
-    XMPPRoster *xmppRoster;
-    XMPPRosterCoreDataStorage *xmppRosterStorage;
-    XMPPvCardCoreDataStorage *xmppvCardStorage;
-    XMPPvCardTempModule *xmppvCardTempModule;
-    XMPPvCardAvatarModule *xmppvCardAvatarModule;
-    XMPPCapabilities *xmppCapabilities;
-    XMPPCapabilitiesCoreDataStorage *xmppCapabilitiesStorage;
-    
-    NSString *password;
-    
-    BOOL customCertEvaluation;
-    
-    BOOL isXmppConnected;
+	XMPPStream *xmppStream;
+	XMPPReconnect *xmppReconnect;
+	XMPPRoster *xmppRoster;
+	XMPPRosterCoreDataStorage *xmppRosterStorage;
+	XMPPvCardCoreDataStorage *xmppvCardStorage;
+	XMPPvCardTempModule *xmppvCardTempModule;
+	XMPPvCardAvatarModule *xmppvCardAvatarModule;
+	XMPPCapabilities *xmppCapabilities;
+	XMPPCapabilitiesCoreDataStorage *xmppCapabilitiesStorage;
 
+	NSString *password;
+
+	BOOL customCertEvaluation;
+
+	BOOL isXmppConnected;
 }
 
 @property (nonatomic, strong, readonly) XMPPStream *xmppStream;
@@ -45,13 +44,13 @@
 
 @property (strong, nonatomic) UIWindow *window;
 @property (readwrite, nonatomic) BOOL isread;
-@property (nonatomic,strong) FlipBoardNavigationController *flipNC;
-@property (nonatomic,retain) ASINetworkQueue *netWorkQueue; //g_ASIQueue
-@property (nonatomic,assign) NetworkStatus netWorkStatus; //g_NetStatus
-@property (nonatomic,retain) ASIDownloadCache *anyTimeCache;
+@property (nonatomic, strong) FlipBoardNavigationController *flipNC;
+@property (nonatomic, retain) ASINetworkQueue *netWorkQueue; //g_ASIQueue
+@property (nonatomic, assign) NetworkStatus netWorkStatus; //g_NetStatus
+@property (nonatomic, retain) ASIDownloadCache *anyTimeCache;
 
 
-+(AppDelegate *)getAppDelegate;
++ (AppDelegate *)getAppDelegate;
 
 
 - (NSManagedObjectContext *)managedObjectContext_roster;
@@ -61,12 +60,12 @@
 - (void)disconnect;
 
 
--(void) initLoginView:(id )target;
+- (void)initLoginView:(id)target;
 
--(void)autoUserWithLogin;
--(void)initMainView;
+- (void)autoUserWithLogin;
+- (void)initMainView;
 //文件归档
-- (void) saveFileWithArray: (NSMutableArray*)activityArray fileName:(NSString *) name;
+- (void)saveFileWithArray:(NSMutableArray *)activityArray fileName:(NSString *)name;
 //文件解档
 - (NSMutableArray *)loadDataFromFile:(NSString *)fileName;
 @end

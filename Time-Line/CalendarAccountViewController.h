@@ -14,13 +14,13 @@
 
 @interface CalendarAccountViewController : UIViewController
 
-@property (nonatomic,assign) id<CalendarAccountDelegate> delegate;
+@property (nonatomic, assign) id <CalendarAccountDelegate> delegate;
 
 @end
 
 @protocol CalendarAccountDelegate <NSObject>
 
 @optional
--(void)calendarAccountWithAccont:(Calendar *)ca;
+- (void)calendarAccountWithAccont:(Calendar *)ca;
 
 @end

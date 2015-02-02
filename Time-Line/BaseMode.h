@@ -10,5 +10,5 @@
 
 @interface BaseMode : NSObject
 //源数据为字典，执行set方法
-- (void) parseDictionary:(NSDictionary*)dicData;
+- (void)parseDictionary:(NSDictionary *)dicData;
 @end

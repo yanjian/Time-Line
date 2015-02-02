@@ -15,23 +15,23 @@
 @property (nonatomic, strong) NSMutableArray *events;
 
 @property (nonatomic, readonly) BOOL isToday;
-@property (nonatomic,assign)    BOOL isExistData;
+@property (nonatomic, assign)    BOOL isExistData;
 @property (nonatomic, readonly) NSUInteger day;
 @property (nonatomic, readonly) NSUInteger month;
 @property (nonatomic, readonly) NSUInteger year;
-@property (nonatomic,readonly) NSUInteger week;
+@property (nonatomic, readonly) NSUInteger week;
 @property (nonatomic, assign) BOOL isSelectDay;
 
 
-- (id)initWithDate:(NSDate*)date;
+- (id)initWithDate:(NSDate *)date;
 
-- (void)addEvent:(AT_Event*)event;
+- (void)addEvent:(AT_Event *)event;
 
 - (BOOL)removeEventByIndex:(int)index;
 
--(NSString *)weekDayMotch;
--(NSString *)monthFulfillEn;
--(NSString *)weekDayFulfillEn;
--(NSString *)abbreviationWeekDay;
--(NSString *)abbreviationWeekDayMotch;
+- (NSString *)weekDayMotch;
+- (NSString *)monthFulfillEn;
+- (NSString *)weekDayFulfillEn;
+- (NSString *)abbreviationWeekDay;
+- (NSString *)abbreviationWeekDayMotch;
 @end

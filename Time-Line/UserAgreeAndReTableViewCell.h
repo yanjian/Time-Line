@@ -10,8 +10,8 @@
 
 @interface UserAgreeAndReTableViewCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView * userHead;
-@property (weak, nonatomic) IBOutlet UILabel     * msgInfo;
+@property (weak, nonatomic) IBOutlet UIImageView *userHead;
+@property (weak, nonatomic) IBOutlet UILabel *msgInfo;
 
--(void)setFriendMsgInfo:(NSString *) msgStr ;
+- (void)setFriendMsgInfo:(NSString *)msgStr;
 @end

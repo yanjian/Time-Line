@@ -12,11 +12,11 @@
 #import "DateDetailsViewController.h"
 @interface HomeViewController : UIViewController <CLCalendarDataSource, CLCalendarDelegate>
 {
-       CLCalendarView *calendarView;
-        NSMutableArray     *dateArr;
-    UIScrollView *_scrollview;
+	CLCalendarView *calendarView;
+	NSMutableArray *dateArr;
+	UIScrollView *_scrollview;
 }
--(void)fetchDataResult:(void (^)(UIBackgroundFetchResult result))completionHandler;
+- (void)fetchDataResult:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
-@property (nonatomic,assign) BOOL isRefreshUIData;//是否刷新ui数据
+@property (nonatomic, assign) BOOL isRefreshUIData;//是否刷新ui数据
 @end

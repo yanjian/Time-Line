@@ -19,9 +19,8 @@
 
 @property (nonatomic, strong) FriendGroup *friendGroup;
 
-@property (nonatomic, weak) id<HeadViewDelegate> delegate;
+@property (nonatomic, weak) id <HeadViewDelegate> delegate;
 
--(id) initWithFrame:(CGRect)frame;
+- (id)initWithFrame:(CGRect)frame;
 
 @end
-

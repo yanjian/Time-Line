@@ -15,13 +15,13 @@
 @protocol RepeatCalViewControllerDelegate;
 @interface RepeatCalViewController : UIViewController
 
-@property (nonatomic,retain) id<RepeatCalViewControllerDelegate> delegate;
+@property (nonatomic, retain) id <RepeatCalViewControllerDelegate> delegate;
 
 @end
 
 
 @protocol RepeatCalViewControllerDelegate <NSObject>
 
--(void)repeatCalViewController:(UIViewController *) controle selectData:(NSString *) dateString;
+- (void)repeatCalViewController:(UIViewController *)controle selectData:(NSString *)dateString;
 
 @end

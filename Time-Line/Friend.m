@@ -11,28 +11,27 @@
 @implementation Friend
 
 
-+ (instancetype)friendWithDict:(NSDictionary *)dict
-{
-    return [[self alloc] initWithDict:dict];
-}
-- (instancetype)initWithDict:(NSDictionary *)dict
-{
-    if (self = [super init]) {
-        [self setValuesForKeysWithDictionary:dict];
-    }
-    return self;
++ (instancetype)friendWithDict:(NSDictionary *)dict {
+	return [[self alloc] initWithDict:dict];
 }
 
--(void)setImgBig:(NSString *)imgBig{
-    if (imgBig) {
-         _imgBig= [imgBig stringByReplacingOccurrencesOfString:@"\\" withString:@"/"] ;
-    }
+- (instancetype)initWithDict:(NSDictionary *)dict {
+	if (self = [super init]) {
+		[self setValuesForKeysWithDictionary:dict];
+	}
+	return self;
 }
 
--(void)setImgSmall:(NSString *)imgSmall{
-    if (imgSmall) {
-        _imgSmall = [imgSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"] ;
-    }
+- (void)setImgBig:(NSString *)imgBig {
+	if (imgBig) {
+		_imgBig = [imgBig stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+	}
+}
+
+- (void)setImgSmall:(NSString *)imgSmall {
+	if (imgSmall) {
+		_imgSmall = [imgSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+	}
 }
 
 @end

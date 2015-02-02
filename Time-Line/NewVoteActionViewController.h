@@ -12,10 +12,10 @@
 @protocol NewVoteActionViewControllerDelegate;
 @interface NewVoteActionViewController : UIViewController
 
-@property (nonatomic , retain) id<NewVoteActionViewControllerDelegate> delegate;
-@property (nonatomic , assign) BOOL   isEdit;
+@property (nonatomic, retain) id <NewVoteActionViewControllerDelegate> delegate;
+@property (nonatomic, assign) BOOL isEdit;
 
-@property (nonatomic, retain) NSDictionary * voteOptionDic;
+@property (nonatomic, retain) NSDictionary *voteOptionDic;
 
 @end
 
@@ -32,6 +32,6 @@
  *  @param allow         是否允许成员添加问题（1.表示允许，0表示不允许）
  *  @param childArr      该问题的子选项
  */
--(void)newVoteActionViewController:(NewVoteActionViewController *) newVoteViewVc mainQuestion:(NSString *) question   allowAddQuestion:(NSInteger) allow childQuestion:(NSArray*) childArr optionId:(NSString *) optionId isEdit:(BOOL) isModify;
+- (void)newVoteActionViewController:(NewVoteActionViewController *)newVoteViewVc mainQuestion:(NSString *)question allowAddQuestion:(NSInteger)allow childQuestion:(NSArray *)childArr optionId:(NSString *)optionId isEdit:(BOOL)isModify;
 
 @end

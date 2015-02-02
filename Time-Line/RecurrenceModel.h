@@ -9,19 +9,19 @@
 #import <Foundation/Foundation.h>
 #import "CLDay.h"
 @interface RecurrenceModel : NSObject
-@property (nonatomic,copy) NSString *freq;
-@property (nonatomic,assign) NSInteger interval;
-@property (nonatomic,copy) NSString *until;
-@property (nonatomic,assign) NSInteger count;
-@property (nonatomic,copy) NSString *byDay;
+@property (nonatomic, copy) NSString *freq;
+@property (nonatomic, assign) NSInteger interval;
+@property (nonatomic, copy) NSString *until;
+@property (nonatomic, assign) NSInteger count;
+@property (nonatomic, copy) NSString *byDay;
 
 
 
 
--(instancetype)initRecrrenceModel:(NSString *) recString;
--(NSString *) stringWithIntFromWeek;
--(NSString *)showWeekFromInt;
--(NSString *)showIntervalWithRepat;
--(NSString *)showUtil;
--(CLDay *)showUtilClday;
+- (instancetype)initRecrrenceModel:(NSString *)recString;
+- (NSString *)stringWithIntFromWeek;
+- (NSString *)showWeekFromInt;
+- (NSString *)showIntervalWithRepat;
+- (NSString *)showUtil;
+- (CLDay *)showUtilClday;
 @end

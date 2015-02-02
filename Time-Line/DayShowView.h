@@ -8,17 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
-@interface DayShowView : UIView{
-     UILabel *calStartLable;
-     UILabel *calEndLable;
-     UILabel *timeStartLable;
-     UILabel *timeEndLable;
-     UILabel *flagLable;
-
+@interface DayShowView : UIView {
+	UILabel *calStartLable;
+	UILabel *calEndLable;
+	UILabel *timeStartLable;
+	UILabel *timeEndLable;
+	UILabel *flagLable;
 }
 
-@property (nonatomic,assign) BOOL isAllDay;
-@property (nonatomic,copy) NSString *startDay;
-@property (nonatomic,copy) NSString *endDay;
+@property (nonatomic, assign) BOOL isAllDay;
+@property (nonatomic, copy) NSString *startDay;
+@property (nonatomic, copy) NSString *endDay;
 
 @end

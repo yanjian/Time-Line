@@ -11,33 +11,33 @@
 @implementation ActiveVoteDateTableViewCell
 
 - (void)awakeFromNib {
-    // Initialization code
-    [self.voteBtn setBackgroundImage:[UIImage imageNamed:@"selecte_friend_cycle"] forState:UIControlStateNormal];
-    [self.voteBtn setBackgroundImage:[UIImage imageNamed:@"selecte_friend_tick"] forState:UIControlStateSelected];
-    
+	// Initialization code
+	[self.voteBtn setBackgroundImage:[UIImage imageNamed:@"selecte_friend_cycle"] forState:UIControlStateNormal];
+	[self.voteBtn setBackgroundImage:[UIImage imageNamed:@"selecte_friend_tick"] forState:UIControlStateSelected];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
+	[super setSelected:selected animated:animated];
 
-    // Configure the view for the selected state
+	// Configure the view for the selected state
 }
 
 - (IBAction)voteClickEvent:(UIButton *)sender {
-    if (sender.selected) {
-        sender.selected=NO;
-    }else{
-        sender.selected = YES;
-    }
-    if(self.delegate&&[self.delegate respondsToSelector:@selector(activeVoteDateTableViewCell:isVoteTimeOrOption:ParamDictionnary:isSelectForBtn:)]){
-        [self.delegate activeVoteDateTableViewCell:self isVoteTimeOrOption:self.voteTimeOrOption ParamDictionnary:self.paramDic isSelectForBtn:sender.selected];
-    }
+	if (sender.selected) {
+		sender.selected = NO;
+	}
+	else {
+		sender.selected = YES;
+	}
+	if (self.delegate && [self.delegate respondsToSelector:@selector(activeVoteDateTableViewCell:isVoteTimeOrOption:ParamDictionnary:isSelectForBtn:)]) {
+		[self.delegate activeVoteDateTableViewCell:self isVoteTimeOrOption:self.voteTimeOrOption ParamDictionnary:self.paramDic isSelectForBtn:sender.selected];
+	}
 }
+
 - (IBAction)showVoteMemberList:(UIButton *)sender {
-    
-    if(self.delegate&&[self.delegate respondsToSelector:@selector(activeVoteDateTableViewCell:isVoteTimeOrOption:ParamArray:)]){
-        [self.delegate activeVoteDateTableViewCell:self isVoteTimeOrOption:self.voteTimeOrOption ParamArray:self.memberArr];
-    }
-    
+	if (self.delegate && [self.delegate respondsToSelector:@selector(activeVoteDateTableViewCell:isVoteTimeOrOption:ParamArray:)]) {
+		[self.delegate activeVoteDateTableViewCell:self isVoteTimeOrOption:self.voteTimeOrOption ParamArray:self.memberArr];
+	}
 }
+
 @end

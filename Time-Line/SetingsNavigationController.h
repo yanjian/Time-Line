@@ -11,7 +11,7 @@
 #define SetingsBackViewHeight [UIScreen mainScreen].bounds.size.height
 #define SetingsBackViewWidth [UIScreen mainScreen].bounds.size.width
 
-#define iOS7  ( [[[UIDevice currentDevice] systemVersion] compare:@"7.0"] != NSOrderedAscending )
+#define iOS7  ([[[UIDevice currentDevice] systemVersion] compare:@"7.0"] != NSOrderedAscending)
 
 // 背景视图起始frame.x
 #define startX -200;
@@ -19,7 +19,7 @@
 @interface SetingsNavigationController : UINavigationController
 
 {
-    CGFloat startBackViewX;
+	CGFloat startBackViewX;
 }
 
 // 默认为特效开启

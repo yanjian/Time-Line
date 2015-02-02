@@ -13,7 +13,7 @@
 
 @protocol CLCalendarDataSource <NSObject>
 
-- (NSArray*)dateSourceWithCalendarView:(CLCalendarView *)calendarView;
+- (NSArray *)dateSourceWithCalendarView:(CLCalendarView *)calendarView;
 
 @end
 
@@ -21,12 +21,8 @@
 
 - (void)calendarDidToMonth:(int)month year:(int)year CalendarView:(CLCalendarView *)calendarView;
 
-- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AT_Event*)event AllEvent:(NSArray*)events;
+- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay *)day event:(AT_Event *)event AllEvent:(NSArray *)events;
 
--(void)calendartitle:(NSString*)title;
+- (void)calendartitle:(NSString *)title;
 
 @end
-
-
-
-

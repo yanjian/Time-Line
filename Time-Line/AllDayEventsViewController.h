@@ -9,12 +9,12 @@
 #import <UIKit/UIKit.h>
 @protocol AllDayEventsDelegate;
 @interface AllDayEventsViewController : UIViewController
-@property (nonatomic,strong) id<AllDayEventsDelegate> delegate;
+@property (nonatomic, strong) id <AllDayEventsDelegate> delegate;
 @end
 
 
-@protocol AllDayEventsDelegate  <NSObject>
+@protocol AllDayEventsDelegate <NSObject>
 
--(void)getAllDayEvent:(NSString *)timestr;
+- (void)getAllDayEvent:(NSString *)timestr;
 
 @end

@@ -15,11 +15,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *dayCountLab;
 @property (weak, nonatomic) IBOutlet UILabel *activeNameLab;
 @property (weak, nonatomic) IBOutlet UILabel *activeDesLab;
-@property (weak, nonatomic) IBOutlet UIView  *activeChangView;
+@property (weak, nonatomic) IBOutlet UIView *activeChangView;
 @property (weak, nonatomic) IBOutlet UIImageView *userHeadImg;
 @property (weak, nonatomic) IBOutlet UILabel *changMsgLab;
 
 @property (strong, nonatomic) ActiveBaseInfoMode *activeEvent;
 
--(void)setActivechangInfo:(NSString *) str ;
+- (void)setActivechangInfo:(NSString *)str;
 @end

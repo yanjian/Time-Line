@@ -9,7 +9,7 @@
 #import "BaseMode.h"
 
 @interface ActiveModifyMsgModel : BaseMode
-@property (nonatomic , copy) NSString * eid ;
-@property (nonatomic , copy) NSString * message ;
-@property (nonatomic , copy) NSString * time ;
+@property (nonatomic, copy) NSString *eid;
+@property (nonatomic, copy) NSString *message;
+@property (nonatomic, copy) NSString *time;
 @end

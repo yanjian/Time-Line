@@ -1,4 +1,3 @@
-
 #import <Foundation/Foundation.h>
 
 @interface CalendarDateUtil : NSObject
@@ -28,17 +27,17 @@
 
 
 
-+ (NSInteger)getMonthWithDate:(NSDate*)date;
++ (NSInteger)getMonthWithDate:(NSDate *)date;
 
-+ (NSInteger)getWeekDayWithDate:(NSDate*)date;
++ (NSInteger)getWeekDayWithDate:(NSDate *)date;
 
-+ (NSInteger)getDayWithDate:(NSDate*)date;
++ (NSInteger)getDayWithDate:(NSDate *)date;
 
-+ (NSInteger)getYearWithDate:(NSDate*)date;
++ (NSInteger)getYearWithDate:(NSDate *)date;
 
 
-+ (NSDate*)dateSinceNowWithInterval:(NSInteger)dayInterval;
++ (NSDate *)dateSinceNowWithInterval:(NSInteger)dayInterval;
 
-+ (NSDate*)dateWithTimeInterval:(NSInteger)dayInterval sinceDate:(NSDate*)date;
++ (NSDate *)dateWithTimeInterval:(NSInteger)dayInterval sinceDate:(NSDate *)date;
 
 @end

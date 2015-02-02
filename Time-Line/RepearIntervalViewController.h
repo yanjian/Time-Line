@@ -11,13 +11,13 @@
 
 @interface RepearIntervalViewController : UIViewController
 
-@property (nonatomic,copy) NSString *repeatParam;
-@property (nonatomic,retain) id<RepearIntervalViewControllerDelegate> delegate ;
+@property (nonatomic, copy) NSString *repeatParam;
+@property (nonatomic, retain) id <RepearIntervalViewControllerDelegate> delegate;
 
 @end
 
 @protocol RepearIntervalViewControllerDelegate <NSObject>
 
--(void) selectValueWithInterval:(NSString *) interval;
+- (void)selectValueWithInterval:(NSString *)interval;
 
 @end

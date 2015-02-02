@@ -13,23 +13,23 @@
 @class CLCalendarCell;
 @protocol CLCalendarCellDelegate <NSObject>
 
-- (void)selectDate:(CLCalendarCell*)cell weekDay:(NSInteger)index;
+- (void)selectDate:(CLCalendarCell *)cell weekDay:(NSInteger)index;
 
 - (int)getShowMonth;
 
-- (int)getShowSelectDay:(CLCalendarCell*)cell;
+- (int)getShowSelectDay:(CLCalendarCell *)cell;
 @end
 
 
 @interface CLCalendarCell : UITableViewCell {
-        NSMutableArray *_btnArray;
-        NSMutableArray *_bgArray;
-    NSMutableArray *_pointArray;
+	NSMutableArray *_btnArray;
+	NSMutableArray *_bgArray;
+	NSMutableArray *_pointArray;
 }
 
 
-@property (nonatomic, weak) id<CLCalendarCellDelegate> detelegate;
+@property (nonatomic, weak) id <CLCalendarCellDelegate> detelegate;
 @property (nonatomic, strong) NSArray *weekArr;
-@property (nonatomic,retain)NSString* time;
-@property (nonatomic,retain)UIImageView* imageview;
+@property (nonatomic, retain) NSString *time;
+@property (nonatomic, retain) UIImageView *imageview;
 @end

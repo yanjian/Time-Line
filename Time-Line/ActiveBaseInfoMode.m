@@ -11,9 +11,10 @@
 @implementation ActiveBaseInfoMode
 
 
--(void)setImgUrl:(NSString *)imgUrl{
-    if (imgUrl) {
-        _imgUrl = [imgUrl stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-    }
+- (void)setImgUrl:(NSString *)imgUrl {
+	if (imgUrl) {
+		_imgUrl = [imgUrl stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+	}
 }
+
 @end

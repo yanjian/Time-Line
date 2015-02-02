@@ -10,11 +10,11 @@
 
 @interface FriendGroup : NSObject
 
-@property (nonatomic, strong) NSString * Id;
-@property (nonatomic, copy)   NSString * name;
-@property (nonatomic, strong) NSMutableArray  * friends;
-@property (nonatomic, assign) NSInteger  online;
-@property (nonatomic, retain) NSString * defaultTeam ;
+@property (nonatomic, strong) NSString *Id;
+@property (nonatomic, copy)   NSString *name;
+@property (nonatomic, strong) NSMutableArray *friends;
+@property (nonatomic, assign) NSInteger online;
+@property (nonatomic, retain) NSString *defaultTeam;
 
 @property (nonatomic, assign, getter = isOpened) BOOL opened;
 

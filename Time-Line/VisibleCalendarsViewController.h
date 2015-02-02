@@ -10,6 +10,6 @@
 
 @interface VisibleCalendarsViewController : UIViewController
 
-@property (nonatomic,strong) NSMutableArray *calendarArray;//日历列表数组用于生成tableview中有多少组
+@property (nonatomic, strong) NSMutableArray *calendarArray;//日历列表数组用于生成tableview中有多少组
 
 @end

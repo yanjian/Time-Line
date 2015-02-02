@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface AccountViewController : UIViewController
-@property (nonatomic,strong) NSArray *accountArr;
+@property (nonatomic, strong) NSArray *accountArr;
 @end

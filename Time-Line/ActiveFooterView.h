@@ -9,14 +9,14 @@
 #import <UIKit/UIKit.h>
 @protocol ActiveFooterViewDelegate;
 @interface ActiveFooterView : UIView
-@property (nonatomic ,retain) id<ActiveFooterViewDelegate> delegate;
-@property (nonatomic , retain) NSDictionary * voteOptionDic;
-@property (nonatomic , assign) NSInteger selectSection;
+@property (nonatomic, retain) id <ActiveFooterViewDelegate> delegate;
+@property (nonatomic, retain) NSDictionary *voteOptionDic;
+@property (nonatomic, assign) NSInteger selectSection;
 @end
 
 @protocol ActiveFooterViewDelegate <NSObject>
 @optional
 
--(void)activeFooterView:(ActiveFooterView *) footerView returnValue:(NSArray *) returnArr selectSection:(NSInteger) section;
+- (void)activeFooterView:(ActiveFooterView *)footerView returnValue:(NSArray *)returnArr selectSection:(NSInteger)section;
 
 @end

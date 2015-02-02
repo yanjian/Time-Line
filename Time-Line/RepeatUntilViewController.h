@@ -10,12 +10,12 @@
 #import "CLDay.h"
 @protocol RepeatUntilViewControllerDelegate;
 @interface RepeatUntilViewController : UIViewController
-@property (nonatomic,retain) id<RepeatUntilViewControllerDelegate> delegate;
+@property (nonatomic, retain) id <RepeatUntilViewControllerDelegate> delegate;
 @end
 
 
 @protocol RepeatUntilViewControllerDelegate <NSObject>
 
--(void)selectedDidDate:(CLDay *)selectDate;
+- (void)selectedDidDate:(CLDay *)selectDate;
 
 @end

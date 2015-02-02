@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface CalendarListViewController : UIViewController
-@property (nonatomic,strong) NSArray *googleCalendarDataArr;//存放GoogleCalendarData对象
-@property (nonatomic,strong) NSArray *calendarAccountArr;
+@property (nonatomic, strong) NSArray *googleCalendarDataArr;//存放GoogleCalendarData对象
+@property (nonatomic, strong) NSArray *calendarAccountArr;
 @end

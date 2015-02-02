@@ -13,15 +13,15 @@
 
 @interface Calendar : NSManagedObject
 
-@property (nonatomic, retain) NSString * account;
-@property (nonatomic, retain) NSString * backgroundColor;
-@property (nonatomic, retain) NSString * cid;
-@property (nonatomic, retain) NSNumber * isDefault;
-@property (nonatomic, retain) NSNumber * isNotification;
-@property (nonatomic, retain) NSNumber * isVisible;
-@property (nonatomic, retain) NSString * summary;
-@property (nonatomic, retain) NSString * timeZone;
-@property (nonatomic, retain) NSNumber * type;
+@property (nonatomic, retain) NSString *account;
+@property (nonatomic, retain) NSString *backgroundColor;
+@property (nonatomic, retain) NSString *cid;
+@property (nonatomic, retain) NSNumber *isDefault;
+@property (nonatomic, retain) NSNumber *isNotification;
+@property (nonatomic, retain) NSNumber *isVisible;
+@property (nonatomic, retain) NSString *summary;
+@property (nonatomic, retain) NSString *timeZone;
+@property (nonatomic, retain) NSNumber *type;
 @property (nonatomic, retain) NSSet *anyEvent;
 @property (nonatomic, retain) AT_Account *atAccount;
 @end

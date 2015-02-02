@@ -10,7 +10,7 @@
 @protocol SetFriendViewControllerDelegate;
 @interface SetFriendViewController : UIViewController
 
-@property (nonatomic,retain) id<SetFriendViewControllerDelegate>  delegate;
+@property (nonatomic, retain) id <SetFriendViewControllerDelegate> delegate;
 
 @end
 
@@ -24,6 +24,6 @@
  *  @param secondSetFriendViewController 弹出的窗体控制器
  *  @param friendArr                     选择的好友数组
  */
-- (void)saveButtonClicked:(SetFriendViewController*)secondSetFriendViewController didSelectFriend:(NSArray *) friendArr;
+- (void)saveButtonClicked:(SetFriendViewController *)secondSetFriendViewController didSelectFriend:(NSArray *)friendArr;
 
 @end

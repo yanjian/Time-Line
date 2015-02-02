@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AlertViewController : UIViewController<UITableViewDataSource,UITableViewDelegate>
+@interface AlertViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) IBOutlet UITableView *alert_Tableview;
 
 @end

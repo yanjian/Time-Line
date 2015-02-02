@@ -9,9 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "PECropViewController.h"
 @protocol getimagename <NSObject>
-- (void)getimage:(NSString*)image;
+- (void)getimage:(NSString *)image;
 @end
-@interface BackGroundViewController : UIViewController<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
-@property (nonatomic, weak) id<getimagename> detelegate;
+@interface BackGroundViewController : UIViewController <UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@property (nonatomic, weak) id <getimagename> detelegate;
 @property (nonatomic) UIPopoverController *popover;
 @end

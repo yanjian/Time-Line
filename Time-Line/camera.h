@@ -10,5 +10,5 @@
 // THE SOFTWARE.
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-BOOL	ShouldStartCamera			(id target, BOOL canEdit);
-BOOL	ShouldStartPhotoLibrary		(id target, BOOL canEdit);
+BOOL ShouldStartCamera(id target, BOOL canEdit);
+BOOL ShouldStartPhotoLibrary(id target, BOOL canEdit);

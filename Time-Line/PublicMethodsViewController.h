@@ -10,51 +10,51 @@
 
 @interface PublicMethodsViewController : UIViewController
 
-+(PublicMethodsViewController *)getPublicMethods;
++ (PublicMethodsViewController *)getPublicMethods;
 
--(NSString*)getcurrentTime:(NSString*)format;
--(NSString*)getcurrentTime:(NSString*)format interval:(NSInteger ) interval ;
+- (NSString *)getcurrentTime:(NSString *)format;
+- (NSString *)getcurrentTime:(NSString *)format interval:(NSInteger)interval;
 
--(NSString*)getonehourstime:(NSString*)format;
+- (NSString *)getonehourstime:(NSString *)format;
 
 //时间格式化为rfc3339
-- (NSString *) rfc3339DateFormatter:(NSDate *) date;
+- (NSString *)rfc3339DateFormatter:(NSDate *)date;
 
--(NSString *) stringformatWithDate:(NSDate *) date;
+- (NSString *)stringformatWithDate:(NSDate *)date;
 
--(NSString*)formaterStringfromDate:(NSString*)format dateString:(NSString *) dateString;
-- (NSUInteger)timeIntegerDifference: (NSString *) theDate getStrart:(NSString*)startdate;
+- (NSString *)formaterStringfromDate:(NSString *)format dateString:(NSString *)dateString;
+- (NSUInteger)timeIntegerDifference:(NSString *)theDate getStrart:(NSString *)startdate;
 
--(NSString*)stringFormaterDate:(NSString*)format dateString:(NSString *) dateString;
+- (NSString *)stringFormaterDate:(NSString *)format dateString:(NSString *)dateString;
 
 
--(NSString *) rfc3339StringWithStringDate:(NSString *) dateString;
+- (NSString *)rfc3339StringWithStringDate:(NSString *)dateString;
 
--(NSString *) dateWithStringDate:(NSString *) dateString;
+- (NSString *)dateWithStringDate:(NSString *)dateString;
 
--(NSMutableArray*)intervalSinceNow: (NSString *) theDate getStrart:(NSString*)startdate;
-- (NSString *)intervalSinceNow: (NSString *) theDate;
+- (NSMutableArray *)intervalSinceNow:(NSString *)theDate getStrart:(NSString *)startdate;
+- (NSString *)intervalSinceNow:(NSString *)theDate;
 
-- (NSString *)timeDifference: (NSString *) theDate getStrart:(NSString*)startdate formmtterStyle:(NSString *) formartter
+- (NSString *)timeDifference:(NSString *)theDate getStrart:(NSString *)startdate formmtterStyle:(NSString *)formartter
 ;
 
--(void)setCorner:(UIView *)view radius:(float)cornerRadius borderWidth:(float)width;
+- (void)setCorner:(UIView *)view radius:(float)cornerRadius borderWidth:(float)width;
 
-- (NSString*)getWeekdayFromDate:(NSDate*)date;
+- (NSString *)getWeekdayFromDate:(NSDate *)date;
 
--(UIImage *)imageWithImage:(UIImage *)image scaleToSize:(CGSize)newSize;
+- (UIImage *)imageWithImage:(UIImage *)image scaleToSize:(CGSize)newSize;
 
-- (UIImage *)imageFromImage:(UIImage *)image inRect:(CGRect)rect ;
+- (UIImage *)imageFromImage:(UIImage *)image inRect:(CGRect)rect;
 
--(NSString*)getseconde:(NSString*)endstart;
+- (NSString *)getseconde:(NSString *)endstart;
 
--(NSDate *) formatWithStringDate:(NSString *) stringDate;
+- (NSDate *)formatWithStringDate:(NSString *)stringDate;
 
--(NSString *) formatStringWithStringDate:(NSString *) dateString;
+- (NSString *)formatStringWithStringDate:(NSString *)dateString;
 
--(NSString *) formatStringWithString:(NSString *) stringDate;
+- (NSString *)formatStringWithString:(NSString *)stringDate;
 
--(NSString *) datewithstringEnglist:(NSDate *)date;
--(NSDate *) stringToDate:(NSString *) dateStr;
--(NSString *) shortTimeFromDate:(NSDate *) date;
+- (NSString *)datewithstringEnglist:(NSDate *)date;
+- (NSDate *)stringToDate:(NSString *)dateStr;
+- (NSString *)shortTimeFromDate:(NSDate *)date;
 @end

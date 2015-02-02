@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface CircleDrawView : UIView
-@property (nonatomic,copy) NSString *hexString;//十六进制的颜色值
-@property (nonatomic,assign) int cirSize;
+@property (nonatomic, copy) NSString *hexString;//十六进制的颜色值
+@property (nonatomic, assign) int cirSize;
 @end

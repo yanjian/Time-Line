@@ -15,15 +15,15 @@
 
 
 
-@property (nonatomic,retain)  ActiveBaseInfoMode * activeEventInfo;
+@property (nonatomic, retain)  ActiveBaseInfoMode *activeEventInfo;
 
-@property (nonatomic,retain)  id<ActivedetailsViewControllerDelegate> delegate;
+@property (nonatomic, retain)  id <ActivedetailsViewControllerDelegate> delegate;
 @end
 
 @protocol ActivedetailsViewControllerDelegate <NSObject>
 
 @optional
 
--(void)cancelActivedetailsViewController:(ActivedetailsViewController *)activeDetailsViewVontroller;
+- (void)cancelActivedetailsViewController:(ActivedetailsViewController *)activeDetailsViewVontroller;
 
 @end

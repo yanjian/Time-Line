@@ -7,14 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-@ class AliasModifyViewController ;
-typedef void (^AliasModify) (AliasModifyViewController * selfViewCOntroller,NSString * modifyAlias ) ;
+@ class AliasModifyViewController;
+typedef void (^AliasModify) (AliasModifyViewController *selfViewCOntroller, NSString *modifyAlias);
 
 @interface AliasModifyViewController : UIViewController
 
 
-@property (nonatomic, strong) NSString * fid ; //好友的id ；
-@property (nonatomic, strong) NSString * alias ; //别名 ；
+@property (nonatomic, strong) NSString *fid;   //好友的id ；
+@property (nonatomic, strong) NSString *alias;   //别名 ；
 
-@property (nonatomic, copy) AliasModify aliasModify ;
+@property (nonatomic, copy) AliasModify aliasModify;
 @end

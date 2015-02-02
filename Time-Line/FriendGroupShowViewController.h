@@ -8,11 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "FriendGroup.h"
-@ class FriendGroupShowViewController ;
-typedef void (^FriendGroupShowBlock)(FriendGroupShowViewController * selfViewController,FriendGroup *friendGroup);
+@ class FriendGroupShowViewController;
+typedef void (^FriendGroupShowBlock)(FriendGroupShowViewController *selfViewController, FriendGroup *friendGroup);
 
 @interface FriendGroupShowViewController : UIViewController
 
-@property (nonatomic,copy) FriendGroupShowBlock fBlock ;
+@property (nonatomic, copy) FriendGroupShowBlock fBlock;
 
 @end

@@ -15,7 +15,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OWC-Tj-IN7">
-                        <rect key="frame" x="77" y="12" width="234" height="41"/>
+                        <rect key="frame" x="63" y="9" width="248" height="47"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
@@ -29,7 +29,7 @@
                 <outlet property="msgInfo" destination="OWC-Tj-IN7" id="a0P-4o-kge"/>
                 <outlet property="userHead" destination="wsJ-bo-9k8" id="phL-hx-rBi"/>
             </connections>
-            <point key="canvasLocation" x="264" y="125"/>
+            <point key="canvasLocation" x="264" y="121"/>
         </tableViewCell>
     </objects>
 </document>
