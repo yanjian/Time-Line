@@ -11,7 +11,9 @@
 #import "ActiveTableViewCell.h"
 #import "UserApplyTableViewCell.h"
 #import "UserAgreeAndReTableViewCell.h"
+#import "UserActiveChangTableViewCell.h"
 #import "NotiveMsgPageBaseMode.h"
+#import "ActiveModifyMsgModel.h"
 #import "ActivedetailsViewController.h"
 #import "NoticesMsgModel.h"
 #import "CalendarDateUtil.h"
@@ -143,8 +145,8 @@
              return 44.f ;
          }
         
-    }else{
-        return 215.f;
+    }else{  
+        return 185.f;
     }
     
 }
@@ -194,59 +196,76 @@
             }
             return cell ;
         }else{
-            return nil;
+            static NSString *activeSysID =@"activeSystemId";
+            UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:activeSysID];
+            if (!cell) {
+                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:activeSysID] ;
+            }
+            NSDictionary * msgDic =  noticeMsg.message ;
+            if (msgDic) {
+                cell.textLabel.text = [msgDic objectForKey:@"msg"] ;
+            }
+            return cell ;
         }
     }else{
-        static NSString *activeCellID=@"activeManagerCellId";
-        ActiveTableViewCell *activeCell=[tableView dequeueReusableCellWithIdentifier:activeCellID];
+        static NSString *activeCellID=@"activeMsgCellId";
+        UserActiveChangTableViewCell *activeCell=[tableView dequeueReusableCellWithIdentifier:activeCellID];
         if (!activeCell) {
-            activeCell = (ActiveTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"ActiveTableViewCell" owner:self options:nil] firstObject];
+            activeCell = (UserActiveChangTableViewCell*)[[[NSBundle mainBundle] loadNibNamed:@"UserActiveChangTableViewCell" owner:self options:nil] firstObject];
         }
-        activeCell.isNotice = YES ;//用于区分是manage视图中的cell还是notive中的cell
         
         NSDictionary * msgDic = [noticeMsg.message objectForKey:@"event"];
          ActiveBaseInfoMode * activeEvent = [ActiveBaseInfoMode new] ;
         if (msgDic) {
             [activeEvent parseDictionary:msgDic] ;
         }
+    
+        if([activeEvent.status integerValue] == ActiveStatus_upcoming ){
+            if ([activeEvent.type integerValue]== 2) {
+                activeCell.activeStateLab.text = @"UpComing(Voting)" ;
+            }else{
+                activeCell.activeStateLab.text = @"UpComing" ;
+            }
+        }else if  ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm ){
+            activeCell.activeStateLab.text = @"To be Confirm" ;
+        }else if  ([activeEvent.status integerValue] == ActiveStatus_confirmed ){
+            activeCell.activeStateLab.text = @"Confirmed" ;
+        }else if  ([activeEvent.status integerValue] == ActiveStatus_past ){
+            activeCell.activeStateLab.text = @"Past" ;
+        }
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateStyle:NSDateFormatterMediumStyle];
+        [formatter setTimeStyle:NSDateFormatterShortStyle];
+        [formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
+        NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
+        [formatter setTimeZone:timeZone];
+        
+        NSDate * createTime = [formatter dateFromString:activeEvent.createTime];
+        NSInteger currMonth = [CalendarDateUtil getMonthWithDate:createTime];
+        NSInteger currDay = [CalendarDateUtil getDayWithDate:createTime];
+        activeCell.monthLab.text = [self monthStringWithInteger:currMonth];
+        activeCell.dayCountLab.text =[NSString stringWithFormat:@"%ld",(long)currDay];
+        NSURL *url=nil ;
+        if (activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl]) {
+            NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSLog(@"%@",_urlStr);
+            url=[NSURL URLWithString:_urlStr];
+        }
+         [activeCell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+         activeCell.activeNameLab.text = activeEvent.title;
+        
         if ([noticeMsg.type integerValue] == 10) { //活动更新,
-            
-        }else if ([noticeMsg.type integerValue] == 11) { //活动新增或邀请成员
-            
             activeCell.activeEvent = activeEvent ;
-            if([activeEvent.status integerValue] == ActiveStatus_upcoming ){
-                if ([activeEvent.type integerValue]== 2) {
-                    activeCell.activeStateLab.text = @"UpComing(Voting)" ;
-                }else{
-                    activeCell.activeStateLab.text = @"UpComing" ;
+            NSArray  * msgDicArr = [noticeMsg.message objectForKey:@"eventMsg"];
+            ActiveModifyMsgModel * activeModifyMsg = [ActiveModifyMsgModel new] ;
+            if (msgDicArr) {
+                for (NSDictionary *dic  in msgDicArr) {//这里可能以后要修改 ，现在数组中仅且仅有一条数据
+                    [activeModifyMsg parseDictionary:dic] ;
                 }
-            }else if  ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm ){
-                activeCell.activeStateLab.text = @"To be Confirm" ;
-            }else if  ([activeEvent.status integerValue] == ActiveStatus_confirmed ){
-                activeCell.activeStateLab.text = @"Confirmed" ;
-            }else if  ([activeEvent.status integerValue] == ActiveStatus_past ){
-                activeCell.activeStateLab.text = @"Past" ;
             }
-            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-            [formatter setDateStyle:NSDateFormatterMediumStyle];
-            [formatter setTimeStyle:NSDateFormatterShortStyle];
-            [formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
-            NSTimeZone* timeZone = [NSTimeZone defaultTimeZone];
-            [formatter setTimeZone:timeZone];
-            
-            NSDate * createTime = [formatter dateFromString:activeEvent.createTime];
-            NSInteger currMonth = [CalendarDateUtil getMonthWithDate:createTime];
-            NSInteger currDay = [CalendarDateUtil getDayWithDate:createTime];
-            activeCell.monthLab.text = [self monthStringWithInteger:currMonth];
-            activeCell.dayCountLab.text =[NSString stringWithFormat:@"%ld",(long)currDay];
-            NSURL *url=nil ;
-            if (activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl]) {
-                NSString *_urlStr=[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                NSLog(@"%@",_urlStr);
-                url=[NSURL URLWithString:_urlStr];
-            }
-            [activeCell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
-            activeCell.activeNameLab.text = activeEvent.title;
+            [activeCell  setActivechangInfo: activeModifyMsg.message ];
+        }else if ([noticeMsg.type integerValue] == 11) { //活动新增或邀请成员
+            [activeCell  setActivechangInfo:@"Invite you to participate in the activity"] ;  ;
         }
         return activeCell;
     }

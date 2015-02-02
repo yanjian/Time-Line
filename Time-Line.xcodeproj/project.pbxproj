@@ -147,6 +147,7 @@
 		A89B676E19D98A7000415108 /* CalendarListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A89B676D19D98A7000415108 /* CalendarListViewController.m */; };
 		A89F91D819C5D18D00CB7FAE /* powered-by-google-on-white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A89F91D719C5D18D00CB7FAE /* powered-by-google-on-white@2x.png */; };
 		A89F91DB19C5D73A00CB7FAE /* AutocompletionTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = A89F91DA19C5D73A00CB7FAE /* AutocompletionTableView.m */; };
+		A8A3B9531A7F27C200322354 /* ActiveModifyMsgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8A3B9521A7F27C200322354 /* ActiveModifyMsgModel.m */; };
 		A8A8C26919C1915900362EE5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C26819C1915900362EE5 /* QuartzCore.framework */; };
 		A8A8C26B19C1916600362EE5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C26A19C1916600362EE5 /* OpenGLES.framework */; };
 		A8A8C26D19C1917500362EE5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C26C19C1917500362EE5 /* libz.dylib */; };
@@ -284,6 +285,8 @@
 		A8C68E3C1A7B5223006940E9 /* UserApplyTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C68E3B1A7B5223006940E9 /* UserApplyTableViewCell.xib */; };
 		A8C68E401A7B60CA006940E9 /* UserAgreeAndReTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C68E3E1A7B60CA006940E9 /* UserAgreeAndReTableViewCell.m */; };
 		A8C68E411A7B60CA006940E9 /* UserAgreeAndReTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C68E3F1A7B60CA006940E9 /* UserAgreeAndReTableViewCell.xib */; };
+		A8C68E4A1A7B87D0006940E9 /* UserActiveChangTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C68E481A7B87D0006940E9 /* UserActiveChangTableViewCell.m */; };
+		A8C68E4B1A7B87D0006940E9 /* UserActiveChangTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C68E491A7B87D0006940E9 /* UserActiveChangTableViewCell.xib */; };
 		A8C6CA411A53DFE4005F6E6F /* MemberListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C6CA3F1A53DFE4005F6E6F /* MemberListViewController.m */; };
 		A8C6CA421A53DFE4005F6E6F /* MemberListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C6CA401A53DFE4005F6E6F /* MemberListViewController.xib */; };
 		A8E5C38E1A50FB1000226FD9 /* FriendInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E5C38D1A50FB1000226FD9 /* FriendInfoViewController.m */; };
@@ -660,6 +663,8 @@
 		A89F91D719C5D18D00CB7FAE /* powered-by-google-on-white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "powered-by-google-on-white@2x.png"; sourceTree = "<group>"; };
 		A89F91D919C5D73A00CB7FAE /* AutocompletionTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutocompletionTableView.h; sourceTree = "<group>"; };
 		A89F91DA19C5D73A00CB7FAE /* AutocompletionTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutocompletionTableView.m; sourceTree = "<group>"; };
+		A8A3B9511A7F27C200322354 /* ActiveModifyMsgModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveModifyMsgModel.h; sourceTree = "<group>"; };
+		A8A3B9521A7F27C200322354 /* ActiveModifyMsgModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveModifyMsgModel.m; sourceTree = "<group>"; };
 		A8A8C26819C1915900362EE5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A8A8C26A19C1916600362EE5 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		A8A8C26C19C1917500362EE5 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -892,6 +897,9 @@
 		A8C68E3D1A7B60CA006940E9 /* UserAgreeAndReTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserAgreeAndReTableViewCell.h; sourceTree = "<group>"; };
 		A8C68E3E1A7B60CA006940E9 /* UserAgreeAndReTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserAgreeAndReTableViewCell.m; sourceTree = "<group>"; };
 		A8C68E3F1A7B60CA006940E9 /* UserAgreeAndReTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserAgreeAndReTableViewCell.xib; sourceTree = "<group>"; };
+		A8C68E471A7B87D0006940E9 /* UserActiveChangTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserActiveChangTableViewCell.h; sourceTree = "<group>"; };
+		A8C68E481A7B87D0006940E9 /* UserActiveChangTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserActiveChangTableViewCell.m; sourceTree = "<group>"; };
+		A8C68E491A7B87D0006940E9 /* UserActiveChangTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserActiveChangTableViewCell.xib; sourceTree = "<group>"; };
 		A8C6CA3E1A53DFE4005F6E6F /* MemberListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemberListViewController.h; sourceTree = "<group>"; };
 		A8C6CA3F1A53DFE4005F6E6F /* MemberListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemberListViewController.m; sourceTree = "<group>"; };
 		A8C6CA401A53DFE4005F6E6F /* MemberListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MemberListViewController.xib; sourceTree = "<group>"; };
@@ -1993,6 +2001,8 @@
 				A8B9AD261A6E4CC500205A24 /* NoticesMsgModel.m */,
 				A8C683B21A74EDB500384FE1 /* NotiveMsgPageBaseMode.h */,
 				A8C683B31A74EDB600384FE1 /* NotiveMsgPageBaseMode.m */,
+				A8A3B9511A7F27C200322354 /* ActiveModifyMsgModel.h */,
+				A8A3B9521A7F27C200322354 /* ActiveModifyMsgModel.m */,
 			);
 			name = model;
 			sourceTree = "<group>";
@@ -2032,6 +2042,9 @@
 				A8C68E3D1A7B60CA006940E9 /* UserAgreeAndReTableViewCell.h */,
 				A8C68E3E1A7B60CA006940E9 /* UserAgreeAndReTableViewCell.m */,
 				A8C68E3F1A7B60CA006940E9 /* UserAgreeAndReTableViewCell.xib */,
+				A8C68E471A7B87D0006940E9 /* UserActiveChangTableViewCell.h */,
+				A8C68E481A7B87D0006940E9 /* UserActiveChangTableViewCell.m */,
+				A8C68E491A7B87D0006940E9 /* UserActiveChangTableViewCell.xib */,
 			);
 			name = view;
 			sourceTree = "<group>";
@@ -3206,6 +3219,7 @@
 				A894D8B619B5BB150088E522 /* 通知.png in Resources */,
 				A894D8AB19B5BB150088E522 /* Alert_Minute.png in Resources */,
 				A894D85819B5BACC0088E522 /* Icon_Downward.png in Resources */,
+				A8C68E4B1A7B87D0006940E9 /* UserActiveChangTableViewCell.xib in Resources */,
 				A8A8C27F19C1925F00362EE5 /* GoogleMaps.bundle in Resources */,
 				A8974F4F19D8524C006AD5C0 /* LoginRegisterViewController.xib in Resources */,
 				A8B8D0471A330A390040C00D /* ActiveTableViewCell.xib in Resources */,
@@ -3446,6 +3460,7 @@
 				A8F9771B1A78893800AD0529 /* XMPPRoster.m in Sources */,
 				A89018CE19E911AE00CAE3E8 /* VisibleCalendarsViewController.m in Sources */,
 				A8B5297419F5EE1B009286AA /* AnyEvent.m in Sources */,
+				A8A3B9531A7F27C200322354 /* ActiveModifyMsgModel.m in Sources */,
 				A8B7E73019FF2F1B0097ABE3 /* CircleDrawView.m in Sources */,
 				A894D70419B57F690088E522 /* BackGroundViewController.m in Sources */,
 				A8B529B619F635B9009286AA /* MagicalImportFunctions.m in Sources */,
@@ -3568,6 +3583,7 @@
 				A8F976FE1A78893800AD0529 /* XMPPXOAuth2Google.m in Sources */,
 				A8F9772C1A78893800AD0529 /* XMPPRoomMessageMemoryStorageObject.m in Sources */,
 				A8F976F71A78893800AD0529 /* XMPPAnonymousAuthentication.m in Sources */,
+				A8C68E4A1A7B87D0006940E9 /* UserActiveChangTableViewCell.m in Sources */,
 				A8F9770D1A78893800AD0529 /* XMPPFileTransfer.m in Sources */,
 				A886548A19D3E5C800EEC0A8 /* MAEvent.m in Sources */,
 				A8BD34371A133DF1005A38FE /* RepearIntervalViewController.m in Sources */,

@@ -164,7 +164,7 @@ UIScrollViewDelegate,ASIHTTPRequestDelegate,ActivedetailsViewControllerDelegate>
     if (tableView== self.popTableView) {
        return   44.f;
     }else
-      return 215.f;
+      return 150.f;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
     return 2.f;

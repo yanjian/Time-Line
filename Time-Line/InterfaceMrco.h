@@ -335,5 +335,8 @@ typedef NS_ENUM(NSInteger, ActiveStatus){
 #define anyTime_EventNotification [NSString stringWithFormat:@"%@/servlet/EventNotification",BASEURL_IP]
 #define anyTime_EventNotification_tag 60
 
+//得到图片的真实路径  GetImgRealPath =====> type: 1,活动 2,用户  id=(eid或uid)
+#define anyTime_GetImgRealPath [NSString stringWithFormat:@"%@/servlet/GetImgRealPath",BASEURL_IP]
+#define anyTime_GetImgRealPath_tag 61
 
 

@@ -36,12 +36,10 @@
 }
 
 -(void)handleLongPressWithFriendGroup:(UIGestureRecognizer *) gestureRecognizer {
-    if ( ! self.isNotice ) {
-        if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+       if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
             UIActionSheet * asActiveSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:activeEvent.isHide? @"Show":@"Hide",activeEvent.isNotification? @"Refused notification":@"Receive notification",@"Quit", nil];
             [asActiveSheet showInView:self];
         }
-    }
 }
 
 // Called when a button is clicked. The view will be automatically dismissed after this call returns
