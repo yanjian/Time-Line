@@ -39,9 +39,11 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-//        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-//        self.navigationController.navigationBarHidden = YES;
+    if (self)
+    {
+        self.title = @"Schedule";
+        [self.tabBarItem setImage:[UIImage imageNamed:@"Schedule_NoFill"]];
+        self.tabBarItem.title = @"Schedule";
     }
     return self;
 }
@@ -400,14 +402,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    NSInteger loginStatus = [UserInfo currUserInfo].loginStatus;
-    if (1!=loginStatus) {//1表示用户登陆
-        [g_AppDelegate initLoginView:self];
-    }else{
-        if (g_NetStatus!=NotReachable){//在有网络的情况下自动登录
-           [g_AppDelegate autoUserWithLogin];
-        }
-    }
 }
 
 #pragma mark -   将anyEvent 转换为json
@@ -858,8 +852,6 @@
 - (void)initNavigationItem
 {
     ison=YES;
-    self.navigationController.navigationBar.barTintColor = blueColor;
-    
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"bell_default"] forState:UIControlStateNormal];
     [leftBtn setFrame:CGRectMake(0, 2, 30, 30)];

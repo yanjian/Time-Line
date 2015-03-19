@@ -126,7 +126,6 @@
 		A8975B7019EA8D17006DFDC3 /* DefaultCalendarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8975B6F19EA8D17006DFDC3 /* DefaultCalendarViewController.m */; };
 		A8975B7319EA8D33006DFDC3 /* AlertsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8975B7219EA8D33006DFDC3 /* AlertsViewController.m */; };
 		A8975B7619EA8D47006DFDC3 /* DirectionsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8975B7519EA8D47006DFDC3 /* DirectionsViewController.m */; };
-		A8975B7919EA8D63006DFDC3 /* WeekStartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8975B7819EA8D63006DFDC3 /* WeekStartViewController.m */; };
 		A898C8E319B4627500559F53 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A898C8E219B4627500559F53 /* AssetsLibrary.framework */; };
 		A898C8E619B4628700559F53 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A898C8E419B4628700559F53 /* EventKit.framework */; };
 		A898C8E719B4628700559F53 /* EventKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A898C8E519B4628700559F53 /* EventKitUI.framework */; };
@@ -244,7 +243,6 @@
 		A8BBD78F1A35E9420036CB9E /* HeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BBD78E1A35E9420036CB9E /* HeadView.m */; };
 		A8BBD7921A35E9DC0036CB9E /* FriendGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BBD7911A35E9DC0036CB9E /* FriendGroup.m */; };
 		A8BBD7951A35EACA0036CB9E /* Friend.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BBD7941A35EACA0036CB9E /* Friend.m */; };
-		A8BBD79A1A35ED580036CB9E /* friends.plist in Resources */ = {isa = PBXBuildFile; fileRef = A8BBD7991A35ED580036CB9E /* friends.plist */; };
 		A8BBD79C1A35EED30036CB9E /* buddy_header_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = A8BBD79B1A35EED30036CB9E /* buddy_header_arrow.png */; };
 		A8BCB4681A6C099700AC03DD /* SJAvatarBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCB4671A6C099700AC03DD /* SJAvatarBrowser.m */; };
 		A8BCF23E1A5D12950062F386 /* ActiveFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8BCF23D1A5D12950062F386 /* ActiveFooterView.m */; };
@@ -278,6 +276,9 @@
 		A8C31A051A6CA86B0076CC61 /* FriendsInfoTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C31A031A6CA86B0076CC61 /* FriendsInfoTableViewController.xib */; };
 		A8C31A091A6CE3F10076CC61 /* AliasModifyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C31A071A6CE3F10076CC61 /* AliasModifyViewController.m */; };
 		A8C31A0A1A6CE3F10076CC61 /* AliasModifyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C31A081A6CE3F10076CC61 /* AliasModifyViewController.xib */; };
+		A8C4384F1AAF16E9000A0735 /* WeekStartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C4384E1AAF16E9000A0735 /* WeekStartViewController.m */; };
+		A8C438531AAF3DFB000A0735 /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C438521AAF3DFB000A0735 /* ChatViewController.m */; };
+		A8C438571AAF3E6F000A0735 /* ChatContentModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C438561AAF3E6F000A0735 /* ChatContentModel.m */; };
 		A8C60F061A15B652000FAC7F /* RecurrenceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C60F051A15B652000FAC7F /* RecurrenceModel.m */; };
 		A8C668081A3E88010017605A /* AddActiveViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C668061A3E88010017605A /* AddActiveViewController.m */; };
 		A8C668091A3E88010017605A /* AddActiveViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C668071A3E88010017605A /* AddActiveViewController.xib */; };
@@ -289,6 +290,22 @@
 		A8C68E4B1A7B87D0006940E9 /* UserActiveChangTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C68E491A7B87D0006940E9 /* UserActiveChangTableViewCell.xib */; };
 		A8C6CA411A53DFE4005F6E6F /* MemberListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C6CA3F1A53DFE4005F6E6F /* MemberListViewController.m */; };
 		A8C6CA421A53DFE4005F6E6F /* MemberListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C6CA401A53DFE4005F6E6F /* MemberListViewController.xib */; };
+		A8CAAC9B1AB139E90095E353 /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CAAC9A1AB139E90095E353 /* NavigationController.m */; };
+		A8CAACA11AB190CE0095E353 /* EventInfoShowCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CAAC9F1AB190CE0095E353 /* EventInfoShowCell.m */; };
+		A8CAACA21AB190CE0095E353 /* EventInfoShowCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CAACA01AB190CE0095E353 /* EventInfoShowCell.xib */; };
+		A8CB24651AB800A000133316 /* Arrow_Left_Blue.png in Resources */ = {isa = PBXBuildFile; fileRef = A8CB24641AB800A000133316 /* Arrow_Left_Blue.png */; };
+		A8CB24691AB809D800133316 /* FriendAddTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CB24671AB809D800133316 /* FriendAddTableViewController.m */; };
+		A8CB246A1AB809D800133316 /* FriendAddTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CB24681AB809D800133316 /* FriendAddTableViewController.xib */; };
+		A8CB2F2F1AB6B81500F59FC4 /* FriendsProfilesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CB2F2D1AB6B81400F59FC4 /* FriendsProfilesTableViewController.m */; };
+		A8CB2F301AB6B81500F59FC4 /* FriendsProfilesTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CB2F2E1AB6B81500F59FC4 /* FriendsProfilesTableViewController.xib */; };
+		A8CB2F341AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CB2F321AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.m */; };
+		A8CB2F351AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CB2F331AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.xib */; };
+		A8CBFFC01AB86E8800CF18FC /* Add_Invitees.png in Resources */ = {isa = PBXBuildFile; fileRef = A8CBFFBF1AB86E8800CF18FC /* Add_Invitees.png */; };
+		A8CC41971AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CC41951AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.m */; };
+		A8CC41981AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CC41961AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.xib */; };
+		A8CCE68D1AB95DA500F3E122 /* Blue_tick.png in Resources */ = {isa = PBXBuildFile; fileRef = A8CCE68C1AB95DA500F3E122 /* Blue_tick.png */; };
+		A8CD861B1AAFCF2A00DF3E3B /* ChatModelData.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CD861A1AAFCF2A00DF3E3B /* ChatModelData.m */; };
+		A8CD861E1AB014D500DF3E3B /* MemberDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CD861D1AB014D500DF3E3B /* MemberDataModel.m */; };
 		A8E5C38E1A50FB1000226FD9 /* FriendInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E5C38D1A50FB1000226FD9 /* FriendInfoViewController.m */; };
 		A8E5C3921A50FCF800226FD9 /* FriendInformationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8E5C3911A50FCF800226FD9 /* FriendInformationView.xib */; };
 		A8E5C3951A50FD1000226FD9 /* FriendInformationView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E5C3941A50FD1000226FD9 /* FriendInformationView.m */; };
@@ -632,7 +649,6 @@
 		A8975B7419EA8D47006DFDC3 /* DirectionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectionsViewController.h; sourceTree = "<group>"; };
 		A8975B7519EA8D47006DFDC3 /* DirectionsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DirectionsViewController.m; sourceTree = "<group>"; };
 		A8975B7719EA8D63006DFDC3 /* WeekStartViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeekStartViewController.h; sourceTree = "<group>"; };
-		A8975B7819EA8D63006DFDC3 /* WeekStartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeekStartViewController.m; sourceTree = "<group>"; };
 		A898C8E219B4627500559F53 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		A898C8E419B4628700559F53 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		A898C8E519B4628700559F53 /* EventKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKitUI.framework; path = System/Library/Frameworks/EventKitUI.framework; sourceTree = SDKROOT; };
@@ -828,7 +844,6 @@
 		A8BBD7911A35E9DC0036CB9E /* FriendGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendGroup.m; sourceTree = "<group>"; };
 		A8BBD7931A35EACA0036CB9E /* Friend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Friend.h; sourceTree = "<group>"; };
 		A8BBD7941A35EACA0036CB9E /* Friend.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Friend.m; sourceTree = "<group>"; };
-		A8BBD7991A35ED580036CB9E /* friends.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = friends.plist; sourceTree = "<group>"; };
 		A8BBD79B1A35EED30036CB9E /* buddy_header_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = buddy_header_arrow.png; sourceTree = "<group>"; };
 		A8BCB4661A6C099700AC03DD /* SJAvatarBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJAvatarBrowser.h; sourceTree = "<group>"; };
 		A8BCB4671A6C099700AC03DD /* SJAvatarBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJAvatarBrowser.m; sourceTree = "<group>"; };
@@ -886,6 +901,11 @@
 		A8C31A061A6CE3F10076CC61 /* AliasModifyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AliasModifyViewController.h; sourceTree = "<group>"; };
 		A8C31A071A6CE3F10076CC61 /* AliasModifyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AliasModifyViewController.m; sourceTree = "<group>"; };
 		A8C31A081A6CE3F10076CC61 /* AliasModifyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AliasModifyViewController.xib; sourceTree = "<group>"; };
+		A8C4384E1AAF16E9000A0735 /* WeekStartViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeekStartViewController.m; sourceTree = "<group>"; };
+		A8C438511AAF3DFB000A0735 /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
+		A8C438521AAF3DFB000A0735 /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
+		A8C438551AAF3E6F000A0735 /* ChatContentModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatContentModel.h; sourceTree = "<group>"; };
+		A8C438561AAF3E6F000A0735 /* ChatContentModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatContentModel.m; sourceTree = "<group>"; };
 		A8C60F041A15B652000FAC7F /* RecurrenceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecurrenceModel.h; sourceTree = "<group>"; };
 		A8C60F051A15B652000FAC7F /* RecurrenceModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecurrenceModel.m; sourceTree = "<group>"; };
 		A8C668051A3E88010017605A /* AddActiveViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddActiveViewController.h; sourceTree = "<group>"; };
@@ -903,6 +923,30 @@
 		A8C6CA3E1A53DFE4005F6E6F /* MemberListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemberListViewController.h; sourceTree = "<group>"; };
 		A8C6CA3F1A53DFE4005F6E6F /* MemberListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemberListViewController.m; sourceTree = "<group>"; };
 		A8C6CA401A53DFE4005F6E6F /* MemberListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MemberListViewController.xib; sourceTree = "<group>"; };
+		A8CAAC991AB139E90095E353 /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
+		A8CAAC9A1AB139E90095E353 /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
+		A8CAAC9E1AB190CE0095E353 /* EventInfoShowCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventInfoShowCell.h; sourceTree = "<group>"; };
+		A8CAAC9F1AB190CE0095E353 /* EventInfoShowCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventInfoShowCell.m; sourceTree = "<group>"; };
+		A8CAACA01AB190CE0095E353 /* EventInfoShowCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EventInfoShowCell.xib; sourceTree = "<group>"; };
+		A8CB24641AB800A000133316 /* Arrow_Left_Blue.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Arrow_Left_Blue.png; sourceTree = "<group>"; };
+		A8CB24661AB809D800133316 /* FriendAddTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendAddTableViewController.h; sourceTree = "<group>"; };
+		A8CB24671AB809D800133316 /* FriendAddTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendAddTableViewController.m; sourceTree = "<group>"; };
+		A8CB24681AB809D800133316 /* FriendAddTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FriendAddTableViewController.xib; sourceTree = "<group>"; };
+		A8CB2F2C1AB6B81400F59FC4 /* FriendsProfilesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsProfilesTableViewController.h; sourceTree = "<group>"; };
+		A8CB2F2D1AB6B81400F59FC4 /* FriendsProfilesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendsProfilesTableViewController.m; sourceTree = "<group>"; };
+		A8CB2F2E1AB6B81500F59FC4 /* FriendsProfilesTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FriendsProfilesTableViewController.xib; sourceTree = "<group>"; };
+		A8CB2F311AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AcceptFriendTableViewCell.h; sourceTree = "<group>"; };
+		A8CB2F321AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AcceptFriendTableViewCell.m; sourceTree = "<group>"; };
+		A8CB2F331AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AcceptFriendTableViewCell.xib; sourceTree = "<group>"; };
+		A8CBFFBF1AB86E8800CF18FC /* Add_Invitees.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Add_Invitees.png; sourceTree = "<group>"; };
+		A8CC41941AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveInvitationsNotifictionTableViewCell.h; sourceTree = "<group>"; };
+		A8CC41951AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveInvitationsNotifictionTableViewCell.m; sourceTree = "<group>"; };
+		A8CC41961AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActiveInvitationsNotifictionTableViewCell.xib; sourceTree = "<group>"; };
+		A8CCE68C1AB95DA500F3E122 /* Blue_tick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Blue_tick.png; sourceTree = "<group>"; };
+		A8CD86191AAFCF2A00DF3E3B /* ChatModelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatModelData.h; sourceTree = "<group>"; };
+		A8CD861A1AAFCF2A00DF3E3B /* ChatModelData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatModelData.m; sourceTree = "<group>"; };
+		A8CD861C1AB014D500DF3E3B /* MemberDataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemberDataModel.h; sourceTree = "<group>"; };
+		A8CD861D1AB014D500DF3E3B /* MemberDataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemberDataModel.m; sourceTree = "<group>"; };
 		A8E5C38C1A50FB1000226FD9 /* FriendInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendInfoViewController.h; sourceTree = "<group>"; };
 		A8E5C38D1A50FB1000226FD9 /* FriendInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendInfoViewController.m; sourceTree = "<group>"; };
 		A8E5C3911A50FCF800226FD9 /* FriendInformationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FriendInformationView.xib; sourceTree = "<group>"; };
@@ -1313,6 +1357,9 @@
 				A8403A6B1A372EA000F8444D /* FriendsSearchViewController */,
 				A8E5C38C1A50FB1000226FD9 /* FriendInfoViewController.h */,
 				A8E5C38D1A50FB1000226FD9 /* FriendInfoViewController.m */,
+				A8CB2F2C1AB6B81400F59FC4 /* FriendsProfilesTableViewController.h */,
+				A8CB2F2D1AB6B81400F59FC4 /* FriendsProfilesTableViewController.m */,
+				A8CB2F2E1AB6B81500F59FC4 /* FriendsProfilesTableViewController.xib */,
 			);
 			name = FriendViewController;
 			sourceTree = "<group>";
@@ -1339,6 +1386,9 @@
 				A8403A6C1A3732CD00F8444D /* FriendSearchViewController.h */,
 				A8403A6D1A3732CD00F8444D /* FriendSearchViewController.m */,
 				A8403A6E1A3732CD00F8444D /* FriendSearchViewController.xib */,
+				A8CB24661AB809D800133316 /* FriendAddTableViewController.h */,
+				A8CB24671AB809D800133316 /* FriendAddTableViewController.m */,
+				A8CB24681AB809D800133316 /* FriendAddTableViewController.xib */,
 			);
 			name = FriendsSearchViewController;
 			sourceTree = "<group>";
@@ -1435,11 +1485,12 @@
 		A877C95019B450C50075D9E8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				A8BBD7991A35ED580036CB9E /* friends.plist */,
-				A877C96119B450C50075D9E8 /* Images.xcassets */,
-				A877C95B19B450C50075D9E8 /* Main.storyboard */,
+				A8CAAC991AB139E90095E353 /* NavigationController.h */,
+				A8CAAC9A1AB139E90095E353 /* NavigationController.m */,
 				A877C95819B450C50075D9E8 /* AppDelegate.h */,
 				A877C95919B450C50075D9E8 /* AppDelegate.m */,
+				A877C96119B450C50075D9E8 /* Images.xcassets */,
+				A877C95B19B450C50075D9E8 /* Main.storyboard */,
 				A877C95119B450C50075D9E8 /* Time-Line-Info.plist */,
 				A877C95219B450C50075D9E8 /* InfoPlist.strings */,
 				A877C95519B450C50075D9E8 /* main.m */,
@@ -1715,7 +1766,7 @@
 				A8975B7419EA8D47006DFDC3 /* DirectionsViewController.h */,
 				A8975B7519EA8D47006DFDC3 /* DirectionsViewController.m */,
 				A8975B7719EA8D63006DFDC3 /* WeekStartViewController.h */,
-				A8975B7819EA8D63006DFDC3 /* WeekStartViewController.m */,
+				A8C4384E1AAF16E9000A0735 /* WeekStartViewController.m */,
 				A89AAFC819EEA0270023742E /* EventAlertsViewController.h */,
 				A89AAFC919EEA0270023742E /* EventAlertsViewController.m */,
 				A89AAFCB19EEB67B0023742E /* AllDayEventsViewController.h */,
@@ -1910,6 +1961,9 @@
 		A8B7F36E1A2EC899000F7EC5 /* twoIcon */ = {
 			isa = PBXGroup;
 			children = (
+				A8CCE68C1AB95DA500F3E122 /* Blue_tick.png */,
+				A8CBFFBF1AB86E8800CF18FC /* Add_Invitees.png */,
+				A8CB24641AB800A000133316 /* Arrow_Left_Blue.png */,
 				A8C21DBA1A52557600072757 /* open_default.png */,
 				A8C21DBB1A52557600072757 /* open_press.png */,
 				A8B6F0DE1A36DC540080E0C4 /* add_friend_default.png */,
@@ -2015,6 +2069,9 @@
 				A8B8D04F1A33166D0040C00D /* FriendInfoTableViewCell.xib */,
 				A8BBD78D1A35E9420036CB9E /* HeadView.h */,
 				A8BBD78E1A35E9420036CB9E /* HeadView.m */,
+				A8CB2F311AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.h */,
+				A8CB2F321AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.m */,
+				A8CB2F331AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.xib */,
 			);
 			name = view;
 			sourceTree = "<group>";
@@ -2045,6 +2102,12 @@
 				A8C68E471A7B87D0006940E9 /* UserActiveChangTableViewCell.h */,
 				A8C68E481A7B87D0006940E9 /* UserActiveChangTableViewCell.m */,
 				A8C68E491A7B87D0006940E9 /* UserActiveChangTableViewCell.xib */,
+				A8CAAC9E1AB190CE0095E353 /* EventInfoShowCell.h */,
+				A8CAAC9F1AB190CE0095E353 /* EventInfoShowCell.m */,
+				A8CAACA01AB190CE0095E353 /* EventInfoShowCell.xib */,
+				A8CC41941AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.h */,
+				A8CC41951AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.m */,
+				A8CC41961AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.xib */,
 			);
 			name = view;
 			sourceTree = "<group>";
@@ -2192,9 +2255,33 @@
 			name = DXPopover;
 			sourceTree = "<group>";
 		};
+		A8C438501AAF3DBB000A0735 /* ChatViewController */ = {
+			isa = PBXGroup;
+			children = (
+				A8C438541AAF3E03000A0735 /* Model */,
+				A8C438511AAF3DFB000A0735 /* ChatViewController.h */,
+				A8C438521AAF3DFB000A0735 /* ChatViewController.m */,
+			);
+			name = ChatViewController;
+			sourceTree = "<group>";
+		};
+		A8C438541AAF3E03000A0735 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				A8C438551AAF3E6F000A0735 /* ChatContentModel.h */,
+				A8C438561AAF3E6F000A0735 /* ChatContentModel.m */,
+				A8CD86191AAFCF2A00DF3E3B /* ChatModelData.h */,
+				A8CD861A1AAFCF2A00DF3E3B /* ChatModelData.m */,
+				A8CD861C1AB014D500DF3E3B /* MemberDataModel.h */,
+				A8CD861D1AB014D500DF3E3B /* MemberDataModel.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
 		A8C668041A3E87290017605A /* EventAndActiveViewController */ = {
 			isa = PBXGroup;
 			children = (
+				A8C438501AAF3DBB000A0735 /* ChatViewController */,
 				A8BA60541A42C05600992603 /* selectFriendView */,
 				A8BA60481A42808800992603 /* EventAndActiveView */,
 				A8B5461519F894AA00C73A24 /* CalendarAccountViewController.h */,
@@ -3189,6 +3276,7 @@
 				A894D8B419B5BB150088E522 /* add_action.png in Resources */,
 				A894D6D119B56B490088E522 /* HomeViewController.xib in Resources */,
 				A8B7F3721A2EC8C5000F7EC5 /* setting_default.png in Resources */,
+				A8CB2F351AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.xib in Resources */,
 				A894D8AD19B5BB150088E522 /* Event_time_red.png in Resources */,
 				A8E5C39D1A51510800226FD9 /* ActivedetailsViewController.xib in Resources */,
 				A894D71719B5932D0088E522 /* BackGroundViewController.xib in Resources */,
@@ -3222,20 +3310,25 @@
 				A8C68E4B1A7B87D0006940E9 /* UserActiveChangTableViewCell.xib in Resources */,
 				A8A8C27F19C1925F00362EE5 /* GoogleMaps.bundle in Resources */,
 				A8974F4F19D8524C006AD5C0 /* LoginRegisterViewController.xib in Resources */,
+				A8CBFFC01AB86E8800CF18FC /* Add_Invitees.png in Resources */,
 				A8B8D0471A330A390040C00D /* ActiveTableViewCell.xib in Resources */,
+				A8CAACA21AB190CE0095E353 /* EventInfoShowCell.xib in Resources */,
 				A894D72319B59ADB0088E522 /* LocationViewController.xib in Resources */,
 				A894D8B319B5BB150088E522 /* Icon_HaveEvent.png in Resources */,
 				A891A75719D5949C004843D2 /* GoogleLoginViewController.xib in Resources */,
 				A8C68E411A7B60CA006940E9 /* UserAgreeAndReTableViewCell.xib in Resources */,
 				A8C668091A3E88010017605A /* AddActiveViewController.xib in Resources */,
 				A8E5C3921A50FCF800226FD9 /* FriendInformationView.xib in Resources */,
+				A8CB2F301AB6B81500F59FC4 /* FriendsProfilesTableViewController.xib in Resources */,
 				A8C21DBC1A52557600072757 /* open_default.png in Resources */,
 				A8B6F0E01A36DC540080E0C4 /* add_friend_default.png in Resources */,
 				A8B8D0511A33166D0040C00D /* FriendInfoTableViewCell.xib in Resources */,
 				A8B7F37C1A2ED166000F7EC5 /* bell_press.png in Resources */,
 				A894D85B19B5BACC0088E522 /* Icon_Edit.png in Resources */,
 				A8BDB8481A75E64800967677 /* FriendGroupShowViewController.xib in Resources */,
+				A8CB246A1AB809D800133316 /* FriendAddTableViewController.xib in Resources */,
 				A8C31A051A6CA86B0076CC61 /* FriendsInfoTableViewController.xib in Resources */,
+				A8CCE68D1AB95DA500F3E122 /* Blue_tick.png in Resources */,
 				A8C31A0A1A6CE3F10076CC61 /* AliasModifyViewController.xib in Resources */,
 				A894D8AF19B5BB150088E522 /* Time_End.png in Resources */,
 				A8B9CBDA1A37FB3C00DA0C54 /* checkMark.png in Resources */,
@@ -3248,11 +3341,11 @@
 				A894D6F819B579560088E522 /* EventCell.xib in Resources */,
 				A894D8B519B5BB150088E522 /* 編輯活動.png in Resources */,
 				A8BB2E7E1A315E220046E1E9 /* ManageViewController.xib in Resources */,
+				A8CC41981AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.xib in Resources */,
 				A89514D319D50F4600538486 /* Default.png in Resources */,
 				A894D85C19B5BACC0088E522 /* Icon_BackArrow.png in Resources */,
 				A8C21DBD1A52557600072757 /* open_press.png in Resources */,
 				A894D86319B5BACC0088E522 /* Icon_Add.png in Resources */,
-				A8BBD79A1A35ED580036CB9E /* friends.plist in Resources */,
 				A8BDABB81A47D4B100545EC4 /* NewVoteActionViewController.xib in Resources */,
 				A894D84E19B5BACC0088E522 /* PEPhotoCropEditor.bundle in Resources */,
 				A8B7F37B1A2ED166000F7EC5 /* bell_default.png in Resources */,
@@ -3270,6 +3363,7 @@
 				A8B7F3871A2EF752000F7EC5 /* UserInfoTableViewController.xib in Resources */,
 				A8B7F3741A2EC8C5000F7EC5 /* smile_1.png in Resources */,
 				A894D71D19B594730088E522 /* ViewController.xib in Resources */,
+				A8CB24651AB800A000133316 /* Arrow_Left_Blue.png in Resources */,
 				A894D86219B5BACC0088E522 /* date_background.png in Resources */,
 				A894D72919B59C730088E522 /* AlertViewController.xib in Resources */,
 				A8B9CBDD1A37FB3C00DA0C54 /* closeButton@2x.png in Resources */,
@@ -3333,6 +3427,7 @@
 				A8B529B919F635B9009286AA /* NSNumber+MagicalDataImport.m in Sources */,
 				A8B529BC19F635B9009286AA /* NSString+MagicalDataImport.m in Sources */,
 				A8F977211A78893800AD0529 /* XMPPLastActivity.m in Sources */,
+				A8CD861E1AB014D500DF3E3B /* MemberDataModel.m in Sources */,
 				A8F977061A78893800AD0529 /* XMPPMessage.m in Sources */,
 				A8B3638619FB4B85001CE37F /* MJSecondDetailViewController.m in Sources */,
 				A8BA60581A42C1A200992603 /* SetFriendViewController.m in Sources */,
@@ -3386,14 +3481,15 @@
 				A8F9770B1A78893800AD0529 /* XMPPBandwidthMonitor.m in Sources */,
 				A8B529B819F635B9009286AA /* NSEntityDescription+MagicalDataImport.m in Sources */,
 				A8F9771F1A78893800AD0529 /* XMPPJabberRPCModule.m in Sources */,
+				A8CAAC9B1AB139E90095E353 /* NavigationController.m in Sources */,
 				A8F977651A78893800AD0529 /* XMPPAttentionModule.m in Sources */,
 				A8F9774A1A78893800AD0529 /* XMPPTransports.m in Sources */,
 				A8B9CBDF1A37FB3C00DA0C54 /* LPPopupListViewCell.m in Sources */,
 				A8975B7319EA8D33006DFDC3 /* AlertsViewController.m in Sources */,
+				A8C4384F1AAF16E9000A0735 /* WeekStartViewController.m in Sources */,
 				A8B529CF19F635B9009286AA /* MagicalRecord.m in Sources */,
 				A886548919D3E5C800EEC0A8 /* TapDetectingView.m in Sources */,
 				A8F977471A78893800AD0529 /* XMPPDateTimeProfiles.m in Sources */,
-				A8975B7919EA8D63006DFDC3 /* WeekStartViewController.m in Sources */,
 				A8B529C319F635B9009286AA /* NSManagedObjectContext+MagicalRecord.m in Sources */,
 				A8F977091A78893800AD0529 /* XMPPPresence.m in Sources */,
 				A8BD9B0E1A40266700C5C3FE /* voteDateTableViewCell.m in Sources */,
@@ -3406,6 +3502,7 @@
 				A8873A861A75177B0014CD26 /* MJRefreshHeaderView.m in Sources */,
 				A894D70A19B57F890088E522 /* MapViewController.m in Sources */,
 				A8BBB1941A660EDA001522B2 /* MBProgressHUD+MJ.m in Sources */,
+				A8C438531AAF3DFB000A0735 /* ChatViewController.m in Sources */,
 				A8BBB1971A660EE5001522B2 /* MBProgressHUD.m in Sources */,
 				A8BDB8471A75E64800967677 /* FriendGroupShowViewController.m in Sources */,
 				A8F977731A78893800AD0529 /* XMPPTimer.m in Sources */,
@@ -3462,6 +3559,7 @@
 				A8B5297419F5EE1B009286AA /* AnyEvent.m in Sources */,
 				A8A3B9531A7F27C200322354 /* ActiveModifyMsgModel.m in Sources */,
 				A8B7E73019FF2F1B0097ABE3 /* CircleDrawView.m in Sources */,
+				A8CB2F341AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.m in Sources */,
 				A894D70419B57F690088E522 /* BackGroundViewController.m in Sources */,
 				A8B529B619F635B9009286AA /* MagicalImportFunctions.m in Sources */,
 				A894D6E319B578270088E522 /* CalendarCell.m in Sources */,
@@ -3500,6 +3598,7 @@
 				A89B676B19D980DA00415108 /* BaseMode.m in Sources */,
 				A894D6F419B5786A0088E522 /* PublicMethodsViewController.m in Sources */,
 				A8F976FC1A78893800AD0529 /* XMPPSCRAMSHA1Authentication.m in Sources */,
+				A8CB24691AB809D800133316 /* FriendAddTableViewController.m in Sources */,
 				A8C21DC31A529CFF00072757 /* ActiveVoteDateTableViewCell.m in Sources */,
 				A8F977771A78893800AD0529 /* DDFileLogger.m in Sources */,
 				A8B95C1E1A0534F800C6B037 /* YQNavigationBar.m in Sources */,
@@ -3548,6 +3647,7 @@
 				A898C8F919B4635900559F53 /* CLDay.m in Sources */,
 				A8F977511A78893800AD0529 /* XMPPMessageArchiving.xcdatamodeld in Sources */,
 				A8A8C28919C1A9B000362EE5 /* t_Network.m in Sources */,
+				A8CAACA11AB190CE0095E353 /* EventInfoShowCell.m in Sources */,
 				A894D6FB19B57F470088E522 /* SHRootController.m in Sources */,
 				A8BA605F1A42D6F100992603 /* MJPopupBackgroundView.m in Sources */,
 				A8F977431A78893800AD0529 /* XMPPIQ+XEP_0066.m in Sources */,
@@ -3581,6 +3681,7 @@
 				A898C8FA19B4635900559F53 /* CLEvent.m in Sources */,
 				A8F9776D1A78893800AD0529 /* DDList.m in Sources */,
 				A8F976FE1A78893800AD0529 /* XMPPXOAuth2Google.m in Sources */,
+				A8CB2F2F1AB6B81500F59FC4 /* FriendsProfilesTableViewController.m in Sources */,
 				A8F9772C1A78893800AD0529 /* XMPPRoomMessageMemoryStorageObject.m in Sources */,
 				A8F976F71A78893800AD0529 /* XMPPAnonymousAuthentication.m in Sources */,
 				A8C68E4A1A7B87D0006940E9 /* UserActiveChangTableViewCell.m in Sources */,
@@ -3600,6 +3701,7 @@
 				A898FA7D19D964D7008CD862 /* GoogleCalendarData.m in Sources */,
 				A8E5C3951A50FD1000226FD9 /* FriendInformationView.m in Sources */,
 				A8C31A041A6CA86B0076CC61 /* FriendsInfoTableViewController.m in Sources */,
+				A8C438571AAF3E6F000A0735 /* ChatContentModel.m in Sources */,
 				A8F9777E1A78893800AD0529 /* NSString+DDXML.m in Sources */,
 				A8F977611A78893800AD0529 /* XMPPAutoTime.m in Sources */,
 				A8F9776B1A78893800AD0529 /* XMPPMessage+XEP_0333.m in Sources */,
@@ -3608,6 +3710,7 @@
 				A8F977111A78893800AD0529 /* XMPPProcessOne.m in Sources */,
 				A8F977751A78893800AD0529 /* DDAbstractDatabaseLogger.m in Sources */,
 				A8873A841A75177B0014CD26 /* MJRefreshConst.m in Sources */,
+				A8CC41971AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.m in Sources */,
 				A8F976FA1A78893800AD0529 /* XMPPDigestMD5Authentication.m in Sources */,
 				A8F977311A78893800AD0529 /* XMPPvCard.xcdatamodeld in Sources */,
 				A8C60F061A15B652000FAC7F /* RecurrenceModel.m in Sources */,
@@ -3621,6 +3724,7 @@
 				A8B9AD271A6E4CC500205A24 /* NoticesMsgModel.m in Sources */,
 				A8B529CD19F635B9009286AA /* MagicalRecord+Setup.m in Sources */,
 				A886549319D3E61700EEC0A8 /* WeekViewController.m in Sources */,
+				A8CD861B1AAFCF2A00DF3E3B /* ChatModelData.m in Sources */,
 				A8F977781A78893800AD0529 /* DDLog.m in Sources */,
 				A8F977631A78893800AD0529 /* NSXMLElement+XEP_0203.m in Sources */,
 				A8F9770E1A78893800AD0529 /* XMPPIncomingFileTransfer.m in Sources */,

@@ -17,22 +17,22 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-
 	self.title = @"Alias Modify";
-	self.navigationItem.hidesBackButton = YES;
 
-	UIButton *leftButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-	leftButton.frame = CGRectMake(15, 30, 21, 25);
-	leftButton.backgroundColor = [UIColor clearColor];
-	[leftButton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-	leftButton.tag = 1;
-	[leftButton addTarget:self action:@selector(aliasTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
-	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftButton];
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
+    [leftBtn setTag:1];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn addTarget:self action:@selector(aliasTouchUpInside:) forControlEvents:UIControlEventTouchUpInside] ;
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
+
 
 	UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
 	[rightBtn setTag:2];
-	[rightBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Tick.png"] forState:UIControlStateNormal];
-	[rightBtn setFrame:CGRectMake(0, 2, 30, 25)];
+	[rightBtn setBackgroundImage:[UIImage imageNamed:@"Blue_tick"] forState:UIControlStateNormal];
+	[rightBtn setFrame:CGRectMake(0, 2, 16, 12)];
 	[rightBtn addTarget:self action:@selector(aliasTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn];
 	if (self.alias && ![self.alias isEqualToString:@""]) {

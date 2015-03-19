@@ -6,14 +6,21 @@
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
 //
 
+#define latestCount @"latestCount"
+#define latestEventMsg @"latestEventMsg"
+#define latestMsgTime @"latestMsgTime"
+#define latestUserName @"latestUserName"
+
 #import "ManageViewController.h"
 #import "MJRefresh.h"
 #import "ActiveEventMode.h"
-#import "ActiveTableViewCell.h"
+//#import "ActiveTableViewCell.h"
+#import "EventInfoShowCell.h"
+
 #import "UIImageView+WebCache.h"
 #import "CalendarDateUtil.h"
 #import "ActivedetailsViewController.h"
-#import "JCMSegmentPageController.h"
+//#import "JCMSegmentPageController.h"
 #import "DXPopover.h"
 
 typedef NS_ENUM (NSInteger, ShowActiveType) {
@@ -28,83 +35,137 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 
 @interface ManageViewController () <UITableViewDelegate, UITableViewDataSource,
-                                    UIScrollViewDelegate, ASIHTTPRequestDelegate, ActivedetailsViewControllerDelegate>
+                                    UIScrollViewDelegate, ASIHTTPRequestDelegate, ActivedetailsViewControllerDelegate,UISearchBarDelegate,UISearchDisplayDelegate>
 {
 	NSMutableArray *_activeArr;  //用于显示活动的数组
 	NSMutableArray *_tmpActiveArr;   //抓取到的数据都放在这个里面的（除隐藏的活动，直接放到_activeArr中的）
 	ShowActiveType _showActiveType;
 	NSMutableArray *_selectActiveBtnArr;
 	NSArray *_configs;
+    UISearchBar * searchBar ;
+    NSMutableDictionary *  latestMsgDic ;//存放最新的活动数据
 }
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UITableView *popTableView;
 @property (nonatomic, strong) DXPopover *popover;
+@property (nonatomic, strong) UISearchDisplayController *searchController;
 
 @end
 
 @implementation ManageViewController
 
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self)
+    {
+        self.title = @"Event" ;
+        [self.tabBarItem setImage:[UIImage imageNamed:@"Updates_NoFill"]];
+        self.tabBarItem.title = @"Updates";
+    }
+    return self;
+}
+
+
 - (void)viewDidLoad {
 	[super viewDidLoad];
+    
 	CGRect frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
 	self.view.frame = frame;
 
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:self action:@selector(searchNewActive)];
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Create" style:UIBarButtonItemStylePlain target:self action:@selector(createNewActive)];
+    
 
 	_activeArr = [NSMutableArray array]; //创建一个数组
 
 	_showActiveType = ShowActiveType_All; //默认查询所有的活动
 
 	_selectActiveBtnArr = [NSMutableArray array];
+    
+    latestMsgDic = [NSMutableDictionary dictionary];
+    
+    _configs = @[@"To be confirm", @"Confirm", @"Past", @"Hide", @"Refused notification"];
 
-	UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, 1, frame.size.width, 25)];
-	for (int i = 0; i < 3; i++) {
-		UIButton *allBtn = [[UIButton alloc] initWithFrame:CGRectMake(selectView.frame.size.width / 3 * i, 0, selectView.frame.size.width / 3, 25)];
-		[allBtn setBackgroundImage:[UIImage imageNamed:@"TIme_Start"] forState:UIControlStateSelected];
-		allBtn.titleLabel.font = [UIFont systemFontOfSize:12.f];
-		if (i == 0) {
-			[allBtn setSelected:YES];
-			allBtn.tag = ShowActiveType_All;
-			[allBtn setTitle:@"ALL" forState:UIControlStateNormal];
-		}
-		else if (i == 1) {
-			allBtn.tag = ShowActiveType_upcoming;
-			[allBtn setTitle:@"UpComing" forState:UIControlStateNormal];
-		}
-		else if (i == 2) {
-			allBtn.tag = 2;
-			[allBtn setTitle:@"More" forState:UIControlStateNormal];
-		}
+//	UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, 1, frame.size.width, 25)];
+//	for (int i = 0; i < 3; i++) {
+//		UIButton *allBtn = [[UIButton alloc] initWithFrame:CGRectMake(selectView.frame.size.width / 3 * i, 0, selectView.frame.size.width / 3, 25)];
+//		[allBtn setBackgroundImage:[UIImage imageNamed:@"TIme_Start"] forState:UIControlStateSelected];
+//		allBtn.titleLabel.font = [UIFont systemFontOfSize:12.f];
+//		if (i == 0) {
+//			[allBtn setSelected:YES];
+//			allBtn.tag = ShowActiveType_All;
+//			[allBtn setTitle:@"ALL" forState:UIControlStateNormal];
+//		}
+//		else if (i == 1) {
+//			allBtn.tag = ShowActiveType_upcoming;
+//			[allBtn setTitle:@"UpComing" forState:UIControlStateNormal];
+//		}
+//		else if (i == 2) {
+//			allBtn.tag = 2;
+//			[allBtn setTitle:@"More" forState:UIControlStateNormal];
+//		}
+//
+//		[allBtn addTarget:self action:@selector(clickTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
+//		[selectView addSubview:allBtn];
+//		[_selectActiveBtnArr addObject:allBtn];
+//	}
+//	[selectView setBackgroundColor:blueColor];
+//	[self.view addSubview:selectView];
 
-		[allBtn addTarget:self action:@selector(clickTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
-		[selectView addSubview:allBtn];
-		[_selectActiveBtnArr addObject:allBtn];
-	}
-	[selectView setBackgroundColor:blueColor];
-	[self.view addSubview:selectView];
-
-	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
-	                                                               selectView.frame.size.height,
-	                                                               frame.size.width,
-	                                                               frame.size.height - (selectView.frame.size.height + selectView.frame.origin.y + naviHigth))
-	                                              style:UITableViewStyleGrouped];
+//	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
+//	                                                               selectView.frame.size.height,
+//	                                                               frame.size.width,
+//	                                                               frame.size.height - (selectView.frame.size.height + selectView.frame.origin.y + naviHigth))
+//	                                              style:UITableViewStyleGrouped];
+    //创建searchbar
+    searchBar = [[UISearchBar alloc] init];
+    searchBar.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0);
+    searchBar.delegate = self;
+    searchBar.placeholder = @"Event name?";
+    searchBar.translucent = YES ;
+    searchBar.tintColor = [UIColor whiteColor];
+//    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Rectangle_13"]];
+//    
+//    [searchBar insertSubview:imageView atIndex:1];
+    [searchBar sizeToFit];
+    
+    self.tableView =[[UITableView alloc] initWithFrame:CGRectMake(0,
+                                                                  0,
+                                                                  frame.size.width,
+                                                                  frame.size.height)
+                                                 style:UITableViewStylePlain];
 	self.tableView.delegate = self;
 	self.tableView.dataSource = self;
+    self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+    self.tableView.tableFooterView = [UIView new] ;
 	[self.view addSubview:self.tableView];
-
-	[self setupRefresh];
-
-
-	_configs = @[@"To be confirm", @"Confirm", @"Past", @"Hide", @"Refused notification"];
-
-	self.popTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
-	                                                                  0,
-	                                                                  200,
-	                                                                  220)
-	                                                 style:UITableViewStylePlain];
+    
+    //收到信息的通知
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fetchChatGroupInfo:) name:CHATGROUP_ACTIVENOTIFICTION object:nil];
+    
+    //把searchbar赋给表头，创建searchController
+    self.tableView.tableHeaderView = searchBar;
+    self.searchController = [[UISearchDisplayController alloc] initWithSearchBar:searchBar contentsController:self];
+    self.searchDisplayController.delegate = self;
+    self.searchDisplayController.searchResultsDataSource = self;
+    self.searchDisplayController.searchResultsDelegate = self;
+    
+    [self.tableView setContentOffset:CGPointMake(0, 108) animated:YES];
+    
+	 [self setupRefresh];
+    
+	self.popTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,0,200,220) style:UITableViewStylePlain];
 	self.popTableView.delegate   = self;
 	self.popTableView.dataSource = self;
-
 	self.popover = [DXPopover new];
+    
+  }
+
+- (BOOL)shouldAutomaticallyForwardAppearanceMethods {
+    return YES;
 }
 
 /**
@@ -133,24 +194,112 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 - (void)viewWillAppear:(BOOL)animated {
 	[super viewWillAppear:animated];
+    NSInteger loginStatus = [UserInfo currUserInfo].loginStatus;
+    if (1!=loginStatus) {//1表示用户登陆
+        [g_AppDelegate initLoginView];
+    }else{
+        if (g_NetStatus!=NotReachable){//在有网络的情况下自动登录
+            [g_AppDelegate autoUserWithLogin];
+        }
+    }
+    
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+}
+
+
+-(void)fetchChatGroupInfo:(NSNotification *)notification{
+    ChatContentModel * chatContent = [notification.userInfo objectForKey:CHATGROUP_USERINFO];
+    if(chatContent){
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateStyle:NSDateFormatterMediumStyle];
+        [formatter setTimeStyle:NSDateFormatterShortStyle];
+        [formatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
+        NSTimeZone *timeZone = [NSTimeZone defaultTimeZone];
+        [formatter setTimeZone:timeZone];
+        NSDate * objDate1 = [formatter dateFromString:chatContent.time];
+        
+         NSMutableDictionary * latestDic = [latestMsgDic objectForKey:chatContent.eid] ;
+        if (latestDic) {
+            NSInteger latestMsgCount = [[latestDic objectForKey:@"latestCount"] integerValue];
+            latestMsgCount+=1;
+            [latestMsgDic removeObjectForKey:chatContent.eid];
+            [latestMsgDic setObject:@{latestCount:@(latestMsgCount),latestEventMsg:chatContent.text,latestMsgTime:objDate1,latestUserName:chatContent.username}.mutableCopy forKey:chatContent.eid];
+            
+        }else{
+            [latestMsgDic setObject:@{latestCount:@(1),latestEventMsg:chatContent.text,latestMsgTime:objDate1,latestUserName:chatContent.username}.mutableCopy forKey:chatContent.eid];
+        }
+        [self.tableView reloadData];
+    }
+
+}
+
+//加载没读取的数据
+-(void)loadUnreadMsg:(NSString *) eventId{
+    NSPredicate *nspre=[NSPredicate predicateWithFormat:@"unreadMessage==%i&&eid==%@",UNREADMESSAGE_NO,eventId];
+    NSArray *chatContentArr=[ChatContentModel MR_findAllWithPredicate:nspre];
+    if(chatContentArr && chatContentArr.count >0){
+        [chatContentArr sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            ChatContentModel *objChat1 =  ( ChatContentModel *)obj1 ;
+            ChatContentModel *objChat2 =  ( ChatContentModel *)obj2 ;
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateStyle:NSDateFormatterMediumStyle];
+            [formatter setTimeStyle:NSDateFormatterShortStyle];
+            [formatter setDateFormat:@"YYYY-MM-dd HH:mm"];// ----------设置你想要的格式,hh与HH的区别:分别表示12小时制,24小时制
+            NSTimeZone *timeZone = [NSTimeZone defaultTimeZone];
+            [formatter setTimeZone:timeZone];
+            NSDate * objDate1 = [formatter dateFromString:objChat1.time];
+            NSDate * objDate2 = [formatter dateFromString:objChat2.time];
+
+            NSComparisonResult result =[objDate1 compare:objDate2];
+            switch(result)
+            {
+                case NSOrderedAscending:
+                    return NSOrderedDescending;
+                case NSOrderedDescending:
+                    return NSOrderedAscending;
+                case NSOrderedSame:
+                    return NSOrderedSame;
+                default:
+                    return NSOrderedSame;
+            } // 时间从近到远（远近相对当前时间而言）
+        }];
+        
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateStyle:NSDateFormatterMediumStyle];
+        [formatter setTimeStyle:NSDateFormatterShortStyle];
+        [formatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
+        NSTimeZone *timeZone = [NSTimeZone defaultTimeZone];
+        [formatter setTimeZone:timeZone];
+        
+        ChatContentModel * tmpModel = [chatContentArr lastObject] ;
+        NSDate * objDate1 = [formatter dateFromString:tmpModel.time];
+        
+        NSMutableDictionary * latestDic = [latestMsgDic objectForKey:eventId] ;
+         NSInteger latestMsgCount = chatContentArr.count ;
+        if (latestDic) {
+            [latestMsgDic removeObjectForKey:eventId];
+            [latestMsgDic setObject:@{latestCount:@(latestMsgCount),latestEventMsg:tmpModel.text,latestMsgTime:objDate1,latestUserName:tmpModel.username}.mutableCopy forKey:eventId];
+        }else{
+            [latestMsgDic setObject:@{latestCount:@(latestMsgCount),latestEventMsg:tmpModel.text,latestMsgTime:objDate1,latestUserName:tmpModel.username}.mutableCopy forKey:eventId];
+        }
+    }else{
+         [latestMsgDic removeObjectForKey:eventId];
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView; {
-	if (self.popTableView == tableView) {
-		return 1;
-	}
-	else {
-		[self showActiveWhatWithActiveType:_showActiveType];
-		return _activeArr.count;
-	}
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	if (self.popTableView == tableView) {
 		return _configs.count;
-	}
-	else {
-		return 1;
+	}else {
+        [self showActiveWhatWithActiveType:_showActiveType];
+        return _activeArr.count;
 	}
 }
 
@@ -159,16 +308,9 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 		return 44.f;
 	}
 	else
-		return 150.f;
+		return 64.f;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-	return 2.f;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-	return 0.1f;
-}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	if (self.popTableView == tableView) {
@@ -181,54 +323,65 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 		cell.textLabel.text = [_configs objectAtIndex:indexPath.row];
 
 		return cell;
-	}
-	else {
+    }else {
 		static NSString *activeId = @"activeManagerCellId";
-		ActiveTableViewCell *activeCell = [tableView dequeueReusableCellWithIdentifier:activeId];
+		EventInfoShowCell *activeCell = [tableView dequeueReusableCellWithIdentifier:activeId];
 		if (!activeCell) {
-			activeCell = (ActiveTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"ActiveTableViewCell" owner:self options:nil] firstObject];
+			activeCell = (EventInfoShowCell *)[[[NSBundle mainBundle] loadNibNamed:@"EventInfoShowCell" owner:self options:nil] firstObject];
 		}
 		if (_activeArr.count > 0) {
-			ActiveBaseInfoMode *activeEvent = _activeArr[indexPath.section];
-
+			ActiveBaseInfoMode *activeEvent = _activeArr[indexPath.row];
+            [self loadUnreadMsg:activeEvent.Id];
 			activeCell.activeEvent = activeEvent;
 
-			if ([activeEvent.status integerValue] == ActiveStatus_upcoming) {
-				if ([activeEvent.type integerValue] == 2) {
-					activeCell.activeStateLab.text = @"UpComing(Voting)";
-				}
-				else {
-					activeCell.activeStateLab.text = @"UpComing";
-				}
-			}
-			else if ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm) {
-				activeCell.activeStateLab.text = @"To be Confirm";
-			}
-			else if ([activeEvent.status integerValue] == ActiveStatus_confirmed) {
-				activeCell.activeStateLab.text = @"Confirmed";
-			}
-			else if ([activeEvent.status integerValue] == ActiveStatus_past) {
-				activeCell.activeStateLab.text = @"Past";
-			}
-			NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-			[formatter setDateStyle:NSDateFormatterMediumStyle];
-			[formatter setTimeStyle:NSDateFormatterShortStyle];
-			[formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
-			NSTimeZone *timeZone = [NSTimeZone defaultTimeZone];
-			[formatter setTimeZone:timeZone];
-
-			NSDate *createTime = [formatter dateFromString:activeEvent.createTime];
-			NSInteger currMonth = [CalendarDateUtil getMonthWithDate:createTime];
-			NSInteger currDay = [CalendarDateUtil getDayWithDate:createTime];
-			activeCell.monthLab.text = [self monthStringWithInteger:currMonth];
-			activeCell.dayCountLab.text = [NSString stringWithFormat:@"%ld", (long)currDay];
+//			if ([activeEvent.status integerValue] == ActiveStatus_upcoming) {
+//				if ([activeEvent.type integerValue] == 2) {
+//					activeCell.activeStateLab.text = @"UpComing(Voting)";
+//				}
+//				else {
+//					activeCell.activeStateLab.text = @"UpComing";
+//				}
+//			}
+//			else if ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm) {
+//				activeCell.activeStateLab.text = @"To be Confirm";
+//			}
+//			else if ([activeEvent.status integerValue] == ActiveStatus_confirmed) {
+//				activeCell.activeStateLab.text = @"Confirmed";
+//			}
+//			else if ([activeEvent.status integerValue] == ActiveStatus_past) {
+//				activeCell.activeStateLab.text = @"Past";
+//			}
+            
 			NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 			NSLog(@"%@", _urlStr);
 			NSURL *url = [NSURL URLWithString:_urlStr];
-			[activeCell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
-			activeCell.activeNameLab.text = activeEvent.title;
+			[activeCell.activePic sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+			activeCell.activeTitle.text = activeEvent.title;
+            
+            NSDictionary *latestDic = [latestMsgDic objectForKey:activeEvent.Id];
+            activeCell.latestModifyMsg.text = [latestDic objectForKey:latestEventMsg] ;
+            NSString * reUserName = [latestDic objectForKey:latestUserName];
+            if (reUserName && ![@"" isEqualToString:reUserName ]) {
+                 activeCell.latestModifyUserName.text =[NSString stringWithFormat:@"%@:",reUserName]  ;
+            }
+            
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setTimeStyle:NSDateFormatterShortStyle];
+            NSTimeZone *timeZone = [NSTimeZone defaultTimeZone];
+            [formatter setTimeZone:timeZone];
+            activeCell.latestTime.text =[formatter stringFromDate:[latestDic objectForKey:latestMsgTime]];
+            NSNumber *unReadCount = [latestDic objectForKey:latestCount];
+            if ( [unReadCount intValue] == 0) {
+                [activeCell.unReadCount setHidden:YES];
+            }else{
+                [activeCell.unReadCount setHidden:NO];
+                if ([unReadCount intValue]>=100) {
+                    activeCell.unReadCount.text = [NSString stringWithFormat:@"99+"] ;
+                }else{
+                    activeCell.unReadCount.text = [unReadCount stringValue] ;
+                }
+            }
 		}
-
 		return activeCell;
 	}
 }
@@ -259,7 +412,8 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 	}
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	ActivedetailsViewController *activeDetailVC = [[ActivedetailsViewController alloc] init];
-	ActiveBaseInfoMode *activeEvent = _activeArr[indexPath.section];
+	ActiveBaseInfoMode *activeEvent = _activeArr[indexPath.row];
+    
 	activeDetailVC.delegate = self;
 	activeDetailVC.activeEventInfo = activeEvent;
 	[self.navigationController pushViewController:activeDetailVC animated:YES];
@@ -466,13 +620,27 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 - (void)cancelActivedetailsViewController:(ActivedetailsViewController *)activeDetailsViewVontroller {
 	[self loadActiveData:nil];//刷新数据
-
-	for (UIViewController *viewController in activeDetailsViewVontroller.navigationController.viewControllers) {
-		if ([viewController isKindOfClass:[JCMSegmentPageController class]]) {
-			[activeDetailsViewVontroller.navigationController popToViewController:viewController animated:YES];
-		}
-	}
+    [activeDetailsViewVontroller.navigationController popToViewController:self animated:YES];
+    
 }
+
+-(void)searchNewActive{
+    self.tableView.tableHeaderView = nil;
+    
+    
+}
+
+
+-(void)createNewActive{
+    self.tableView.tableHeaderView = nil;
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+
+    
+}
+
+
 
 - (NSString *)monthStringWithInteger:(NSUInteger)month {
 	NSString *monthStr;

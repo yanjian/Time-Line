@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -15,20 +15,17 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="characterWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WhP-GM-uaT">
-                        <rect key="frame" x="63" y="10" width="205" height="22"/>
+                        <rect key="frame" x="63" y="7" width="205" height="22"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b9a-wO-Wc9">
-                        <rect key="frame" x="63" y="32" width="205" height="19"/>
+                        <rect key="frame" x="63" y="29" width="205" height="19"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="smile_1.png" translatesAutoresizingMaskIntoConstraints="NO" id="SRj-2H-jhm">
-                        <rect key="frame" x="8" y="4" width="47" height="47"/>
-                    </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lKz-HY-RoP">
                         <rect key="frame" x="271" y="2" width="49" height="55"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -36,18 +33,29 @@
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LB1-2X-dzI">
+                        <rect key="frame" x="282" y="13" width="30" height="30"/>
+                        <state key="normal" backgroundImage="Add_Invitees.png">
+                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        </state>
+                    </button>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="smile_1.png" translatesAutoresizingMaskIntoConstraints="NO" id="SRj-2H-jhm">
+                        <rect key="frame" x="8" y="4" width="47" height="47"/>
+                    </imageView>
                 </subviews>
             </tableViewCellContentView>
             <connections>
+                <outlet property="addFriendBtn" destination="LB1-2X-dzI" id="fPT-fl-KUb"/>
                 <outlet property="joinDes" destination="lKz-HY-RoP" id="9MD-Xk-Byd"/>
                 <outlet property="nickName" destination="WhP-GM-uaT" id="Kfv-6S-XN4"/>
                 <outlet property="userHead" destination="SRj-2H-jhm" id="a3w-Fb-oe1"/>
                 <outlet property="userNote" destination="b9a-wO-Wc9" id="Rje-Y0-ZXf"/>
             </connections>
-            <point key="canvasLocation" x="-24" y="129.5"/>
+            <point key="canvasLocation" x="-24" y="111.5"/>
         </tableViewCell>
     </objects>
     <resources>
+        <image name="Add_Invitees.png" width="58" height="58"/>
         <image name="smile_1.png" width="256" height="256"/>
     </resources>
 </document>

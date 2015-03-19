@@ -146,6 +146,11 @@
             if ([@"1" isEqualToString:responseStr]) {
                 [USER_DEFAULT removeObjectForKey:CURRENTUSERINFO];
                 
+                [USER_DEFAULT removeObjectForKey:XMPP_ANYTIMENAME];
+                [USER_DEFAULT removeObjectForKey:XMPP_ANYTIMEPWD];
+                
+                [USER_DEFAULT synchronize];
+                
                 uInfo = [UserInfo currUserInfo];//当前用户信息对象
                 
                 ASIHTTPRequest *userInfoRequest= [t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
@@ -212,6 +217,9 @@
                     //[userInfo setValue:userEmail forKey:@"email"];
                     
                     NSData * userInfoData = [NSKeyedArchiver archivedDataWithRootObject:uInfo];
+                    [USER_DEFAULT setValue:[NSString stringWithFormat:@"anytime_%@@ubuntu",uInfo.username] forKey:XMPP_ANYTIMENAME];
+                    [USER_DEFAULT setValue:[NSString stringWithFormat:XMPP_PWD] forKey:XMPP_ANYTIMEPWD];
+                    
                     [USER_DEFAULT setObject:userInfoData forKey:CURRENTUSERINFO];
                     [USER_DEFAULT synchronize];
                 }

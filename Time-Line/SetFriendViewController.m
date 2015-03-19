@@ -157,19 +157,6 @@
 	}
 }
 
-/**
- *  添加组或朋友按钮的单击事件
- *
- *  @param sender
- */
-- (void)addNewFriendsAndGroups:(UIButton *)sender {
-	[UIView animateWithDuration:0.2f animations:nil completion: ^(BOOL finished) {
-	    addBtn.hidden = YES;
-	}];
-
-	UIActionSheet *fgSheet = [[UIActionSheet alloc] initWithTitle:@"add Friends Or Groups" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Add Friends", @"Add Groups", nil];
-	[fgSheet showInView:self.view];
-}
 
 #pragma mark -UIActionSheet的代理
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex; {
@@ -179,9 +166,7 @@
 		[self presentViewController:searchVc animated:NO completion:nil];
 	}
 	else if (buttonIndex == 1) {//add groups
-		UIAlertView *gAlertView = [[UIAlertView alloc] initWithTitle:@"Add Groups" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
-		gAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
-		[gAlertView show];
+		
 	}
 	addBtn.hidden = NO;
 }

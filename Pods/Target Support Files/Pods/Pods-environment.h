@@ -78,6 +78,12 @@
 #define COCOAPODS_VERSION_MINOR_ASIHTTPRequest_S3 8
 #define COCOAPODS_VERSION_PATCH_ASIHTTPRequest_S3 2
 
+// Base64
+#define COCOAPODS_POD_AVAILABLE_Base64
+#define COCOAPODS_VERSION_MAJOR_Base64 1
+#define COCOAPODS_VERSION_MINOR_Base64 0
+#define COCOAPODS_VERSION_PATCH_Base64 1
+
 // CNPPopupController
 #define COCOAPODS_POD_AVAILABLE_CNPPopupController
 #define COCOAPODS_VERSION_MAJOR_CNPPopupController 0
@@ -120,6 +126,18 @@
 #define COCOAPODS_VERSION_MINOR_JSONKit_NoWarning 2
 #define COCOAPODS_VERSION_PATCH_JSONKit_NoWarning 0
 
+// JSQMessagesViewController
+#define COCOAPODS_POD_AVAILABLE_JSQMessagesViewController
+#define COCOAPODS_VERSION_MAJOR_JSQMessagesViewController 6
+#define COCOAPODS_VERSION_MINOR_JSQMessagesViewController 1
+#define COCOAPODS_VERSION_PATCH_JSQMessagesViewController 3
+
+// JSQSystemSoundPlayer
+#define COCOAPODS_POD_AVAILABLE_JSQSystemSoundPlayer
+#define COCOAPODS_VERSION_MAJOR_JSQSystemSoundPlayer 2
+#define COCOAPODS_VERSION_MINOR_JSQSystemSoundPlayer 0
+#define COCOAPODS_VERSION_PATCH_JSQSystemSoundPlayer 1
+
 // MSCollectionViewCalendarLayout
 #define COCOAPODS_POD_AVAILABLE_MSCollectionViewCalendarLayout
 #define COCOAPODS_VERSION_MAJOR_MSCollectionViewCalendarLayout 0
@@ -142,7 +160,7 @@
 #define COCOAPODS_POD_AVAILABLE_RMDateSelectionViewController
 #define COCOAPODS_VERSION_MAJOR_RMDateSelectionViewController 1
 #define COCOAPODS_VERSION_MINOR_RMDateSelectionViewController 4
-#define COCOAPODS_VERSION_PATCH_RMDateSelectionViewController 2
+#define COCOAPODS_VERSION_PATCH_RMDateSelectionViewController 3
 
 // Reachability
 #define COCOAPODS_POD_AVAILABLE_Reachability

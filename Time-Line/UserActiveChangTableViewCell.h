@@ -4,7 +4,7 @@
 //
 //  Created by IF on 15/1/30.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
-//
+// 作废-----yj
 
 #import <UIKit/UIKit.h>
 #import "ActiveBaseInfoMode.h"

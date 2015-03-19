@@ -4,7 +4,7 @@
 //
 //  Created by IF on 14/12/6.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
-//
+//  作废--------yj
 
 #import <UIKit/UIKit.h>
 #import "ActiveEventMode.h"

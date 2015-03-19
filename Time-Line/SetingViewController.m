@@ -41,7 +41,9 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
 	if (self) {
-		// Custom initialization
+        self.title = @"Settings" ;
+        [self.tabBarItem setImage:[UIImage imageNamed:@"Settings_NoFill"]];
+        self.tabBarItem.title = @"Settings";
 	}
 	return self;
 }

@@ -25,24 +25,19 @@
 	[super viewDidLoad];
 	self.view.frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
 	self.title = @"Profile";
-	NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+//	NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
+//
+//	                            [UIColor whiteColor], NSForegroundColorAttributeName, nil];
+//
+//	[self.navigationController.navigationBar setTitleTextAttributes:attributes];
 
-	                            [UIColor whiteColor], NSForegroundColorAttributeName, nil];
-
-	[self.navigationController.navigationBar setTitleTextAttributes:attributes];
-
-	// 导航
-	self.navigationController.navigationBar.barTintColor = blueColor;
-
-	//左边的按钮
-	UIButton *leftButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-	leftButton.frame = CGRectMake(15, 30, 21, 25);
-	leftButton.backgroundColor = [UIColor clearColor];
-	[leftButton setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-	leftButton.tag = 1;
-	[leftButton addTarget:self action:@selector(eventTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
-	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftButton];
-
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn addTarget:self action:@selector(backFromEventTouchUpInside:) forControlEvents:UIControlEventTouchUpInside] ;
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
 
 	if (self.friendDeleteBlock) {
 		UIView *footerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 45)];
@@ -75,19 +70,14 @@
 
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning];
-	// Dispose of any resources that can be recreated.
 }
 
 #pragma mark - Table view data source
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Potentially incomplete method implementation.
-	// Return the number of sections.
 	return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete method implementation.
 	// Return the number of rows in the section.
 	return 5;
 }
@@ -127,18 +117,6 @@
 
 
 	return cell;
-}
-
-- (void)eventTouchUpInside:(UIButton *)sender {
-	switch (sender.tag) {
-		case 1: {
-			// [self.navigationController popViewControllerAnimated:YES] ;
-			[self.navigationController popViewControllerAnimated:YES];
-		} break;
-
-		default:
-			break;
-	}
 }
 
 - (IBAction)checkBIgPicture:(UIButton *)sender {
@@ -183,64 +161,9 @@
 	}
 }
 
-/*
-   // Override to support conditional editing of the table view.
-   - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-   }
- */
 
-/*
-   // Override to support editing the table view.
-   - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }
-   }
- */
-
-/*
-   // Override to support rearranging the table view.
-   - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-   }
- */
-
-/*
-   // Override to support conditional rearranging of the table view.
-   - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-   }
- */
-
-/*
-   #pragma mark - Table view delegate
-
-   // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
-   - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Navigation logic may go here, for example:
-    // Create the next view controller.
-    <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:<#@"Nib name"#> bundle:nil];
-
-    // Pass the selected object to the new view controller.
-
-    // Push the view controller.
-    [self.navigationController pushViewController:detailViewController animated:YES];
-   }
- */
-
-/*
-   #pragma mark - Navigation
-
-   // In a storyboard-based application, you will often want to do a little preparation before navigation
-   - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-   }
- */
+- (void)backFromEventTouchUpInside:(UIButton *)sender {
+				[self.navigationController popViewControllerAnimated:YES];
+}
 
 @end

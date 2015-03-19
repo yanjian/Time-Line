@@ -19,5 +19,7 @@ pod 'CNPPopupController'
 pod 'pop', '~> 1.0.6'
 pod 'Fingertips'
 pod 'SDWebImage', '~> 3.7.1'
+pod 'JSQMessagesViewController'
+pod 'Base64'
 
 pod 'RMDateSelectionViewController', '~> 1.4.0'

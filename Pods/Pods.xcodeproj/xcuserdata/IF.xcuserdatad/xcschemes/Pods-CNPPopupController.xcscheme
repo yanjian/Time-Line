@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BE172C91C30A4D80DC033A68"
+               BlueprintIdentifier = "F3C238038BAC1EA7A54C933D"
                BuildableName = "libPods-CNPPopupController.a"
                BlueprintName = "Pods-CNPPopupController"
                ReferencedContainer = "container:Pods.xcodeproj">

@@ -12,6 +12,7 @@
 #import "ASINetworkQueue.h"
 #import "ASIDownloadCache.h"
 #import "FlipBoardNavigationController.h"
+#import "ChatContentModel.h"
 #import "XMPPFramework.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate, XMPPRosterDelegate>
@@ -43,11 +44,13 @@
 @property (nonatomic, strong, readonly) XMPPCapabilitiesCoreDataStorage *xmppCapabilitiesStorage;
 
 @property (strong, nonatomic) UIWindow *window;
-@property (readwrite, nonatomic) BOOL isread;
 @property (nonatomic, strong) FlipBoardNavigationController *flipNC;
 @property (nonatomic, retain) ASINetworkQueue *netWorkQueue; //g_ASIQueue
 @property (nonatomic, assign) NetworkStatus netWorkStatus; //g_NetStatus
 @property (nonatomic, retain) ASIDownloadCache *anyTimeCache;
+@property (strong, nonatomic) NSNumber * isRead; //信息是否读取
+
+@property (strong, nonatomic) UITabBarController *tabBarController;
 
 
 + (AppDelegate *)getAppDelegate;
@@ -59,9 +62,11 @@
 - (BOOL)connect;
 - (void)disconnect;
 
+//初始化登陆页面
+- (void)initLoginView;
 
-- (void)initLoginView:(id)target;
-
+//pragma mark -保存聊天信息
+-(ChatContentModel *)saveChatInfoForActive:(NSDictionary * ) bodyDic;
 - (void)autoUserWithLogin;
 - (void)initMainView;
 //文件归档

@@ -7,6 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+typedef void(^headGroupNewFriendBlock)(NSString * groupName) ;
+
 @class FriendGroup;
 @protocol HeadViewDelegate <NSObject>
 
@@ -20,6 +22,8 @@
 @property (nonatomic, strong) FriendGroup *friendGroup;
 
 @property (nonatomic, weak) id <HeadViewDelegate> delegate;
+
+@property (nonatomic, strong) headGroupNewFriendBlock headGroupNewFriendBlock;//这里定义的只用与添加组
 
 - (id)initWithFrame:(CGRect)frame;
 

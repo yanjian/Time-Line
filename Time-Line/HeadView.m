@@ -9,11 +9,17 @@
 #import "HeadView.h"
 #import "FriendGroup.h"
 
+typedef NS_ENUM(NSInteger, GroupManager) {
+    GroupManager_add = 0 ,
+    GroupManager_update =1,
+    GroupManager_delete = 2
+};
+
 @interface HeadView () <UIActionSheetDelegate, UIAlertViewDelegate>
 {
 	UIButton *_bgButton;
 	UILabel *_numLabel;
-	BOOL isDelete;
+    GroupManager groupManager;
 }
 @end
 
@@ -78,80 +84,101 @@
 
 - (void)handleLongPressWithFriendGroup:(UILongPressGestureRecognizer *)longPressgestureRecognizer {
 	if (longPressgestureRecognizer.state == UIGestureRecognizerStateEnded) {
-		UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Delete Or Update Group" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Update Group", @"Delete Group", nil];
+		UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Group manage" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Add Groups",@"Update Group", @"Delete Group", nil];
 		[actionSheet showInView:self];
 	}
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-	if (buttonIndex == 0) {
+    if (buttonIndex == 0 ) {
+        groupManager = GroupManager_add ;
+        UIAlertView *gAlertView = [[UIAlertView alloc] initWithTitle:@"Add Groups" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
+        gAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+        [gAlertView show];
+        
+    }else if (buttonIndex == 1) {
 		NSLog(@"%@", _friendGroup.Id);
-		isDelete = FALSE;
+        groupManager = GroupManager_update ;
 		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Update Group" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
 		alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
 		[alertView show];
 	}
-	else if (buttonIndex == 1) {
+	else if (buttonIndex == 2) {
 		NSLog(@"%@", _friendGroup.Id);
-		isDelete = TRUE;
+        groupManager = GroupManager_delete ;
 		UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Delete Group" message:@"Are you sure you want to delete?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
 		[alertView show];
 	}
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+
 	if (buttonIndex == 1) {
-		if (!isDelete) {//不是删除组而是更新组
-			_friendGroup.name = [alertView textFieldAtIndex:0].text;
-			ASIHTTPRequest *updateGroupsRequest = [t_Network httpPostValue:@{ @"tid": _friendGroup.Id, @"name":_friendGroup.name }.mutableCopy Url:anyTime_FriendTeam Delegate:nil Tag:anyTime_FriendTeam_tag];
-			__block ASIHTTPRequest *updateGroupsReq = updateGroupsRequest;
-			[updateGroupsRequest setCompletionBlock: ^{//请求成功
-			    NSString *responseStr = [updateGroupsReq responseString];
-			    NSLog(@"%@", responseStr);
-			    id objGroup = [responseStr objectFromJSONString];
-			    if ([objGroup isKindOfClass:[NSDictionary class]]) {
-			        NSString *statusCode = [objGroup objectForKey:@"statusCode"];
-			        if ([statusCode isEqualToString:@"1"]) {
-			            [MBProgressHUD showSuccess:@"Update Success"];
-			            if ([_delegate respondsToSelector:@selector(clickHeadView)]) {
-			                [_delegate clickHeadView];
-						}
-					}
-				}
-			}];
+        
+        switch (groupManager) {
+            case GroupManager_add:{
+                _friendGroup.name = [alertView textFieldAtIndex:0].text;
+                if(self.headGroupNewFriendBlock){
+                    self.headGroupNewFriendBlock(_friendGroup.name);
+                }
+            }break;
+            case GroupManager_update:{
+                _friendGroup.name = [alertView textFieldAtIndex:0].text;
+                ASIHTTPRequest *updateGroupsRequest = [t_Network httpPostValue:@{ @"tid": _friendGroup.Id, @"name":_friendGroup.name }.mutableCopy Url:anyTime_FriendTeam Delegate:nil Tag:anyTime_FriendTeam_tag];
+                __block ASIHTTPRequest *updateGroupsReq = updateGroupsRequest;
+                [updateGroupsRequest setCompletionBlock: ^{//请求成功
+                    NSString *responseStr = [updateGroupsReq responseString];
+                    NSLog(@"%@", responseStr);
+                    id objGroup = [responseStr objectFromJSONString];
+                    if ([objGroup isKindOfClass:[NSDictionary class]]) {
+                        NSString *statusCode = [objGroup objectForKey:@"statusCode"];
+                        if ([statusCode isEqualToString:@"1"]) {
+                            [MBProgressHUD showSuccess:@"Update Success"];
+                            if ([_delegate respondsToSelector:@selector(clickHeadView)]) {
+                                [_delegate clickHeadView];
+                            }
+                        }
+                    }
+                }];
+                
+                [updateGroupsRequest setFailedBlock: ^{//请求失败
+                    NSLog(@"%@", [updateGroupsReq responseString]);
+                }];
+                [updateGroupsRequest startAsynchronous];
 
-			[updateGroupsRequest setFailedBlock: ^{//请求失败
-			    NSLog(@"%@", [updateGroupsReq responseString]);
-			}];
-			[updateGroupsRequest startAsynchronous];
-		}
-		else {//删除组
-			if ([@"1" isEqualToString:_friendGroup.defaultTeam]) {
-				[MBProgressHUD showError:@"Default group cannot be deleted!"];
-				return;
-			}
-			ASIHTTPRequest *deleteGroupsRequest = [t_Network httpGet:@{ @"tid": _friendGroup.Id }.mutableCopy Url:anyTime_DeleteFTeam Delegate:nil Tag:anyTime_DeleteFTeam_tag];
-			__block ASIHTTPRequest *delGroupsRequest = deleteGroupsRequest;
-			[deleteGroupsRequest setCompletionBlock: ^{//请求成功
-			    NSString *responseStr = [delGroupsRequest responseString];
-			    NSLog(@"%@", responseStr);
-			    id objGroup = [responseStr objectFromJSONString];
-			    if ([objGroup isKindOfClass:[NSDictionary class]]) {
-			        NSString *statusCode = [objGroup objectForKey:@"statusCode"];
-			        if ([statusCode isEqualToString:@"1"]) {
-			            [MBProgressHUD showSuccess:@"Delete Success"];
-					}
-				}
-			    if ([_delegate respondsToSelector:@selector(clickHeadView)]) {
-			        [_delegate clickHeadView];
-				}
-			}];
-
-			[deleteGroupsRequest setFailedBlock: ^{//请求失败
-			    NSLog(@"%@", [delGroupsRequest responseString]);
-			}];
-			[deleteGroupsRequest startAsynchronous];
-		}
+            }break;
+            case GroupManager_delete:{
+                if ([@"1" isEqualToString:_friendGroup.defaultTeam]) {
+                    [MBProgressHUD showError:@"Default group cannot be deleted!"];
+                    return;
+                }
+                ASIHTTPRequest *deleteGroupsRequest = [t_Network httpGet:@{ @"tid": _friendGroup.Id }.mutableCopy Url:anyTime_DeleteFTeam Delegate:nil Tag:anyTime_DeleteFTeam_tag];
+                __block ASIHTTPRequest *delGroupsRequest = deleteGroupsRequest;
+                [deleteGroupsRequest setCompletionBlock: ^{//请求成功
+                    NSString *responseStr = [delGroupsRequest responseString];
+                    NSLog(@"%@", responseStr);
+                    id objGroup = [responseStr objectFromJSONString];
+                    if ([objGroup isKindOfClass:[NSDictionary class]]) {
+                        NSString *statusCode = [objGroup objectForKey:@"statusCode"];
+                        if ([statusCode isEqualToString:@"1"]) {
+                            [MBProgressHUD showSuccess:@"Delete Success"];
+                        }
+                    }
+                    if ([_delegate respondsToSelector:@selector(clickHeadView)]) {
+                        [_delegate clickHeadView];
+                    }
+                }];
+                
+                [deleteGroupsRequest setFailedBlock: ^{//请求失败
+                    NSLog(@"%@", [delGroupsRequest responseString]);
+                }];
+                [deleteGroupsRequest startAsynchronous];
+            }break;
+                
+            default:
+                NSLog(@">>>>>>>>>>>>>>>>>group Manager : other options")
+                break;
+        }
 	}
 }
 

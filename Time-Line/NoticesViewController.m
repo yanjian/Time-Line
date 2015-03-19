@@ -8,10 +8,6 @@
 
 #import "NoticesViewController.h"
 #import "MJRefresh.h"
-#import "ActiveTableViewCell.h"
-#import "UserApplyTableViewCell.h"
-#import "UserAgreeAndReTableViewCell.h"
-#import "UserActiveChangTableViewCell.h"
 #import "NotiveMsgPageBaseMode.h"
 #import "ActiveModifyMsgModel.h"
 #import "ActivedetailsViewController.h"
@@ -20,8 +16,10 @@
 #import "UIImageView+WebCache.h"
 #import "FriendGroupShowViewController.h"
 #import "UIViewController+MJPopupViewController.h"
+#import "ActiveInvitationsNotifictionTableViewCell.h"
+#import "FriendsProfilesTableViewController.h"
 
-@interface NoticesViewController () <UITableViewDataSource, UITableViewDelegate, UserApplyTableViewCellDelegate, ActivedetailsViewControllerDelegate> {
+@interface NoticesViewController () <UITableViewDataSource, UITableViewDelegate, ActivedetailsViewControllerDelegate> {
 	NSMutableArray *_noticeArr;
 	NSInteger currPageNum;  //当前页码
 }
@@ -31,8 +29,22 @@
 
 @implementation NoticesViewController
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self)
+    {
+        self.title = @"Invitations" ;
+        [self.tabBarItem setImage:[UIImage imageNamed:@"Invitations_NoFill"]];
+        self.tabBarItem.title = @"Invitations";
+    }
+    return self;
+}
+
+
 - (void)viewDidLoad {
 	[super viewDidLoad];
+    
 	CGRect frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
 	self.view.frame = frame;
 	_noticeArr = [NSMutableArray array];
@@ -40,6 +52,7 @@
 
 	self.tableView.dataSource = self;
 	self.tableView.delegate = self;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;//去掉分割线
 	[self.view addSubview:self.tableView];
 	[self setupRefresh];
 }
@@ -118,30 +131,16 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView; {
-	return _noticeArr.count;
+	return 1;
 }
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return 1;
+	return _noticeArr.count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-	NoticesMsgModel *noticeMsg = [_noticeArr objectAtIndex:indexPath.section];
-	if ([noticeMsg.type integerValue] < 10) {
-		if ([noticeMsg.type integerValue] == 1) {
-			return 100.f;
-		}
-		else if ([noticeMsg.type integerValue] == 2 ||  [noticeMsg.type integerValue] == 3) {
-			return 64.f;
-		}
-		else {
-			return 44.f;
-		}
-	}
-	else {
-		return 185.f;
-	}
+    return 64.f;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
@@ -153,45 +152,55 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	NoticesMsgModel *noticeMsg = [_noticeArr objectAtIndex:indexPath.section];
+	NoticesMsgModel *noticeMsg = [_noticeArr objectAtIndex:indexPath.row];
+    static NSString *activeCellID = @"activeMsgCellId";
+    
+    ActiveInvitationsNotifictionTableViewCell *activeCell = [tableView dequeueReusableCellWithIdentifier:activeCellID];
+    if (!activeCell) {
+        activeCell = (ActiveInvitationsNotifictionTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"ActiveInvitationsNotifictionTableViewCell" owner:self options:nil] firstObject];
+    }
+    
 	if ([noticeMsg.type integerValue] < 10) {
 		if ([noticeMsg.type integerValue] == 1) { //好友请求
-			static NSString *activeId = @"activeCellId";
-			UserApplyTableViewCell *userApplyCell = [tableView dequeueReusableCellWithIdentifier:activeId];
-			if (!userApplyCell) {
-				userApplyCell = (UserApplyTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"UserApplyTableViewCell" owner:self options:nil] firstObject];
-			}
 			NSDictionary *msgDic =  noticeMsg.message;
 			if (msgDic) {
-				[userApplyCell setNoticesMsg:noticeMsg];  //设置信息
-				userApplyCell.delegate = self;
-				NSString *tmpUrl = [[msgDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                    NSString *tmpUrl = [[msgDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
 				NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, tmpUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				NSLog(@"%@", _urlStr);
 				NSURL *url = [NSURL URLWithString:_urlStr];
-				[userApplyCell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-				[userApplyCell setFriendRequestInfo:[msgDic objectForKey:@"msg"]];
+				[activeCell.showImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
+                [activeCell.titleAndName setTextColor: blueColor];
+                [activeCell.titleAndName setText:[msgDic objectForKey:@"fname"]];
+                [activeCell.note setText:[msgDic objectForKey:@"msg"]]  ;
+                if([noticeMsg.isRead intValue] == 1 ){
+                    [activeCell.pointLab setHidden:YES];
+                }else{
+                     [activeCell.pointLab setHidden:NO];
+                     [activeCell.pointLab setBackgroundColor:blueColor];
+                }
+               
 			}
-			return userApplyCell;
-		}
-		else if ([noticeMsg.type integerValue] == 2 ||  [noticeMsg.type integerValue] == 3) { //对方同意 信息  //对方拒绝添加 你为好友信息
-			static NSString *activeAgreeAndReID = @"activeAgreeAndReId";
-			UserAgreeAndReTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:activeAgreeAndReID];
-			if (!cell) {
-				cell = (UserAgreeAndReTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"UserAgreeAndReTableViewCell" owner:self options:nil] firstObject];
-			}
+            return activeCell ;
+		}else if ([noticeMsg.type integerValue] == 2 ||  [noticeMsg.type integerValue] == 3) { //对方同意 信息  //对方拒绝添加 你为
 			NSDictionary *msgDic =  noticeMsg.message;
 			if (msgDic) {
 				NSString *tmpUrl = [[msgDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
 				NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, tmpUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				NSLog(@"%@", _urlStr);
 				NSURL *url = [NSURL URLWithString:_urlStr];
-				[cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-				[cell setFriendMsgInfo:[msgDic objectForKey:@"msg"]];
+                [activeCell.showImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
+                [activeCell.titleAndName setTextColor: blueColor];
+                [activeCell.titleAndName setText:[msgDic objectForKey:@"fname"]];
+                [activeCell.note setText:[msgDic objectForKey:@"msg"]]  ;
+                if([noticeMsg.isRead intValue] == 1 ){
+                    [activeCell.pointLab setHidden:YES];
+                }else{
+                    [activeCell.pointLab setHidden:NO];
+                    [activeCell.pointLab setBackgroundColor:blueColor];
+                }
 			}
-			return cell;
-		}
-		else {
+			return activeCell;
+		}else {
 			static NSString *activeSysID = @"activeSystemId";
 			UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:activeSysID];
 			if (!cell) {
@@ -205,77 +214,80 @@
 		}
 	}
 	else {
-		static NSString *activeCellID = @"activeMsgCellId";
-		UserActiveChangTableViewCell *activeCell = [tableView dequeueReusableCellWithIdentifier:activeCellID];
-		if (!activeCell) {
-			activeCell = (UserActiveChangTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"UserActiveChangTableViewCell" owner:self options:nil] firstObject];
-		}
-
 		NSDictionary *msgDic = [noticeMsg.message objectForKey:@"event"];
 		ActiveBaseInfoMode *activeEvent = [ActiveBaseInfoMode new];
 		if (msgDic) {
 			[activeEvent parseDictionary:msgDic];
 		}
+        
+        NSURL *url = nil;
+        if (activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl]) {
+            NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSLog(@"%@", _urlStr);
+            url = [NSURL URLWithString:_urlStr];
+        }
+        [activeCell.showImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+        
+        [activeCell.titleAndName setTextColor:[UIColor redColor]];
+        
+        activeCell.titleAndName.text = activeEvent.title ;
+        
+        if ([noticeMsg.message objectForKey:@"creater"]) {
+             activeCell.note.text =[NSString stringWithFormat:@"hosted by Margaret %@",[noticeMsg.message objectForKey:@"creater"]]  ;
+        }
 
-		if ([activeEvent.status integerValue] == ActiveStatus_upcoming) {
-			if ([activeEvent.type integerValue] == 2) {
-				activeCell.activeStateLab.text = @"UpComing(Voting)";
-			}
-			else {
-				activeCell.activeStateLab.text = @"UpComing";
-			}
-		}
-		else if ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm) {
-			activeCell.activeStateLab.text = @"To be Confirm";
-		}
-		else if ([activeEvent.status integerValue] == ActiveStatus_confirmed) {
-			activeCell.activeStateLab.text = @"Confirmed";
-		}
-		else if ([activeEvent.status integerValue] == ActiveStatus_past) {
-			activeCell.activeStateLab.text = @"Past";
-		}
-		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-		[formatter setDateStyle:NSDateFormatterMediumStyle];
-		[formatter setTimeStyle:NSDateFormatterShortStyle];
-		[formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
-		NSTimeZone *timeZone = [NSTimeZone defaultTimeZone];
-		[formatter setTimeZone:timeZone];
+//		if ([activeEvent.status integerValue] == ActiveStatus_upcoming) {
+//			if ([activeEvent.type integerValue] == 2) {
+//				activeCell.activeStateLab.text = @"UpComing(Voting)";
+//			}
+//			else {
+//				activeCell.activeStateLab.text = @"UpComing";
+//			}
+//		}
+//		else if ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm) {
+//			activeCell.activeStateLab.text = @"To be Confirm";
+//		}
+//		else if ([activeEvent.status integerValue] == ActiveStatus_confirmed) {
+//			activeCell.activeStateLab.text = @"Confirmed";
+//		}
+//		else if ([activeEvent.status integerValue] == ActiveStatus_past) {
+//			activeCell.activeStateLab.text = @"Past";
+//		}
+//		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//		[formatter setDateStyle:NSDateFormatterMediumStyle];
+//		[formatter setTimeStyle:NSDateFormatterShortStyle];
+//		[formatter setDateFormat:@"YYYY-MM-dd HH:mm"];
+//		NSTimeZone *timeZone = [NSTimeZone defaultTimeZone];
+//		[formatter setTimeZone:timeZone];
+//
+//		NSDate *createTime = [formatter dateFromString:activeEvent.createTime];
+//		NSInteger currMonth = [CalendarDateUtil getMonthWithDate:createTime];
+//		NSInteger currDay = [CalendarDateUtil getDayWithDate:createTime];
+//		activeCell.monthLab.text = [self monthStringWithInteger:currMonth];
+//		activeCell.dayCountLab.text = [NSString stringWithFormat:@"%ld", (long)currDay];
 
-		NSDate *createTime = [formatter dateFromString:activeEvent.createTime];
-		NSInteger currMonth = [CalendarDateUtil getMonthWithDate:createTime];
-		NSInteger currDay = [CalendarDateUtil getDayWithDate:createTime];
-		activeCell.monthLab.text = [self monthStringWithInteger:currMonth];
-		activeCell.dayCountLab.text = [NSString stringWithFormat:@"%ld", (long)currDay];
-		NSURL *url = nil;
-		if (activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl]) {
-			NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-			NSLog(@"%@", _urlStr);
-			url = [NSURL URLWithString:_urlStr];
-		}
-		[activeCell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
-		activeCell.activeNameLab.text = activeEvent.title;
-
-		if ([noticeMsg.type integerValue] == 10) { //活动更新,
-			activeCell.activeEvent = activeEvent;
-			NSArray *msgDicArr = [noticeMsg.message objectForKey:@"eventMsg"];
-			ActiveModifyMsgModel *activeModifyMsg = [ActiveModifyMsgModel new];
-			if (msgDicArr) {
-				for (NSDictionary *dic  in msgDicArr) {//这里可能以后要修改 ，现在数组中仅且仅有一条数据
-					[activeModifyMsg parseDictionary:dic];
-				}
-			}
-			[activeCell setActivechangInfo:activeModifyMsg.message];
-		}
-		else if ([noticeMsg.type integerValue] == 11) {  //活动新增或邀请成员
-			[activeCell setActivechangInfo:@"Invite you to participate in the activity"];
-		}
+//
+//		if ([noticeMsg.type integerValue] == 10) { //活动更新,
+//			activeCell.activeEvent = activeEvent;
+//			NSArray *msgDicArr = [noticeMsg.message objectForKey:@"eventMsg"];
+//			ActiveModifyMsgModel *activeModifyMsg = [ActiveModifyMsgModel new];
+//			if (msgDicArr) {
+//				for (NSDictionary *dic  in msgDicArr) {//这里可能以后要修改 ，现在数组中仅且仅有一条数据
+//					[activeModifyMsg parseDictionary:dic];
+//				}
+//			}
+//			[activeCell setActivechangInfo:activeModifyMsg.message];
+//		}
+//		else if ([noticeMsg.type integerValue] == 11) {  //活动新增或邀请成员
+//			[activeCell setActivechangInfo:@"Invite you to participate in the activity"];
+//		}
 		return activeCell;
 	}
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
-	NoticesMsgModel *noticeMsg = [_noticeArr objectAtIndex:indexPath.section];
+	NoticesMsgModel *noticeMsg = [_noticeArr objectAtIndex:indexPath.row];
 	if ([noticeMsg.type integerValue] == 10 || [noticeMsg.type integerValue] == 11) {
 		NSDictionary *msgDic = [noticeMsg.message objectForKey:@"event"];
 		ActiveBaseInfoMode *activeEvent = [ActiveBaseInfoMode new];
@@ -288,69 +300,88 @@
 		}
 
 		ActivedetailsViewController *activeDetailVC = [[ActivedetailsViewController alloc] init];
+        activeDetailVC.hidesBottomBarWhenPushed =YES ;
 		activeDetailVC.delegate = self;
 		activeDetailVC.activeEventInfo = activeEvent;
 		[self.navigationController pushViewController:activeDetailVC animated:YES];
-	}
+    }else if([noticeMsg.type integerValue] == 1){//好友请求
+        
+        FriendsProfilesTableViewController * friendPVC = [[FriendsProfilesTableViewController alloc] init] ;
+        friendPVC.noticesMsg = noticeMsg;
+        friendPVC.hidesBottomBarWhenPushed = YES ;
+        if ([noticeMsg.isRead intValue] == 0) {
+            friendPVC.isAddSuccess = NO ;
+        }else{
+            friendPVC.isAddSuccess = YES ;
+        }
+        [self.navigationController pushViewController:friendPVC animated:YES];
+    }else if([noticeMsg.type integerValue] == 2){//好友同意信息
+        FriendsProfilesTableViewController * friendPVC = [[FriendsProfilesTableViewController alloc] init] ;
+        friendPVC.noticesMsg = noticeMsg;
+        friendPVC.hidesBottomBarWhenPushed = YES ;
+        friendPVC.isAddSuccess = YES ;
+        [self.navigationController pushViewController:friendPVC animated:YES];
+    }
 }
 
 - (void)cancelActivedetailsViewController:(ActivedetailsViewController *)activeDetailsViewVontroller {
 	[activeDetailsViewVontroller.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)userApplyTableViewCell:(UserApplyTableViewCell *)selfCell paramNoticesMsgModel:(NoticesMsgModel *)noticesMsg isAcceptAndDeny:(BOOL)isAccept {
-	NSDictionary *paramDic = noticesMsg.message;
-	if (!isAccept) {//表示用户不同意添加对方为好友
-		ASIHTTPRequest *acceptFriendRequest = [t_Network httpPostValue:@{ @"fid":[paramDic objectForKey:@"fid"], @"fname":[paramDic objectForKey:@"fname"], @"mid":noticesMsg.Id, @"type":@(1) }.mutableCopy Url:anyTime_DisposeFriendRequest Delegate:nil Tag:anyTime_DisposeFriendRequest_tag];
-
-		__block ASIHTTPRequest *acceptRequest = acceptFriendRequest;
-		[acceptFriendRequest setCompletionBlock: ^{
-		    NSString *responseStr = [acceptRequest responseString];
-		    id obtTmp =  [responseStr objectFromJSONString];
-		    if ([obtTmp isKindOfClass:[NSDictionary class]]) {
-		        NSString *statusCode = [obtTmp objectForKey:@"statusCode"];
-		        if ([statusCode isEqualToString:@"1"]) {
-		            selfCell.acceptBtn.hidden = YES;
-		            selfCell.denyBtn.hidden   = YES;
-		            [MBProgressHUD showSuccess:@"Success"];
-				}
-			}
-		}];
-
-		[acceptFriendRequest setFailedBlock: ^{
-		    [MBProgressHUD showError:@"Network error"];
-		}];
-		[acceptFriendRequest startAsynchronous];
-
-		return;
-	}
-
-	FriendGroupShowViewController *fgsVC = [[FriendGroupShowViewController alloc] initWithNibName:@"FriendGroupShowViewController" bundle:nil];
-
-	fgsVC.fBlock = ^(FriendGroupShowViewController *selfViewController, FriendGroup *friendGroup) {
-		ASIHTTPRequest *acceptFriendRequest = [t_Network httpPostValue:@{ @"fid":[paramDic objectForKey:@"fid"], @"tid":friendGroup.Id, @"fname":[paramDic objectForKey:@"fname"], @"mid":noticesMsg.Id }.mutableCopy Url:anyTime_DisposeFriendRequest Delegate:nil Tag:anyTime_DisposeFriendRequest_tag];
-
-		__block ASIHTTPRequest *acceptRequest = acceptFriendRequest;
-		[acceptFriendRequest setCompletionBlock: ^{
-		    NSString *responseStr = [acceptRequest responseString];
-		    id obtTmp =  [responseStr objectFromJSONString];
-		    if ([obtTmp isKindOfClass:[NSDictionary class]]) {
-		        NSString *statusCode = [obtTmp objectForKey:@"statusCode"];
-		        if ([statusCode isEqualToString:@"1"]) {
-		            selfCell.acceptBtn.hidden = YES;
-		            selfCell.denyBtn.hidden   = YES;
-		            [selfViewController dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
-		            [MBProgressHUD showSuccess:@"Success"];
-				}
-			}
-		}];
-		[acceptFriendRequest setFailedBlock: ^{
-		    [MBProgressHUD showError:@"Network error"];
-		}];
-		[acceptFriendRequest startAsynchronous];
-	};
-	[self presentPopupViewController:fgsVC animationType:MJPopupViewAnimationFade];
-}
+#pragma mark -用户同意或拒绝请求
+//- (void)userApplyTableViewCell:(UserApplyTableViewCell *)selfCell paramNoticesMsgModel:(NoticesMsgModel *)noticesMsg isAcceptAndDeny:(BOOL)isAccept {
+//	NSDictionary *paramDic = noticesMsg.message;
+//	if (!isAccept) {//表示用户不同意添加对方为好友
+//		ASIHTTPRequest *acceptFriendRequest = [t_Network httpPostValue:@{ @"fid":[paramDic objectForKey:@"fid"], @"fname":[paramDic objectForKey:@"fname"], @"mid":noticesMsg.Id, @"type":@(1) }.mutableCopy Url:anyTime_DisposeFriendRequest Delegate:nil Tag:anyTime_DisposeFriendRequest_tag];
+//
+//		__block ASIHTTPRequest *acceptRequest = acceptFriendRequest;
+//		[acceptFriendRequest setCompletionBlock: ^{
+//		    NSString *responseStr = [acceptRequest responseString];
+//		    id obtTmp =  [responseStr objectFromJSONString];
+//		    if ([obtTmp isKindOfClass:[NSDictionary class]]) {
+//		        NSString *statusCode = [obtTmp objectForKey:@"statusCode"];
+//		        if ([statusCode isEqualToString:@"1"]) {
+//		            //selfCell.acceptBtn.hidden = YES;
+//		           // selfCell.denyBtn.hidden   = YES;
+//		            [MBProgressHUD showSuccess:@"Success"];
+//				}
+//			}
+//		}];
+//
+//		[acceptFriendRequest setFailedBlock: ^{
+//		    [MBProgressHUD showError:@"Network error"];
+//		}];
+//		[acceptFriendRequest startAsynchronous];
+//
+//		return;
+//	}
+//
+//	FriendGroupShowViewController *fgsVC = [[FriendGroupShowViewController alloc] initWithNibName:@"FriendGroupShowViewController" bundle:nil];
+//
+//	fgsVC.fBlock = ^(FriendGroupShowViewController *selfViewController, FriendGroup *friendGroup) {
+//		ASIHTTPRequest *acceptFriendRequest = [t_Network httpPostValue:@{ @"fid":[paramDic objectForKey:@"fid"], @"tid":friendGroup.Id, @"fname":[paramDic objectForKey:@"fname"], @"mid":noticesMsg.Id }.mutableCopy Url:anyTime_DisposeFriendRequest Delegate:nil Tag:anyTime_DisposeFriendRequest_tag];
+//
+//		__block ASIHTTPRequest *acceptRequest = acceptFriendRequest;
+//		[acceptFriendRequest setCompletionBlock: ^{
+//		    NSString *responseStr = [acceptRequest responseString];
+//		    id obtTmp =  [responseStr objectFromJSONString];
+//		    if ([obtTmp isKindOfClass:[NSDictionary class]]) {
+//		        NSString *statusCode = [obtTmp objectForKey:@"statusCode"];
+//		        if ([statusCode isEqualToString:@"1"]) {
+//		          //  selfCell.acceptBtn.hidden = YES;
+//		          //  selfCell.denyBtn.hidden   = YES;
+//		            [selfViewController dismissPopupViewControllerWithanimationType:MJPopupViewAnimationFade];
+//		            [MBProgressHUD showSuccess:@"Success"];
+//				}
+//			}
+//		}];
+//		[acceptFriendRequest setFailedBlock: ^{
+//		    [MBProgressHUD showError:@"Network error"];
+//		}];
+//		[acceptFriendRequest startAsynchronous];
+//	};
+//	[self presentPopupViewController:fgsVC animationType:MJPopupViewAnimationFade];
+//}
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
 	return YES;
@@ -358,7 +389,7 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
 	if (editingStyle == UITableViewCellEditingStyleDelete) {
-		NoticesMsgModel *noticesMsgModel = [_noticeArr objectAtIndex:indexPath.section];
+		NoticesMsgModel *noticesMsgModel = [_noticeArr objectAtIndex:indexPath.row];
 		ASIHTTPRequest *deleteMsgRequest = [t_Network httpPostValue:@{ @"msgId":[@[@{ @"id":noticesMsgModel.Id }] JSONString] }.mutableCopy Url:anyTime_DelMessage Delegate:nil Tag:anyTime_DelMessage_tag];
 
 		__block ASIHTTPRequest *magRequest = deleteMsgRequest;
@@ -368,8 +399,8 @@
 		    if ([obtTmp isKindOfClass:[NSDictionary class]]) {
 		        NSString *statusCode = [obtTmp objectForKey:@"statusCode"];
 		        if ([statusCode isEqualToString:@"1"]) {
-		            [_noticeArr removeObjectAtIndex:indexPath.section];
-		            [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationTop];
+		            [_noticeArr removeObjectAtIndex:indexPath.row];
+		            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath, nil] withRowAnimation:UITableViewRowAnimationTop];
 		            [MBProgressHUD showSuccess:@"Success"];
 				}
 		        else {

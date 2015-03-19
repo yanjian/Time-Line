@@ -110,7 +110,26 @@ typedef NS_ENUM (NSInteger, ActiveStatus) {
 };
 
 
+#define		DEFAULT_TAB							0
 
+
+//==================================登陆openfire的用户名和密码（格式：anytime_xxx@ubuntu   密码： qq123456）=====
+
+#define XMPP_ANYTIMENAME @"anytimeName"
+#define XMPP_ANYTIMEPWD  @"anytimePWD"
+
+#define XMPP_PWD @"qq123456" 
+
+//=========================================================================================================
+
+
+
+//==============================================(本程序有关通知常量)==========================================
+
+#define CHATGROUP_ACTIVENOTIFICTION @"chatGroupActiveNotifiction"//一个活动群聊信息通知
+#define CHATGROUP_USERINFO @"chatGroupUserInfo" //活动群聊通知的附加信息
+
+//==========================================================================================================
 
 //可配置IP
 #define BASE_IP_CHANGE(serviceName) [NSString stringWithFormat : @"%@/servlet/%@", BASEURL_IP, serviceName]
@@ -337,3 +356,19 @@ typedef NS_ENUM (NSInteger, ActiveStatus) {
 //得到图片的真实路径  GetImgRealPath =====> type: 1,活动 2,用户  id=(eid或uid)
 #define anyTime_GetImgRealPath [NSString stringWithFormat:@"%@/servlet/GetImgRealPath", BASEURL_IP]
 #define anyTime_GetImgRealPath_tag 61
+
+
+//UpdateDeviceToken 更新设备token
+#define anyTime_UpdateDeviceToken [NSString stringWithFormat:@"%@/servlet/UpdateDeviceToken", BASEURL_IP]
+#define anyTime_UpdateDeviceToken_tag 62
+
+//多人活动群聊消息发送 SendMsg
+
+#define anyTime_SendMsg [NSString stringWithFormat:@"%@/servlet/SendMsg", BASEURL_IP]
+#define anyTime_SendMsg_tag 63
+
+
+//更新好友分组 UpdateFTeam
+
+#define anyTime_UpdateFTeam [NSString stringWithFormat:@"%@/servlet/UpdateFTeam", BASEURL_IP]
+#define anyTime_UpdateFTeam_tag 64

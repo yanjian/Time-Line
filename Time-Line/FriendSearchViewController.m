@@ -7,11 +7,12 @@
 //
 
 #import "FriendSearchViewController.h"
+#import "FriendsProfilesTableViewController.h"
 #import "FriendInfoTableViewCell.h"
 #import "Friend.h"
 #import "UIImageView+WebCache.h"
 #import "LPPopupListView.h"
-@interface FriendSearchViewController () <UITableViewDelegate, UITableViewDataSource, LPPopupListViewDelegate> {
+@interface FriendSearchViewController () <UITableViewDelegate, UITableViewDataSource,UISearchBarDelegate, LPPopupListViewDelegate> {
 	NSMutableArray *searchFriendArr;
 	NSIndexPath *selectIndexPath;//用户选择的行数
 }
@@ -24,52 +25,40 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	self.view.frame = CGRectMake(0, 44, kScreen_Width, kScreen_Height);
-	UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, 320, 64)];
-	navBar.translucent = NO;
-	navBar.barTintColor = blueColor;
-	UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:nil];
-	//创建一个左边按钮
-	UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-	[leftBtn setFrame:CGRectMake(20, 30, 21, 25)];
-	[leftBtn addTarget:self action:@selector(onClickClose) forControlEvents:UIControlEventTouchUpInside];
+	self.view.frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
+    self.title = @"By account/display name" ;
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn addTarget:self action:@selector(backToAddFriendsView) forControlEvents:UIControlEventTouchUpInside] ;
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
 
-	UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
-	navItem.leftBarButtonItem = leftButton;
-
-	UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 18)];
-	titleLabel.textAlignment = NSTextAlignmentCenter;
-	titleLabel.font = [UIFont boldSystemFontOfSize:17];
-	titleLabel.textColor = [UIColor whiteColor];
-	titleLabel.text = @"Add Friend";
-	navItem.titleView = titleLabel;
-
-	[navBar pushNavigationItem:navItem animated:NO];
-	[self.view addSubview:navBar];
-
-	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 64 + 5, kScreen_Width, kScreen_Height - naviHigth) style:UITableViewStylePlain];
+    
+	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height) style:UITableViewStylePlain];
 	self.tableView.dataSource = self;
 	self.tableView.delegate = self;
 	[self.view addSubview:self.tableView];
+    [self createTableHead];
 }
 
 #pragma mark -创建搜索视图
-- (UIView *)createTableHead {
-	UIView *headView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 50)];
-	CGRect rect = CGRectMake(20, 0, 200, 30);
-	self.searchText = [[UITextField alloc] initWithFrame:rect];
-	self.searchText.borderStyle = UITextBorderStyleLine;
-	[headView addSubview:self.searchText];
-
-	self.searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[self.searchBtn setTitle:@"Search" forState:UIControlStateNormal];
-	self.searchBtn.frame = CGRectMake(rect.size.width + rect.origin.x + 10, 0, 70, 30);
-	[self.searchBtn setBackgroundColor:purple];
-	[self.searchBtn addTarget:self action:@selector(searchFriendAdd:) forControlEvents:UIControlEventTouchUpInside];
-	[headView addSubview:self.searchBtn];
-	[headView setBackgroundColor:[UIColor whiteColor]];
-	return headView;
+- (void)createTableHead {
+	
+    UISearchBar * searchBar = [[UISearchBar alloc] init];
+    searchBar.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0);
+    searchBar.delegate = self;
+    searchBar.placeholder = @"Search";
+    searchBar.backgroundColor = [UIColor clearColor];
+    searchBar.translucent = YES ;
+//    [[[[searchBar.subviews objectAtIndex : 0 ] subviews ] objectAtIndex : 0 ] removeFromSuperview ];
+//    
+//    [searchBar setBackgroundColor :[ UIColor clearColor ]];
+    searchBar.tintColor = [UIColor whiteColor];
+    [searchBar sizeToFit];
+    self.tableView.tableHeaderView = searchBar ;
+    self.tableView.tableFooterView = [UIView new];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -77,16 +66,20 @@
 	// Dispose of any resources that can be recreated.
 }
 
-- (void)onClickClose {
-	[self dismissViewControllerAnimated:YES completion:nil];
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+    [searchBar resignFirstResponder];
+    [self searchFriendAdd:searchBar.text];
+    
 }
 
-- (IBAction)searchFriendAdd:(UIButton *)sender {
-	searchFriendArr = [NSMutableArray array];
+- (IBAction)searchFriendAdd:(NSString *)searchText {
+	
 
-	if (self.searchText.text && ![self.searchText.text isEqualToString:@""]) {
+	if (searchText && ![searchText isEqualToString:@""]) {
+        searchFriendArr = [NSMutableArray array];
 		[MBProgressHUD showMessage:@"Search..."];
-		ASIHTTPRequest *request = [t_Network httpGet:@{ @"uid":self.searchText.text }.mutableCopy Url:anyTime_FindUser Delegate:nil Tag:anyTime_FindUser_tag];
+		ASIHTTPRequest *request = [t_Network httpGet:@{ @"uid":searchText }.mutableCopy Url:anyTime_FindUser Delegate:nil Tag:anyTime_FindUser_tag];
 		__block ASIHTTPRequest *searchRequest = request;
 		[request setCompletionBlock: ^{
 		    NSString *responseStr = [searchRequest responseString];
@@ -120,28 +113,17 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-	return 1;
+	return searchFriendArr.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return searchFriendArr.count;
+	return 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 	return 55.f;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-	return 40.f;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-	return 0.5f;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-	return [self createTableHead];
-}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	static NSString *cellIdentifier = @"cellFriendId";
@@ -151,7 +133,7 @@
 		cell = (FriendInfoTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"FriendInfoTableViewCell" owner:self options:nil] lastObject];
 	}
 
-	Friend *friend = searchFriendArr[indexPath.row];
+	Friend *friend = searchFriendArr[indexPath.section];
 
 
 	NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, friend.imgSmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -162,39 +144,60 @@
 	//cell.textLabel.textColor = friend.isVip ? [UIColor redColor] : [UIColor blackColor];
 	cell.nickName.text = friend.nickname;
 	cell.userNote.text = friend.alias;
+    [cell.addFriendBtn addTarget:self action:@selector(addFriendEventTouch:) forControlEvents:UIControlEventTouchUpInside];
 	return cell;
 }
+
+
+-(void)addFriendEventTouch:(UIButton *) sender {
+    
+
+}
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	selectIndexPath = indexPath;
-	LPPopupListView *lpopView = [[LPPopupListView alloc] initWithTitle:@"Select Group" list:nil selectedIndexes:nil point:CGPointMake(20, 70) size:CGSizeMake(kScreen_Width - 40, kScreen_Height - 100) multipleSelection:NO];
-	lpopView.titleLabel.textAlignment = NSTextAlignmentCenter;
-	lpopView.delegate = self;
-	[lpopView showInView:self.view animated:YES];
+    Friend *friend = searchFriendArr[indexPath.section];
+    
+    FriendsProfilesTableViewController * friendsProfileVC = [[FriendsProfilesTableViewController alloc] init] ;
+    friendsProfileVC.isSendRequest = YES ;
+    friendsProfileVC.friend = friend ;
+    friendsProfileVC.friendsAddProfileblack = ^(NSString *groupId){
+        ASIHTTPRequest *addFriendRequest = [t_Network httpPostValue:@{ @"fid":friend.Id, @"tid":groupId, @"name":friend.username }.mutableCopy Url:anyTime_AddFriend Delegate:nil Tag:anyTime_AddFriend_tag];
+        __block ASIHTTPRequest *friendRequest = addFriendRequest;
+        [addFriendRequest setCompletionBlock: ^{
+            NSString *responseStr = [friendRequest responseString];
+            NSLog(@"%@", responseStr);
+            id objTmp = [responseStr objectFromJSONString];
+            NSString *statusCode = [objTmp objectForKey:@"statusCode"];
+            if ([statusCode isEqualToString:@"1"]) {
+                [MBProgressHUD showSuccess:@"Friend request sent. Please wait for confirmation"];
+            }else {
+                [MBProgressHUD showError:@"Fail to send friend request"];
+            }
+        }];
+        [addFriendRequest setFailedBlock: ^{
+            [MBProgressHUD showError:@"Fail to send friend request"];
+        }];
+        [addFriendRequest startAsynchronous];
+    };
+    
+    [self.navigationController pushViewController:friendsProfileVC animated:YES];
+    
+//	LPPopupListView *lpopView = [[LPPopupListView alloc] initWithTitle:@"Select Group" list:nil selectedIndexes:nil point:CGPointMake(20, 70) size:CGSizeMake(kScreen_Width - 40, kScreen_Height - 100) multipleSelection:NO];
+//	lpopView.titleLabel.textAlignment = NSTextAlignmentCenter;
+//	lpopView.delegate = self;
+//	[lpopView showInView:self.view animated:YES];
 }
 
 #pragma mark -LPPopupListView的代理
 - (void)popupListView:(LPPopupListView *)popupListView didSelectFriendGroup:(FriendGroup *)selectFriendGroup {
-	Friend *friend = searchFriendArr[selectIndexPath.row];
-	ASIHTTPRequest *addFriendRequest = [t_Network httpPostValue:@{ @"fid":friend.Id, @"tid":selectFriendGroup.Id, @"name":friend.username }.mutableCopy Url:anyTime_AddFriend Delegate:nil Tag:anyTime_AddFriend_tag];
-	__block ASIHTTPRequest *friendRequest = addFriendRequest;
-	[addFriendRequest setCompletionBlock: ^{
-	    NSString *responseStr = [friendRequest responseString];
-	    NSLog(@"%@", responseStr);
-	    id objTmp = [responseStr objectFromJSONString];
-	    NSString *statusCode = [objTmp objectForKey:@"statusCode"];
-	    if ([statusCode isEqualToString:@"1"]) {
-	        [MBProgressHUD showSuccess:@"Friend request sent. Please wait for confirmation"];
-		}
-	    else {
-	        [MBProgressHUD showError:@"Fail to send friend request"];
-		}
-	}];
-	[addFriendRequest setFailedBlock: ^{
-	    [MBProgressHUD showError:@"Fail to send friend request"];
-	}];
-	[addFriendRequest startAsynchronous];
+}
+
+
+-(void)backToAddFriendsView{
+    [self.navigationController popViewControllerAnimated:YES] ;
 }
 
 /*

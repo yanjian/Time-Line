@@ -18,6 +18,7 @@
 #import "ActiveFooterView.h"
 #import "AddActiveViewController.h"
 #import "UserInfo.h"
+#import "ChatViewController.h"
 
 #define footerCellHeight_AddYes  90
 #define footerCellHeight_AddNo   42
@@ -149,9 +150,6 @@
 
 #pragma mark -初始化导航视图
 - (void)createNavView {
-	// 导航
-	self.navigationController.navigationBar.barTintColor = blueColor;
-
 	//左边的按钮
 
 	UIButton *zvbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -176,12 +174,13 @@
 	}
 
 	//中间icon
-	UIView *midView = [[UIView alloc] initWithFrame:CGRectMake(88, 20, kScreen_Width - 2 * 88, 44)];
+	UIControl *midView = [[UIControl alloc] initWithFrame:CGRectMake(88, 20, kScreen_Width - 2 * 88, 44)];
 	[midView setBackgroundColor:[UIColor clearColor]];
 	UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(45, 0, 50, 44)];
 	[imgView setImage:[UIImage imageNamed:@"open_default"]];
 	[imgView setBackgroundColor:[UIColor clearColor]];
 	[midView addSubview:imgView];
+    [midView addTarget:self action:@selector(openActiveChatGroupVC) forControlEvents:UIControlEventTouchUpInside];
 	self.navigationItem.titleView = midView;
 }
 
@@ -407,6 +406,13 @@
 		}
 	}
 	return headView;
+}
+
+-(void)openActiveChatGroupVC{
+    ChatViewController *chatVc = [[ChatViewController alloc] init] ;
+    chatVc.hidesBottomBarWhenPushed = YES;
+    chatVc.activeEvent = self.activeEvent ;
+    [self.navigationController pushViewController:chatVc animated:YES] ;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {

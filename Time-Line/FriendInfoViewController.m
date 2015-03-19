@@ -12,6 +12,7 @@
 #import "Friend.h"
 #import "HeadView.h"
 #import "FriendSearchViewController.h"
+#import "FriendAddTableViewController.h"
 #import "FriendsInfoTableViewController.h"
 #import "UIImageView+WebCache.h"
 #import "FriendInfoTableViewCell.h"
@@ -27,11 +28,27 @@
 
 @implementation FriendInfoViewController
 
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self)
+    {
+        self.title = @"Friends"; 
+        [self.tabBarItem setImage:[UIImage imageNamed:@"Friends_NoFill"]];
+        self.tabBarItem.title = @"Friends";
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	CGRect frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
 	self.view.frame = frame;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:self action:@selector(searchFriendInfo)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addFriendView)];
 
+    
 	[self loadData];//加载数据
 
 	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height - naviHigth) style:UITableViewStyleGrouped];
@@ -39,7 +56,7 @@
 	self.tableView.delegate = self;
 	[self.view addSubview:self.tableView];
 	[self setupRefresh];
-	[self createAddFriendBtn];
+	//[self createAddFriendBtn];
 }
 
 /**
@@ -60,6 +77,17 @@
 
 - (void)footerRereshing {
 	[self.tableView footerEndRefreshing];
+}
+
+
+-(void)searchFriendInfo{
+
+}
+
+-(void)addFriendView{
+    FriendAddTableViewController *fAddVc = [[FriendAddTableViewController alloc] init];
+    fAddVc.hidesBottomBarWhenPushed = YES ;
+    [self.navigationController pushViewController:fAddVc animated:YES];
 }
 
 #pragma mark -创建一个添加组或添加好友的按钮
@@ -142,68 +170,6 @@
 - (void)requestFailed:(ASIHTTPRequest *)request {
 }
 
-/**
- *  添加组或朋友按钮的单击事件
- *
- *  @param sender
- */
-- (void)addNewFriendsAndGroups:(UIButton *)sender {
-	[UIView animateWithDuration:0.2f animations:nil completion: ^(BOOL finished) {
-	    addBtn.hidden = YES;
-	}];
-
-	UIActionSheet *fgSheet = [[UIActionSheet alloc] initWithTitle:@"add Friends Or Groups" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Add Friends", @"Add Groups", nil];
-	[fgSheet showInView:self.view];
-}
-
-#pragma mark -UIActionSheet的代理
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex; {
-	if (buttonIndex == 0) {//add friends
-		FriendSearchViewController *searchVc = [[FriendSearchViewController alloc] init];
-		self.modalPresentationStyle = UIModalPresentationCurrentContext;
-		[self presentViewController:searchVc animated:YES completion:nil];
-	}
-	else if (buttonIndex == 1) {//add groups
-		UIAlertView *gAlertView = [[UIAlertView alloc] initWithTitle:@"Add Groups" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
-		gAlertView.alertViewStyle = UIAlertViewStylePlainTextInput;
-		[gAlertView show];
-	}
-	addBtn.hidden = NO;
-}
-
-
-#pragma mark -UIAlertView的代理
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-	if (buttonIndex == 1) {
-		__block FriendGroup *friendGroup = [[FriendGroup alloc] init];
-		friendGroup.name = [alertView textFieldAtIndex:0].text;
-
-		ASIHTTPRequest *addGroupsRequest = [t_Network httpPostValue:@{ @"name": friendGroup.name }.mutableCopy Url:anyTime_AddFTeam Delegate:nil Tag:anyTime_AddFTeam_tag];
-		__block ASIHTTPRequest *groupsRequest = addGroupsRequest;
-		[addGroupsRequest setCompletionBlock: ^{//请求成功
-		    NSString *responseStr = [groupsRequest responseString];
-		    NSLog(@"%@", responseStr);
-		    id objGroup = [responseStr objectFromJSONString];
-		    if ([objGroup isKindOfClass:[NSDictionary class]]) {
-		        NSString *statusCode = [objGroup objectForKey:@"statusCode"];
-		        if ([statusCode isEqualToString:@"1"]) {
-		            NSDictionary *tmpDic = [objGroup objectForKey:@"data"];
-		            friendGroup = [friendGroup initWithDict:tmpDic];
-				}
-			}
-		}];
-
-		[addGroupsRequest setFailedBlock: ^{//请求失败
-		    NSLog(@"%@", [groupsRequest responseString]);
-		}];
-
-		[addGroupsRequest startAsynchronous];
-
-		[_groupArr addObject:friendGroup];
-		[self.tableView reloadData];
-	}
-}
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 	return _groupArr.count;
 }
@@ -241,6 +207,7 @@
 	NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, friend.imgBig] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	NSLog(@"%@", _urlStr);
 	NSURL *url = [NSURL URLWithString:_urlStr];
+    [cell.addFriendBtn setHidden:YES] ;//隐藏添加朋友按钮
 	[cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
 
 	cell.textLabel.textColor = friend.isVip ? [UIColor redColor] : [UIColor blackColor];
@@ -263,8 +230,36 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
 	HeadView *headView = [[HeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 40)];
 	headView.delegate = self;
-	headView.friendGroup = _groupArr[section];
-
+    headView.friendGroup = _groupArr[section];
+    
+    headView.headGroupNewFriendBlock=^(NSString * groupName){
+        __block FriendGroup *friendGroup = [[FriendGroup alloc] init];
+        friendGroup.name = groupName;
+        
+        ASIHTTPRequest *addGroupsRequest = [t_Network httpPostValue:@{ @"name": friendGroup.name }.mutableCopy Url:anyTime_AddFTeam Delegate:nil Tag:anyTime_AddFTeam_tag];
+        __block ASIHTTPRequest *groupsRequest = addGroupsRequest;
+        [addGroupsRequest setCompletionBlock: ^{//请求成功
+            NSString *responseStr = [groupsRequest responseString];
+            NSLog(@"%@", responseStr);
+            id objGroup = [responseStr objectFromJSONString];
+            if ([objGroup isKindOfClass:[NSDictionary class]]) {
+                NSString *statusCode = [objGroup objectForKey:@"statusCode"];
+                if ([statusCode isEqualToString:@"1"]) {
+                    NSDictionary *tmpDic = [objGroup objectForKey:@"data"];
+                    friendGroup = [friendGroup initWithDict:tmpDic];
+                }
+            }
+        }];
+        
+        [addGroupsRequest setFailedBlock: ^{//请求失败
+            NSLog(@"%@", [groupsRequest responseString]);
+        }];
+        
+        [addGroupsRequest startAsynchronous];
+        
+        [_groupArr addObject:friendGroup];
+        [self.tableView reloadData];
+    };
 	return headView;
 }
 
@@ -272,6 +267,7 @@
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 
 	FriendsInfoTableViewController *fiVC = [[FriendsInfoTableViewController alloc] initWithNibName:@"FriendsInfoTableViewController" bundle:nil];
+    fiVC.hidesBottomBarWhenPushed = YES ;
 	FriendGroup *friendGroup = _groupArr[indexPath.section];
 	Friend *friend = friendGroup.friends[indexPath.row];
 	fiVC.friendInfo = friend;
@@ -301,13 +297,14 @@
 	[self.navigationController pushViewController:fiVC animated:YES];
 }
 
+
+
 - (void)clickHeadView {
 	[self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning];
-	// Dispose of any resources that can be recreated.
 }
 
 @end
