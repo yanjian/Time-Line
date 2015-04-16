@@ -37,66 +37,69 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	self.navigationController.navigationBar.barTintColor = blueColor;
 	self.googleCalendar = [[NSMutableArray alloc] initWithCapacity:0];
 
-
-	UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
-	UILabel *titlelabel = [[UILabel alloc]initWithFrame:titleView.frame];
-	titlelabel.textAlignment = NSTextAlignmentCenter;
-	titlelabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
-	titlelabel.textColor = [UIColor whiteColor];
-	[titleView addSubview:titlelabel];
-	self.navigationItem.titleView = titleView;
-	_activityIndicatorView = [[UIActivityIndicatorView  alloc] initWithFrame:CGRectMake(192.0, 13.0, 20, 20.0)];
+	_activityIndicatorView = [[UIActivityIndicatorView  alloc] initWithFrame:CGRectMake(0, 0, 20, 20.0)];
 	_activityIndicatorView.hidesWhenStopped = NO;
-	_activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
-	[titleView addSubview:_activityIndicatorView];
+	_activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+
 	if (self.isBind) {
 		if (self.isSeting) {
 			if (self.isSync) {
-				titlelabel.text = @"Sync with Google";
+				self.title = @"Sync with Google";
+                self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_activityIndicatorView];
+                
 				UIButton *rightBtn = [self createRightBtn:@" SKIP"];
 				self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
 			}
 			else {
-				titlelabel.text = @"Connect";
+				self.title = @"Connect";
 				UIButton *leftBtn = [self createLeftButton];
 				self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
+              
+                self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_activityIndicatorView];
+
 			}
 		}
 		else {
-			titlelabel.text = @"Sync with Google";
+			self.title = @"Sync with Google";
+             self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_activityIndicatorView];
+            
 			UIButton *rightBtn = [self createRightBtn:@" SKIP"];
 			self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
 		}
 	}
 	else {
 		if (self.isLogin) {
-			titlelabel.text = @"Login with Google";
+			self.title = @"Login with Google";
 		}
 		else {
-			titlelabel.text = @"Sign up with Google";
+			self.title = @"Sign up with Google";
 		}
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:_activityIndicatorView];
+        
 		UIButton *leftBtn = [self createLeftButton];
-		self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
 	}
 	self.googleLoginView.scalesPageToFit = YES;
 	self.googleLoginView.delegate = self;
+    
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
 }
 
 - (UIButton *)createLeftButton {
-	UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-	[leftBtn setFrame:CGRectMake(0, 2, 21, 25)];
-	[leftBtn addTarget:self action:@selector(dimssGoogleView:) forControlEvents:UIControlEventTouchUpInside];
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn addTarget:self action:@selector(dimssGoogleView:) forControlEvents:UIControlEventTouchUpInside] ;
 	return leftBtn;
 }
 
 - (UIButton *)createRightBtn:(NSString *)title {
 	UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
 	[rightBtn setTitle:title forState:UIControlStateNormal];
-	[rightBtn setFrame:CGRectMake(290, 4, 60, 20)];
+    [rightBtn setTitleColor:blueColor forState:UIControlStateNormal];
+	[rightBtn setFrame:CGRectMake(0, 0, 60, 20)];
 	[rightBtn addTarget:self action:@selector(bindGoogleAccountSkip:) forControlEvents:UIControlEventTouchUpInside];
 	return rightBtn;
 }
@@ -150,7 +153,7 @@
 }
 
 - (void)bindGoogleAccountSkip:(UIButton *)sender {
-	[[AppDelegate getAppDelegate] initMainView];
+	[[AppDelegate getAppDelegate] setupViewControllers];
 	[self dismissViewControllerAnimated:YES completion:nil];
 }
 

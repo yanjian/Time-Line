@@ -17,7 +17,7 @@
         MASLayoutPriorityDefaultHigh = 750,
         MASLayoutPriorityDefaultMedium = 500,
         MASLayoutPriorityDefaultLow = 250,
-        MASLayoutPriorityFittingSizeLevel =  50,
+        MASLayoutPriorityFittingSizeLevel = 50,
     };
     typedef float MASLayoutPriority;
 

@@ -424,7 +424,7 @@
         if ([obtTmp isKindOfClass:[NSDictionary class]]) {
             NSString *statusCode = [obtTmp objectForKey:@"statusCode"];
             if ([statusCode isEqualToString:@"1"]) {
-                NSLog(@">>>>>>>>>>>>>>>>>>Team update success")
+                NSLog(@">>>>>>>>>>>>>>>>>>Team update success");
             }
         }
     }];

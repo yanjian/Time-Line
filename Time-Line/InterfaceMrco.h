@@ -38,6 +38,11 @@ typedef NS_ENUM (NSInteger, eventStatus) {
 };
 
 
+typedef NS_ENUM(NSInteger, LoginOrLogoutType) {
+    LoginOrLogoutType_SetupMainOpen = 0,//程序启动时，初始化登陆界面
+    LoginOrLogoutType_ModelOpen = 1 //程序启动后，在用户点击退出时打开的登陆方式：模式打开
+};
+
 #define  calendarDateCount [CalendarDateUtil getCurrentDay] + 2 * 30
 
 //google的apikey
@@ -372,3 +377,15 @@ typedef NS_ENUM (NSInteger, ActiveStatus) {
 
 #define anyTime_UpdateFTeam [NSString stringWithFormat:@"%@/servlet/UpdateFTeam", BASEURL_IP]
 #define anyTime_UpdateFTeam_tag 64
+
+//AddEventMember
+#define anyTime_AddEventMember [NSString stringWithFormat:@"%@/servlet/AddEventMember", BASEURL_IP]
+#define anyTime_AddEventMember_tag 65
+
+//GetEventChatImg
+#define anyTime_GetEventChatImg [NSString stringWithFormat:@"%@/servlet/GetEventChatImg", BASEURL_IP]
+#define anyTime_GetEventChatImg_tag 66
+
+//ConfirmEventTime
+#define anyTime_ConfirmEventTime [NSString stringWithFormat:@"%@/servlet/ConfirmEventTime", BASEURL_IP]
+#define anyTime_ConfirmEventTime_tag 67

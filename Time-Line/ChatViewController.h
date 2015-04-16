@@ -10,8 +10,9 @@
 #import "JSQMessages.h"
 #import "ChatModelData.h"
 #import "ActiveEventMode.h"
+#import "XLPagerTabStripViewController.h"
 
-@interface ChatViewController : JSQMessagesViewController
+@interface ChatViewController : JSQMessagesViewController<XLPagerTabStripChildItem>
 
 @property (strong, nonatomic) ChatModelData *chatModelData;
 

@@ -43,20 +43,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.title = @"Location" ;
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow.png"] forState:UIControlStateNormal];
-    [leftBtn setFrame:CGRectMake(0, 2, 21, 25)];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal];
+    [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
     
     [leftBtn addTarget:self action:@selector(disviewcontroller) forControlEvents:UIControlEventTouchUpInside];
     
-    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(0, 0, 140, 40)];
-    UILabel* titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 140, 40)];
-    titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.font = [UIFont boldSystemFontOfSize:22];
-    titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.text =@"Location";
-    [titleView addSubview:titleLabel];
-    self.navigationItem.titleView = titleView;
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
 //    __block __weak LocationViewController *wself = self;
 //    [[MMLocationManager shareLocation] getCity:^(NSString *cityString) {

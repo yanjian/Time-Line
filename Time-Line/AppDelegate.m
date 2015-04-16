@@ -120,8 +120,6 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 		[alert show];
 		application.applicationIconBadgeNumber = 0;
 	}
-
-    	//[self initMainView];
     
     [self setupViewControllers];
     
@@ -178,11 +176,16 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 	return timeMs;
 }
 
-- (void)initLoginView {
-	LoginViewController *loginVc = [[LoginViewController alloc] init];
+- (void)initLoginView:(LoginOrLogoutType)loginOrLogoutType {
+	LoginViewController *loginVc   = [[LoginViewController alloc] init];
 	NavigationController *navLogin = [[NavigationController alloc] initWithRootViewController:loginVc];
-	navLogin.navigationBar.hidden = YES;
-	[self.tabBarController presentViewController:navLogin animated:YES completion:nil];
+	navLogin.navigationBar.hidden  = YES;
+    if (loginOrLogoutType == LoginOrLogoutType_SetupMainOpen) {
+        self.window.rootViewController = navLogin;
+        [self.window makeKeyAndVisible];
+    }else if(loginOrLogoutType == LoginOrLogoutType_ModelOpen){
+       [self.tabBarController presentViewController:navLogin animated:YES completion:nil];
+    }
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request {
@@ -239,16 +242,16 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 	}
 }
 
-//初始化mian界面
-- (void)initMainView {
-	homeVC = [[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
-
-	homeVC.isRefreshUIData = YES;//初始化的时候刷新ui加载数据
-	nav = [[UINavigationController alloc] initWithRootViewController:homeVC];
-	nav.navigationBar.translucent = NO;
-	self.window.rootViewController = nav;
-	[self.window makeKeyAndVisible];
-}
+////初始化mian界面
+//- (void)initMainView {
+//	homeVC = [[HomeViewController alloc] initWithNibName:@"HomeViewController" bundle:nil];
+//
+//	homeVC.isRefreshUIData = YES;//初始化的时候刷新ui加载数据
+//	nav = [[UINavigationController alloc] initWithRootViewController:homeVC];
+//	nav.navigationBar.translucent = NO;
+//	self.window.rootViewController = nav;
+//	[self.window makeKeyAndVisible];
+//}
 
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
 	if (notification) {

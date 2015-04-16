@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AT_Event.h"
 #import "AddEventViewController.h"
 @interface DateDetailsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 {

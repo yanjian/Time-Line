@@ -232,9 +232,9 @@
 	SetFriendTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
 	if (!cell) {
 		cell = (SetFriendTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"SetFriendTableViewCell" owner:self options:nil] lastObject];
+        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"selecte_friend_tick"]];
 		//  cell.selectionStyle = UITableViewCellSelectionStyleNone;
 	}
-
 	FriendGroup *friendGroup = _groupArr[indexPath.section];
 	Friend *friend = friendGroup.friends[indexPath.row];
 
@@ -261,23 +261,23 @@
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	NSString *indexPathStr = [NSString stringWithFormat:@"%i%i", indexPath.section, indexPath.row];
 	SetFriendTableViewCell *stv = (SetFriendTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
-	if (![_selectIndexPathDic objectForKey:indexPathStr]) {
-		stv.selectStyleImg.image = [UIImage imageNamed:@"selecte_friend_tick"];
-		FriendGroup *friendGroup = _groupArr[indexPath.section];
-		Friend *friend = friendGroup.friends[indexPath.row];
-		[_selectFriendArr addObject:friend];
-		[_selectIndexPathDic setObject:indexPath forKey:indexPathStr];
-
-		selectInviteesCount++;
-	}
-	else {
-		stv.selectStyleImg.image = [UIImage imageNamed:@"selecte_friend_cycle"];
-		FriendGroup *friendGroup = _groupArr[indexPath.section];
-		Friend *friend = friendGroup.friends[indexPath.row];
-		[_selectFriendArr removeObject:friend];
-		[_selectIndexPathDic removeObjectForKey:indexPathStr];
-		selectInviteesCount--;
-	}
+//	if (![_selectIndexPathDic objectForKey:indexPathStr]) {
+//		stv.selectStyleImg.image = [UIImage imageNamed:@"selecte_friend_tick"];
+//		FriendGroup *friendGroup = _groupArr[indexPath.section];
+//		Friend *friend = friendGroup.friends[indexPath.row];
+//		[_selectFriendArr addObject:friend];
+//		[_selectIndexPathDic setObject:indexPath forKey:indexPathStr];
+//
+//		selectInviteesCount++;
+//	}
+//	else {
+//		stv.selectStyleImg.image = [UIImage imageNamed:@"selecte_friend_cycle"];
+//		FriendGroup *friendGroup = _groupArr[indexPath.section];
+//		Friend *friend = friendGroup.friends[indexPath.row];
+//		[_selectFriendArr removeObject:friend];
+//		[_selectIndexPathDic removeObjectForKey:indexPathStr];
+//		selectInviteesCount--;
+//	}
 	titlelabel.text = [NSString stringWithFormat:@"%i Invitees", selectInviteesCount];
 }
 

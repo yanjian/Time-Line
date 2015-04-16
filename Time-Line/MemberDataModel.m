@@ -10,5 +10,11 @@
 
 @implementation MemberDataModel
 
+-(void)setImgBig:(NSString *)imgBig{
+    _imgBig = [imgBig stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+}
 
+-(void)setImgSmall:(NSString *)imgSmall{
+    _imgSmall = [_imgSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+}
 @end

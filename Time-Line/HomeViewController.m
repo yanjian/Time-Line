@@ -11,27 +11,16 @@
 #import "AddEventViewController.h"
 #import "AnyEvent.h"
 #import "AT_Event.h"
-#import "SloppySwiper.h"
 #import "RecurrenceModel.h"
 #import "Calendar.h"
-#import "SetingViewController.h"
-#import "SetingsNavigationController.h"
-#import "NoticeAndFriendAndManageViewController.h"
-
 #import "AddActiveViewController.h"
-#import "NoticesViewController.h"
-#import "ManageViewController.h"
-#import "FriendInfoViewController.h"
-#import "JCMSegmentPageController.h"
 
-@interface HomeViewController () <ASIHTTPRequestDelegate,JCMSegmentPageControllerDelegate,UIActionSheetDelegate>{
+@interface HomeViewController () <ASIHTTPRequestDelegate,UIActionSheetDelegate>{
     UILabel *titleLabel;
-    BOOL ison;
     BOOL isSuccess;
+    NSMutableArray *_tmpActiveArr;
 }
 @property (nonatomic, strong) UIWindow *subWindow;
-
-@property (strong, nonatomic) SloppySwiper *swiper;
 @end
 
 @implementation HomeViewController
@@ -54,48 +43,114 @@
     [self initNavigationItem];
 }
 
+#pragma 初始化导航栏内容
+- (void)initNavigationItem
+{
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Schedule_Month"] forState:UIControlStateNormal];
+    [leftBtn setFrame:CGRectMake(0, 2, 21, 15)];
+    [leftBtn addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
+    
+    
+    //    UIButton*  rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    //    [rightBtn setBackgroundImage:[UIImage imageNamed:@"add_action"] forState:UIControlStateNormal];
+    //    [rightBtn setFrame:CGRectMake(0, 2, 30, 25)];
+    //    [rightBtn addTarget:self action:@selector(setYVbutton) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Today" style:UIBarButtonItemStylePlain target:self action:@selector(backToToday)];
+    
+    _scrollview = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
+    _scrollview .contentSize = CGSizeMake(0, kScreen_Height);
+    //    _scrollview.contentOffset = CGPointMake(kScreen_Width, 0);
+    _scrollview.backgroundColor = [UIColor whiteColor];
+    _scrollview.pagingEnabled = NO;
+    _scrollview.bounces = NO;//最后一页滑不动
+    _scrollview.showsHorizontalScrollIndicator=NO;
+    self.view =_scrollview ;
+    
+    calendarView = [[CLCalendarView alloc] init];
+    calendarView.frame = CGRectMake (0, 0, kScreen_Width, kScreen_Height);
+    calendarView.dataSuorce = self;
+    calendarView.delegate = self;
+    calendarView.time=@"time";
+    [_scrollview addSubview:calendarView];
+    
+    titleLabel.text=[NSString stringWithFormat:@"Today %@",[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"dd/M"]];
+    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 180, 30)];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    titleLabel.font=[UIFont boldSystemFontOfSize:20.0f];
+    titleLabel.textColor = [UIColor whiteColor];
+    
+    //    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(0, 0, 180, 30)];
+    //    [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
+    //    [titleView addSubview:titleLabel];
+    //    self.navigationItem.titleView = titleView ;
+}
+
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-   
-    NSArray *calendararr=[Calendar MR_findAll];
-    NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
-    for (Calendar *ca in calendararr) {
-        if ([ca.isVisible intValue]==1) {
-            NSPredicate *nspre=[NSPredicate predicateWithFormat:@"calendar==%@ and isDelete!=%i and recurringEventId==nil",ca,isDeleteData_YES];//不查询删除的数据
-            NSArray *arr=[AnyEvent MR_findAllWithPredicate:nspre];
-            for (AnyEvent *anyevent  in arr) {
-                [anyeventArr addObject:anyevent];
+    _tmpActiveArr = [NSMutableArray arrayWithCapacity:0];
+    ASIHTTPRequest *activeRequest = [t_Network httpGet:nil Url:anyTime_GetEventBasicInfo Delegate:self Tag:anyTime_GetEventBasicInfo_tag];
+    [activeRequest setDownloadCache:g_AppDelegate.anyTimeCache];
+    [activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy | ASIAskServerIfModifiedWhenStaleCachePolicy];
+    [activeRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy];
+    [activeRequest startSynchronous];
+    
+    dateArr = [NSMutableArray array];
+    
+    NSInteger cDay = calendarDateCount;
+    //NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
+    NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];
+    NSInteger startIndex = -(cDay - 1  + weekDay - 1);
+    for (int i = startIndex; i < startIndex + (7* 5 * 12); i+=7) {
+        NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];//回到200天前
+        NSArray *weekArr = [self switchWeekByDate:temp];
+        for (int d = 0; d<7; d++) {
+            CLDay *day = [weekArr objectAtIndex:d];
+            if (day.isToday) {
+                [calendarView setToDayRow:(i-startIndex)/7 Index:d];
             }
         }
+        [dateArr addObject:weekArr];
     }
-
-    [self synchronizationDataWriteEventId];//同步数据写入离线事件的Eid
-   // if (self.isRefreshUIData) {
-        dateArr = [NSMutableArray array];
-        NSInteger cDay = calendarDateCount;
-        //NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
-        
-        NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];
-        NSInteger startIndex = -(cDay - 1  + weekDay - 1);
-        for (int i = startIndex; i < startIndex + (7* 5 * 12); i+=7) {
-            NSDate *temp = [CalendarDateUtil dateSinceNowWithInterval:i];//回到200天前
-            NSArray *weekArr = [self switchWeekByDate:temp];
-            for (int d = 0; d<7; d++) {
-                CLDay *day = [weekArr objectAtIndex:d];
-                if (day.isToday) {
-                    [calendarView setToDayRow:(i-startIndex)/7 Index:d];
-                }
-            }
-            [dateArr addObject:weekArr];
-        }
-        
-        //默认不执行下面加载数据刷新ui的功能
         __block  NSUInteger intervalCount=0;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+            NSArray *calendararr=[Calendar MR_findAll];
+            NSMutableArray *anyeventArr=[NSMutableArray arrayWithCapacity:0];
+            for (Calendar *ca in calendararr) {
+                if ([ca.isVisible intValue]==1) {
+                    NSPredicate *nspre=[NSPredicate predicateWithFormat:@"calendar==%@ and isDelete!=%i and recurringEventId==nil",ca,isDeleteData_YES];//不查询删除的数据
+                    NSArray *arr=[AnyEvent MR_findAllWithPredicate:nspre];
+                    for (AnyEvent *anyevent  in arr) {
+                        [anyeventArr addObject:anyevent];
+                    }
+                }
+            }
+            [self synchronizationDataWriteEventId];//同步数据写入离线事件的Eid
             for (NSArray *weekArr in dateArr) {
                 for (int d=0; d<7; d++) {
                     CLDay *day = [weekArr objectAtIndex:d];
+                    
+                    NSDateFormatter *formatter =  [[NSDateFormatter alloc] init];
+                    [formatter setDateFormat:@"YYYY年 M月d日"];
+                    NSTimeZone *timeZone = [NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE];
+                    [formatter setTimeZone:timeZone];
+                    NSDate *loctime = [formatter dateFromString:[day description]];
+                    [formatter setDateFormat:@"yyyy-MM-dd"];
+                    NSString *tmpTimeStr = [formatter stringFromDate:loctime];
+
+                   NSArray * filterArr =  [_tmpActiveArr filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"createTime CONTAINS[cd] %@",tmpTimeStr]];
+                    
+                    if (filterArr.count>0){
+                        [day.events addObjectsFromArray:filterArr];
+                         NSLog(@"=============>>>>>><<<<<<<============ %@ =====  %@",filterArr,[day description]);
+                    }
+                    
+//                    NSArray * activeArr = [anyeventArr filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"startDate CONTAINS[cd] %@",[day description]]];
+                    
                     for (AnyEvent *event in anyeventArr) {
                         NSLog(@"%@",event.recurrence);
                         
@@ -261,8 +316,11 @@
             });
         });
         [calendarView goBackToday];//回到今天
-  // }
-   
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
 }
 
 
@@ -398,11 +456,6 @@
     }
 }
 
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-}
 
 #pragma mark -   将anyEvent 转换为json
 -(NSString *)assemblyStringWithGoogleAnyEvent:(AnyEvent *)anyEvent{
@@ -724,6 +777,35 @@
             }
             break;
         }
+        case anyTime_GetEventBasicInfo_tag: {
+            NSError *error = [request error];
+            if (error) {
+                [MBProgressHUD showError:@"error"];
+            }
+            NSString *requestStr =  [request responseString];
+            NSDictionary *dic = [requestStr objectFromJSONString];
+            NSString *statusCode = [dic objectForKey:@"statusCode"];
+            if ([@"1" isEqualToString:statusCode]) {
+                id dataObj = [dic objectForKey:@"data"];
+                if ([dataObj isKindOfClass:[NSArray class]]) {
+                    NSArray *activeArr = (NSArray *)dataObj;
+                    for (int i = 0; i < activeArr.count; i++) {
+                        ActiveBaseInfoMode *activeEvent = [[ActiveBaseInfoMode alloc] init];
+                        [activeEvent parseDictionary:activeArr[i]];
+                        if (activeEvent.member) {
+                            NSDictionary *memberDataDic = [activeEvent.member firstObject];  //在活动基本信息接口中member只有当前用户
+                            NSInteger notNum =  [[memberDataDic objectForKey:@"notification"] integerValue];
+                            activeEvent.isNotification = notNum == 1 ? YES : NO;
+                        }
+                        [_tmpActiveArr addObject:activeEvent];
+                    }
+                }
+            }
+            else {
+                [MBProgressHUD showError:@"Request Fail"];
+            }
+            [MBProgressHUD hideHUDForView:self.view animated:YES];
+        } break;
         default:
             break;
     }
@@ -847,114 +929,10 @@
     // Dispose of any resources that can be recreated.
 }
 
-
-#pragma 初始化导航栏内容
-- (void)initNavigationItem
-{
-    ison=YES;
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"bell_default"] forState:UIControlStateNormal];
-    [leftBtn setFrame:CGRectMake(0, 2, 30, 30)];
-    [leftBtn addTarget:self action:@selector(skipNotificationView) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
-    
-    
-    UIButton*  rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn setBackgroundImage:[UIImage imageNamed:@"add_action"] forState:UIControlStateNormal];
-    [rightBtn setFrame:CGRectMake(0, 2, 30, 25)];
-    [rightBtn addTarget:self action:@selector(setYVbutton) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn];
-    
-    _scrollview = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
-    _scrollview .contentSize = CGSizeMake(0, kScreen_Height);
-//    _scrollview.contentOffset = CGPointMake(kScreen_Width, 0);
-    _scrollview.backgroundColor = [UIColor whiteColor];
-    _scrollview.pagingEnabled = NO;
-    _scrollview.bounces = NO;//最后一页滑不动
-    _scrollview.showsHorizontalScrollIndicator=NO;
-    [self.view addSubview:_scrollview];
-    
-    calendarView = [[CLCalendarView alloc] init];
-    calendarView.frame = CGRectMake (0, 0, kScreen_Width, kScreen_Height);
-    calendarView.dataSuorce = self;
-    calendarView.delegate = self;
-    calendarView.time=@"time";
-    [_scrollview addSubview:calendarView];
-
-    titleLabel.text=[NSString stringWithFormat:@"Today %@",[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"dd/M"]];
-    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 180, 30)];
-    titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.font=[UIFont boldSystemFontOfSize:20.0f];
-    titleLabel.textColor = [UIColor whiteColor];
-    
-    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(0, 0, 180, 30)];
-    [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
-    [titleView addSubview:titleLabel];
-    self.navigationItem.titleView = titleView ;
+-(void) backToToday{
+ [calendarView goBackToday];//回到今天
 }
 
-
-#pragma mark -跳到通知视图页面
--(void)skipNotificationView{
-    
-    NoticesViewController *notivesView = [[NoticesViewController alloc] init];//初始化通知视图控制器
-    notivesView.title=@"Notice";
-    ManageViewController *manageView = [[ManageViewController alloc] init];//初始化管理控制器
-    manageView.title=@"Manage";
-    FriendInfoViewController *friendView = [[FriendInfoViewController  alloc] init];
-    friendView.title=@"Friends";
-    NSArray *viewsControllers= @[notivesView, manageView,friendView];
-    JCMSegmentPageController *segmentPageController = [[JCMSegmentPageController alloc] initWithTintColor:[UIColor whiteColor]];
-    segmentPageController.delegate = self;
-    segmentPageController.viewControllers = viewsControllers;
-    
-    CATransition *transition = [CATransition animation];
-    transition.duration = 0.45;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
-    transition.type = kCATransitionMoveIn;
-    transition.subtype = kCATransitionFromLeft;
-    transition.delegate = self;
-    [self.navigationController.view.layer addAnimation:transition forKey:nil];
-    self.navigationController.navigationBarHidden = NO;
-    
-    [self.navigationController pushViewController:segmentPageController animated:YES];
-}
-
-#pragma mark - JCMSegmentPageController的代理
-- (BOOL)segmentPageController:(JCMSegmentPageController *)segmentPageController shouldSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index {
-    NSLog(@"segmentPageController %@ shouldSelectViewController %@ at index %u", segmentPageController, viewController, index);
-    return YES;
-}
-
-#pragma mark - JCMSegmentPageController的代理
-- (void)segmentPageController:(JCMSegmentPageController *)segmentPageController didSelectViewController:(UIViewController *)viewController atIndex:(NSUInteger)index {
-    NSLog(@"segmentPageController %@ didSelectViewController %@ at index %u", segmentPageController, viewController, index);
-}
-
-
-#pragma mark 条到设置视图页面
--(void)setZVbutton
-{
-    /**另外一种导航滑动样式！
-     SetingViewController *setVC=[[SetingViewController alloc] init];
-     SetingsNavigationController *nc=[[SetingsNavigationController alloc] initWithRootViewController:setVC];
-     nc.navigationBar.translucent=NO;
-     nc.navigationBar.barTintColor=blueColor;
-     [self presentViewController:nc animated:YES completion:nil];
-     self.isRefreshUIData=NO;
-     */
-    
-    
-    SetingViewController *setVC=[[SetingViewController alloc] init];
-    UINavigationController *nc=[[UINavigationController alloc] initWithRootViewController:setVC];
-    nc.navigationBar.translucent=NO;
-    nc.navigationItem.hidesBackButton=YES;
-    nc.navigationBar.barTintColor=blueColor;
-    self.swiper = [[SloppySwiper alloc] initWithNavigationController:nc];
-    nc.delegate = self.swiper;
-    [self presentViewController:nc animated:YES completion:nil];
-    self.isRefreshUIData=NO;
-}
 
 #pragma mark -添加新的事件
 -(void)setYVbutton
@@ -1106,30 +1084,13 @@
     if (buttonIndex == 0) {
         AddActiveViewController *addActiveVC = [[AddActiveViewController alloc] init];
         [self.navigationController  pushViewController:addActiveVC animated:YES ] ;
-        self.isRefreshUIData=NO;
 
     }else if (buttonIndex == 1){
         AddEventViewController *addVC = [[AddEventViewController alloc] init];
         [self.navigationController  pushViewController:addVC animated:YES ] ;
-        self.isRefreshUIData=NO;
     }
     
 }
-///**
-// * 点击导航菜单按钮
-// */
-//- (void)oClickMenu
-//{
-//    SHRootController* sh=[[SHRootController alloc]init];
-//    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:sh];
-//    [self presentViewController:nav animated:YES completion:nil];
-////    sh.view.backgroundColor = [UIColor blackColor];
-////    sh.view.alpha=0.8;
-////    UIViewController*  rootViewr=[UIApplication sharedApplication].keyWindow.rootViewController;
-////    rootViewr.modalPresentationStyle = UIModalPresentationCurrentContext;
-////    [rootViewr presentViewController:sh animated:YES completion:nil];
-//
-//}
 
 
 #pragma mark - Method

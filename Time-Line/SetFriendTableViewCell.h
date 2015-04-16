@@ -12,6 +12,5 @@
 @property (weak, nonatomic) IBOutlet UIImageView *userHead;
 @property (weak, nonatomic) IBOutlet UILabel *nickName;
 @property (weak, nonatomic) IBOutlet UILabel *userNote;
-@property (weak, nonatomic) IBOutlet UIImageView *selectStyleImg;
 @property (assign, nonatomic) BOOL isSelect;
 @end

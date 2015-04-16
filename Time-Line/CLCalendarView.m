@@ -15,22 +15,30 @@
 #import "RecurrenceModel.h"
 #import "AT_Event.h"
 #import "CalendarDateUtil.h"
+#import "UIColor+HexString.h"
+#import "UIImageView+WebCache.h"
+#import "SimpleEventTableViewCell.h"
+#import "ComplicatedEventTableViewCell.h"
+#import "ActiveBaseInfoMode.h"
 
 #define calendar_Table_Month_H  220   //只显示一周此处改为44
-#define calendar_Table_Week_H   90   //110
+#define calendar_Table_Week_H    0  //110  90
+
+//星期label高度
+#define DayLab_H 20
 
 //表行的高度 139.0f
-#define rowHeight 55
+#define rowHeight 64
 
 //表头高度
 #define headHeight 20
 
-#define calendar_Table_Month_F CGRectMake(0, 20, self.bounds.size.width, calendar_Table_Month_H)
-#define calendar_Table_Week_F  CGRectMake(0, 20, self.bounds.size.width, calendar_Table_Week_H)
+#define calendar_Table_Month_F CGRectMake(0, DayLab_H, self.bounds.size.width, calendar_Table_Month_H)
+#define calendar_Table_Week_F  CGRectMake(0, DayLab_H, self.bounds.size.width, calendar_Table_Week_H)
 
-#define event_Table_Month_F CGRectMake(0, 20 + calendar_Table_Month_H, self.bounds.size.width, self.bounds.size.height - calendar_Table_Month_H - naviHigth - headHeight)
+#define event_Table_Month_F CGRectMake(0,  calendar_Table_Month_H+DayLab_H, self.bounds.size.width, self.bounds.size.height - calendar_Table_Month_H)
 
-#define event_Table_Week_F CGRectMake(0, calendar_Table_Week_H - headHeight, self.bounds.size.width, self.bounds.size.height - calendar_Table_Week_H + headHeight - naviHigth)
+#define event_Table_Week_F CGRectMake(0, calendar_Table_Week_H, self.bounds.size.width, self.bounds.size.height-calendar_Table_Week_H)
 
 #define cellID @"CLCalendarCell"
 #define eventCellID @"eventCell"
@@ -51,6 +59,7 @@
 	BOOL needReload;
 	UILabel *month;
 	BOOL isshow;
+    UIControl *shieldLab;
 }
 
 @end
@@ -62,7 +71,7 @@
 }
 
 - (id)init {
-	self = [super initWithFrame:CGRectMake(0, naviHigth, kScreen_Width, kScreen_Height)];
+	self = [super initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
 	return [self initByMode:CLCalendarViewModeWeek];
 }
 
@@ -70,13 +79,11 @@
 - (id)initByMode:(CLCalendarDisplayMode)mode {
 	if (self) {
 		self.backgroundColor = [UIColor whiteColor];//原为黑色
-
-		[self loadLable];
 		[self loadCalendar];
 		[self loadEventTable];
-		[self loadTodayBtn];
+		//[self loadTodayBtn]; 去掉回到今天按钮
 		self.displayMode = mode;
-	}
+    }
 	return self;
 }
 
@@ -106,6 +113,8 @@
 //日历表
 - (void)loadCalendar {
 	if (!calendar_tableView) {
+        [self loadLable];
+        
 		calendar_tableView = [[UITableView alloc] initWithFrame:self.displayMode ? calendar_Table_Week_F : calendar_Table_Month_F];
 		calendar_tableView.delegate = self;
 		calendar_tableView.dataSource = self;
@@ -140,9 +149,23 @@
 
 		event_tableView.bounces = NO;
 		[self addSubview:event_tableView];
-		needReload = YES;
+        
+        shieldLab = [[UIControl alloc]initWithFrame:event_tableView.frame];
+        shieldLab.alpha = 0.5f;
+        shieldLab.backgroundColor = [UIColor blackColor];
 	}
 }
+
+
+-(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event{
+     CGPoint  shieldPoint = [shieldLab convertPoint:point fromView:self];
+    if ([shieldLab pointInside:shieldPoint withEvent:event]) {
+         [self setDisplayMode:CLCalendarViewModeWeek] ;
+        return shieldLab;
+    }
+    return  [super hitTest:point withEvent:event];
+}
+
 
 //到顶或到底箭头
 - (void)loadTodayBtn {
@@ -165,6 +188,7 @@
 				calendar_tableView.frame = calendar_Table_Month_F;
 				[calendar_tableView setBounces:YES];
 				calendar_tableView.pagingEnabled = NO;
+                [self addSubview:shieldLab];
 				break;
 
 			case CLCalendarViewModeWeek:
@@ -176,6 +200,7 @@
 				if (selectDate[0] != -1) {
 				    [calendar_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:selectDate[0] inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
 				}
+                [shieldLab removeFromSuperview];
 				break;
 
 			default:
@@ -206,75 +231,73 @@
 //tableview的区
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 	if (tableView == event_tableView) {  //事件表
-		dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
+        dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
 		return (dateArr) ? dateArr.count * 7 : 1;
 	}
 	return 1;
 }
 
 //表头
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-	if (tableView == event_tableView) {
-//        CGPoint offset = event_tableView.contentOffset;
-//        CGRect bounds = event_tableView.bounds;
-//        UIEdgeInsets inset = event_tableView.contentInset;
-//        NSInteger currentOffset = offset.y + bounds.size.height-inset.bottom;
-//        NSLog(@"----->%ld",(long)currentOffset);
-		int row = section / 7;
-		int index = section % 7;
-		UIView *headview = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, headHeight)];
-		UILabel *titlelabel = [[UILabel alloc]initWithFrame:headview.frame];
-		titlelabel.font = [UIFont boldSystemFontOfSize:15.0f];
-		titlelabel.textAlignment = NSTextAlignmentCenter;
-		titlelabel.textColor = [UIColor whiteColor];
-		CLDay *clDay = [[dateArr objectAtIndex:row] objectAtIndex:index];
-		NSString *table_title = [clDay description];
-		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-		[formatter setDateFormat:@"YYYY年 M月dd日"];
-		NSDate *date = [formatter dateFromString:table_title];
-		NSString *weakStr = [[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
-		table_title = [table_title stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
-		table_title = [table_title stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
-		table_title = [table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
-		NSArray *array = [table_title componentsSeparatedByString:@"/"];
-		titlelabel.text = [NSString stringWithFormat:@"%@, %@ %@", weakStr, [self abbreviationMonthStringWithInteger:[[array objectAtIndex:1] intValue] currYear:[[array objectAtIndex:0] intValue] isAbbreviation:NO], [array objectAtIndex:2]];
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+//	if (tableView == event_tableView) {
+////        CGPoint offset = event_tableView.contentOffset;
+////        CGRect bounds = event_tableView.bounds;
+////        UIEdgeInsets inset = event_tableView.contentInset;
+////        NSInteger currentOffset = offset.y + bounds.size.height-inset.bottom;
+////        NSLog(@"----->%ld",(long)currentOffset);
+//		int row = section / 7;
+//		int index = section % 7;
+//		UIView *headview = [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.frame.size.width, headHeight)];
+//		UILabel *titlelabel = [[UILabel alloc]initWithFrame:headview.frame];
+//		titlelabel.font = [UIFont boldSystemFontOfSize:15.0f];
+//		titlelabel.textAlignment = NSTextAlignmentCenter;
+//		titlelabel.textColor = [UIColor whiteColor];
+//		CLDay *clDay = [[dateArr objectAtIndex:row] objectAtIndex:index];
+//		NSString *table_title = [clDay description];
+//		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+//		[formatter setDateFormat:@"YYYY年 M月dd日"];
+//		NSDate *date = [formatter dateFromString:table_title];
+//		NSString *weakStr = [[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
+//		table_title = [table_title stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
+//		table_title = [table_title stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
+//		table_title = [table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
+//		NSArray *array = [table_title componentsSeparatedByString:@"/"];
+//		titlelabel.text = [NSString stringWithFormat:@"%@, %@ %@", weakStr, [self abbreviationMonthStringWithInteger:[[array objectAtIndex:1] intValue] currYear:[[array objectAtIndex:0] intValue] isAbbreviation:NO], [array objectAtIndex:2]];
+//
+////       区头的颜色
+//		if (clDay.isToday) {
+//			titlelabel.backgroundColor = purple;
+//			//titlelabel.alpha=0.8f;
+//		}
+//		else {
+//			titlelabel.backgroundColor = [UIColor lightGrayColor];
+//			// titlelabel.alpha=0.3f;
+//		}
+//		[headview addSubview:titlelabel];
+//		return headview;
+//	}
+//	return nil;
+//}
 
-//       区头的颜色
-		if (clDay.isToday) {
-			titlelabel.backgroundColor = purple;
-			//titlelabel.alpha=0.8f;
-		}
-		else {
-			titlelabel.backgroundColor = [UIColor lightGrayColor];
-			// titlelabel.alpha=0.3f;
-		}
-		[headview addSubview:titlelabel];
-		return headview;
-	}
-	return nil;
-}
-
-//表头高
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-	if (tableView == event_tableView) {
-		return headHeight;//46
-	}
-	return 0;
-}
+////表头高
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+//	if (tableView == event_tableView) {
+//		return headHeight;//46
+//	}
+//	return 0;
+//}
 
 //tableview的row数
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	if (tableView == calendar_tableView) {
 		dateArr = [self.dataSuorce dateSourceWithCalendarView:self];
 		return (dateArr) ? dateArr.count : 0;
-	}
-	else if (tableView == event_tableView) {
-		int row = section / 7;
-		int index = section % 7;
+	}else if (tableView == event_tableView) {
+		int row = section / 7, index = section % 7;
+      
 		CLDay *clDay = [[dateArr objectAtIndex:row] objectAtIndex:index];
 		return clDay.events.count == 0 ? 1 : clDay.events.count;
-	}
-	else {
+	}else {
 		return 0;
 	}
 }
@@ -335,59 +358,120 @@
 		}
 	}
 	else {   //事件表
-		EventCell *cell = [tableView dequeueReusableCellWithIdentifier:eventCellID];
-		if (!cell) {
-			cell = (EventCell *)[[[NSBundle mainBundle] loadNibNamed:@"EventCell" owner:self options:nil] objectAtIndex:0];
-		}
+        int row = indexPath.section / 7;
+        int index = indexPath.section % 7;
+        CLDay *clday = [[dateArr objectAtIndex:row] objectAtIndex:index];
+        
+		if (clday.events.count <= 0) {
+            SimpleEventTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:eventCellID];
+            if (!cell) {
+                cell = (SimpleEventTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"SimpleEventTableViewCell" owner:self options:nil] objectAtIndex:0];
+                
+            }
+            NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+            [formatter setDateFormat:@"YYYY年 M月dd日"];
+            NSString *table_title = [clday description];
+            NSDate *date = [formatter dateFromString:table_title];
+            
+            NSString *weakStr = [[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
+            table_title = [table_title stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
+            table_title = [table_title stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
+            table_title = [table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
+            NSArray *array = [table_title componentsSeparatedByString:@"/"];
+            cell.dayNumber.text = [array objectAtIndex:2];
+            cell.weekNumber.text = weakStr ;
+            cell.eventColor.text =@"NO EVENT" ;
+            if (clday.isToday) {
+                cell.dayNumber.textColor = purple ;
+                cell.weekNumber.textColor =purple ;
+            }
+            return cell ;
+        }else {
+            id undifineObj = [clday.events objectAtIndex:indexPath.row];
+            if ([undifineObj isKindOfClass:[AT_Event class]]) {
+               
+                SimpleEventTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:eventCellID];
+                if (!cell) {
+                    cell = (SimpleEventTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"SimpleEventTableViewCell" owner:self options:nil] objectAtIndex:0];
+                }
+                
+                AT_Event *anyEvent =(AT_Event *) undifineObj;
+                if (indexPath.row == 0  ) {
+                    [cell.dayAndWeekView setHidden:NO];
+                    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                    [formatter setDateFormat:@"YYYY年 M月dd日"];
+                    NSString *table_title = [clday description];
+                    NSDate *date = [formatter dateFromString:table_title];
+                    NSString *weakStr = [[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
+                    table_title = [table_title stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
+                    table_title = [table_title stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
+                    table_title = [table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
+                    NSArray *array = [table_title componentsSeparatedByString:@"/"];
+                    cell.dayNumber.text = [array objectAtIndex:2];
+                    cell.weekNumber.text = weakStr ;
+                    if (clday.isToday) {
+                        cell.dayNumber.textColor = purple ;
+                        cell.weekNumber.textColor =purple ;
+                    }
+                    
+                }else{
+                    [cell.dayAndWeekView setHidden:YES];
+                }
+                cell.eventTitle.text = anyEvent.eventTitle ;
+                cell.eventColor.backgroundColor = [UIColor colorWithHexString:anyEvent.backgroundColor];
+                NSString *starttime = anyEvent.startDate;
+                NSRange range = [starttime rangeOfString:@"日"];
+                NSString *startstrs = [starttime substringWithRange:NSMakeRange(range.location + 1, starttime.length - range.location - 1)];
+                
+                NSString *endtime = anyEvent.endDate;
+                NSString *endstrs = [endtime substringWithRange:NSMakeRange(range.location + 1, endtime.length - range.location - 1)];
+                cell.eventTime.text = [NSString stringWithFormat:@"%@ - %@",startstrs,endstrs];
+                return cell ;
+            }else{
+                ActiveBaseInfoMode *activeEvent =(ActiveBaseInfoMode *) undifineObj;
+                ComplicatedEventTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ActiveBaseInfoId"];
+                if (!cell) {
+                    cell = (ComplicatedEventTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"ComplicatedEventTableViewCell" owner:self options:nil] objectAtIndex:0];
+                }
+                if (indexPath.row == 0  ) {
+                    [cell.dayAndWeekView setHidden:NO];
+                    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+                    [formatter setDateFormat:@"YYYY年 M月dd日"];
+                    NSString *table_title = [clday description];
+                    NSDate *date = [formatter dateFromString:table_title];
+                    NSString *weakStr = [[PublicMethodsViewController getPublicMethods] getWeekdayFromDate:date];
+                    table_title = [table_title stringByReplacingOccurrencesOfString:@"年 " withString:@"/"];
+                    table_title = [table_title stringByReplacingOccurrencesOfString:@"月" withString:@"/"];
+                    table_title = [table_title stringByReplacingOccurrencesOfString:@"日" withString:@"/"];
+                    NSArray *array = [table_title componentsSeparatedByString:@"/"];
+                    cell.dayNumber.text = [array objectAtIndex:2];
+                    cell.weekNumber.text = weakStr ;
+                    if (clday.isToday) {
+                        cell.dayNumber.textColor = purple ;
+                        cell.weekNumber.textColor =purple ;
+                    }
+                    
+                }else{
+                    [cell.dayAndWeekView setHidden:YES];
+                }
+                cell.activeTitle.text = activeEvent.title ;
+                NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSLog(@"%@", _urlStr);
+                NSURL *url = [NSURL URLWithString:_urlStr];
+                [cell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
 
-		int row = indexPath.section / 7;
-		int index = indexPath.section % 7;
-		CLDay *clday = [[dateArr objectAtIndex:row] objectAtIndex:index];
+//                NSString *starttime = activeEvent.createTime;
+//                NSRange range = [starttime rangeOfString:@"日"];
+//                NSString *startstrs = [starttime substringWithRange:NSMakeRange(range.location + 1, starttime.length - range.location - 1)];
+//                
+//                NSString *endtime = anyEvent.endDate;
+//                NSString *endstrs = [endtime substringWithRange:NSMakeRange(range.location + 1, endtime.length - range.location - 1)];
+//                cell.eventTime.text = [NSString stringWithFormat:@"%@ - %@",startstrs,endstrs];
+                return cell ;
 
-		for (AT_Event *anyEvent in clday.events) {
-			NSLog(@"%@", anyEvent.eventTitle);
-		}
-
-		if (clday.events.count > 0) {
-			AT_Event *anyEvent = [clday.events objectAtIndex:indexPath.row];
-			NSString *starttime = anyEvent.startDate;
-			NSRange range = [starttime rangeOfString:@"日"];
-			NSString *startstrs = [starttime substringWithRange:NSMakeRange(range.location + 1, starttime.length - range.location - 1)];
-
-			cell.starttimelabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
-
-			NSString *intervalTime = [[PublicMethodsViewController getPublicMethods] timeDifference:anyEvent.endDate getStrart:anyEvent.startDate formmtterStyle:@"YYYY年 M月d日HH:mm"];//得到开始时间和结束时间的差值
-
-			cell.timelabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:8.0];
-
-			cell.timelabel.text = intervalTime;
-			NSLog(@"strtime->>>>%@", starttime);
-			cell.starttimelabel.text = [NSString stringWithFormat:@"%@", startstrs];
-
-			NSString *strtitle = anyEvent.eventTitle;
-			cell.content.lineBreakMode = NSLineBreakByWordWrapping;
-			cell.content.text = [strtitle uppercaseString];
-			cell.content.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
-			cell.content.textColor = [UIColor blackColor];
-
-			//设置小圆点
-			CircleDrawView *cd = [[CircleDrawView alloc] init];
-			cd.frame = cell.cirPoint.frame;
-			cd.hexString = anyEvent.backgroundColor;
-			[cell.cirPoint addSubview:cd];
-		}
-		else {
-			cell.textLabel.text = @"FREE DAY";
-			cell.textLabel.font = [UIFont boldSystemFontOfSize:17.0f];
-			cell.textLabel.textAlignment = NSTextAlignmentCenter;
-			cell.textLabel.textColor = [UIColor whiteColor];
-			cell.content.hidden = YES;
-			cell.starttimelabel.hidden = YES;
-			cell.timelabel.hidden = YES;
-			cell.backImage.hidden = YES;
-		}
-
-		return cell;
+            }
+         }
+		return nil;
 	}
 }
 
@@ -463,19 +547,37 @@
 	if (event_tableView == tableView) {
 		int row = indexPath.section / 7;
 		int index = indexPath.section % 7;
-
-		CLDay *day = [[dateArr objectAtIndex:row] objectAtIndex:index];
-		AT_Event *event = nil;
-		if (day.events.count > 0) {
-			event = [day.events objectAtIndex:indexPath.row];
-		}
-		[self.delegate calendarSelectEvent:self day:day event:event AllEvent:day.events];
+        
+		CLDay *clday = [[dateArr objectAtIndex:row] objectAtIndex:index];
+        if(clday.events.count > 0){
+            id undifineObj = [clday.events objectAtIndex:indexPath.row];
+            if ([undifineObj isKindOfClass:[AT_Event class]]) {
+                AT_Event *event = nil;
+                if (clday.events.count > 0) {
+                    event = [clday.events objectAtIndex:indexPath.row];
+                }
+                [self.delegate calendarSelectEvent:self day:clday event:event AllEvent:clday.events];
+            }else{
+                
+            }
+        }
 	}
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 	if (event_tableView == tableView) {
-		return rowHeight;
+        int row = indexPath.section / 7;
+        int index = indexPath.section % 7;
+        CLDay *clday = [[dateArr objectAtIndex:row] objectAtIndex:index];
+        if(clday.events.count<=0){
+            return rowHeight ;
+        }
+        id undifineObj = [clday.events objectAtIndex:indexPath.row];
+        if ([undifineObj isKindOfClass:[AT_Event class]]) {
+          return rowHeight;
+        }else{
+            return 90.f;
+        }
 	}
 	return 44.0f;
 }
@@ -500,7 +602,7 @@
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
 	if (calendar_tableView == scrollView) {
 		[self addSubview:month];
-		[self setDisplayMode:CLCalendarViewModeMonth];
+		//[self setDisplayMode:CLCalendarViewModeMonth];
 		NSLog(@"开始滑动日历列表");
 	}
 	else {

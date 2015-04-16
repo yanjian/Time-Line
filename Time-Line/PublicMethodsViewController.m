@@ -388,31 +388,31 @@ static PublicMethodsViewController *PublicMethods = nil;
 	NSString *weakStr = @"";
 	switch (weekday - 1) {
 		case 0:
-			weakStr = @"Sunday";
+			weakStr = @"Sun";
 			break;
 
 		case 1:
-			weakStr = @"Monday";
+			weakStr = @"Mon";
 			break;
 
 		case 2:
-			weakStr = @"Tuesday";
+			weakStr = @"Tue";
 			break;
 
 		case 3:
-			weakStr = @"Wednesday";
+			weakStr = @"Wed";
 			break;
 
 		case 4:
-			weakStr = @"Thursday";
+			weakStr = @"Thu";
 			break;
 
 		case 5:
-			weakStr = @"Friday";
+			weakStr = @"Fri";
 			break;
 
 		case 6:
-			weakStr = @"Saturday";
+			weakStr = @"Sat";
 			break;
 
 		default:

@@ -41,6 +41,8 @@ NS_ENUM (NSInteger, voteAndFixDateType) {
 #define voteActiveTableCellHight  55
 
 
+
+
 @interface AddActiveViewController () <ASIHTTPRequestDelegate, UITableViewDataSource, UITableViewDelegate, settimeDay, SetFriendViewControllerDelegate, NewVoteActionViewControllerDelegate, getlocationDelegate, RMDateSelectionViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate, PECropViewControllerDelegate>
 {
 	UITableView *_tableView;

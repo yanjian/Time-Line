@@ -29,7 +29,15 @@
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	[self.navigationItem setHidesBackButton:YES animated:YES];
+    self.title = @"Background Refresh" ;
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn addTarget:self action:@selector(visibleCaTobackSetingView) forControlEvents:UIControlEventTouchUpInside] ;
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
+
 	self.refreshArr = [NSArray arrayWithObjects:@"15 minutes", @"30 minutes", @"1 hour", @"2 hour", @"never", nil];
 	if (![USER_DEFAULT objectForKey:RefTime]) {
 		[USER_DEFAULT setObject:@"15 minutes"  forKey:RefTime];
@@ -42,21 +50,14 @@
 	self.tableView.delegate = self;
 	[self.view addSubview:self.tableView];
 
-	UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
-	UILabel *titlelabel = [[UILabel alloc]initWithFrame:titleView.frame];
-	titlelabel.textAlignment = NSTextAlignmentCenter;
-	titlelabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
-	titlelabel.text = @"Background Refresh";
-	titlelabel.textColor = [UIColor whiteColor];
-	[titleView addSubview:titlelabel];
-	self.navigationItem.titleView = titleView;
-
-	self.navigationItem.hidesBackButton = YES;
-	UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-	leftBtn.frame = CGRectMake(0, 2, 21, 25);
-	[leftBtn addTarget:self action:@selector(visibleCaTobackSetingView) forControlEvents:UIControlEventTouchUpInside];
-	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
+//	UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
+//	UILabel *titlelabel = [[UILabel alloc]initWithFrame:titleView.frame];
+//	titlelabel.textAlignment = NSTextAlignmentCenter;
+//	titlelabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
+//	titlelabel.text = @"Background Refresh";
+//	titlelabel.textColor = [UIColor whiteColor];
+//	[titleView addSubview:titlelabel];
+//	self.navigationItem.titleView = titleView;
 }
 
 - (void)didReceiveMemoryWarning {

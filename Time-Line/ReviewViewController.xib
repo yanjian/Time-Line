@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ReviewViewController">
+            <connections>
+                <outlet property="reviewTableview" destination="1ru-v9-BeC" id="XgC-0N-h5x"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="1ru-v9-BeC">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="oLg-Jn-IlT"/>
+                        <outlet property="delegate" destination="-1" id="BqI-Ub-35q"/>
+                    </connections>
+                </tableView>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="1ru-v9-BeC" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="Bqd-Nh-iWt"/>
+                <constraint firstItem="1ru-v9-BeC" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="L0B-4e-k9G"/>
+                <constraint firstAttribute="bottom" secondItem="1ru-v9-BeC" secondAttribute="bottom" id="bbB-Oo-5Tg"/>
+                <constraint firstAttribute="trailing" secondItem="1ru-v9-BeC" secondAttribute="trailing" id="byn-u2-74k"/>
+            </constraints>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+            <point key="canvasLocation" x="596" y="72"/>
+        </view>
+    </objects>
+</document>

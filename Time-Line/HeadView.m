@@ -176,7 +176,6 @@ typedef NS_ENUM(NSInteger, GroupManager) {
             }break;
                 
             default:
-                NSLog(@">>>>>>>>>>>>>>>>>group Manager : other options")
                 break;
         }
 	}

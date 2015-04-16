@@ -41,7 +41,7 @@ PODS:
   - Fingertips (0.3.0)
   - FXBlurView (1.6.3)
   - JSONKit-NoWarning (1.2)
-  - JSQMessagesViewController (6.1.3):
+  - JSQMessagesViewController (7.0.0):
     - JSQSystemSoundPlayer (~> 2.0.1)
   - JSQSystemSoundPlayer (2.0.1)
   - Masonry (0.4.0)
@@ -52,13 +52,14 @@ PODS:
   - Reachability (3.2)
   - RMDateSelectionViewController (1.4.3)
   - SBJson (4.0.1)
-  - SDWebImage (3.7.1):
-    - SDWebImage/Core (= 3.7.1)
-  - SDWebImage/Core (3.7.1)
+  - SDWebImage (3.7.2):
+    - SDWebImage/Core (= 3.7.2)
+  - SDWebImage/Core (3.7.2)
   - SHLineGraphView (1.0.6)
   - SloppySwiper (0.3.0)
   - TBXML (1.5)
   - UIColor-HexString (1.0.1)
+  - XLPagerTabStrip (1.0.0)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.3.1)
@@ -83,31 +84,33 @@ DEPENDENCIES:
   - SloppySwiper
   - TBXML (~> 1.5)
   - UIColor-HexString (~> 1.0.0)
+  - XLPagerTabStrip (~> 1.0.0)
 
 SPEC CHECKSUMS:
-  AFNetworking: 6d7b76aa5d04c8c37daad3eef4b7e3f2a7620da3
-  ASIHTTPRequest: 2c8335b49410c0e2ad42829c438e74d454b77590
-  Base64: c6d74f31f150543b246a07e180ba813c88e59311
-  CNPPopupController: 3e4698081c04e0e2a178e4114b73c44b7301057a
-  CupertinoYankee: b07873e724c2c5c1a249c555a5bd3d508c04e0de
-  EAIntroView: 8f66dc6b79f2d52db26af8fc5476a05ffc549d4c
-  EGOTableViewPullRefreshAndLoadMore: 1dcd0f78d7aa8dee28adf64891b627904be8cd71
-  Fingertips: 09d223a390349b317a51d4c941d778bdb661c4e1
-  FXBlurView: abe1046285813c4f6e9008abbc324fc5ab32af90
-  JSONKit-NoWarning: fc8d6dd8ec65e303867d1bd274632fc60a4a8ab9
-  JSQMessagesViewController: e93a288a9662d4519c95a28a8c0eec10beae1bfc
-  JSQSystemSoundPlayer: 55528c699a283aae2220d3ae7b8b527d2ecef4b4
-  Masonry: 392466f4090cb28cc5349adec067453463e2ecd9
-  MSCollectionViewCalendarLayout: 10ca29578b0dd9b8586b1beed3ab479a3788b4b5
-  PEPhotoCropEditor: ec3d241673c914d5c561166d00cd07f6b91194e8
-  pop: 2f14a1ea61339767af9e66741b418c831b3844df
-  Reachability: 1ef8adf5c4e3d362f96515d4278f68dad3c26930
-  RMDateSelectionViewController: ae40905ee3cc7b66bc3291461be7aa7dd17edf4c
-  SBJson: d71212c078abf4679d54b0d0565260c474e46235
-  SDWebImage: 116e88633b5b416ea0ca4b334a4ac59cf72dd38d
-  SHLineGraphView: ea496febee7a19bef01d5d1c832cf83a5e6a443e
-  SloppySwiper: 732c1d6008b19748feb196e560fb304693221fbc
-  TBXML: a279440030ba55c40e1455cafba3b0a44e1963d4
-  UIColor-HexString: 9cf42ab500ce12fdaf523cdb96ecffd11a28b7ed
+  AFNetworking: 05b9f6e3aa5ac45bc383b4bb108ef338080a26c7
+  ASIHTTPRequest: ec013992946676b7978dcbde6396d57312d21db4
+  Base64: 4924bf3ca6fa559a5161ef717291bd450eb7bd1a
+  CNPPopupController: 8ce4ccd90287320aaa716c7c06caabda31b844ed
+  CupertinoYankee: 742ab22e47518167d0c78d2eaa5aed5b6e26af3b
+  EAIntroView: df7dc18da73e1831d06878b9c0e13da78e6bb3ce
+  EGOTableViewPullRefreshAndLoadMore: 118a0824590db042d42e08fcc442b93cebf15e73
+  Fingertips: bccd316dda073afb49ab4aac206a77a3d01231c7
+  FXBlurView: c6d23f3d35af2c6282296a2930f61c6e2c788d01
+  JSONKit-NoWarning: 3d27e6f9e6846ecf741e8c64dcadd7d5aa7193cb
+  JSQMessagesViewController: 9fd7e9ac96e9fc91f2deca86928e2cc916aeebaa
+  JSQSystemSoundPlayer: c5850e77a4363ffd374cd851154b9af93264ed8d
+  Masonry: a950d1934075b87bc941720a1439f1990fa0ead7
+  MSCollectionViewCalendarLayout: fba6fefdb3a340cb3e4f10725c6b3a530e6f6817
+  PEPhotoCropEditor: 613292fce009efd085e7aed975f1ebb3fec8bb7b
+  pop: 628ffc631644601567ee8bfaaaea493ebd7d0923
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  RMDateSelectionViewController: 5c0e7a210077fe1b23aaf2b2b305aac3356396f0
+  SBJson: 68f16f446bd6047dc3dd1ec4919a468c2cd7fedd
+  SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
+  SHLineGraphView: eb2be643fe2b9778e10e702836a1b474083ab9da
+  SloppySwiper: 7d1e6af56b3f5dd6407d6130c8aec1319c4275da
+  TBXML: 9f9dadb239f2f2af1dadb87fe43a0ce6e479379a
+  UIColor-HexString: 3b6e52edc3ba2d9053128c7eea60b4558526feb2
+  XLPagerTabStrip: 1614c2a5a078e0ef378a825e84534d56066bea88
 
 COCOAPODS: 0.35.0

@@ -128,9 +128,9 @@
 
 // JSQMessagesViewController
 #define COCOAPODS_POD_AVAILABLE_JSQMessagesViewController
-#define COCOAPODS_VERSION_MAJOR_JSQMessagesViewController 6
-#define COCOAPODS_VERSION_MINOR_JSQMessagesViewController 1
-#define COCOAPODS_VERSION_PATCH_JSQMessagesViewController 3
+#define COCOAPODS_VERSION_MAJOR_JSQMessagesViewController 7
+#define COCOAPODS_VERSION_MINOR_JSQMessagesViewController 0
+#define COCOAPODS_VERSION_PATCH_JSQMessagesViewController 0
 
 // JSQSystemSoundPlayer
 #define COCOAPODS_POD_AVAILABLE_JSQSystemSoundPlayer
@@ -178,13 +178,13 @@
 #define COCOAPODS_POD_AVAILABLE_SDWebImage
 #define COCOAPODS_VERSION_MAJOR_SDWebImage 3
 #define COCOAPODS_VERSION_MINOR_SDWebImage 7
-#define COCOAPODS_VERSION_PATCH_SDWebImage 1
+#define COCOAPODS_VERSION_PATCH_SDWebImage 2
 
 // SDWebImage/Core
 #define COCOAPODS_POD_AVAILABLE_SDWebImage_Core
 #define COCOAPODS_VERSION_MAJOR_SDWebImage_Core 3
 #define COCOAPODS_VERSION_MINOR_SDWebImage_Core 7
-#define COCOAPODS_VERSION_PATCH_SDWebImage_Core 1
+#define COCOAPODS_VERSION_PATCH_SDWebImage_Core 2
 
 // SHLineGraphView
 #define COCOAPODS_POD_AVAILABLE_SHLineGraphView
@@ -209,6 +209,12 @@
 #define COCOAPODS_VERSION_MAJOR_UIColor_HexString 1
 #define COCOAPODS_VERSION_MINOR_UIColor_HexString 0
 #define COCOAPODS_VERSION_PATCH_UIColor_HexString 1
+
+// XLPagerTabStrip
+#define COCOAPODS_POD_AVAILABLE_XLPagerTabStrip
+#define COCOAPODS_VERSION_MAJOR_XLPagerTabStrip 1
+#define COCOAPODS_VERSION_MINOR_XLPagerTabStrip 0
+#define COCOAPODS_VERSION_PATCH_XLPagerTabStrip 0
 
 // pop
 #define COCOAPODS_POD_AVAILABLE_pop

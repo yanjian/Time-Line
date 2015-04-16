@@ -259,7 +259,7 @@
 //同步google事件数据
 -(void)synchronizeGoogleData:(UIButton*) sender{
     
-    [[AppDelegate getAppDelegate] initMainView];
+    [[AppDelegate getAppDelegate] setupViewControllers];
     [self dismissViewControllerAnimated:YES completion:nil ];
 }
 

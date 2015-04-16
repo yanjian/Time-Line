@@ -33,19 +33,20 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	self.title = @"Profile";
-	[self.navigationItem setHidesBackButton:YES animated:YES];
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setTag:1];
+    [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn addTarget:self action:@selector(profileTobackSetingView:) forControlEvents:UIControlEventTouchUpInside] ;
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
+    
 	self.userInfo = [UserInfo currUserInfo];
 	NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-	                            [UIColor whiteColor], NSForegroundColorAttributeName, nil];
+	                            [UIColor blackColor], NSForegroundColorAttributeName, nil];
 
 	[self.navigationController.navigationBar setTitleTextAttributes:attributes];
-	self.navigationItem.hidesBackButton = YES;
-	UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[leftBtn setTag:1];
-	[leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-	leftBtn.frame = CGRectMake(0, 2, 21, 25);
-	[leftBtn addTarget:self action:@selector(profileTobackSetingView:) forControlEvents:UIControlEventTouchUpInside];
-	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
 
 	UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
 	[rightBtn setTag:2];
@@ -53,7 +54,6 @@
 	[rightBtn setFrame:CGRectMake(0, 2, 30, 25)];
 	[rightBtn addTarget:self action:@selector(profileTobackSetingView:) forControlEvents:UIControlEventTouchUpInside];
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn];
-
 
 	self.tableView.tableHeaderView = self.viewHeader;
 	self.tableView.separatorInset = UIEdgeInsetsZero;

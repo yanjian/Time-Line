@@ -30,7 +30,7 @@
 	return self;
 }
 
-- (void)addEvent:(AT_Event *)event {
+- (void)addEvent:(id)event {
 	if (event) {
 		[self.events addObject:event];
 	}

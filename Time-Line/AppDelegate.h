@@ -63,12 +63,13 @@
 - (void)disconnect;
 
 //初始化登陆页面
-- (void)initLoginView;
+- (void)initLoginView:(LoginOrLogoutType)loginOrLogoutType;
 
 //pragma mark -保存聊天信息
 -(ChatContentModel *)saveChatInfoForActive:(NSDictionary * ) bodyDic;
 - (void)autoUserWithLogin;
-- (void)initMainView;
+//- (void)initMainView;
+- (void)setupViewControllers;
 //文件归档
 - (void)saveFileWithArray:(NSMutableArray *)activityArray fileName:(NSString *)name;
 //文件解档

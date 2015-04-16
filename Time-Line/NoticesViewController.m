@@ -53,7 +53,7 @@
 	self.tableView.dataSource = self;
 	self.tableView.delegate = self;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;//去掉分割线
-	[self.view addSubview:self.tableView];
+	self.view =self.tableView;
 	[self setupRefresh];
 }
 
@@ -144,7 +144,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-	return 5.f;
+	return 0.1f;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {

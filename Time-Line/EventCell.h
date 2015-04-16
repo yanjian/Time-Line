@@ -4,7 +4,7 @@
 //
 //  Created by connor on 14-3-26.
 //  Copyright (c) 2014年 connor. All rights reserved.
-//
+//  弃用 --yj
 
 #import <UIKit/UIKit.h>
 

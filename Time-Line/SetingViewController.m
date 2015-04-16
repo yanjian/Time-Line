@@ -13,12 +13,12 @@
 #import "GoogleCalendarData.h"
 #import "GoogleLoginViewController.h"
 #import "AccountViewController.h"
-#import "IBActionSheet.h"
+//#import "IBActionSheet.h"
 #import "LoginViewController.h"
 #import "AT_Account.h"
 #import "UserInfoTableViewController.h"
 
-@interface SetingViewController () <UITableViewDataSource, UITableViewDelegate, ASIHTTPRequestDelegate, IBActionSheetDelegate> {
+@interface SetingViewController () <UITableViewDataSource, UITableViewDelegate, ASIHTTPRequestDelegate, UIActionSheetDelegate> {
 	BOOL isUserInfo;
 	BOOL isLogout;
 }
@@ -58,7 +58,7 @@
 
 	settingDataArr =  [[NSMutableArray alloc] initWithObjects:@"Visible Calendars", @"Notifications", @"Preference", nil];
 	moreDataArr    =  [[NSMutableArray alloc] initWithObjects:/*@"Support",@"Rate in App Store",*/ @"Profile", @"Logout", nil];
-	self.tableView =  [[UITableView alloc]initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height - self.navigationController.navigationBar.frame.size.height) style:UITableViewStyleGrouped];
+	self.tableView =  [[UITableView alloc]initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height) style:UITableViewStyleGrouped];
 
 	[dataArr addObject:settingDataArr];
 	[dataArr addObject:accountDataArr];
@@ -66,21 +66,7 @@
 
 	self.tableView.dataSource = self;
 	self.tableView.delegate = self;
-	[self.view addSubview:self.tableView];
-	UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	rightBtn.frame = CGRectMake(0, 2, 25, 25);
-	[rightBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Cross"] forState:UIControlStateNormal];
-	[rightBtn addTarget:self action:@selector(closeNavigation) forControlEvents:UIControlEventTouchUpInside];
-	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn];
-
-	UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
-	UILabel *titlelabel = [[UILabel alloc]initWithFrame:titleView.frame];
-	titlelabel.textAlignment = NSTextAlignmentCenter;
-	titlelabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
-	titlelabel.text = @"Setings";
-	titlelabel.textColor = [UIColor whiteColor];
-	[titleView addSubview:titlelabel];
-	self.navigationItem.titleView = titleView;
+    self.view = self.tableView;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -123,13 +109,20 @@
 	return self.titleHeadArr[section];
 }
 
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 40.f;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 0.01f;
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	NSString *cellIdentifier = @"SetingId";
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
 	if (cell == nil) {
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
 	}
-	cell.tag = [[NSString stringWithFormat:@"%ld%ld", (long)indexPath.section, indexPath.row] intValue];
+	cell.tag = [[NSString stringWithFormat:@"%ld%ld", (long)indexPath.section, (long)indexPath.row] intValue];
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
 	NSArray *viewarr = [cell.contentView subviews];
@@ -175,24 +168,29 @@
 	UITableViewCell *selectCell = [tableView cellForRowAtIndexPath:indexPath];
 	if (selectCell.tag == 0) {
 		VisibleCalendarsViewController *vc = [[VisibleCalendarsViewController alloc] init];
+        vc.hidesBottomBarWhenPushed = YES ;
 		[self.navigationController pushViewController:vc animated:YES];
 	}
 	else if (selectCell.tag == 1) {
 		NotificationViewController *notificationVC = [[NotificationViewController alloc] init];
+         notificationVC.hidesBottomBarWhenPushed = YES ;
 		[self.navigationController pushViewController:notificationVC animated:YES];
 	}
 	else if (selectCell.tag == 2) {
 		PreferenceViewController *preferenceVC = [[PreferenceViewController alloc] init];
+         preferenceVC.hidesBottomBarWhenPushed = YES ;
 		[self.navigationController pushViewController:preferenceVC animated:YES];
 	}
 	else if (selectCell.tag == 22) {
+        
 	}
 	else if (selectCell.tag == 21) {
-		IBActionSheet *ibActionSheet = [[IBActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Logout" otherButtonTitles:nil, nil];
-		[ibActionSheet showInView:self.navigationController.view];
+        UIActionSheet *activeSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Logout", nil];
+        [activeSheet showInView:self.view];
 	}
 	else if (selectCell.tag == 20) {
 		UserInfoTableViewController *userInfoVC = [[UserInfoTableViewController alloc] initWithNibName:@"UserInfoTableViewController" bundle:nil];
+        userInfoVC.hidesBottomBarWhenPushed = YES ;
 		userInfoVC.userInfoBlank = ^(UserInfoTableViewController *userInfoViewController, UserInfo *userInfo) {
 			ASIHTTPRequest *userRequest = [t_Network httpGet:@{ @"tel":(userInfo.phone == nil ? @"" : userInfo.phone), @"name":(userInfo.nickname == nil ? @"" : userInfo.nickname), @"gender":@(userInfo.gender) }.mutableCopy Url:UserInfo_UpdateUserInfo Delegate:nil Tag:UserInfo_UpdateUserInfo_tag];
 
@@ -225,6 +223,7 @@
 		if ([rowData isKindOfClass:[NSString class]]) {
 			if ([@"Add Account" isEqualToString:rowData]) {
 				GoogleLoginViewController *glvc = [[GoogleLoginViewController alloc] initWithNibName:@"GoogleLoginViewController" bundle:nil];
+                glvc.hidesBottomBarWhenPushed = YES ;
 				glvc.isBind = YES;
 				glvc.isSeting = YES;
 				[self.navigationController pushViewController:glvc animated:YES];
@@ -232,14 +231,14 @@
 		}
 		else if ([rowData isKindOfClass:[AT_Account class]]) {
 			AccountViewController *accountVC = [[AccountViewController alloc] init];
+            accountVC.hidesBottomBarWhenPushed = YES ;
 			accountVC.accountArr = [NSMutableArray arrayWithObjects:rowData, nil];
 			[self.navigationController pushViewController:accountVC animated:YES];
 		}
 	}
 }
 
-//ibactionsheet的代理
-- (void)actionSheet:(IBActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
 	if (buttonIndex == 0) {
 		isLogout = YES;
 		ASIHTTPRequest *request =  [t_Network httpGet:nil Url:account_Logoff Delegate:self Tag:account_Logoff_Tag];
@@ -254,15 +253,12 @@
 		if (self.delegate && [self.delegate respondsToSelector:@selector(setingViewControllerDelegate:)]) {
 			[self.delegate setingViewControllerDelegate:self];
 		}
-		else {
-			[self closeNavigation];
-		}
-	}
+    }
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request {
 	NSString *dataStr = [request responseString];
-	if (!isLogout) {
+	if (isLogout) {
 		id objId = [dataStr objectFromJSONString];
 		//{"statusCode":"1","message":"成功","data":[{"account":"yanjaya5201314@gmail.com","type":"1","uid":"74"}]}
 		if ([objId isKindOfClass:[NSDictionary class]]) {
@@ -289,7 +285,9 @@
 			}
 		}
 		else {
+            dataStr = [dataStr stringByReplacingOccurrencesOfString:@"\r\n" withString:@""];
 			if ([@"1" isEqualToString:dataStr]) {
+                [g_AppDelegate initLoginView:LoginOrLogoutType_ModelOpen];
 			}
 			isLogout = NO;
 		}
@@ -299,9 +297,4 @@
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning];
 }
-
-- (void)closeNavigation {
-	[self dismissViewControllerAnimated:YES completion:nil];
-}
-
 @end

@@ -26,6 +26,23 @@
 
 }
 
+
+- (void)drawRect:(CGRect)rect
+{
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    CGContextSetFillColorWithColor(context, [UIColor clearColor].CGColor);
+    CGContextFillRect(context, rect);
+    
+    //上分割线，
+    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
+    CGContextStrokeRect(context, CGRectMake(66, -1, rect.size.width - 66, 1));
+    
+//    //下分割线
+//    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
+//    CGContextStrokeRect(context, CGRectMake(66, rect.size.height, rect.size.width - 66, 1));
+}
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 }

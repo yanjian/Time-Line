@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AllDateViewController">
+            <connections>
+                <outlet property="tableView" destination="wOG-De-nTz" id="MYl-Js-HZo"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QRc-Ue-9Dh">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                    <items>
+                        <navigationItem title="Sat,24 Jan" id="YCa-kS-E3g">
+                            <barButtonItem key="leftBarButtonItem" image="Invitations_Filled" id="r6u-vH-e9n"/>
+                            <barButtonItem key="rightBarButtonItem" title="Done" id="sOg-UK-HnU">
+                                <connections>
+                                    <action selector="dismissModal:" destination="-1" id="3yQ-s0-DHW"/>
+                                </connections>
+                            </barButtonItem>
+                        </navigationItem>
+                    </items>
+                </navigationBar>
+                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xMS-pz-ABz">
+                    <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="400" id="Zkg-bc-z7Q"/>
+                        <constraint firstAttribute="height" constant="44" id="y3u-Qm-sYD"/>
+                    </constraints>
+                    <items>
+                        <barButtonItem title="Option" width="70" id="IQR-2t-bgR"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="00L-4A-YJ2"/>
+                        <barButtonItem title="Add More" width="70" id="T7c-Ne-Q5N">
+                            <connections>
+                                <action selector="addMoreDateTime:" destination="-1" id="zaZ-fS-0vP"/>
+                            </connections>
+                        </barButtonItem>
+                    </items>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="Zkg-bc-z7Q"/>
+                            <exclude reference="y3u-Qm-sYD"/>
+                        </mask>
+                    </variation>
+                    <variation key="widthClass=compact">
+                        <mask key="constraints">
+                            <include reference="Zkg-bc-z7Q"/>
+                            <include reference="y3u-Qm-sYD"/>
+                        </mask>
+                    </variation>
+                </toolbar>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="wOG-De-nTz">
+                    <rect key="frame" x="0.0" y="44" width="600" height="512"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="Lrc-uG-jtD"/>
+                        <outlet property="delegate" destination="-1" id="mgT-u2-1hl"/>
+                    </connections>
+                </tableView>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="wOG-De-nTz" firstAttribute="bottom" secondItem="xMS-pz-ABz" secondAttribute="top" id="3RZ-EK-F6g"/>
+                <constraint firstItem="wOG-De-nTz" firstAttribute="trailing" secondItem="QRc-Ue-9Dh" secondAttribute="trailing" id="8ec-CH-UP2"/>
+                <constraint firstAttribute="trailing" secondItem="QRc-Ue-9Dh" secondAttribute="trailing" id="DQC-Xi-w2V"/>
+                <constraint firstItem="QRc-Ue-9Dh" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="FXv-E0-BPT"/>
+                <constraint firstItem="xMS-pz-ABz" firstAttribute="trailing" secondItem="QRc-Ue-9Dh" secondAttribute="trailing" id="IIf-ar-zsE"/>
+                <constraint firstItem="wOG-De-nTz" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="OhJ-ID-xX8"/>
+                <constraint firstItem="QRc-Ue-9Dh" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="RUg-AU-Y2H"/>
+                <constraint firstAttribute="bottom" secondItem="xMS-pz-ABz" secondAttribute="bottom" id="YkM-0q-LWb"/>
+                <constraint firstItem="QRc-Ue-9Dh" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="fzp-uB-aTY"/>
+                <constraint firstAttribute="centerX" secondItem="QRc-Ue-9Dh" secondAttribute="centerX" id="h73-TH-ikt"/>
+                <constraint firstAttribute="bottom" secondItem="xMS-pz-ABz" secondAttribute="bottom" id="mxq-cr-a0l"/>
+                <constraint firstItem="wOG-De-nTz" firstAttribute="top" secondItem="QRc-Ue-9Dh" secondAttribute="bottom" id="rbM-Cy-vEA"/>
+                <constraint firstItem="xMS-pz-ABz" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="uAv-LG-Af9"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="YkM-0q-LWb"/>
+                </mask>
+            </variation>
+            <variation key="heightClass=compact">
+                <mask key="constraints">
+                    <include reference="YkM-0q-LWb"/>
+                    <exclude reference="mxq-cr-a0l"/>
+                </mask>
+            </variation>
+            <point key="canvasLocation" x="235" y="211"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="Invitations_Filled" width="23" height="17"/>
+    </resources>
+</document>

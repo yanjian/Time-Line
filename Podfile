@@ -15,11 +15,10 @@ pod 'UIColor-HexString', '~> 1.0.0'
 pod 'Masonry', '~> 0.4.0'
 pod 'SloppySwiper'
 pod 'CNPPopupController'
-
+pod 'SDWebImage', '~> 3.7.1'
 pod 'pop', '~> 1.0.6'
 pod 'Fingertips'
-pod 'SDWebImage', '~> 3.7.1'
 pod 'JSQMessagesViewController'
 pod 'Base64'
-
+pod 'XLPagerTabStrip', '~> 1.0.0'
 pod 'RMDateSelectionViewController', '~> 1.4.0'

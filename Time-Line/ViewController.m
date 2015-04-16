@@ -605,9 +605,6 @@
 	return [NSArray arrayWithArray:dateArr];
 }
 
-- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay *)day event:(AT_Event *)event AllEvent:(NSArray *)events {
-}
-
 #pragma mark - CLCalendar Delegate
 
 - (void)calendarDidToMonth:(int)month year:(int)year CalendarView:(CLCalendarView *)calendarView {

@@ -409,10 +409,9 @@
 }
 
 -(void)openActiveChatGroupVC{
-    ChatViewController *chatVc = [[ChatViewController alloc] init] ;
-    chatVc.hidesBottomBarWhenPushed = YES;
-    chatVc.activeEvent = self.activeEvent ;
-    [self.navigationController pushViewController:chatVc animated:YES] ;
+//    ChatViewController *chatVc = [[ChatViewController alloc] init] ;
+//    chatVc.activeEvent = self.activeEvent ;
+//    [self.navigationController pushViewController:chatVc animated:YES] ;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
@@ -839,7 +838,7 @@
 			}
 		}
 		break;
-
+        
 		default:
 			break;
 	}
