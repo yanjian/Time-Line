@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "CLDay.h"
 
+typedef NS_ENUM(NSInteger, EventType) {
+    EventType_eventActive=1,
+    EventType_eventSigple = 2
+    
+};
+
 @class CLCalendarView;
 
 @protocol CLCalendarDataSource <NSObject>
@@ -22,7 +28,7 @@
 @optional
 - (void)calendarDidToMonth:(int)month year:(int)year CalendarView:(CLCalendarView *)calendarView;
 
-- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay *)day event:(id)event AllEvent:(NSArray *)events;
+- (void)calendarSelectEvent:(CLCalendarView *)calendarView eventType:(EventType)eventType day:(CLDay *)day event:(id)event AllEvent:(NSArray *)events;
 
 - (void)calendartitle:(NSString *)title;
 

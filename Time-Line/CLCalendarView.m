@@ -556,9 +556,13 @@
                 if (clday.events.count > 0) {
                     event = [clday.events objectAtIndex:indexPath.row];
                 }
-                [self.delegate calendarSelectEvent:self day:clday event:event AllEvent:clday.events];
+                [self.delegate calendarSelectEvent:self eventType:EventType_eventSigple day:clday event:event AllEvent:clday.events];
             }else{
-                
+                ActiveBaseInfoMode  *actviveBase = nil;
+                if (clday.events.count > 0) {
+                    actviveBase = [clday.events objectAtIndex:indexPath.row];
+                }
+                [self.delegate calendarSelectEvent:self eventType:EventType_eventActive day:clday event:actviveBase AllEvent:clday.events];
             }
         }
 	}

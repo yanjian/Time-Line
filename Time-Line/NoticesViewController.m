@@ -8,9 +8,9 @@
 
 #import "NoticesViewController.h"
 #import "MJRefresh.h"
+#import "ActiveDestinationViewController.h"
 #import "NotiveMsgPageBaseMode.h"
 #import "ActiveModifyMsgModel.h"
-#import "ActivedetailsViewController.h"
 #import "NoticesMsgModel.h"
 #import "CalendarDateUtil.h"
 #import "UIImageView+WebCache.h"
@@ -19,7 +19,7 @@
 #import "ActiveInvitationsNotifictionTableViewCell.h"
 #import "FriendsProfilesTableViewController.h"
 
-@interface NoticesViewController () <UITableViewDataSource, UITableViewDelegate, ActivedetailsViewControllerDelegate> {
+@interface NoticesViewController () <UITableViewDataSource, UITableViewDelegate> {
 	NSMutableArray *_noticeArr;
 	NSInteger currPageNum;  //当前页码
 }
@@ -299,11 +299,12 @@
 			return;
 		}
 
-		ActivedetailsViewController *activeDetailVC = [[ActivedetailsViewController alloc] init];
-        activeDetailVC.hidesBottomBarWhenPushed =YES ;
-		activeDetailVC.delegate = self;
-		activeDetailVC.activeEventInfo = activeEvent;
-		[self.navigationController pushViewController:activeDetailVC animated:YES];
+        UIStoryboard *storyboarb = [UIStoryboard storyboardWithName:@"ActiveDestination" bundle:[NSBundle mainBundle]];
+        ActiveDestinationViewController * activeDesc =( ActiveDestinationViewController *)  [storyboarb instantiateViewControllerWithIdentifier:@"ActiveDescriptionId"];
+        activeDesc.activeEventInfo = activeEvent;
+        activeDesc.hidesBottomBarWhenPushed = YES ;
+        [self.navigationController pushViewController:activeDesc animated:YES];
+        
     }else if([noticeMsg.type integerValue] == 1){//好友请求
         
         FriendsProfilesTableViewController * friendPVC = [[FriendsProfilesTableViewController alloc] init] ;
@@ -322,10 +323,6 @@
         friendPVC.isAddSuccess = YES ;
         [self.navigationController pushViewController:friendPVC animated:YES];
     }
-}
-
-- (void)cancelActivedetailsViewController:(ActivedetailsViewController *)activeDetailsViewVontroller {
-	[activeDetailsViewVontroller.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark -用户同意或拒绝请求

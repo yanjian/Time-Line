@@ -14,6 +14,7 @@
 #import "RecurrenceModel.h"
 #import "Calendar.h"
 #import "AddActiveViewController.h"
+#import "ActiveDestinationViewController.h"
 
 @interface HomeViewController () <ASIHTTPRequestDelegate,UIActionSheetDelegate>{
     UILabel *titleLabel;
@@ -1115,21 +1116,29 @@
     return [NSArray arrayWithArray:dateArr];
 }
 
-
 #pragma mark - CLCalendar Delegate
 //点击事件tableview，添加或查询事件详细
-- (void)calendarSelectEvent:(CLCalendarView *)calendarView day:(CLDay*)day event:(AT_Event*)event AllEvent:(NSArray *)events {
-    if (!event) {  //没有事件添加
-        AddEventViewController *addVC = [[AddEventViewController alloc] init];
-        addVC.nowTimeDay=day;
-        [self.navigationController pushViewController:addVC animated:YES ];
-        self.isRefreshUIData=NO;
-    }else {  //有事件查看详细
-        DateDetailsViewController* dateDetails=[[DateDetailsViewController alloc] init];
-        dateDetails.event=event;
-        dateDetails.dateArr=events;
-        [self.navigationController pushViewController:dateDetails animated:YES];
-        self.isRefreshUIData=NO;
+- (void)calendarSelectEvent:(CLCalendarView *)calendarView eventType:(EventType)eventType day:(CLDay*)day event:(id)event AllEvent:(NSArray *)events {
+    if (eventType == EventType_eventSigple) {
+        if (!event) {  //没有事件添加
+            AddEventViewController *addVC = [[AddEventViewController alloc] init];
+            addVC.nowTimeDay=day;
+            [self.navigationController pushViewController:addVC animated:YES ];
+            self.isRefreshUIData=NO;
+        }else {  //有事件查看详细
+            DateDetailsViewController* dateDetails=[[DateDetailsViewController alloc] init];
+            dateDetails.event=event;
+            dateDetails.dateArr=events;
+            [self.navigationController pushViewController:dateDetails animated:YES];
+            self.isRefreshUIData=NO;
+        }
+    }else if (eventType == EventType_eventActive){
+        
+        UIStoryboard *storyboarb = [UIStoryboard storyboardWithName:@"ActiveDestination" bundle:[NSBundle mainBundle]];
+        ActiveDestinationViewController * activeDesc =( ActiveDestinationViewController *)  [storyboarb instantiateViewControllerWithIdentifier:@"ActiveDescriptionId"];
+        activeDesc.activeEventInfo = event;
+        activeDesc.hidesBottomBarWhenPushed = YES ;
+        [self.navigationController pushViewController:activeDesc animated:YES];
     }
 }
 
