@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AddNewActiveViewController">
+            <connections>
+                <outlet property="addNewActiveTableView" destination="Y1b-y2-B72" id="ZGq-s6-QmW"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="Y1b-y2-B72">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="20j-ZK-1vr"/>
+                        <outlet property="delegate" destination="-1" id="88r-4y-lG6"/>
+                    </connections>
+                </tableView>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="Y1b-y2-B72" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="eft-Mf-iA5"/>
+                <constraint firstAttribute="trailing" secondItem="Y1b-y2-B72" secondAttribute="trailing" id="k3L-wT-jTg"/>
+                <constraint firstItem="Y1b-y2-B72" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="nQR-iN-yza"/>
+                <constraint firstAttribute="bottom" secondItem="Y1b-y2-B72" secondAttribute="bottom" id="xec-FB-L8d"/>
+            </constraints>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+            <point key="canvasLocation" x="168" y="305"/>
+        </view>
+    </objects>
+</document>
