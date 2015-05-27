@@ -1,6 +1,6 @@
 //
 //  CalendarCell.h
-//  Time-Line
+//  Go2
 //
 //  Created by zhoulei on 14-5-3.
 //  Copyright (c) 2014年 connor. All rights reserved.

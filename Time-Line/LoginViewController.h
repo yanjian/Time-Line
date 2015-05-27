@@ -1,6 +1,6 @@
 //
 //  LoginViewController.h
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-9-26.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.

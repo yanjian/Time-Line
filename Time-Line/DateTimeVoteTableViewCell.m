@@ -1,6 +1,6 @@
 //
 //  DateTimeVoteTableViewCell.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/4/7.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -11,7 +11,8 @@
 @implementation DateTimeVoteTableViewCell
 
 - (void)awakeFromNib {
-    // Initialization code
+    self.voteCount.layer.masksToBounds = YES ;
+    self.voteCount.layer.cornerRadius = self.voteCount.frame.size.width/2 ;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

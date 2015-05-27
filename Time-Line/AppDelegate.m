@@ -1,6 +1,6 @@
 //
 //  AppDelegate.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-9-1.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -19,7 +19,7 @@
 #import "ManageViewController.h"
 #import "FriendInfoViewController.h"
 #import "NoticesViewController.h"
-
+#import "NoticesMsgManagedModel.h"
 
 #import "GCDAsyncSocket.h"
 #import "XMPP.h"
@@ -67,7 +67,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     
 	[GMSServices provideAPIKey:GOOGLE_API_KEY];//google地图key值
 
-	[MagicalRecord setupCoreDataStackWithStoreNamed:@"TimeLine.sqlite"];//coreData 类的加载
+	[MagicalRecord setupCoreDataStackWithStoreNamed:@"Go2.sqlite"];//coreData 类的加载
 
 	[self createAnyTimeCache];//创建自定义缓存....
 
@@ -85,6 +85,10 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 	_netWorkStatus = ReachableViaWiFi;
 
+    [self setupStream]; //开启xmpp流
+    [self go2AppInitData];//初始化程序数据
+
+    
 	NSTimeInterval timeInterval = [self getRefreshFetchTimetimeInterval];
 	if (timeInterval == 0) {
 		timeInterval = UIApplicationBackgroundFetchIntervalNever;
@@ -107,9 +111,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     
 	[[UIApplication sharedApplication] cancelAllLocalNotifications];
     
-    [self setupStream]; //开启xmpp流
-    
-
+   
 	UILocalNotification *localNotif = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
 	if (localNotif) {
 		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ALERT"
@@ -227,7 +229,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 			[paramDic setObject:currUserInfo.password forKey:@"uPw"];
 			[paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
 			ASIHTTPRequest *request = [t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
-			[request startAsynchronous];
+			[request startSynchronous];
 		}
 		else if (isAccount == AccountTypeGoogle) {//google登陆
 			if (currUserInfo.email)
@@ -236,7 +238,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 				[paramDic setObject:currUserInfo.authCode forKey:@"authCode"];
 				[paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
 				ASIHTTPRequest *request = [t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
-				[request startAsynchronous];
+				[request startSynchronous];
 			}
 		}
 	}
@@ -290,7 +292,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 - (void)autoUserWithLogin {
 	//检查用户是否在登录状态 返回-1000表示没有登录
 	ASIHTTPRequest *request = [t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
-	[request startAsynchronous];
+	[request startSynchronous];
 }
 
 //网络状态发生变化
@@ -307,6 +309,18 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 		NSLog(@"网络不可用NO");
 		[self noReachabilityChanged];
 	}
+}
+
+//go2---app启动是初始化的数据
+-(void)go2AppInitData{
+    if (![USER_DEFAULT objectForKey:@"eventTime"]) {
+        [USER_DEFAULT setObject:@(EventsAlertTime_AtTimeEvent) forKey:@"eventTime"];
+    }
+    if (![USER_DEFAULT objectForKey:@"allDay"]) {
+        [USER_DEFAULT setObject:@(EventsAllDayAlert_8Hour) forKey:@"allDay"];
+    }
+    
+    [USER_DEFAULT synchronize];
 }
 
 //网络改变
@@ -704,11 +718,27 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 		//NSString *displayName = [user displayName];
         NSDictionary *bodyDic = [body objectFromJSONString] ;
         
-        ChatContentModel * chatContent = [self saveChatInfoForActive:bodyDic];
-        //发送通知
-        [[NSNotificationCenter defaultCenter] postNotificationName:CHATGROUP_ACTIVENOTIFICTION object:self userInfo:@{CHATGROUP_USERINFO:chatContent}];
-       
-//
+        NSString * msgType = [NSString stringWithFormat:@"%@",[bodyDic objectForKey:@"type"]];
+        if( [ @"1"  isEqualToString: msgType ] ||[ @"2"  isEqualToString: msgType ] || [ @"3"  isEqualToString: msgType ] || [ @"11"  isEqualToString: msgType ]){//1.对方要添加你为好友信息 ,2.同意添加对方为好友 , 3.拒绝添加对方为好友 ,11.活动新增或邀请成员
+            NoticesMsgManagedModel * noticeMsgManaged = [NoticesMsgManagedModel MR_createEntity];
+            noticeMsgManaged.nId       = @([[bodyDic objectForKey:@"id"] integerValue]);
+            noticeMsgManaged.isReceive = @([[bodyDic objectForKey:@"isReceive"] integerValue]);
+            noticeMsgManaged.message   = [bodyDic objectForKey:@"message"];
+            noticeMsgManaged.time      = [bodyDic objectForKey:@"time"];
+            noticeMsgManaged.type      = @([msgType integerValue]);
+            noticeMsgManaged.uid       = @([[bodyDic objectForKey:@"uid"] integerValue]);
+            noticeMsgManaged.isRead    = self.isRead; //未读//在这里的信息都表示没有读取的
+            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
+                if (contextDidSave) {
+                     [[NSNotificationCenter defaultCenter] postNotificationName:FRIENDS_OPTIONSNOTIFICTION object:self userInfo:@{FRIENDS_OPTIONSINFO:noticeMsgManaged}];
+                }
+            }];
+        }else{
+            ChatContentModel * chatContent = [self saveChatInfoForActive:bodyDic];
+            //发送通知
+            [[NSNotificationCenter defaultCenter] postNotificationName:CHATGROUP_ACTIVENOTIFICTION object:self userInfo:@{CHATGROUP_USERINFO:chatContent}];
+        }
+    
 //		if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
 //			UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:displayName
 //			                                                    message:body
@@ -732,18 +762,27 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 -(ChatContentModel *)saveChatInfoForActive:(NSDictionary * ) bodyDic{
     ChatContentModel * chatContent = [ChatContentModel MR_createEntity];
     chatContent.eid =  [bodyDic objectForKey:@"eid"];
-    if([bodyDic objectForKey:@"imgSmall"]){
-        chatContent.imgBig =  [bodyDic objectForKey:@"imgBig"];
-        
-        NSString *imgsmall = [[bodyDic objectForKey:@"imgSmall"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-        
-        NSData * imgSmallData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,imgsmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]] ;
-        chatContent.imgSmall =  [imgSmallData base64String];
-    }else if ( [bodyDic objectForKey:@"text"]){
-        chatContent.text =[bodyDic objectForKey:@"text"];
+    NSString * msgType = [NSString stringWithFormat:@"%@",[bodyDic objectForKey:@"type"]];
+    if ([@"15" isEqualToString:msgType]) {//聊天信息
+        if([bodyDic objectForKey:@"imgSmall"]){
+            chatContent.imgBig =  [bodyDic objectForKey:@"imgBig"];
+            
+            NSString *imgsmall = [[bodyDic objectForKey:@"imgSmall"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+            
+            NSData * imgSmallData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,imgsmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]] ;
+            chatContent.imgSmall =  [imgSmallData base64String];
+        }else if ( [bodyDic objectForKey:@"text"]){
+            chatContent.text = [bodyDic objectForKey:@"text"];
+        }
+    }else if([@"10" isEqualToString:msgType]){
+        NSDictionary * eventMsgDic = [self dictionaryWithJsonString: [bodyDic objectForKey:@"message"]]; ;
+        if ([eventMsgDic isKindOfClass:[NSDictionary class]]) {
+            NSDictionary * eventMsgTmpDic = [[eventMsgDic objectForKey:@"eventMsg"] lastObject];
+            chatContent.text = [eventMsgTmpDic objectForKey:@"message"] ;
+        }
     }
     chatContent.time =  [bodyDic objectForKey:@"time"];
-    chatContent.type =  [bodyDic objectForKey:@"type"];
+    chatContent.type =   msgType ;
     chatContent.uid =  [bodyDic objectForKey:@"uid"];
     chatContent.username =  [bodyDic objectForKey:@"username"];
     chatContent.unreadMessage = self.isRead; //未读//在这里的信息都表示没有读取的
@@ -808,4 +847,26 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 	}
 }
 
+
+/*!
+ * @brief 把格式化的JSON格式的字符串转换成字典
+ * @param jsonString JSON格式的字符串
+ * @return 返回字典
+ */
+- (NSDictionary *)dictionaryWithJsonString:(NSString *)jsonString {
+    if (jsonString == nil) {
+        return nil;
+    }
+    
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *err;
+    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                        options:NSJSONReadingMutableContainers
+                                                          error:&err];
+    if(err) {
+        NSLog(@"json解析失败：%@",err);
+        return nil;
+    }
+    return dic;
+}
 @end

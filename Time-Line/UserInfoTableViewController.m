@@ -1,6 +1,6 @@
 //
 //  UserInfoTableViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14/12/3.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -50,13 +50,13 @@
 
 	UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
 	[rightBtn setTag:2];
-	[rightBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Tick.png"] forState:UIControlStateNormal];
-	[rightBtn setFrame:CGRectMake(0, 2, 30, 25)];
+    [rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_blueTick"] forState:UIControlStateNormal];
+	[rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
 	[rightBtn addTarget:self action:@selector(profileTobackSetingView:) forControlEvents:UIControlEventTouchUpInside];
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn];
 
 	self.tableView.tableHeaderView = self.viewHeader;
-	self.tableView.separatorInset = UIEdgeInsetsZero;
+	self.tableView.separatorInset  = UIEdgeInsetsZero;
 
 	self.userFixationArr = [NSMutableArray arrayWithObjects:@"Nick Name", @"Account", @"Phone", @"Gender", nil];
 
@@ -65,7 +65,7 @@
 	NSURL *url = [NSURL URLWithString:_urlStr];
 	[self.imageUser sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed: ^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
 	}];
-	self.imageUser.layer.cornerRadius = self.imageUser.frame.size.width / 2;
+	self.imageUser.layer.cornerRadius  = self.imageUser.frame.size.width / 2;
 	self.imageUser.layer.masksToBounds = YES;
 }
 
@@ -90,7 +90,7 @@
 	}
 	NSString *titleStr = self.userFixationArr[indexPath.row];
 	if (indexPath.row == 0) {
-		userCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		userCell.accessoryType  = UITableViewCellAccessoryDisclosureIndicator;
 		userCell.textLabel.text = titleStr;
 		userCell.detailTextLabel.text = self.userInfo.nickname;
 	}
@@ -99,12 +99,12 @@
 		userCell.detailTextLabel.text = self.userInfo.username;
 	}
 	else if (indexPath.row == 2) {
-		userCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		userCell.accessoryType  = UITableViewCellAccessoryDisclosureIndicator;
 		userCell.textLabel.text = titleStr;
 		userCell.detailTextLabel.text = self.userInfo.phone;
 	}
 	else if (indexPath.row == 3) {
-		userCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		userCell.accessoryType  = UITableViewCellAccessoryDisclosureIndicator;
 		userCell.textLabel.text = titleStr;
 		userCell.detailTextLabel.text = self.userInfo.gender == 0 ? @"Female" : @"Male";
 	}

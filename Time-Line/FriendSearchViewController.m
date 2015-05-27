@@ -1,6 +1,6 @@
 //
 //  FriendSearchViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14/12/9.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -26,7 +26,7 @@
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	self.view.frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
-    self.title = @"By account/display name" ;
+    self.title = @"Add a friend" ;
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
@@ -35,11 +35,6 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
 
-    
-	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height) style:UITableViewStylePlain];
-	self.tableView.dataSource = self;
-	self.tableView.delegate = self;
-	[self.view addSubview:self.tableView];
     [self createTableHead];
 }
 
@@ -49,7 +44,7 @@
     UISearchBar * searchBar = [[UISearchBar alloc] init];
     searchBar.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0);
     searchBar.delegate = self;
-    searchBar.placeholder = @"Search";
+    searchBar.placeholder = @"Account name /Email";
     searchBar.backgroundColor = [UIColor clearColor];
     searchBar.translucent = YES ;
 //    [[[[searchBar.subviews objectAtIndex : 0 ] subviews ] objectAtIndex : 0 ] removeFromSuperview ];
@@ -142,23 +137,17 @@
 	[cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
 
 	//cell.textLabel.textColor = friend.isVip ? [UIColor redColor] : [UIColor blackColor];
-	cell.nickName.text = friend.nickname;
-	cell.userNote.text = friend.alias;
+    
+	cell.nickName.text = friend.username;
+	cell.userNote.text = friend.email;
     [cell.addFriendBtn addTarget:self action:@selector(addFriendEventTouch:) forControlEvents:UIControlEventTouchUpInside];
+    [cell.addFriendBtn setTag:indexPath.section];
 	return cell;
 }
 
 
 -(void)addFriendEventTouch:(UIButton *) sender {
-    
-
-}
-
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	[tableView deselectRowAtIndexPath:indexPath animated:YES];
-	selectIndexPath = indexPath;
-    Friend *friend = searchFriendArr[indexPath.section];
+    Friend *friend = searchFriendArr[sender.tag];
     
     FriendsProfilesTableViewController * friendsProfileVC = [[FriendsProfilesTableViewController alloc] init] ;
     friendsProfileVC.isSendRequest = YES ;
@@ -184,6 +173,39 @@
     };
     
     [self.navigationController pushViewController:friendsProfileVC animated:YES];
+
+}
+
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	[tableView deselectRowAtIndexPath:indexPath animated:YES];
+//	selectIndexPath = indexPath;
+//    Friend *friend = searchFriendArr[indexPath.section];
+//    
+//    FriendsProfilesTableViewController * friendsProfileVC = [[FriendsProfilesTableViewController alloc] init] ;
+//    friendsProfileVC.isSendRequest = YES ;
+//    friendsProfileVC.friend = friend ;
+//    friendsProfileVC.friendsAddProfileblack = ^(NSString *groupId){
+//        ASIHTTPRequest *addFriendRequest = [t_Network httpPostValue:@{ @"fid":friend.Id, @"tid":groupId, @"name":friend.username }.mutableCopy Url:anyTime_AddFriend Delegate:nil Tag:anyTime_AddFriend_tag];
+//        __block ASIHTTPRequest *friendRequest = addFriendRequest;
+//        [addFriendRequest setCompletionBlock: ^{
+//            NSString *responseStr = [friendRequest responseString];
+//            NSLog(@"%@", responseStr);
+//            id objTmp = [responseStr objectFromJSONString];
+//            NSString *statusCode = [objTmp objectForKey:@"statusCode"];
+//            if ([statusCode isEqualToString:@"1"]) {
+//                [MBProgressHUD showSuccess:@"Friend request sent. Please wait for confirmation"];
+//            }else {
+//                [MBProgressHUD showError:@"Fail to send friend request"];
+//            }
+//        }];
+//        [addFriendRequest setFailedBlock: ^{
+//            [MBProgressHUD showError:@"Fail to send friend request"];
+//        }];
+//        [addFriendRequest startAsynchronous];
+//    };
+//    
+//    [self.navigationController pushViewController:friendsProfileVC animated:YES];
     
 //	LPPopupListView *lpopView = [[LPPopupListView alloc] initWithTitle:@"Select Group" list:nil selectedIndexes:nil point:CGPointMake(20, 70) size:CGSizeMake(kScreen_Width - 40, kScreen_Height - 100) multipleSelection:NO];
 //	lpopView.titleLabel.textAlignment = NSTextAlignmentCenter;

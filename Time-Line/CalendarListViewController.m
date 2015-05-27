@@ -1,6 +1,6 @@
 //
 //  CalendarListViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-9-29.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -67,9 +67,9 @@
     self.tableView.delegate=self;
     self.tableView.dataSource=self;
     [calendarview addSubview:self.tableView];
-    UIButton *rightBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    rightBtn.frame=CGRectMake(280, 20, 30, 20);
-    [rightBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Tick"] forState:UIControlStateNormal];
+    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rightBtn setFrame:CGRectMake(0, 0, 25, 17)];
+    [rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_blueTick"] forState:UIControlStateNormal] ;
     [rightBtn addTarget:self action:@selector(synchronizeGoogleData:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
     [self.navigationItem setHidesBackButton:YES animated:YES];
@@ -79,7 +79,7 @@
     titlelabel.textAlignment = NSTextAlignmentCenter;
     titlelabel.font =[UIFont fontWithName:@"Helvetica Neue" size:20.0];
     titlelabel.text = @"Visible Calendars";
-    titlelabel.textColor = [UIColor whiteColor];
+    titlelabel.textColor = [UIColor blackColor];
     [titleView addSubview:titlelabel];
     self.navigationItem.titleView =titleView;
     self.view=calendarview;

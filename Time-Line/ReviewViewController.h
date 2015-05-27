@@ -1,6 +1,6 @@
 //
 //  ReviewViewController.h
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/31.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.

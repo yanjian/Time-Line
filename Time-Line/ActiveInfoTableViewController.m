@@ -1,6 +1,6 @@
 //
 //  ActiveInfoTableViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/4/2.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -12,9 +12,13 @@
 #import "UIImageView+WebCache.h"
 #import "InviteesViewController.h"
 #import "UserInfo.h"
+#import "utilities.h"
+#import "UIColor+HexString.h"
+#import "InviteesJoinOrReplyTableViewController.h"
+#import "MemberDataModel.h"
 
 static NSString * cellId = @"activeInfoID";
-static NSString * cellStyleV1 = @"static NSString";
+static NSString * cellStyleV1 = @"cellStyleV1ID";
 
 @interface ActiveInfoTableViewController ()<ASIHTTPRequestDelegate>{
     ActiveImageTableViewCell * activeImgCell ;
@@ -64,32 +68,27 @@ static NSString * cellStyleV1 = @"static NSString";
             }
         }
     }
-
+    _joinAndNoJoinView = [[UIView alloc] initWithFrame:CGRectMake(0, 10, kScreen_Width, 44)];
     
-    _joinAndNoJoinView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 44)];
-    
-    UIButton *joinBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 160, 44)];
-    [joinBtn setTitle:@"Joining" forState:UIControlStateNormal];
-    [joinBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    UIButton *joinBtn = [[UIButton alloc] initWithFrame:CGRectMake(20, 0, kScreen_Width/2-40, 44)];
     [joinBtn setTag:3];
-    [joinBtn setTitleColor:purple forState:UIControlStateSelected];
-    
+    [joinBtn setBackgroundImage:[UIImage imageNamed:@"Join_Grey"] forState:UIControlStateNormal];
+    [joinBtn setBackgroundImage:[UIImage imageNamed:@"Join_Rectangle"] forState:UIControlStateSelected];
     [joinBtn addTarget:self action:@selector(eventTouchUpInsideJoin:) forControlEvents:UIControlEventTouchUpInside];
     
-    UIButton *noJoinBtn = [[UIButton alloc] initWithFrame:CGRectMake(160, 0, 160, 44)];
-    [noJoinBtn setTitle:@"Not Joining" forState:UIControlStateNormal];
-    [noJoinBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-    [noJoinBtn setTitleColor:purple forState:UIControlStateSelected];
+    UIButton *noJoinBtn = [[UIButton alloc] initWithFrame:CGRectMake(kScreen_Width/2+10, 0, 160-20, 44)];
     [noJoinBtn setTag:4];
+    [noJoinBtn setBackgroundImage:[UIImage imageNamed:@"NotJoin_Grey"] forState:UIControlStateNormal];
+    [noJoinBtn setBackgroundImage:[UIImage imageNamed:@"NotJoiningRectangle"] forState:UIControlStateSelected];
     [noJoinBtn addTarget:self action:@selector(eventTouchUpInsideJoin:) forControlEvents:UIControlEventTouchUpInside];
     if ([_joinStatus isEqualToString:@"1"]) {//表示参加
-        [joinBtn setTitleColor:purple forState:UIControlStateNormal];
-    }
-    else {
-        [noJoinBtn setTitleColor:purple forState:UIControlStateNormal];
+        [joinBtn setSelected:YES];
+        [noJoinBtn setSelected:NO];
+    }else {
+        [noJoinBtn setSelected:YES];
+        [joinBtn setSelected:NO];
     }
     _joinAndNoJoinArr = [NSArray arrayWithObjects:joinBtn, noJoinBtn, nil];
-    
     [_joinAndNoJoinView addSubview:joinBtn];
     [_joinAndNoJoinView addSubview:noJoinBtn];
 }
@@ -99,7 +98,7 @@ static NSString * cellStyleV1 = @"static NSString";
 - (void)eventTouchUpInsideJoin:(UIButton *)sender {
     for (UIButton *btn in _joinAndNoJoinArr) {
         btn.selected = NO;
-        [btn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        //[btn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     }
     sender.selected = YES;
     int joinType = 0;
@@ -161,7 +160,7 @@ static NSString * cellStyleV1 = @"static NSString";
             return 0.0f;
         }
     }
-     return 44.f;
+     return 64.f;
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
@@ -177,7 +176,7 @@ static NSString * cellStyleV1 = @"static NSString";
             }
             [selectFriendArr addObject:[tmpDic objectForKey:@"uid"]];
         }
-        inviteCountLab.text = [NSString stringWithFormat:@"%i Invites - %i Going" , activeEvent.member.count,joinCount] ;
+        inviteCountLab.text = [NSString stringWithFormat:@"%lu Invites - %i Going" , (unsigned long)activeEvent.member.count,joinCount] ;
         inviteCountLab.textAlignment = NSTextAlignmentCenter ;
         inviteCountLab.backgroundColor = [UIColor whiteColor];
         inviteCountLab.textColor = [UIColor grayColor];
@@ -207,29 +206,47 @@ static NSString * cellStyleV1 = @"static NSString";
         }
         NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSURL *url = [NSURL URLWithString:_urlStr];
-        [activeImgCell.activeImag sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"] completed:nil];
+        [activeImgCell.activeImag sd_setImageWithURL:url placeholderImage:ResizeImage([UIImage imageNamed:@"018.jpg"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds))  completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+            UIImage *reSizeImg = nil;
+            if (!image) {
+                reSizeImg =  ResizeImage([UIImage imageNamed:@"018.jpg"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds));
+            }else{
+            reSizeImg = ResizeImage(image,CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds));
+            }
+            activeImgCell.activeImag.image = reSizeImg ;
+        }];
         return activeImgCell ;
     }else{
          if (indexPath.section == 1||indexPath.section == 2 || indexPath.section == 5 || indexPath.section == 6 ||indexPath.section == 8){
-            UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellId] ;
-            if (!cell) {
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+            UITableViewCell * cell
+//             = [tableView dequeueReusableCellWithIdentifier:cellId] ;
+//            if (!cell) {
+                 = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
                 cell.selectionStyle = UITableViewCellSelectionStyleNone ;
                 cell.textLabel.textAlignment = NSTextAlignmentCenter ;
-            }
+//            }
             if(indexPath.section == 1 && indexPath.row == 0){
+                cell.textLabel.font = [UIFont fontWithName:@"Avenir Next Medium" size:20];
                  cell.textLabel.text = activeEvent.title ;
-                
             }else if(indexPath.section == 2 && indexPath.row == 0){
                 
                 for (UIView * view in cell.subviews) {
                     [view removeFromSuperview];
                 }
                 
-                UIScrollView * fivScrollV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 38*activeEvent.member.count, 30)];
-                fivScrollV.contentSize = CGSizeMake(38*activeEvent.member.count, 0);
+                UIScrollView * fivScrollV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width - 50, 64)];
+                [fivScrollV setShowsHorizontalScrollIndicator:NO];
+                [fivScrollV setShowsVerticalScrollIndicator:NO];
+                UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openModeMember:)];
+                tapGesture.numberOfTapsRequired = 1 ;
+                [fivScrollV addGestureRecognizer:tapGesture];
+                
+                fivScrollV.contentSize = CGSizeMake(44*activeEvent.member.count, 0);
+                UIView * memberView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 44*activeEvent.member.count, 44)];
+                [fivScrollV addSubview:memberView];
+                
                 for (int i = 0; i < activeEvent.member.count ; i++) {
-                    UIImageView *fiv =  [[UIImageView alloc] initWithFrame:CGRectMake((38*i)+(i==0?4:0), 0, 30, 30)];
+                    UIImageView *fiv =  [[UIImageView alloc] initWithFrame:CGRectMake(40*i, 0, 40, 40)];
                     fiv.layer.masksToBounds = YES ;
                     fiv.layer.cornerRadius = fiv.bounds.size.width/2;
                     NSDictionary * tmpDic = activeEvent.member[i];
@@ -237,17 +254,16 @@ static NSString * cellStyleV1 = @"static NSString";
                     NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, imgSmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                         NSURL *url = [NSURL URLWithString:_urlStr];
                         [fiv sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-                    [fivScrollV addSubview:fiv];
+                    [memberView addSubview:fiv];
                 }
+                memberView.center = fivScrollV.center ;
                 [cell addSubview:fivScrollV];
                 
                 UIButton * addBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
                 [addBtn setImage:[UIImage imageNamed:@"add_default"] forState:UIControlStateNormal];
                 [addBtn addTarget:self action:@selector(addFriendsList:) forControlEvents:UIControlEventTouchUpInside];
-                [cell.contentView addSubview:addBtn];
                 cell.accessoryView = addBtn ;
-                fivScrollV.center = cell.center ;
-                
+  
             }else if ( indexPath.section == 5  && indexPath.row == 0 ){
                 [cell.contentView addSubview:_joinAndNoJoinView];
             }else if ( indexPath.section == 6  && indexPath.row == 0 ){
@@ -322,7 +338,7 @@ static NSString * cellStyleV1 = @"static NSString";
     inviteesVc.joinAllArr = selectFriendArr ;
     NavigationController *navC= [[NavigationController alloc] initWithRootViewController:inviteesVc];
     navC.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
-    [navC.navigationBar setBarTintColor:HEXCOLOR(0x19C5FF00)];
+    [navC.navigationBar setBarTintColor:[UIColor colorWithHexString:@"31aaeb"]];
     [self.navigationController presentViewController:navC animated:YES completion:nil];
 }
 
@@ -337,6 +353,22 @@ static NSString * cellStyleV1 = @"static NSString";
     }
 }
 
+-(void)openModeMember:(UIGestureRecognizer *) gestureRecognizer{
+    InviteesJoinOrReplyTableViewController * inviteesJoinOrReplyVC = [[InviteesJoinOrReplyTableViewController alloc] init];
+    
+    NSMutableArray * memberArr = @[].mutableCopy ;
+    for (NSDictionary *memDic in self.activeEvent.member) {
+        MemberDataModel * member = [[MemberDataModel alloc] init];
+        [member parseDictionary:memDic];
+        [memberArr addObject:member];
+    }
+    inviteesJoinOrReplyVC.isOpenModel = YES ;
+    inviteesJoinOrReplyVC.memberArr = memberArr ;
+    NavigationController *navC= [[NavigationController alloc] initWithRootViewController:inviteesJoinOrReplyVC];
+    navC.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
+    [navC.navigationBar setBarTintColor:[UIColor colorWithHexString:@"31aaeb"]];
+    [self presentViewController:navC animated:YES completion:nil];
+}
 
 /*
 // Override to support conditional editing of the table view.

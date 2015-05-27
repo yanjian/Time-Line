@@ -1,6 +1,6 @@
 //
 //  ActiveVotingViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/4/2.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -8,30 +8,55 @@
 
 #import "ActiveVotingViewController.h"
 #import "DateTimeVoteTableViewCell.h"
+#import "TimeSlotDetailsViewController.h"
+#import "TimeVoteModel.h"
+#import "MemberDataModel.h"
+#import "UserInfo.h"
+#import "UIColor+HexString.h"
+#import "VoteMemberTableViewController.h"
 
 static NSString * cellVotingId = @"cellVotingId";
 @interface ActiveVotingViewController ()<ASIHTTPRequestDelegate>{
-    NSMutableArray * activeTimeVoteArr ;
-    
     NSMutableDictionary *_selectIndexPathDic; //用户选择的indexPath
     
     VoteTimeType voteTimeType;
+    BOOL isTimeConfirm ;//确定是否已经确定时间 true 表示确定《《《《《《《
 }
+@property (strong, nonatomic) NSArray * activeTimeVoteArr ;
+@property (strong, nonatomic) NSArray * voteTimeArr ;//用户对那些时间投票咯
+@property (strong, nonatomic) NSArray * voteMemberArr ;
 
 @end
 
 @implementation ActiveVotingViewController
-
+@synthesize activeTimeVoteArr,activeEvent ;
 - (void)viewDidLoad {
     [super viewDidLoad];
     _selectIndexPathDic = @{}.mutableCopy ;
-    //解析数据
-    activeTimeVoteArr = [NSMutableArray arrayWithCapacity:0];
-    for (NSDictionary *tmpDic in self.timeArr) {
+    
+    NSMutableArray * timeArr = @[].mutableCopy ;
+    for (NSDictionary *tmpDic in activeEvent.time ) {
         ActiveTimeVoteMode * activeTimeVote = [[ActiveTimeVoteMode  alloc] init];
         [activeTimeVote parseDictionary:tmpDic];
-        [activeTimeVoteArr addObject:activeTimeVote];
+        [timeArr addObject:activeTimeVote];
     }
+    self.activeTimeVoteArr = timeArr ;
+    
+    NSMutableArray * voteTimeArr = @[].mutableCopy ;
+    for (NSDictionary *timeVoteDic in activeEvent.etList) {
+        TimeVoteModel * timeVoteModel = [[TimeVoteModel alloc] init];
+        [timeVoteModel parseDictionary:timeVoteDic];
+        [voteTimeArr addObject:timeVoteModel];
+    }
+    self.voteTimeArr = voteTimeArr ;
+    
+    NSMutableArray * memberArr = @[].mutableCopy ;
+    for (NSDictionary *memberDic in activeEvent.member) {
+        MemberDataModel * memberDataModel = [[MemberDataModel alloc] init];
+        [memberDataModel parseDictionary:memberDic];
+        [memberArr addObject:memberDataModel];
+    }
+    self.voteMemberArr = memberArr ;
 }
 
 - (NSString *)titleForPagerTabStripViewController:(XLPagerTabStripViewController *)pagerTabStripViewController{
@@ -70,13 +95,34 @@ static NSString * cellVotingId = @"cellVotingId";
     DateTimeVoteTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellVotingId] ;
     if (!cell) {
         cell =(DateTimeVoteTableViewCell *)[[[UINib nibWithNibName:@"DateTimeVoteTableViewCell" bundle:[NSBundle mainBundle]] instantiateWithOwner:self options:nil] lastObject];
-        UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-        imageView.image =[UIImage imageNamed:@"selecte_friend_cycle"] ;
-        cell.accessoryView = imageView ;
-        imageView.center = cell.accessoryView.center ;
+        UIButton * btnImgAccessory = [UIButton buttonWithType:UIButtonTypeCustom];
+        btnImgAccessory.frame = CGRectMake(0, 0, 40, 40) ;
+        btnImgAccessory.tag = indexPath.section ;
+        [btnImgAccessory setImage:[UIImage imageNamed:@"selecte_friend_cycle"] forState:UIControlStateNormal];
+        [btnImgAccessory setImage:[UIImage imageNamed:@"selecte_friend_tick"] forState:UIControlStateSelected];
+        [btnImgAccessory addTarget:self action:@selector(userVoteTimeDate:) forControlEvents:UIControlEventTouchUpInside];
+        cell.accessoryView = btnImgAccessory;
+        cell.voteCount.text = @"0" ;
+        
     }
     ActiveTimeVoteMode * activeTimeVote = [activeTimeVoteArr objectAtIndex:indexPath.section];
-   
+    if ([activeTimeVote.finalTime integerValue]== 2) {//表示时间已经确定(只要有一个确定就表示为真)
+        isTimeConfirm = true ;
+    }
+    NSPredicate *pre = [NSPredicate predicateWithFormat:@"tid == %@",activeTimeVote.Id];
+    NSArray * voteArr =  [self.voteTimeArr filteredArrayUsingPredicate:pre];
+    if (voteArr.count>0) {
+        cell.voteCount.text = [NSString stringWithFormat:@"%lu",(unsigned long)voteArr.count];
+    }
+    for (TimeVoteModel *timeVote in voteArr) {
+        if ([timeVote.uid integerValue] == [[UserInfo currUserInfo].Id integerValue] ) {
+            UIButton * btnTmp =(UIButton *) cell.accessoryView ;
+            [_selectIndexPathDic setObject:@(btnTmp.tag) forKey:[NSString stringWithFormat:@"%li", (long)btnTmp.tag]];
+            btnTmp.selected = YES ;
+            break;
+        }
+    }
+
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
     [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE]];
@@ -85,11 +131,28 @@ static NSString * cellVotingId = @"cellVotingId";
     
     cell.startTimeLab.text = [NSString stringWithFormat:@"From - %@",[self formaterDate:start]] ;
     cell.endTimeLab.text   = [NSString stringWithFormat:@"To - %@",[self formaterDate:end]] ;
+  
     cell.suggestLab.text   = @"suggested by  " ;
     return cell;
 }
 
 
+-(void)userVoteTimeDate:(UIButton *)sender{
+    ActiveTimeVoteMode * activeTimeVote = [activeTimeVoteArr objectAtIndex:sender.tag];
+    NSString *indexPathStr = [NSString stringWithFormat:@"%li", (long)sender.tag];
+    if (![_selectIndexPathDic objectForKey:indexPathStr]) {
+        sender.selected = YES ;
+        [_selectIndexPathDic setObject:@(sender.tag) forKey:indexPathStr];
+        voteTimeType = voteTimeType_Vote ;
+    }else {
+        sender.selected = NO ;
+        [_selectIndexPathDic removeObjectForKey:indexPathStr];
+        voteTimeType = voteTimeType_cancel ;
+    }
+    ASIHTTPRequest *voteTimeRequest = [t_Network httpPostValue:@{ @"eid":activeTimeVote.eid, @"tid":activeTimeVote.Id, @"type":@(voteTimeType_Vote) }.mutableCopy Url:anyTime_VoteTimeForEvent Delegate:self Tag:anyTime_VoteTimeForEvent_tag];
+    
+    [voteTimeRequest startAsynchronous];
+}
 
 /*
 // Override to support conditional editing of the table view.
@@ -131,28 +194,42 @@ static NSString * cellVotingId = @"cellVotingId";
 // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-   
-    ActiveTimeVoteMode * activeTimeVote = [activeTimeVoteArr objectAtIndex:indexPath.section];
+    if(isTimeConfirm){
+        //暂时屏蔽这一块功能。。。。
+//        UIStoryboard *storyboarb = [UIStoryboard storyboardWithName:@"ActiveDestination" bundle:[NSBundle mainBundle]];
+//        TimeSlotDetailsViewController *  activeDesc = ( TimeSlotDetailsViewController *)  [storyboarb instantiateViewControllerWithIdentifier:@"timeSlotDetails"];
+//        UINavigationController  *nav = [[UINavigationController alloc] initWithRootViewController:activeDesc];
+//        nav.navigationBar.barTintColor = [UIColor colorWithHexString:@"31aaeb"];
+//        nav.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]} ;
+//        
+//        ActiveTimeVoteMode * activeTimeVote = [activeTimeVoteArr objectAtIndex:indexPath.section];
+//        
+//        NSPredicate *pre = [NSPredicate predicateWithFormat:@"tid == %@",activeTimeVote.Id];
+//        NSArray * voteArr =  [self.voteTimeArr filteredArrayUsingPredicate:pre];
+//        NSArray * tmpArr = @[] ;
+//        for (TimeVoteModel * timeVoteModel in voteArr) {
+//          NSArray * tmpMemberArr =  [self.voteMemberArr filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"uid == %@",timeVoteModel.uid]];
+//            tmpArr = [tmpArr arrayByAddingObjectsFromArray:tmpMemberArr];
+//        }
+//        activeDesc.voteMemberArr = tmpArr ;
+//        [self.navigationController presentViewController:nav animated:YES completion:nil];
+        
+        VoteMemberTableViewController * voteMember = [[VoteMemberTableViewController alloc] init];
+        UINavigationController  *nav = [[UINavigationController alloc] initWithRootViewController:voteMember];
+        nav.navigationBar.barTintColor = [UIColor colorWithHexString:@"31aaeb"];
+        nav.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]} ;
 
-    NSString *indexPathStr = [NSString stringWithFormat:@"%i%i", indexPath.section, indexPath.row];
-    DateTimeVoteTableViewCell *stv = (DateTimeVoteTableViewCell *)[tableView cellForRowAtIndexPath:indexPath];
-    if (![_selectIndexPathDic objectForKey:indexPathStr]) {
-        UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-        imageView.image =[UIImage imageNamed:@"selecte_friend_tick"] ;
-        stv.accessoryView = imageView;
-        [_selectIndexPathDic setObject:indexPath forKey:indexPathStr];
-        voteTimeType = voteTimeType_Vote ;
-    }else {
-        UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-        imageView.image =[UIImage imageNamed:@"selecte_friend_cycle"] ;
-        stv.accessoryView = imageView;
-        [_selectIndexPathDic removeObjectForKey:indexPathStr];
-        voteTimeType = voteTimeType_cancel ;
+        ActiveTimeVoteMode * activeTimeVote = [activeTimeVoteArr objectAtIndex:indexPath.section];
+        NSPredicate *pre  = [NSPredicate predicateWithFormat:@"tid == %@",activeTimeVote.Id];
+        NSArray * voteArr =  [self.voteTimeArr filteredArrayUsingPredicate:pre];
+        NSArray * tmpArr  = @[] ;
+        for (TimeVoteModel * timeVoteModel in voteArr) {
+          NSArray * tmpMemberArr =  [self.voteMemberArr filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"uid == %@",timeVoteModel.uid]];
+            tmpArr = [tmpArr arrayByAddingObjectsFromArray:tmpMemberArr];
+        }
+        voteMember.voteMemberArr = tmpArr ;
+        [self.navigationController presentViewController:nav animated:YES completion:nil];
     }
-    ASIHTTPRequest *voteTimeRequest = [t_Network httpPostValue:@{ @"eid":activeTimeVote.eid, @"tid":activeTimeVote.Id, @"type":@(voteTimeType_Vote) }.mutableCopy Url:anyTime_VoteTimeForEvent Delegate:self Tag:anyTime_VoteTimeForEvent_tag];
-    
-    [voteTimeRequest startAsynchronous];
-    
 }
 
 

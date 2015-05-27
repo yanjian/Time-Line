@@ -1,6 +1,6 @@
 //
 //  AlertsViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-10-12.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -10,13 +10,20 @@
 #import "EventAlertsViewController.h"
 #import "AllDayEventsViewController.h"
 
+#define alertContentArr [NSArray arrayWithObjects:@"never", @"at time of event", @"5 minutes before", @"15 minutes before", @"30 minutes before", @"1 hour before", @"2 hour before", nil]
+
+#define allAlertArr  [NSArray arrayWithObjects:@"never", @"5:00", @"7:00", @"8:00", @"9:00", @"10:00", nil]
+
 @interface AlertsViewController () <UITableViewDelegate, UITableViewDataSource, EventAlertsDelegate, AllDayEventsDelegate>
-@property (nonatomic, retain) UITableView *tableView;
-@property (nonatomic, retain) NSMutableArray *selectIndexPathArr;
-@property (nonatomic, assign) BOOL isSelect;
-@property (nonatomic, retain) NSArray *alertsArr;
-@property (nonatomic, strong) NSString *eventStr;
-@property (nonatomic, strong) NSString *allDayEventStr;
+@property (nonatomic, retain) UITableView    * tableView;
+@property (nonatomic, retain) NSMutableArray * selectIndexPathArr;
+@property (nonatomic, assign) BOOL       isSelect ;
+@property (nonatomic, retain) NSArray  * alertsArr;
+@property (nonatomic, strong) NSString * eventStr ;
+@property (nonatomic, strong) NSString * allDayEventStr;
+@property (nonatomic, assign) EventsAlertTime eventAlertTime ;
+@property (nonatomic, assign) EventsAllDayAlert  eventsAllDayAlert ;
+
 @end
 
 @implementation AlertsViewController
@@ -41,13 +48,13 @@
     self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
     
 	self.alertsArr = [NSArray arrayWithObjects:@"Events", @"All Day Events", nil];
-	self.allDayEventStr = [USER_DEFAULT objectForKey:@"allDay"];
-	self.eventStr = [USER_DEFAULT objectForKey:@"eventTime"];
+    self.allDayEventStr = [allAlertArr objectAtIndex:[[USER_DEFAULT objectForKey:@"allDay"] integerValue]];
+	self.eventStr = [alertContentArr objectAtIndex:[[USER_DEFAULT objectForKey:@"eventTime"] integerValue]];
 	self.selectIndexPathArr = [NSMutableArray arrayWithCapacity:0];
 
 	self.tableView = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
 	self.tableView.dataSource = self;
-	self.tableView.delegate = self;
+	self.tableView.delegate   = self;
 	[self.view addSubview:self.tableView];
 }
 
@@ -111,11 +118,13 @@
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	if (indexPath.row == 0) {//events
 		EventAlertsViewController *eventAlerts = [[EventAlertsViewController alloc] init];
+        eventAlerts.eventAlertsArr = alertContentArr ;
 		eventAlerts.delegate = self;
 		[self.navigationController pushViewController:eventAlerts animated:YES];
 	}
 	else if (indexPath.row == 1) {//all day
 		AllDayEventsViewController *allDayEvents = [[AllDayEventsViewController alloc] init];
+        allDayEvents.allDayEventArr = allAlertArr ;
 		allDayEvents.delegate = self;
 		[self.navigationController pushViewController:allDayEvents animated:YES];
 	}
@@ -123,18 +132,51 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
 	[super viewDidDisappear:animated];
-	[USER_DEFAULT setObject:self.allDayEventStr forKey:@"allDay"];
-	[USER_DEFAULT setObject:self.eventStr forKey:@"eventTime"];
-	[USER_DEFAULT synchronize];
+	
+
+	
 }
 
-- (void)eventsAlertTimeString:(NSString *)alertStr {
+- (void)eventsAlertTimeString:(NSString *)alertStr atIndex:(NSInteger)index {
+    if ([@"never" isEqualToString:alertStr]) {
+        self.eventAlertTime = EventsAlertTime_Never ;
+    }else if ([@"at time of event" isEqualToString:alertStr ]){
+        self.eventAlertTime = EventsAlertTime_AtTimeEvent ;
+    }else if ([@"5 minutes before" isEqualToString:alertStr]){
+         self.eventAlertTime = EventsAlertTime_5MinBefore ;
+    }else if ([@"15 minutes before" isEqualToString:alertStr]){
+        self.eventAlertTime = EventsAlertTime_15MinBefore ;
+    }else if ([@"30 minutes before" isEqualToString:alertStr]){
+        self.eventAlertTime = EventsAlertTime_30MinBefore ;
+    }else if ([@"1 hour before" isEqualToString:alertStr]){
+        self.eventAlertTime = EventsAlertTime_1HourBefore ;
+    }else if ([@"2 hour before" isEqualToString:alertStr]){
+        self.eventAlertTime = EventsAlertTime_2HourBefore ;
+    }
 	self.eventStr =  alertStr;
+    [USER_DEFAULT setObject:@(self.eventAlertTime) forKey:@"eventTime"];
+    [USER_DEFAULT synchronize];
 	[self.tableView reloadData];
 }
 
 - (void)getAllDayEvent:(NSString *)timestr {
+    if ([@"never" isEqualToString:timestr]) {
+        self.eventsAllDayAlert = EventsAllDayAlert_Never ;
+    }else if ([@"5:00" isEqualToString:timestr ]){
+       self.eventsAllDayAlert = EventsAllDayAlert_5Hour  ;
+    }else if ([@"7:00" isEqualToString:timestr ]){
+        self.eventsAllDayAlert = EventsAllDayAlert_7Hour ;
+    }else if ([@"8:00" isEqualToString:timestr ]){
+        self.eventsAllDayAlert = EventsAllDayAlert_8Hour ;
+    }else if ([@"9:00" isEqualToString:timestr ]){
+        self.eventsAllDayAlert = EventsAllDayAlert_9Hour ;
+    }else if ([@"10:00" isEqualToString:timestr ]){
+        self.eventsAllDayAlert = EventsAllDayAlert_10Hour;
+    }
+    
 	self.allDayEventStr = timestr;
+    [USER_DEFAULT setObject:@(self.eventsAllDayAlert) forKey:@"allDay"];
+    [USER_DEFAULT synchronize];
 	[self.tableView reloadData];
 }
 

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A877C94519B450C50075D9E8"
-               BuildableName = "Time-Line.app"
-               BlueprintName = "Time-Line"
-               ReferencedContainer = "container:Time-Line.xcodeproj">
+               BuildableName = "Go2.app"
+               BlueprintName = "Go2"
+               ReferencedContainer = "container:Go2.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A877C94519B450C50075D9E8"
-            BuildableName = "Time-Line.app"
-            BlueprintName = "Time-Line"
-            ReferencedContainer = "container:Time-Line.xcodeproj">
+            BuildableName = "Go2.app"
+            BlueprintName = "Go2"
+            ReferencedContainer = "container:Go2.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -49,13 +49,14 @@
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES"
       launchAutomaticallySubstyle = "1">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A877C94519B450C50075D9E8"
-            BuildableName = "Time-Line.app"
-            BlueprintName = "Time-Line"
-            ReferencedContainer = "container:Time-Line.xcodeproj">
+            BuildableName = "Go2.app"
+            BlueprintName = "Go2"
+            ReferencedContainer = "container:Go2.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -67,13 +68,14 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A877C94519B450C50075D9E8"
-            BuildableName = "Time-Line.app"
-            BlueprintName = "Time-Line"
-            ReferencedContainer = "container:Time-Line.xcodeproj">
+            BuildableName = "Go2.app"
+            BlueprintName = "Go2"
+            ReferencedContainer = "container:Go2.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

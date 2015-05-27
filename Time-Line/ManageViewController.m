@@ -1,6 +1,6 @@
 //
 //  ManageViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14/12/5.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -24,8 +24,8 @@
 
 #import "AddNewActiveViewController.h"
 //#import "AddActiveViewController.h"
-
 #import "ActiveDestinationViewController.h"
+#import "SimpleEventViewController.h"
 
 typedef NS_ENUM (NSInteger, ShowActiveType) {
 	ShowActiveType_upcoming     = 0,
@@ -131,6 +131,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
                                                  style:UITableViewStyleGrouped];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+    self.tableView.separatorInset = UIEdgeInsetsMake(0, 50, 0, 0);
     self.tableView.tableFooterView = [UIView new] ;
     self.view=self.tableView;
 
@@ -180,12 +181,20 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 	[self.tableView headerBeginRefreshing];
 
 	// 2.上拉加载更多(进入刷新状态就会调用self的footerRereshing)
-	[self.tableView addFooterWithTarget:self action:@selector(footerRereshing)];
+	//[self.tableView addFooterWithTarget:self action:@selector(footerRereshing)];
 }
 
 #pragma mark 开始进入刷新状态
 - (void)headerRereshing {
-	[self loadActiveData:nil]; //刷新数据
+    NSInteger loginStatus = [UserInfo currUserInfo].loginStatus;
+    if (1!=loginStatus) {//1表示用户登陆
+        [g_AppDelegate initLoginView:LoginOrLogoutType_ModelOpen];
+    }else{
+        if (g_NetStatus!=NotReachable){//在有网络的情况下自动登录
+            [g_AppDelegate autoUserWithLogin];
+        }
+    }
+    [self loadActiveData:nil]; //刷新数据
 	[self.tableView headerEndRefreshing];
 }
 
@@ -198,16 +207,6 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
     
     self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
     [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
-    
-    NSInteger loginStatus = [UserInfo currUserInfo].loginStatus;
-    if (1!=loginStatus) {//1表示用户登陆
-        [g_AppDelegate initLoginView:LoginOrLogoutType_ModelOpen];
-    }else{
-        if (g_NetStatus!=NotReachable){//在有网络的情况下自动登录
-            [g_AppDelegate autoUserWithLogin];
-        }
-    }
-    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -224,21 +223,26 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
         [formatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
         NSTimeZone *timeZone = [NSTimeZone defaultTimeZone];
         [formatter setTimeZone:timeZone];
-        NSDate * objDate1 = [formatter dateFromString:chatContent.time];
-        
-         NSMutableDictionary * latestDic = [latestMsgDic objectForKey:chatContent.eid] ;
+        NSRange  timePointRange = [chatContent.time rangeOfString:@"."];
+        NSDate * objDate1 = nil ;
+        if (timePointRange.location == NSNotFound) {
+             objDate1 = [formatter dateFromString:chatContent.time];
+        }else{
+            objDate1 = [formatter dateFromString:[chatContent.time substringToIndex:timePointRange.location]];
+        }
+
+        NSMutableDictionary * latestDic = [latestMsgDic objectForKey:chatContent.eid] ;
         if (latestDic) {
             NSInteger latestMsgCount = [[latestDic objectForKey:@"latestCount"] integerValue];
             latestMsgCount+=1;
             [latestMsgDic removeObjectForKey:chatContent.eid];
-            [latestMsgDic setObject:@{latestCount:@(latestMsgCount),latestEventMsg:chatContent.text,latestMsgTime:objDate1,latestUserName:chatContent.username}.mutableCopy forKey:chatContent.eid];
+            [latestMsgDic setObject:@{latestCount:@(latestMsgCount),latestEventMsg:chatContent.text==nil?@"":chatContent.text,latestMsgTime:objDate1,latestUserName:chatContent.username}.mutableCopy forKey:chatContent.eid];
             
         }else{
-            [latestMsgDic setObject:@{latestCount:@(1),latestEventMsg:chatContent.text,latestMsgTime:objDate1,latestUserName:chatContent.username}.mutableCopy forKey:chatContent.eid];
+            [latestMsgDic setObject:@{latestCount:@(1),latestEventMsg:chatContent.text==nil?@"":chatContent.text,latestMsgTime:objDate1,latestUserName:chatContent.username==nil?@"":chatContent.username }.mutableCopy forKey:chatContent.eid];
         }
         [self.tableView reloadData];
     }
-
 }
 
 //加载没读取的数据
@@ -280,16 +284,24 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
         [formatter setTimeZone:timeZone];
         
         ChatContentModel * tmpModel = [chatContentArr lastObject] ;
-        NSDate * objDate1 = [formatter dateFromString:tmpModel.time];
+        
+        NSRange  timePointRange = [tmpModel.time rangeOfString:@"."];
+        NSDate * objDate1 = nil ;
+        if (timePointRange.location == NSNotFound) {
+            objDate1 = [formatter dateFromString:tmpModel.time];
+        }else{
+            objDate1 = [formatter dateFromString:[tmpModel.time substringToIndex:timePointRange.location]];
+        }
+
         
         NSMutableDictionary * latestDic = [latestMsgDic objectForKey:eventId] ;
          NSInteger latestMsgCount = chatContentArr.count ;
         if (latestDic) {
             [latestMsgDic removeObjectForKey:eventId];
-            [latestMsgDic setObject:@{latestCount:@(latestMsgCount),latestEventMsg:tmpModel.text,latestMsgTime:objDate1,latestUserName:tmpModel.username}.mutableCopy forKey:eventId];
+            [latestMsgDic setObject:@{latestCount:@(latestMsgCount),latestEventMsg:tmpModel.text == nil?@"":tmpModel.text,latestMsgTime:objDate1,latestUserName:tmpModel.username}.mutableCopy forKey:eventId];
         }else{
             if(tmpModel.text){
-               [latestMsgDic setObject:@{latestCount:@(latestMsgCount),latestEventMsg:tmpModel.text,latestMsgTime:objDate1,latestUserName:tmpModel.username}.mutableCopy forKey:eventId];
+               [latestMsgDic setObject:@{latestCount:@(latestMsgCount),latestEventMsg:tmpModel.text == nil?@"":tmpModel.text,latestMsgTime:objDate1,latestUserName:tmpModel.username}.mutableCopy forKey:eventId];
             }
         }
     }else{
@@ -309,7 +321,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
         self.searchController.searchResultsTableView.separatorStyle = UITableViewCellSelectionStyleNone;
         return readyActiveArr.count ;
     }else{
-      self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
+     // self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
     return _activeArr.count ;
     }
 	 
@@ -328,18 +340,20 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-		static NSString *activeId = @"activeManagerCellId";
-		EventInfoShowCell *activeCell = [tableView dequeueReusableCellWithIdentifier:activeId];
+	//	static NSString   *activeId   = @"activeManagerCellId";
+        EventInfoShowCell *activeCell = (EventInfoShowCell *) [tableView cellForRowAtIndexPath:indexPath];// [tableView dequeueReusableCellWithIdentifier:activeId];
 		if (!activeCell) {
 			activeCell = (EventInfoShowCell *)[[[NSBundle mainBundle] loadNibNamed:@"EventInfoShowCell" owner:self options:nil] firstObject];
+            activeCell.showShortTitle.hidden = YES ;
             
-		}
-		if (readyActiveArr.count > 0 ||_activeArr.count>0) {
-            ActiveBaseInfoMode *activeEvent=nil;
+        }
+		if (readyActiveArr.count > 0 || _activeArr.count>0) {
+            
+             ActiveBaseInfoMode *activeEvent = nil;
              if (tableView == self.searchController.searchResultsTableView) {
-		        	activeEvent = readyActiveArr[indexPath.row];
+                activeEvent = readyActiveArr[indexPath.row];
              }else{
-                     activeEvent = _activeArr[indexPath.row];
+                activeEvent = _activeArr[indexPath.row];
              }
             [self loadUnreadMsg:activeEvent.Id];
 			activeCell.activeEvent = activeEvent;
@@ -361,11 +375,18 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 //			else if ([activeEvent.status integerValue] == ActiveStatus_past) {
 //				activeCell.activeStateLab.text = @"Past";
 //			}
-            
-			NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-			NSLog(@"%@", _urlStr);
-			NSURL *url = [NSURL URLWithString:_urlStr];
-			[activeCell.activePic sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+            if ( activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl] ) {
+                activeCell.showShortTitle.hidden = YES ;
+                NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSLog(@"%@", _urlStr);
+                NSURL *url = [NSURL URLWithString:_urlStr];
+                [activeCell.activePic sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+            }else{
+                activeCell.showShortTitle.hidden = NO ;
+                [activeCell.activePic setBackgroundColor: [UIColor colorWithHexString:@"2e9ef1"]];
+                activeCell.showShortTitle.text = [[activeEvent.title substringToIndex:1] uppercaseString];
+            }
+			
 			activeCell.activeTitle.text = activeEvent.title;
             
             NSDictionary *latestDic = [latestMsgDic objectForKey:activeEvent.Id];
@@ -619,9 +640,8 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 					}
 				}
 				[self.tableView reloadData];
-			}
-			else {
-				[MBProgressHUD showError:@"Request Fail"];
+			}else {
+				//[MBProgressHUD showError:@"Request Fail"];
 			}
 			[MBProgressHUD hideHUDForView:self.view animated:YES];
 		} break;
@@ -651,7 +671,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 
 -(void)createNewActive{
-    UIActionSheet *activeSheet = [[UIActionSheet alloc] initWithTitle:@"Add Active Or Event" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"New Active",@"New Event", nil];
+    UIActionSheet *activeSheet = [[UIActionSheet alloc] initWithTitle:@"Add Event" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Social",@"Personal", nil];
     [activeSheet showInView:self.view];
     
     
@@ -668,8 +688,9 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
         [self.navigationController  pushViewController:antVC animated:YES ] ;
         
     }else if (buttonIndex == 1){
-//        AddEventViewController *addVC = [[AddEventViewController alloc] init];
-//        [self.navigationController  pushViewController:addVC animated:YES ] ;
+        SimpleEventViewController * simpleEventVC = [[SimpleEventViewController alloc] init];
+        simpleEventVC.hidesBottomBarWhenPushed = YES ;
+        [self.navigationController pushViewController:simpleEventVC animated:YES];
     }
     
 }
@@ -695,7 +716,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 - (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
 {
-    return(NO);
+    return  NO ;
 }
 
 

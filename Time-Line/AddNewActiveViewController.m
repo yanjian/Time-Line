@@ -1,6 +1,6 @@
 //
 //  AddNewActiveViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/25.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -15,8 +15,8 @@
 #import "PECropViewController.h"
 #import "LocationViewController.h"
 #import "ActiveDataMode.h"
-
-
+#import "utilities.h"
+#import "UIColor+HexString.h"
 static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 
 @interface AddNewActiveViewController ()<UITableViewDataSource,UITableViewDelegate,UIActionSheetDelegate,PECropViewControllerDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate,UITextFieldDelegate,getlocationDelegate,MKMapViewDelegate>
@@ -31,6 +31,8 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     NSMutableArray * selectFriendArr ;
     
     ActiveDataMode * activeDataMode;
+    
+    NSDate * dueVoteDate ;
 }
 
 @property (nonatomic,retain) UIPopoverController *popover;
@@ -48,7 +50,6 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     self.title = @"Event Details";
     [self colorWithNavigationBar];
     
-    
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setFrame:CGRectMake(0, 0, 17 , 17)];
     [leftBtn setTag:1];
@@ -64,6 +65,7 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
     
     self.navigationController.interactivePopGestureRecognizer.delegate =(id) self ;
+    
     
     activeDataMode = [[ActiveDataMode alloc] init];//开始初始化一个
     
@@ -84,19 +86,20 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 
 -(void)createVariousView{
     //活动标题
-    titleFiled=[[UITextField alloc]initWithFrame:CGRectMake(0, 0, kScreen_Width, 64)];
+    titleFiled=[[UITextField alloc]initWithFrame:CGRectMake(15, 0, kScreen_Width-30, 64)];
     titleFiled.delegate = self;
     titleFiled.tag = 3;
-    titleFiled.font=[UIFont boldSystemFontOfSize:15.0f];
+    titleFiled.font=[UIFont boldSystemFontOfSize:20.0f];
     titleFiled.textAlignment=NSTextAlignmentCenter;
     [titleFiled setBorderStyle:UITextBorderStyleNone];
+    titleFiled.returnKeyType = UIReturnKeyDone ;
     
     //活动描述
-    descFiled=[[UITextField alloc]initWithFrame:CGRectMake(0, 0, kScreen_Width, 64)];
+    descFiled=[[UITextField alloc]initWithFrame:CGRectMake(15, 0, kScreen_Width-30, 64)];
     descFiled.delegate = self;
     descFiled.tag = 4;
     descFiled.font=[UIFont boldSystemFontOfSize:15.0f];
-    descFiled.textAlignment=NSTextAlignmentCenter;
+    descFiled.returnKeyType = UIReturnKeyDone ;
     [descFiled setBorderStyle:UITextBorderStyleNone];
 
     
@@ -126,9 +129,16 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     NSArray *array = [[NSArray alloc] initWithObjects: leftButton,fixedButton, rightButton, nil];
     
     [toolBar setItems: array];
+    
+    
     datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 44, 0, 0)];
     [datePicker setBackgroundColor:[UIColor whiteColor]];
-    datePicker.datePickerMode = UIDatePickerModeDateAndTime;
+    datePicker.datePickerMode = UIDatePickerModeDate ;
+    if (!self.isEdit) {
+        NSDate * nowDate = [NSDate new];
+        dueVoteDate = [nowDate dateByAddingTimeInterval:7*24*60*60] ;//默认在当前时间上添加7天 ；
+        datePicker.date = dueVoteDate ;
+    }
     
     [datePickerView addSubview:toolBar];
     [datePickerView addSubview:datePicker];
@@ -145,18 +155,23 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
  */
 -(void)colorWithNavigationBar{
     self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
-    [self.navigationController.navigationBar setBarTintColor:HEXCOLOR(0x19C5FF00)];
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithHexString:@"31aaeb"]];
 }
 
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField{
+    if (textField.becomeFirstResponder) {
+        [textField resignFirstResponder];
+    }
+    return  YES ;
+}
 
 
 -(void)done{
     NSDate *select = [datePicker date];
+    dueVoteDate = select ;
 
-    NSString *dateAndTime =  [self stringFromNSDate:select];
-    UITableViewCell * cell = [addNewActiveTableView  cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:4] ];
-    cell.detailTextLabel.text = dateAndTime ;
-    [addNewActiveTableView reloadData] ;
+    [addNewActiveTableView reloadSections:[NSIndexSet indexSetWithIndex:4] withRowAnimation:UITableViewRowAnimationNone];
     [self docancel];
 }
 
@@ -212,6 +227,8 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     return 5;
 }
 
+
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (coorDic) {
         if (section == 3) {
@@ -254,7 +271,11 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
         if (self.isEdit) { //编辑数据
             NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, self.activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
             NSURL *url = [NSURL URLWithString:_urlStr];
-            [activeImgCell.activeImag sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"] completed:nil];
+            
+            [activeImgCell.activeImag sd_setImageWithURL:url placeholderImage:ResizeImage([UIImage imageNamed:@"018.jpg"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds))  completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                UIImage *reSizeImg = ResizeImage(image,CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds));
+                activeImgCell.activeImag.image = reSizeImg ;
+            }];
         }
         return activeImgCell ;
     }else{
@@ -264,14 +285,14 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:AddNewActiveCellId];
         }
         if (indexPath.section == 1 && indexPath.row == 0) {
-            titleFiled.placeholder = @"Eevet Title";
+            titleFiled.placeholder = @"Event Title";
             [titleFiled becomeFirstResponder];
             if(self.isEdit){//编辑数据
                 titleFiled.text = self.activeEvent.title ;
             }
             [cell.contentView addSubview:titleFiled];
         }else if(indexPath.section == 2 && indexPath.row == 0){
-            descFiled.placeholder = @"Event Description";
+            descFiled.placeholder = @"Description";
             if (self.isEdit) {//编辑数据
                 descFiled.text = self.activeEvent.note ;
             }
@@ -311,11 +332,14 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
         }else if(indexPath.section == 4 && indexPath.row == 0){
             cell.accessoryType  = UITableViewCellAccessoryDisclosureIndicator ;
             cell.textLabel.text = @"Due date to vote:" ;
+            cell.detailTextLabel.textColor = [UIColor blackColor ];
             if (self.isEdit) {
                 NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
                 [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
                 [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE]];
-                cell.detailTextLabel.text = [self stringFromNSDate:[dateFormatter dateFromString:self.activeEvent.voteEndTime]];;
+                cell.detailTextLabel.text = [self stringFromNSDate:[dateFormatter dateFromString:self.activeEvent.voteEndTime]];
+            }else{
+                cell.detailTextLabel.text = [self stringFromNSDate:dueVoteDate];
             }
         }
         return cell ;

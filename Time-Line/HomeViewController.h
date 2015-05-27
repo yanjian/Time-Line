@@ -1,6 +1,6 @@
 //
 //  HomeViewController.h
-//  Time-Line
+//  Go2
 //
 //  Created by connor on 14-3-24.
 //  Copyright (c) 2014年 connor. All rights reserved.
@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/CoreAnimation.h>
 #import "CLCalendarView.h"
-#import "DateDetailsViewController.h"
+//#import "DateDetailsViewController.h"
 @interface HomeViewController : UIViewController <CLCalendarDataSource, CLCalendarDelegate>
 {
 	CLCalendarView *calendarView;

@@ -1,6 +1,6 @@
 //
 //  SetingViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-10-11.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -283,10 +283,11 @@
 					[self.tableView reloadData];
 				}
 			}
-		}
-		else {
+		} else {
             dataStr = [dataStr stringByReplacingOccurrencesOfString:@"\r\n" withString:@""];
 			if ([@"1" isEqualToString:dataStr]) {
+                [UserInfo currUserInfo].loginStatus = UserLoginStatus_NO ; //登陆状态改为没有登陆
+                [UserInfo userInfoWithArchive:[UserInfo currUserInfo]];
                 [g_AppDelegate initLoginView:LoginOrLogoutType_ModelOpen];
 			}
 			isLogout = NO;

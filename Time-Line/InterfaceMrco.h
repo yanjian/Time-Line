@@ -1,6 +1,6 @@
 /*
    InterfaceMrco.h
-   Time-Line
+   Go2
 
    Created by IF on 14-9-11.
    Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -11,6 +11,9 @@
 //OVER_QUERY_LIMIT 表示您超出了配额。
 //REQUEST_DENIED 表示您的请求遭到拒绝，这通常是由于缺少 sensor 参数造成的。
 //INVALID_REQUEST 通常表示缺少 input 参数。
+
+#define kWidth 100
+#define kHeight 40
 
 //经度，纬度
 #define LATITUDE  @"lat"
@@ -115,6 +118,28 @@ typedef NS_ENUM (NSInteger, ActiveStatus) {
 };
 
 
+
+typedef NS_ENUM(NSInteger, EventsAlertTime) {
+    EventsAlertTime_Never       = 0,
+    EventsAlertTime_AtTimeEvent = 1,
+    EventsAlertTime_5MinBefore  = 2,
+    EventsAlertTime_15MinBefore = 3,
+    EventsAlertTime_30MinBefore = 4,
+    EventsAlertTime_1HourBefore = 5,
+    EventsAlertTime_2HourBefore = 6
+
+};
+
+typedef NS_ENUM(NSInteger, EventsAllDayAlert) {
+    EventsAllDayAlert_Never  = 0,
+    EventsAllDayAlert_5Hour  = 1,
+    EventsAllDayAlert_7Hour  = 2,
+    EventsAllDayAlert_8Hour  = 3,
+    EventsAllDayAlert_9Hour  = 4,
+    EventsAllDayAlert_10Hour = 5
+    
+};
+
 #define		DEFAULT_TAB							0
 
 
@@ -123,7 +148,7 @@ typedef NS_ENUM (NSInteger, ActiveStatus) {
 #define XMPP_ANYTIMENAME @"anytimeName"
 #define XMPP_ANYTIMEPWD  @"anytimePWD"
 
-#define XMPP_PWD @"qq123456" 
+#define XMPP_PWD @"qq123456"
 
 //=========================================================================================================
 
@@ -134,6 +159,8 @@ typedef NS_ENUM (NSInteger, ActiveStatus) {
 #define CHATGROUP_ACTIVENOTIFICTION @"chatGroupActiveNotifiction"//一个活动群聊信息通知
 #define CHATGROUP_USERINFO @"chatGroupUserInfo" //活动群聊通知的附加信息
 
+#define FRIENDS_OPTIONSNOTIFICTION @"friendOptionNotifiction"
+#define FRIENDS_OPTIONSINFO        @"friendOptionInfo"
 //==========================================================================================================
 
 //可配置IP

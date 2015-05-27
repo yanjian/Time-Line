@@ -1,6 +1,6 @@
 //
 //  AddEventViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by connor on 14-3-26.
 //  Copyright (c) 2014年 connor. All rights reserved.
@@ -379,7 +379,7 @@
                 anyEvent.isAllDay=@(isAllDay);//全天事件 标记
                 NSString *coor=nil;
                 if (coordinates) {
-                    coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
+                    coor=[NSString stringWithFormat:@"%@;%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
                 }
                 anyEvent.coordinate= coor;
                 NSString * alertStr=nil;
@@ -1207,7 +1207,7 @@
                             
                             NSString *coor=nil;
                             if (coordinates) {
-                                coor=[NSString stringWithFormat:@"%@,%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
+                                coor=[NSString stringWithFormat:@"%@;%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
                             }
                             anyEvent.coordinate= coor;
                             NSString * alertStr=nil;

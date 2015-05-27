@@ -35,7 +35,7 @@
         modalView.translatesAutoresizingMaskIntoConstraints = NO;
         [containerView addSubview:modalView];
         NSDictionary *views = NSDictionaryOfVariableBindings(containerView, modalView);
-        _constraints = [[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-10-[modalView]-10-|" options:0 metrics:nil views:views] arrayByAddingObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-40-[modalView]-40-|" options:0 metrics:nil views:views]];
+        _constraints = [[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-15-[modalView]-15-|" options:0 metrics:nil views:views] arrayByAddingObjectsFromArray:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-40-[modalView]-40-|" options:0 metrics:nil views:views]];
         [containerView addConstraints:_constraints];
         
         //Move off of the screen so we can slide it up

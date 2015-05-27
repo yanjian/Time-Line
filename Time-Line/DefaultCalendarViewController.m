@@ -1,6 +1,6 @@
 //
 //  DefaultCalendarViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-10-12.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -101,15 +101,15 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
 	NSArray *calendarListArr = self.calendarArray[section];
-	Calendar *caObj = calendarListArr[0];
-	NSString *returnStr = @"";
-
-	if ([caObj.type intValue] == AccountTypeLocal) {
-		returnStr = [NSString stringWithFormat:@"  IF(%@)", caObj.account];
-	}
-	else if ([caObj.type intValue] == AccountTypeGoogle) {
-		returnStr = [NSString stringWithFormat:@"  GOOGLE(%@)", caObj.account];
-	}
+    NSString *returnStr = @"";
+    if (calendarListArr.count > 0 ) {
+        Calendar *caObj = calendarListArr[0];
+        if ([caObj.type intValue] == AccountTypeLocal) {
+            returnStr = [NSString stringWithFormat:@" IF(%@)", caObj.account];
+        } else if ([caObj.type intValue] == AccountTypeGoogle) {
+            returnStr = [NSString stringWithFormat:@" GOOGLE(%@)", caObj.account];
+        }
+    }
 	UILabel *label = [[UILabel alloc] init];
 	label.frame = CGRectMake(2, 20, 300, 22);
 	label.backgroundColor = [UIColor clearColor];

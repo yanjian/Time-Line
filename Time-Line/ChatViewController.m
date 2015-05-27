@@ -1,6 +1,6 @@
 //
 //  ChatViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/10.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -22,9 +22,9 @@
     self.senderId = [UserInfo currUserInfo].Id;
     self.senderDisplayName = [UserInfo currUserInfo].username;
     
-    
+    self.showLoadEarlierMessagesHeader = NO ;
     self.chatModelData = [[ChatModelData alloc] initChatModelDataWithActiveEventModel:self.activeEvent];
-    
+    self.inputToolbar.contentView.leftBarButtonItem = nil;//先屏蔽掉发送图片功能
     //收到信息的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fetchChatGroupInfo:) name:CHATGROUP_ACTIVENOTIFICTION object:nil];
     

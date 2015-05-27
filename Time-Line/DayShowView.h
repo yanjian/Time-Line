@@ -1,6 +1,6 @@
 //
 //  DayShowView.h
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14/11/5.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.

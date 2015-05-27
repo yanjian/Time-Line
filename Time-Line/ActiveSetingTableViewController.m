@@ -1,6 +1,6 @@
 //
 //  ActiveSetingTableViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/4/9.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -44,13 +44,14 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
     [leftBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
     
-    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn setFrame:CGRectMake(0, 0, 35, 18)];
-    [rightBtn setTag:2];
-    [rightBtn setTitle:@"Edit" forState:UIControlStateNormal] ;
-    [rightBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
-    
+     if ([userId isEqualToString:self.activeEvent.create]) {
+        UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [rightBtn setFrame:CGRectMake(0, 0, 35, 18)];
+        [rightBtn setTag:2];
+        [rightBtn setTitle:@"Edit" forState:UIControlStateNormal] ;
+        [rightBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
+     }
     self.navigationController.interactivePopGestureRecognizer.delegate =(id) self ;
     memberArr = @[].mutableCopy ;
     for (NSDictionary *memDic in self.activeEvent.member) {
@@ -130,10 +131,23 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
         if (!cell) {
             cell =(ActiveSetingShowTableViewCell *)[[[UINib nibWithNibName:@"ActiveSetingShowTableViewCell" bundle:[NSBundle mainBundle]] instantiateWithOwner:self options:nil] lastObject];
             cell.selectionStyle = UITableViewCellSelectionStyleNone ;
+            cell.showNoImgTitle.hidden = YES ;
         }
-        NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSURL *url = [NSURL URLWithString:_urlStr];
-        [cell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"] completed:nil];
+        
+        if (activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl] ) {
+            cell.showNoImgTitle.hidden = YES ;
+            NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSLog(@"%@", _urlStr);
+            NSURL *url = [NSURL URLWithString:_urlStr];
+            [cell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+        }else{
+             cell.showNoImgTitle.hidden = NO ;
+            [cell.activeImg setBackgroundColor: [UIColor colorWithHexString:@"2e9ef1"]];
+            cell.showNoImgTitle.text = [[activeEvent.title substringToIndex:1] uppercaseString];
+        }
+
+        
+        
         cell.activeTitle.text = self.activeEvent.title ;
         for (MemberDataModel * member in memberArr) {
             NSNumber * uidStr = member.uid;
@@ -342,6 +356,9 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
             NSDictionary *objDataDic = (NSDictionary *)objData;
             NSString *statusCode = [objDataDic objectForKey:@"statusCode"];
             if ([statusCode isEqualToString:@"1"]) {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(activeSetingTableViewController:eventId:)] ){
+                    [self.delegate activeSetingTableViewController:self eventId:self.activeEvent.Id];
+                }
                 [self.navigationController popToRootViewControllerAnimated:YES];
             }
         }

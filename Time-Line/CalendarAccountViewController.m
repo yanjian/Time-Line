@@ -1,6 +1,6 @@
 //
 //  CalendarAccountViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14/10/23.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -38,19 +38,13 @@
 	self.tableView.delegate = self;
 	[self.view addSubview:self.tableView];
 
-	UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
-	UILabel *titlelabel = [[UILabel alloc]initWithFrame:titleView.frame];
-	titlelabel.textAlignment = NSTextAlignmentCenter;
-	titlelabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
-	titlelabel.text = @"Calendar Account";
-	titlelabel.textColor = [UIColor whiteColor];
-	[titleView addSubview:titlelabel];
-	self.navigationItem.titleView = titleView;
+	self.title = @"Calendar Account";
 
-	self.navigationItem.hidesBackButton = YES;
-	UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-	leftBtn.frame = CGRectMake(0, 2, 21, 25);
+    
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
+    [leftBtn setTag:1];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
 	[leftBtn addTarget:self action:@selector(visibleCaTobackSetingView) forControlEvents:UIControlEventTouchUpInside];
 	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
 }

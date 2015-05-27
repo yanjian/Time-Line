@@ -1,6 +1,6 @@
 //
 //  FriendsProfilesTableViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/16.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -135,7 +135,7 @@
                 [activeCell.userHeadImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
                 [activeCell.userName setTextColor: blueColor];
                 [activeCell.userName setText:self.friend.username];
-                [activeCell.userAlias setText:self.friend.alias]  ;
+                [activeCell.userAlias setText:self.friend.alias==nil? self.friend.email:self.friend.alias]  ;
 
             }else{
                 NSString *tmpUrl = [[self.messageDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];

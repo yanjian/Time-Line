@@ -1,6 +1,6 @@
 //
 //  CLCalendarView.m
-//  Time-Line
+//  Go2
 //
 //  Created by Charlie Liao on 14-3-25.
 //  Copyright (c) 2014年 connor. All rights reserved.
@@ -144,7 +144,7 @@
 		event_tableView.delegate = self;
 		event_tableView.dataSource = self;
 		event_tableView.tag = 1;
-
+        event_tableView.separatorInset = UIEdgeInsetsMake(0, 43, 0, 0) ;
 		event_tableView.backgroundColor = [UIColor whiteColor];//设置事件表格背景为白色
 
 		event_tableView.bounces = NO;
@@ -196,7 +196,6 @@
 				calendar_tableView.frame = calendar_Table_Week_F;
 				[calendar_tableView setBounces:NO];
 				calendar_tableView.pagingEnabled = YES;
-
 				if (selectDate[0] != -1) {
 				    [calendar_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:selectDate[0] inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
 				}
@@ -455,10 +454,15 @@
                     [cell.dayAndWeekView setHidden:YES];
                 }
                 cell.activeTitle.text = activeEvent.title ;
-                NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                NSLog(@"%@", _urlStr);
-                NSURL *url = [NSURL URLWithString:_urlStr];
-                [cell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+                
+                if (activeEvent.imgUrl) {
+                    NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                    NSLog(@"%@", _urlStr);
+                    NSURL *url = [NSURL URLWithString:_urlStr];
+                    [cell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+                }else{
+                    [cell.activeImg setBackgroundColor: [UIColor colorWithHexString:@"31aaeb"]];
+                }
 
 //                NSString *starttime = activeEvent.createTime;
 //                NSRange range = [starttime rangeOfString:@"日"];

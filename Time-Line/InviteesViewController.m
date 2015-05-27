@@ -1,6 +1,6 @@
 //
 //  InviteesViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/25.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -15,7 +15,7 @@
 #import "SetFriendTableViewCell.h"
 #import "PurposeEventTimeViewController.h"
 
-@interface InviteesViewController () <HeadViewDelegate, UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate, ASIHTTPRequestDelegate>
+@interface InviteesViewController () <HeadViewDelegate,UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate, ASIHTTPRequestDelegate>
 {
     UIButton *addBtn;
     NSMutableArray *_groupArr;
@@ -265,9 +265,11 @@
     NSURL *url = [NSURL URLWithString:_urlStr];
     [cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
     
-    cell.textLabel.textColor = friend.isVip ? [UIColor redColor] : [UIColor blackColor];
-    cell.nickName.text = friend.nickname;
-    cell.userNote.text = friend.alias;
+   // cell.textLabel.textColor = friend.isVip ? [UIColor redColor] : [UIColor blackColor];
+    
+    cell.nickName.text = (friend.nickname==nil||[friend.nickname isEqualToString:@""]) ? friend.username:friend.nickname;
+    
+    cell.userNote.text = (friend.alias==nil||[friend.alias isEqualToString:@""])?friend.email:friend.alias;
     return cell;
 }
 

@@ -1,6 +1,6 @@
 //
 //  PurposeEventTimeViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/26.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -12,12 +12,14 @@
 #import "ModalAnimation.h"
 #import "DateVoteShowTableViewCell.h"
 #import "ReviewViewController.h"
+#import "HATransparentView.h"
 
-@interface PurposeEventTimeViewController ()<UIViewControllerTransitioningDelegate,AllDateViewControllerDelegate,UITableViewDataSource,UITableViewDelegate>{
+@interface PurposeEventTimeViewController ()<UIViewControllerTransitioningDelegate,UITableViewDataSource,UITableViewDelegate,HATransparentViewDelegate>{
      ModalAnimation *_modalAnimationController;
      __block NSMutableArray * voteTimeArr ;
    
 }
+@property(strong, nonatomic) HATransparentView *transparentView;
 @property (nonatomic,retain) UILabel * placeholderLab ;
 @end
 
@@ -98,17 +100,25 @@
 }
 
 -(void)pushToDateView:(UIButton *) sender {
-    AllDateViewController * allDateVC = [[AllDateViewController alloc] initWithNibName:@"AllDateViewController" bundle:nil] ;
-    allDateVC.modalPresentationStyle = UIModalPresentationCustom;
-    allDateVC.transitioningDelegate = self;
-    allDateVC.delegate = self ;
-    [self presentViewController:allDateVC animated:YES completion:nil];
+//    AllDateViewController * allDateVC = [[AllDateViewController alloc] initWithNibName:@"AllDateViewController" bundle:nil] ;
+//    allDateVC.modalPresentationStyle = UIModalPresentationCustom;
+//    allDateVC.transitioningDelegate = self;
+//    allDateVC.delegate = self ;
+//    [self presentViewController:allDateVC animated:YES completion:nil];
+    _transparentView = [[HATransparentView alloc] init];
+    _transparentView.tapBackgroundToClose = YES ;
+    _transparentView.delegate = self ;
+    if (self.isEdit) {
+        
+    }else{
+        _transparentView.dueVoteDate = self.activeDataMode.activeDueVoteDate ;
+    }
+    
+    [_transparentView open];
+
 }
 
-/**
- *AllDateViewController的delegate
- */
--(void)allDateViewController:(AllDateViewController *) allDateViewController dateDic:(NSDictionary *) dateDic {
+-(void)hATransparentViewDidSelectDate:(NSDictionary *) dateDic {
     NSLog(@"start: %@  ---- end: %@",[dateDic objectForKey:startTime],[dateDic objectForKey:endTime]);
     [voteTimeArr addObject:dateDic];
     [dateShowTableView reloadData];
@@ -165,7 +175,6 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
 }
 
 

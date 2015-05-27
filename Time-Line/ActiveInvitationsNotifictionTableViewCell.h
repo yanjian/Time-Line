@@ -1,6 +1,6 @@
 //
 //  ActiveInvitationsNotifictionTableViewCell.h
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/13.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -13,5 +13,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleAndName;
 @property (weak, nonatomic) IBOutlet UILabel *note;
 @property (weak, nonatomic) IBOutlet UILabel *pointLab;
+@property (weak, nonatomic) IBOutlet UILabel *showShotTitle;
 
 @end

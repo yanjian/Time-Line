@@ -1,6 +1,6 @@
 //
 //  ActiveDestinationViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/4/2.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -13,7 +13,7 @@
 #import "ActiveAlbumsTableViewController.h"
 #import "ActiveEventMode.h"
 #import "ActiveSetingTableViewController.h"
-
+#import "TimeVoteModel.h"
 
 @interface ActiveDestinationViewController ()<ASIHTTPRequestDelegate>
 {
@@ -23,9 +23,19 @@
 
 @implementation ActiveDestinationViewController
 
+-(instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+       
+    }
+    return self ;
+}
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Event";
+    self.containerView.bounces = NO ; //XLButtonBarPagerTabStripViewController中的属性  
     [self colorWithNavigationBar];
     
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -101,7 +111,7 @@
     };
     
     ActiveVotingViewController * activeVotingVc   = [[ActiveVotingViewController alloc] init];
-    activeVotingVc.timeArr = ac.time ;
+    activeVotingVc.activeEvent = ac ;
     
     ChatViewController *chatVc = [[ChatViewController alloc] init] ;
     chatVc.activeEvent = ac ;
@@ -117,7 +127,7 @@
  */
 -(void)colorWithNavigationBar{
     self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
-    [self.navigationController.navigationBar setBarTintColor:HEXCOLOR(0x19C5FF00)];
+    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithHexString:@"31aaeb"]];
 }
 
 

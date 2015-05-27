@@ -1,6 +1,6 @@
 //
 //  EventInfoShowCell.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/12.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -21,27 +21,28 @@
     _unReadCount.layer.cornerRadius = _unReadCount.frame.size.width / 2 ;
     _unReadCount.layer.masksToBounds = YES;
     
-    UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressWithFriendGroup:)];
-    [self addGestureRecognizer:longPressGesture];
+    //屏蔽掉长按手势事件
+//    UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressWithFriendGroup:)];
+//    [self addGestureRecognizer:longPressGesture];
 
 }
 
 
-- (void)drawRect:(CGRect)rect
-{
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    CGContextSetFillColorWithColor(context, [UIColor clearColor].CGColor);
-    CGContextFillRect(context, rect);
-    
-    //上分割线，
-    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
-    CGContextStrokeRect(context, CGRectMake(66, -1, rect.size.width - 66, 1));
-    
-//    //下分割线
+//- (void)drawRect:(CGRect)rect
+//{
+//    CGContextRef context = UIGraphicsGetCurrentContext();
+//    
+//    CGContextSetFillColorWithColor(context, [UIColor clearColor].CGColor);
+//    CGContextFillRect(context, rect);
+//    
+//    //上分割线，
 //    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
-//    CGContextStrokeRect(context, CGRectMake(66, rect.size.height, rect.size.width - 66, 1));
-}
+//    CGContextStrokeRect(context, CGRectMake(66, -1, rect.size.width - 66, 1/2));
+//    
+////    //下分割线
+////    CGContextSetStrokeColorWithColor(context, [UIColor grayColor].CGColor);
+////    CGContextStrokeRect(context, CGRectMake(66, rect.size.height, rect.size.width - 66, 1));
+//}
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];

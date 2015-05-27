@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="6751" systemVersion="14C109" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7549" systemVersion="14D136" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="AnyEvent" representedClassName="AnyEvent" syncable="YES">
         <attribute name="alerts" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="calendarAccount" optional="YES" attributeType="String" syncable="YES"/>
@@ -56,10 +56,20 @@
         <attribute name="unreadMessage" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="username" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="NoticesMsgManagedModel" syncable="YES">
+        <attribute name="isRead" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="isReceive" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="message" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nId" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="time" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="uid" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+    </entity>
     <elements>
         <element name="AnyEvent" positionX="-306" positionY="-124" width="128" height="420"/>
         <element name="AT_Account" positionX="-497" positionY="-136" width="128" height="88"/>
         <element name="Calendar" positionX="-54" positionY="68" width="128" height="210"/>
         <element name="ChatContentModel" positionX="-297" positionY="9" width="128" height="180"/>
+        <element name="NoticesMsgManagedModel" positionX="-297" positionY="9" width="128" height="150"/>
     </elements>
 </model>

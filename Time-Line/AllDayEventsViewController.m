@@ -1,6 +1,6 @@
 //
 //  AllDayEventsViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-10-15.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -10,7 +10,7 @@
 
 @interface AllDayEventsViewController () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, retain) UITableView *tableView;
-@property (nonatomic, retain) NSArray *allDayEventArr;
+@property (nonatomic, assign) EventsAllDayAlert eventAllDayAlert ;
 @end
 
 @implementation AllDayEventsViewController
@@ -34,9 +34,9 @@
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
-    
-	self.allDayEventArr = [NSArray arrayWithObjects:@"never", @"5:00", @"7:00", @"8:00", @"9:00", @"10:00", nil];
 
+    self.eventAllDayAlert = [[USER_DEFAULT objectForKey:@"allDay"] integerValue] ;
+    
 	self.tableView = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
 	self.tableView.dataSource = self;
 	self.tableView.delegate = self;
@@ -69,7 +69,12 @@
 	if (cell == nil) {
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
 	}
-	cell.textLabel.text = self.allDayEventArr[indexPath.row];
+    NSString * allDayStr = self.allDayEventArr[indexPath.row] ;
+    NSString * allDayTmpStr = self.allDayEventArr[self.eventAllDayAlert] ;
+    if ([allDayStr isEqualToString:allDayTmpStr]) {
+        cell.accessoryType =  UITableViewCellAccessoryCheckmark ;
+    }
+	cell.textLabel.text = allDayStr;
 	return cell;
 }
 

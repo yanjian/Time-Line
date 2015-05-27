@@ -1,6 +1,6 @@
 //
 //  EventAlertsViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-10-15.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -10,7 +10,7 @@
 
 @interface EventAlertsViewController () <UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic, retain) UITableView *tableView;
-@property (nonatomic, retain) NSArray *eventAlertsArr;
+@property (nonatomic, assign) EventsAlertTime eventsAlertTime;
 @end
 
 @implementation EventAlertsViewController
@@ -19,7 +19,6 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
 	if (self) {
-		// Custom initialization
 	}
 	return self;
 }
@@ -32,12 +31,11 @@
      [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
      [leftBtn addTarget:self action:@selector(visibleCaTobackSetingView) forControlEvents:UIControlEventTouchUpInside] ;
      
-     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
-     self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
-     
-	self.eventAlertsArr = [NSArray arrayWithObjects:@"never", @"At time of event", @"5 minutes before", @"15 minutes before", @"30 minutes before", @"1 hour before", @"2 hour before", nil];
-
-
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
+    
+    self.eventsAlertTime = [[USER_DEFAULT objectForKey:@"eventTime"] integerValue];
+    
 	self.tableView = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
 	self.tableView.dataSource = self;
 	self.tableView.delegate = self;
@@ -70,14 +68,22 @@
 	if (cell == nil) {
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
 	}
-	cell.textLabel.text = self.eventAlertsArr[indexPath.row];
+    NSString * alertStr    = self.eventAlertsArr[indexPath.row];
+    NSString * alertTmpStr = self.eventAlertsArr[self.eventsAlertTime];
+    if ([alertStr isEqualToString:alertTmpStr]) {
+        cell.accessoryType = UITableViewCellAccessoryCheckmark ;
+    }
+    
+	cell.textLabel.text = alertStr ;
 	return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-	[self.delegate eventsAlertTimeString:cell.textLabel.text];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(eventsAlertTimeString:atIndex:)]) {
+        [self.delegate eventsAlertTimeString:cell.textLabel.text atIndex:indexPath.row];
+    }
 	[self visibleCaTobackSetingView];
 }
 

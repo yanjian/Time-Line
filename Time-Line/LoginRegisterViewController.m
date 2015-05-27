@@ -1,6 +1,6 @@
 //
 //  LoginRegisterViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-9-28.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -28,27 +28,19 @@
 	[super viewDidLoad];
 	UINavigationBar *navBar = [[UINavigationBar alloc] initWithFrame:CGRectMake(0, 0, 320, 64)];
 	navBar.translucent = NO;
-	navBar.barTintColor = blueColor;
-	UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:nil];
+	UINavigationItem *navItem = [[UINavigationItem alloc] initWithTitle:@"REGISTER"];
 	//创建一个左边按钮
 	UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow"] forState:UIControlStateNormal];
-	[leftBtn setFrame:CGRectMake(20, 30, 21, 25)];
+    [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue"] forState:UIControlStateNormal] ;
 	[leftBtn addTarget:self action:@selector(onClickClose) forControlEvents:UIControlEventTouchUpInside];
 
 	UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];
 	navItem.leftBarButtonItem = leftButton;
 
-	UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 18)];
-	titleLabel.textAlignment = NSTextAlignmentCenter;
-	titleLabel.font = [UIFont boldSystemFontOfSize:17];
-	titleLabel.textColor = [UIColor whiteColor];
-	titleLabel.text = @"REGISTER";
-	navItem.titleView = titleLabel;
-
 	[navBar pushNavigationItem:navItem animated:NO];
 	[self.view addSubview:navBar];
-	// Do any additional setup after loading the view from its nib.
+    self.navigationController.interactivePopGestureRecognizer.delegate =(id) self ;
 }
 
 - (void)viewWillAppear:(BOOL)animated {

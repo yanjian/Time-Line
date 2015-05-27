@@ -1,13 +1,12 @@
 //
 //  MADayView.m
-//  Time-Line
+//  Go2
 //
 //  Created by connor on 14-4-9.
 //  Copyright (c) 2014年 connor. All rights reserved.
 //
 
 #import "MADayView.h"
-
 #import "MAEvent.h"               /* MAEvent */
 #import <QuartzCore/QuartzCore.h> /* CALayer */
 #import "TapDetectingView.h"      /* TapDetectingView */
@@ -26,7 +25,7 @@ static const unsigned int ARROW_RIGHT                    = 1;
 static const unsigned int ARROW_WIDTH                    = 48;
 static const unsigned int ARROW_HEIGHT                   = 38;
 static const unsigned int TOP_BACKGROUND_HEIGHT          = 35;
-
+#define PI 3.14159265358979323846
 #define DATE_COMPONENTS (NSYearCalendarUnit| NSMonthCalendarUnit | NSDayCalendarUnit | NSWeekCalendarUnit |  NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekdayCalendarUnit | NSWeekdayOrdinalCalendarUnit)
 #define CURRENT_CALENDAR [NSCalendar currentCalendar]
 
@@ -87,6 +86,22 @@ static const unsigned int TOP_BACKGROUND_HEIGHT          = 35;
 
 @end
 
+
+@interface DayTimeScrollView : UIScrollView
+
+@end
+
+//可移动的视图
+@interface TimeMoveView : UIView{
+    CGPoint  _startPoint;//开始位置
+    DayTimeScrollView *_scrollView;
+}
+
+@property (nonatomic,assign) CGPoint startPoint ;
+@property (nonatomic,retain) DayTimeScrollView *scrollView;
+@end
+
+
 @interface MADayView()
 
 @property (strong) NSDate *firstDate;
@@ -104,15 +119,17 @@ static const unsigned int TOP_BACKGROUND_HEIGHT          = 35;
 @property (readonly) UIImageView *topBackground;
 @property (readonly) UIButton *leftArrow;
 @property (readonly) UIButton *rightArrow;
-@property (readonly) UILabel *dateLabel;
-@property (readonly) UIScrollView *scrollView;
+@property (readonly) UILabel  *dateLabel;
 @property (readonly) MA_AllDayGridView *allDayGridView;
 @property (readonly) MADayGridView *gridView;
 @property (readonly) UIFont *regularFont;
 @property (readonly) UIFont *boldFont;
 @property (readonly) UISwipeGestureRecognizer *swipeLeftRecognizer;
 @property (readonly) UISwipeGestureRecognizer *swipeRightRecognizer;
-@property (readonly) NSString *titleText;
+@property (readonly) NSString * titleText;
+
+@property (readonly) TimeMoveView * moveToView;//添加 yj
+
 @end
 
 @implementation MADayView
@@ -146,12 +163,14 @@ static const unsigned int TOP_BACKGROUND_HEIGHT          = 35;
 	[self addSubview:self.leftArrow];
 	[self addSubview:self.rightArrow];
 	[self addSubview:self.dateLabel];
-	
+    
 	[self addSubview:self.scrollView];
 	
 	[self.scrollView addSubview:self.allDayGridView];
 	[self.scrollView addSubview:self.gridView];
-	
+    
+    [self.scrollView addSubview:self.moveToView];
+    
 	[self.gridView addGestureRecognizer:self.swipeLeftRecognizer];
 	[self.gridView addGestureRecognizer:self.swipeRightRecognizer];
 }
@@ -178,7 +197,10 @@ static const unsigned int TOP_BACKGROUND_HEIGHT          = 35;
 									 CGRectGetMaxY(self.allDayGridView.bounds),
 									 CGRectGetWidth(self.bounds),
 									 [@"FOO" sizeWithFont:self.boldFont].height * SPACE_BETWEEN_HOUR_LABELS * HOURS_IN_DAY);
-	
+    
+    self.moveToView.frame = CGRectMake(CGRectGetMaxX(self.leftArrow.bounds), 10.5, self.bounds.size.width, MINUTES_IN_HOUR) ;
+    
+    
 	self.scrollView.frame = CGRectMake(CGRectGetMinX(self.bounds),
 									   CGRectGetMaxY(self.topBackground.bounds),
 									   CGRectGetWidth(self.bounds),
@@ -194,6 +216,13 @@ static const unsigned int TOP_BACKGROUND_HEIGHT          = 35;
 		_topBackground = [[UIImageView alloc] initWithImage:[UIImage imageNamed:TOP_BACKGROUND_IMAGE]];
 	}
 	return _topBackground;
+}
+
+-(UIView *)moveToView{
+    if (!_moveToView) {
+        _moveToView = [[TimeMoveView alloc] init] ;
+    }
+    return _moveToView ;
 }
 
 - (UIButton *)leftArrow {
@@ -229,10 +258,12 @@ static const unsigned int TOP_BACKGROUND_HEIGHT          = 35;
 
 - (UIScrollView *)scrollView {
 	if (!_scrollView) {		
-		_scrollView = [[UIScrollView alloc] init];
+		_scrollView = [[DayTimeScrollView alloc] init];
 		_scrollView.backgroundColor      = [UIColor whiteColor];
 		_scrollView.scrollEnabled        = TRUE;
 		_scrollView.alwaysBounceVertical = TRUE;
+        _scrollView.showsVerticalScrollIndicator = NO;
+        _scrollView.bounces = NO ;
 	}
 	return _scrollView;
 }
@@ -539,7 +570,7 @@ static const CGFloat kCorner       = 5.0;
 													 CGRectGetHeight(self.bounds) + CGRectGetHeight(self.dayView.gridView.bounds));
 	
 	for (id view in self.subviews) {
-		if ([NSStringFromClass([view class])isEqualToString:@"MADayEventView"]) {
+		if ([NSStringFromClass([view class]) isEqualToString:@"MADayEventView"]) {
 			MADayEventView *ev = view;
 			
 			CGFloat x = (int)self.dayView.gridView.lineX,
@@ -792,5 +823,90 @@ static NSString const * const HOURS_24[] = {
 	CGContextDrawPath(c, kCGPathFillStroke);
 	CGContextRestoreGState(c);
 }
+@end
+
+@implementation DayTimeScrollView
+
+- (BOOL)touchesShouldBegin:(NSSet *)touches withEvent:(UIEvent *)event inContentView:(UIView *)view
+{
+    NSLog(@"用户点击了scroll上的视图%@,是否开始滚动scroll",view);
+    return YES;
+}
+
+- (BOOL)touchesShouldCancelInContentView:(UIView *)view
+{
+    
+    NSLog(@"用户点击的视图 %@",view);
+    
+    //NO scroll不可以滚动 YES scroll可以滚动
+    return NO;
+}
+@end
+
+
+@implementation TimeMoveView
+@synthesize startPoint = _startPoint ;
+@synthesize scrollView = _scrollView ;
+-(id)init{
+    if (self = [super init]) {
+         self.backgroundColor = [UIColor colorWithRed:81.f/255.f green:185.f/255.f blue:210.f/255.f alpha:0.8f];
+    }
+    return self ;
+}
+
+-(instancetype) initWithFrame:(CGRect)frame{
+    if (self = [super initWithFrame:frame]) {
+        self.backgroundColor = [UIColor colorWithRed:81.f/255.f green:185.f/255.f blue:210.f/255.f alpha:0.8f];
+    }
+    return self ;
+}
+
+-(void)drawRect:(CGRect)rect{
+    [super drawRect:rect];
+//    CGContextRef context = UIGraphicsGetCurrentContext();
+//    UIColor*aColor = [UIColor colorWithRed:1 green:0.0 blue:0 alpha:1];
+//    CGContextSetFillColorWithColor(context, aColor.CGColor);//填充颜色
+//    CGContextSetLineWidth(context, 3.0);//线的宽度
+//    CGContextAddArc(context, 250, 0, 10, 0, 2*PI, 0); //添加一个圆
+//    //kCGPathFill填充非零绕数规则,kCGPathEOFill表示用奇偶规则,kCGPathStroke路径,kCGPathFillStroke路径填充,kCGPathEOFillStroke表示描线，不是填充
+//    CGContextDrawPath(context, kCGPathFillStroke); //绘制路径加填充
+    
+}
+
+-(DayTimeScrollView *)scrollView{
+    if (!_scrollView) {
+        _scrollView =(DayTimeScrollView *) self.superview ;//父视图就是该滚动视图
+    }
+    return _scrollView ;
+}
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+      CGPoint point =  [[touches anyObject] locationInView:self];
+     _startPoint = point ;
+     [[self superview] bringSubviewToFront:self];
+}
+
+-(void) touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+    
+    CGFloat minX = CGRectGetMinY(self.frame);
+    
+    if ( minX >= 10.5) {
+        //计算位移=当前位置-起始位置
+        CGPoint point = [[touches anyObject] locationInView:self];
+        float dy = point.y - _startPoint.y;
+        
+        //计算移动后的view中心点
+        CGPoint newcenter = CGPointMake(self.center.x, self.center.y + dy);
+        //移动view
+        self.center = newcenter;
+    }else{
+        [UIView animateWithDuration:0.3 animations:^{
+             self.frame = CGRectMake(self.frame.origin.x, 10.5, CGRectGetWidth(self.bounds) , CGRectGetHeight(self.bounds));
+        }];
+    }
+}
+
 
 @end

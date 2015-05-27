@@ -1,6 +1,6 @@
 //
 //  EventConfirmTimeTableViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/4/10.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -82,6 +82,9 @@
     cell.timeOrEenTime.text  = [NSString stringWithFormat:@"  To - %@",[self formaterDate:endDate]];
     
     UIButton * selectBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 70, 30)];
+    if([activeTime.finalTime integerValue] == 2){
+        selectBtn.selected = YES;
+    }
     [selectBtn setTitle:@"SELECT" forState:UIControlStateNormal];
     [selectBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [selectBtn setTitleColor:purple forState:UIControlStateSelected];

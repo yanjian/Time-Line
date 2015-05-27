@@ -1,6 +1,6 @@
 //
 //  NotificationViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-10-11.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -105,15 +105,16 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
 	NSArray *calendarListArr = self.calendarArr[section];
-	Calendar *tmpObj = [calendarListArr objectAtIndex:0];
-	NSString *returnStr = @"";
-	if ([tmpObj.type intValue] == AccountTypeGoogle) {
-		returnStr = [NSString stringWithFormat:@"  GOOGLE(%@)", tmpObj.account];
-	}
-	else if ([tmpObj.type intValue] == AccountTypeLocal) {
-		returnStr = [NSString stringWithFormat:@"  IF(%@)", tmpObj.account];
-	}
-
+     NSString *returnStr = @"";
+    if (calendarListArr.count > 0) {
+        Calendar *tmpObj = [calendarListArr objectAtIndex:0];
+        if ([tmpObj.type intValue] == AccountTypeGoogle) {
+            returnStr = [NSString stringWithFormat:@" GOOGLE(%@)", tmpObj.account];
+        }else if ([tmpObj.type intValue] == AccountTypeLocal) {
+            returnStr = [NSString stringWithFormat:@" IF(%@)", tmpObj.account];
+        }
+    }
+	
 	UILabel *label = [[UILabel alloc] init];
 	label.frame = CGRectMake(2, 18, 300, 22);
 	label.backgroundColor = [UIColor clearColor];

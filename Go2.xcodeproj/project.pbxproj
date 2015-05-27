@@ -10,7 +10,20 @@
 		5A89419930F14EE2AE7A6067 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A79FC40584C54ABD95BCBAD3 /* libPods.a */; };
 		A8116A2419B9B7EF003EB3ED /* FlipBoardNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8116A2319B9B7EF003EB3ED /* FlipBoardNavigationController.m */; };
 		A82B72B719C133ED00D89816 /* day_today.png in Resources */ = {isa = PBXBuildFile; fileRef = A82B72B619C133ED00D89816 /* day_today.png */; };
+		A82E5ADD1B12DBBA004B11F8 /* NotJoin_Grey.png in Resources */ = {isa = PBXBuildFile; fileRef = A82E5AD91B12DBBA004B11F8 /* NotJoin_Grey.png */; };
+		A82E5ADE1B12DBBA004B11F8 /* Join_Rectangle.png in Resources */ = {isa = PBXBuildFile; fileRef = A82E5ADA1B12DBBA004B11F8 /* Join_Rectangle.png */; };
+		A82E5ADF1B12DBBA004B11F8 /* NotJoiningRectangle.png in Resources */ = {isa = PBXBuildFile; fileRef = A82E5ADB1B12DBBA004B11F8 /* NotJoiningRectangle.png */; };
+		A82E5AE11B12DC7D004B11F8 /* Join_Grey.png in Resources */ = {isa = PBXBuildFile; fileRef = A82E5AE01B12DC7D004B11F8 /* Join_Grey.png */; };
 		A838B4431A0CA45500D35F14 /* SetingsNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A838B4421A0CA45500D35F14 /* SetingsNavigationController.m */; };
+		A83CC20C1AE753CB003AF4F0 /* MSTimeRowHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = A83CC1FF1AE753CB003AF4F0 /* MSTimeRowHeader.m */; };
+		A83CC20D1AE753CB003AF4F0 /* MSDayColumnHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = A83CC2011AE753CB003AF4F0 /* MSDayColumnHeader.m */; };
+		A83CC20E1AE753CB003AF4F0 /* MSTimeRowHeaderBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = A83CC2031AE753CB003AF4F0 /* MSTimeRowHeaderBackground.m */; };
+		A83CC20F1AE753CB003AF4F0 /* MSDayColumnHeaderBackground.m in Sources */ = {isa = PBXBuildFile; fileRef = A83CC2051AE753CB003AF4F0 /* MSDayColumnHeaderBackground.m */; };
+		A83CC2101AE753CB003AF4F0 /* MSGridline.m in Sources */ = {isa = PBXBuildFile; fileRef = A83CC2071AE753CB003AF4F0 /* MSGridline.m */; };
+		A83CC2111AE753CB003AF4F0 /* MSCurrentTimeGridline.m in Sources */ = {isa = PBXBuildFile; fileRef = A83CC2091AE753CB003AF4F0 /* MSCurrentTimeGridline.m */; };
+		A83CC2121AE753CB003AF4F0 /* MSCurrentTimeIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = A83CC20B1AE753CB003AF4F0 /* MSCurrentTimeIndicator.m */; };
+		A83CC2151AE75567003AF4F0 /* MSEventCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A83CC2141AE75567003AF4F0 /* MSEventCell.m */; };
+		A83CC2181AE75571003AF4F0 /* MSEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = A83CC2171AE75571003AF4F0 /* MSEvent.m */; };
 		A8403A6F1A3732CD00F8444D /* FriendSearchViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8403A6D1A3732CD00F8444D /* FriendSearchViewController.m */; };
 		A8403A701A3732CD00F8444D /* FriendSearchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8403A6E1A3732CD00F8444D /* FriendSearchViewController.xib */; };
 		A84580831A4DAE0300A8677D /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84580821A4DAE0300A8677D /* Security.framework */; };
@@ -30,6 +43,7 @@
 		A877C96B19B450C50075D9E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A877C94D19B450C50075D9E8 /* UIKit.framework */; };
 		A877C97319B450C50075D9E8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A877C97119B450C50075D9E8 /* InfoPlist.strings */; };
 		A877C97519B450C50075D9E8 /* Time_LineTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A877C97419B450C50075D9E8 /* Time_LineTests.m */; };
+		A882F6201AE6440900355818 /* TimeShow.m in Sources */ = {isa = PBXBuildFile; fileRef = A882F61F1AE6440900355818 /* TimeShow.m */; };
 		A886548919D3E5C800EEC0A8 /* TapDetectingView.m in Sources */ = {isa = PBXBuildFile; fileRef = A886548019D3E5C800EEC0A8 /* TapDetectingView.m */; };
 		A886548A19D3E5C800EEC0A8 /* MAEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = A886548219D3E5C800EEC0A8 /* MAEvent.m */; };
 		A886548B19D3E5C800EEC0A8 /* MADayView.m in Sources */ = {isa = PBXBuildFile; fileRef = A886548419D3E5C800EEC0A8 /* MADayView.m */; };
@@ -146,6 +160,8 @@
 		A89F91D819C5D18D00CB7FAE /* powered-by-google-on-white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A89F91D719C5D18D00CB7FAE /* powered-by-google-on-white@2x.png */; };
 		A89F91DB19C5D73A00CB7FAE /* AutocompletionTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = A89F91DA19C5D73A00CB7FAE /* AutocompletionTableView.m */; };
 		A8A3B9531A7F27C200322354 /* ActiveModifyMsgModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8A3B9521A7F27C200322354 /* ActiveModifyMsgModel.m */; };
+		A8A783781AF1C80D005E5035 /* SimpleEventViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8A783761AF1C80D005E5035 /* SimpleEventViewController.m */; };
+		A8A783791AF1C80D005E5035 /* SimpleEventViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8A783771AF1C80D005E5035 /* SimpleEventViewController.xib */; };
 		A8A8C26919C1915900362EE5 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C26819C1915900362EE5 /* QuartzCore.framework */; };
 		A8A8C26B19C1916600362EE5 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C26A19C1916600362EE5 /* OpenGLES.framework */; };
 		A8A8C26D19C1917500362EE5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A8C26C19C1917500362EE5 /* libz.dylib */; };
@@ -307,6 +323,12 @@
 		A8C7CFBB1AD662B5008CB037 /* ActiveSetingTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C7CFB91AD662B5008CB037 /* ActiveSetingTableViewController.xib */; };
 		A8C7CFC01AD66B1F008CB037 /* ActiveSetingShowTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C7CFBE1AD66B1F008CB037 /* ActiveSetingShowTableViewCell.m */; };
 		A8C7CFC11AD66B1F008CB037 /* ActiveSetingShowTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8C7CFBF1AD66B1F008CB037 /* ActiveSetingShowTableViewCell.xib */; };
+		A8C8C7C41AE5F0D7005FB4BF /* SCHeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C8C7B91AE5F0D7005FB4BF /* SCHeadView.m */; };
+		A8C8C7C51AE5F0D7005FB4BF /* SCCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C8C7BB1AE5F0D7005FB4BF /* SCCell.m */; };
+		A8C8C7C61AE5F0D7005FB4BF /* TimeView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C8C7BD1AE5F0D7005FB4BF /* TimeView.m */; };
+		A8C8C7C71AE5F0D7005FB4BF /* TimeLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C8C7BF1AE5F0D7005FB4BF /* TimeLabel.m */; };
+		A8C8C7C81AE5F0D7005FB4BF /* TimeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C8C7C11AE5F0D7005FB4BF /* TimeCell.m */; };
+		A8C8C7C91AE5F0D7005FB4BF /* MeetModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8C8C7C31AE5F0D7005FB4BF /* MeetModel.m */; };
 		A8CA527F1ACD04C300EE56C5 /* ActiveDestination.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8CA527E1ACD04C300EE56C5 /* ActiveDestination.storyboard */; };
 		A8CA52831ACD05FD00EE56C5 /* ActiveDestinationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CA52821ACD05FD00EE56C5 /* ActiveDestinationViewController.m */; };
 		A8CA52871ACD1E0A00EE56C5 /* ActiveInfoTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CA52851ACD1E0A00EE56C5 /* ActiveInfoTableViewController.m */; };
@@ -326,14 +348,21 @@
 		A8CB2F301AB6B81500F59FC4 /* FriendsProfilesTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CB2F2E1AB6B81500F59FC4 /* FriendsProfilesTableViewController.xib */; };
 		A8CB2F341AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CB2F321AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.m */; };
 		A8CB2F351AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CB2F331AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.xib */; };
+		A8CBFF3F1AE497070014B727 /* TimeVoteModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CBFF3E1AE497070014B727 /* TimeVoteModel.m */; };
 		A8CBFFC01AB86E8800CF18FC /* Add_Invitees.png in Resources */ = {isa = PBXBuildFile; fileRef = A8CBFFBF1AB86E8800CF18FC /* Add_Invitees.png */; };
 		A8CC01F91AD6BF7F00A8CC49 /* InviteesTimeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CC01F71AD6BF7F00A8CC49 /* InviteesTimeTableViewCell.m */; };
 		A8CC01FA1AD6BF7F00A8CC49 /* InviteesTimeTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CC01F81AD6BF7F00A8CC49 /* InviteesTimeTableViewCell.xib */; };
 		A8CC41971AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CC41951AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.m */; };
 		A8CC41981AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CC41961AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.xib */; };
+		A8CC44DB1AE8D27B002217C8 /* HATransparentView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CC44DA1AE8D27B002217C8 /* HATransparentView.m */; };
 		A8CCE68D1AB95DA500F3E122 /* Blue_tick.png in Resources */ = {isa = PBXBuildFile; fileRef = A8CCE68C1AB95DA500F3E122 /* Blue_tick.png */; };
 		A8CD861B1AAFCF2A00DF3E3B /* ChatModelData.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CD861A1AAFCF2A00DF3E3B /* ChatModelData.m */; };
 		A8CD861E1AB014D500DF3E3B /* MemberDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CD861D1AB014D500DF3E3B /* MemberDataModel.m */; };
+		A8CDE7FB1AE0E60A001395A5 /* TimeSlotDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CDE7FA1AE0E60A001395A5 /* TimeSlotDetailsViewController.m */; };
+		A8CDE8041AE0E882001395A5 /* VotedTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CDE8021AE0E882001395A5 /* VotedTableViewController.m */; };
+		A8CDE8051AE0E882001395A5 /* VotedTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CDE8031AE0E882001395A5 /* VotedTableViewController.xib */; };
+		A8CDE8091AE0E9EC001395A5 /* ScheduleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CDE8071AE0E9EC001395A5 /* ScheduleViewController.m */; };
+		A8CDE80A1AE0E9EC001395A5 /* ScheduleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CDE8081AE0E9EC001395A5 /* ScheduleViewController.xib */; };
 		A8CE457B1ABA5F3D000DB684 /* Schedule_Month.png in Resources */ = {isa = PBXBuildFile; fileRef = A8CE457A1ABA5F3D000DB684 /* Schedule_Month.png */; };
 		A8CE457F1ABAB4F9000DB684 /* SimpleEventTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CE457D1ABAB4F9000DB684 /* SimpleEventTableViewCell.m */; };
 		A8CE45801ABAB4F9000DB684 /* SimpleEventTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CE457E1ABAB4F9000DB684 /* SimpleEventTableViewCell.xib */; };
@@ -342,6 +371,8 @@
 		A8CF90ED1ACA799F00766667 /* ActiveDataMode.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CF90EC1ACA799F00766667 /* ActiveDataMode.m */; };
 		A8CF90F11ACA81C100766667 /* ReviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CF90EF1ACA81C100766667 /* ReviewViewController.m */; };
 		A8CF90F21ACA81C100766667 /* ReviewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8CF90F01ACA81C100766667 /* ReviewViewController.xib */; };
+		A8CFA2E01AE9F8D800F3D73F /* TimeSelectView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CFA2DF1AE9F8D800F3D73F /* TimeSelectView.m */; };
+		A8CFA2E31AEA301C00F3D73F /* DayTimeView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8CFA2E21AEA301C00F3D73F /* DayTimeView.m */; };
 		A8D00ADD1AC8E92A00A2BC3A /* AddMoreViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8D00ADB1AC8E92A00A2BC3A /* AddMoreViewController.m */; };
 		A8D00ADE1AC8E92A00A2BC3A /* AddMoreViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8D00ADC1AC8E92A00A2BC3A /* AddMoreViewController.xib */; };
 		A8D00AE21AC935CC00A2BC3A /* DateVoteShowTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8D00AE01AC935CB00A2BC3A /* DateVoteShowTableViewCell.m */; };
@@ -362,6 +393,16 @@
 		A8D486691AC28F2100CC82BB /* InviteesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8D486671AC28F2100CC82BB /* InviteesViewController.xib */; };
 		A8D4866E1AC2A03300CC82BB /* ActiveImageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A8D4866C1AC2A03300CC82BB /* ActiveImageTableViewCell.m */; };
 		A8D4866F1AC2A03300CC82BB /* ActiveImageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8D4866D1AC2A03300CC82BB /* ActiveImageTableViewCell.xib */; };
+		A8DCD9B81B0D89080044D757 /* NoticesMsgManagedModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A8DCD9B71B0D89080044D757 /* NoticesMsgManagedModel.m */; };
+		A8DFC8F61B09B6D200DB7D1D /* go2_blueTick.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DFC8F51B09B6D200DB7D1D /* go2_blueTick.png */; };
+		A8DFC8F81B09C73E00DB7D1D /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DFC8F71B09C73E00DB7D1D /* icon@2x.png */; };
+		A8DFC8FA1B09CAAC00DB7D1D /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DFC8F91B09CAAC00DB7D1D /* icon.png */; };
+		A8DFC8FC1B09CB4200DB7D1D /* icon@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A8DFC8FB1B09CB4200DB7D1D /* icon@3x.png */; };
+		A8E0089B1AFB049900A34860 /* EventDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E008991AFB049900A34860 /* EventDetailsViewController.m */; };
+		A8E0089C1AFB049900A34860 /* EventDetailsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8E0089A1AFB049900A34860 /* EventDetailsViewController.xib */; };
+		A8E065A61B145F1A00C65976 /* invitations_social_event.png in Resources */ = {isa = PBXBuildFile; fileRef = A8E065A51B145F1A00C65976 /* invitations_social_event.png */; };
+		A8E065AF1B1470EA00C65976 /* VoteMemberTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E065AD1B1470EA00C65976 /* VoteMemberTableViewController.m */; };
+		A8E065B01B1470EA00C65976 /* VoteMemberTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8E065AE1B1470EA00C65976 /* VoteMemberTableViewController.xib */; };
 		A8E5C38E1A50FB1000226FD9 /* FriendInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E5C38D1A50FB1000226FD9 /* FriendInfoViewController.m */; };
 		A8E5C3921A50FCF800226FD9 /* FriendInformationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A8E5C3911A50FCF800226FD9 /* FriendInformationView.xib */; };
 		A8E5C3951A50FD1000226FD9 /* FriendInformationView.m in Sources */ = {isa = PBXBuildFile; fileRef = A8E5C3941A50FD1000226FD9 /* FriendInformationView.m */; };
@@ -526,8 +567,30 @@
 		A8116A2219B9B7EF003EB3ED /* FlipBoardNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlipBoardNavigationController.h; sourceTree = "<group>"; };
 		A8116A2319B9B7EF003EB3ED /* FlipBoardNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlipBoardNavigationController.m; sourceTree = "<group>"; };
 		A82B72B619C133ED00D89816 /* day_today.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = day_today.png; sourceTree = "<group>"; };
+		A82E5AD91B12DBBA004B11F8 /* NotJoin_Grey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NotJoin_Grey.png; sourceTree = "<group>"; };
+		A82E5ADA1B12DBBA004B11F8 /* Join_Rectangle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Join_Rectangle.png; sourceTree = "<group>"; };
+		A82E5ADB1B12DBBA004B11F8 /* NotJoiningRectangle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NotJoiningRectangle.png; sourceTree = "<group>"; };
+		A82E5AE01B12DC7D004B11F8 /* Join_Grey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Join_Grey.png; sourceTree = "<group>"; };
 		A838B4411A0CA45500D35F14 /* SetingsNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetingsNavigationController.h; sourceTree = "<group>"; };
 		A838B4421A0CA45500D35F14 /* SetingsNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetingsNavigationController.m; sourceTree = "<group>"; };
+		A83CC1FE1AE753CB003AF4F0 /* MSTimeRowHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSTimeRowHeader.h; sourceTree = "<group>"; };
+		A83CC1FF1AE753CB003AF4F0 /* MSTimeRowHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSTimeRowHeader.m; sourceTree = "<group>"; };
+		A83CC2001AE753CB003AF4F0 /* MSDayColumnHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSDayColumnHeader.h; sourceTree = "<group>"; };
+		A83CC2011AE753CB003AF4F0 /* MSDayColumnHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSDayColumnHeader.m; sourceTree = "<group>"; };
+		A83CC2021AE753CB003AF4F0 /* MSTimeRowHeaderBackground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSTimeRowHeaderBackground.h; sourceTree = "<group>"; };
+		A83CC2031AE753CB003AF4F0 /* MSTimeRowHeaderBackground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSTimeRowHeaderBackground.m; sourceTree = "<group>"; };
+		A83CC2041AE753CB003AF4F0 /* MSDayColumnHeaderBackground.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSDayColumnHeaderBackground.h; sourceTree = "<group>"; };
+		A83CC2051AE753CB003AF4F0 /* MSDayColumnHeaderBackground.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSDayColumnHeaderBackground.m; sourceTree = "<group>"; };
+		A83CC2061AE753CB003AF4F0 /* MSGridline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSGridline.h; sourceTree = "<group>"; };
+		A83CC2071AE753CB003AF4F0 /* MSGridline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSGridline.m; sourceTree = "<group>"; };
+		A83CC2081AE753CB003AF4F0 /* MSCurrentTimeGridline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSCurrentTimeGridline.h; sourceTree = "<group>"; };
+		A83CC2091AE753CB003AF4F0 /* MSCurrentTimeGridline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSCurrentTimeGridline.m; sourceTree = "<group>"; };
+		A83CC20A1AE753CB003AF4F0 /* MSCurrentTimeIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSCurrentTimeIndicator.h; sourceTree = "<group>"; };
+		A83CC20B1AE753CB003AF4F0 /* MSCurrentTimeIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSCurrentTimeIndicator.m; sourceTree = "<group>"; };
+		A83CC2131AE75567003AF4F0 /* MSEventCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSEventCell.h; sourceTree = "<group>"; };
+		A83CC2141AE75567003AF4F0 /* MSEventCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSEventCell.m; sourceTree = "<group>"; };
+		A83CC2161AE75571003AF4F0 /* MSEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MSEvent.h; sourceTree = "<group>"; };
+		A83CC2171AE75571003AF4F0 /* MSEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MSEvent.m; sourceTree = "<group>"; };
 		A8403A6C1A3732CD00F8444D /* FriendSearchViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendSearchViewController.h; sourceTree = "<group>"; };
 		A8403A6D1A3732CD00F8444D /* FriendSearchViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendSearchViewController.m; sourceTree = "<group>"; };
 		A8403A6E1A3732CD00F8444D /* FriendSearchViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FriendSearchViewController.xib; sourceTree = "<group>"; };
@@ -536,24 +599,26 @@
 		A84580861A4DAE8800A8677D /* libresolv.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libresolv.dylib; path = usr/lib/libresolv.dylib; sourceTree = SDKROOT; };
 		A86CEA1E19C7CF8D0015BB25 /* GoogleMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleMapViewController.h; sourceTree = "<group>"; };
 		A86CEA1F19C7CF8D0015BB25 /* GoogleMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleMapViewController.m; sourceTree = "<group>"; };
-		A877C94619B450C50075D9E8 /* Time-Line.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Time-Line.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A877C94619B450C50075D9E8 /* Go2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Go2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A877C94919B450C50075D9E8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A877C94B19B450C50075D9E8 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		A877C94D19B450C50075D9E8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		A877C95119B450C50075D9E8 /* Time-Line-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Time-Line-Info.plist"; sourceTree = "<group>"; };
+		A877C95119B450C50075D9E8 /* Go2-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Go2-Info.plist"; sourceTree = "<group>"; };
 		A877C95319B450C50075D9E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A877C95519B450C50075D9E8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		A877C95719B450C50075D9E8 /* Time-Line-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Time-Line-Prefix.pch"; sourceTree = "<group>"; };
+		A877C95719B450C50075D9E8 /* Go2-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Go2-Prefix.pch"; sourceTree = "<group>"; };
 		A877C95819B450C50075D9E8 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A877C95919B450C50075D9E8 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		A877C95E19B450C50075D9E8 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		A877C95F19B450C50075D9E8 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		A877C96119B450C50075D9E8 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		A877C96719B450C50075D9E8 /* Time-LineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Time-LineTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A877C96719B450C50075D9E8 /* Go2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Go2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A877C96819B450C50075D9E8 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		A877C97019B450C50075D9E8 /* Time-LineTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Time-LineTests-Info.plist"; sourceTree = "<group>"; };
+		A877C97019B450C50075D9E8 /* Go2Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Go2Tests-Info.plist"; sourceTree = "<group>"; };
 		A877C97219B450C50075D9E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A877C97419B450C50075D9E8 /* Time_LineTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Time_LineTests.m; sourceTree = "<group>"; };
+		A882F61E1AE6440900355818 /* TimeShow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeShow.h; sourceTree = "<group>"; };
+		A882F61F1AE6440900355818 /* TimeShow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeShow.m; sourceTree = "<group>"; };
 		A886547F19D3E5C800EEC0A8 /* TapDetectingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapDetectingView.h; sourceTree = "<group>"; };
 		A886548019D3E5C800EEC0A8 /* TapDetectingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TapDetectingView.m; sourceTree = "<group>"; };
 		A886548119D3E5C800EEC0A8 /* MAEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAEvent.h; sourceTree = "<group>"; };
@@ -736,6 +801,9 @@
 		A89F91DA19C5D73A00CB7FAE /* AutocompletionTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AutocompletionTableView.m; sourceTree = "<group>"; };
 		A8A3B9511A7F27C200322354 /* ActiveModifyMsgModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveModifyMsgModel.h; sourceTree = "<group>"; };
 		A8A3B9521A7F27C200322354 /* ActiveModifyMsgModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveModifyMsgModel.m; sourceTree = "<group>"; };
+		A8A783751AF1C80D005E5035 /* SimpleEventViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleEventViewController.h; sourceTree = "<group>"; };
+		A8A783761AF1C80D005E5035 /* SimpleEventViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleEventViewController.m; sourceTree = "<group>"; };
+		A8A783771AF1C80D005E5035 /* SimpleEventViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SimpleEventViewController.xib; sourceTree = "<group>"; };
 		A8A8C26819C1915900362EE5 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A8A8C26A19C1916600362EE5 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		A8A8C26C19C1917500362EE5 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
@@ -837,8 +905,6 @@
 		A8B7F3891A2F0C5E000F7EC5 /* camera.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = camera.m; sourceTree = "<group>"; };
 		A8B7F38B1A2F0F2D000F7EC5 /* utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utilities.h; sourceTree = "<group>"; };
 		A8B7F38C1A2F0F2D000F7EC5 /* utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = utilities.m; sourceTree = "<group>"; };
-		A8B839631A00DC0900F378E5 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
-		A8B839651A00DC5500F378E5 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		A8B8624D1A43CA6A00D1DEC4 /* SetFriendTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetFriendTableViewCell.h; sourceTree = "<group>"; };
 		A8B8624E1A43CA6A00D1DEC4 /* SetFriendTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetFriendTableViewCell.m; sourceTree = "<group>"; };
 		A8B8624F1A43CA6A00D1DEC4 /* SetFriendTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SetFriendTableViewCell.xib; sourceTree = "<group>"; };
@@ -1010,6 +1076,18 @@
 		A8C7CFBD1AD66B1F008CB037 /* ActiveSetingShowTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveSetingShowTableViewCell.h; sourceTree = "<group>"; };
 		A8C7CFBE1AD66B1F008CB037 /* ActiveSetingShowTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveSetingShowTableViewCell.m; sourceTree = "<group>"; };
 		A8C7CFBF1AD66B1F008CB037 /* ActiveSetingShowTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActiveSetingShowTableViewCell.xib; sourceTree = "<group>"; };
+		A8C8C7B81AE5F0D7005FB4BF /* SCHeadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCHeadView.h; sourceTree = "<group>"; };
+		A8C8C7B91AE5F0D7005FB4BF /* SCHeadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCHeadView.m; sourceTree = "<group>"; };
+		A8C8C7BA1AE5F0D7005FB4BF /* SCCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCCell.h; sourceTree = "<group>"; };
+		A8C8C7BB1AE5F0D7005FB4BF /* SCCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCCell.m; sourceTree = "<group>"; };
+		A8C8C7BC1AE5F0D7005FB4BF /* TimeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeView.h; sourceTree = "<group>"; };
+		A8C8C7BD1AE5F0D7005FB4BF /* TimeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeView.m; sourceTree = "<group>"; };
+		A8C8C7BE1AE5F0D7005FB4BF /* TimeLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeLabel.h; sourceTree = "<group>"; };
+		A8C8C7BF1AE5F0D7005FB4BF /* TimeLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeLabel.m; sourceTree = "<group>"; };
+		A8C8C7C01AE5F0D7005FB4BF /* TimeCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeCell.h; sourceTree = "<group>"; };
+		A8C8C7C11AE5F0D7005FB4BF /* TimeCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeCell.m; sourceTree = "<group>"; };
+		A8C8C7C21AE5F0D7005FB4BF /* MeetModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeetModel.h; sourceTree = "<group>"; };
+		A8C8C7C31AE5F0D7005FB4BF /* MeetModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MeetModel.m; sourceTree = "<group>"; };
 		A8CA527E1ACD04C300EE56C5 /* ActiveDestination.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = ActiveDestination.storyboard; sourceTree = "<group>"; };
 		A8CA52811ACD05FD00EE56C5 /* ActiveDestinationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveDestinationViewController.h; sourceTree = "<group>"; };
 		A8CA52821ACD05FD00EE56C5 /* ActiveDestinationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveDestinationViewController.m; sourceTree = "<group>"; };
@@ -1039,6 +1117,8 @@
 		A8CB2F311AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AcceptFriendTableViewCell.h; sourceTree = "<group>"; };
 		A8CB2F321AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AcceptFriendTableViewCell.m; sourceTree = "<group>"; };
 		A8CB2F331AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AcceptFriendTableViewCell.xib; sourceTree = "<group>"; };
+		A8CBFF3D1AE497070014B727 /* TimeVoteModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeVoteModel.h; sourceTree = "<group>"; };
+		A8CBFF3E1AE497070014B727 /* TimeVoteModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeVoteModel.m; sourceTree = "<group>"; };
 		A8CBFFBF1AB86E8800CF18FC /* Add_Invitees.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Add_Invitees.png; sourceTree = "<group>"; };
 		A8CC01F61AD6BF7F00A8CC49 /* InviteesTimeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InviteesTimeTableViewCell.h; sourceTree = "<group>"; };
 		A8CC01F71AD6BF7F00A8CC49 /* InviteesTimeTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InviteesTimeTableViewCell.m; sourceTree = "<group>"; };
@@ -1046,11 +1126,21 @@
 		A8CC41941AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveInvitationsNotifictionTableViewCell.h; sourceTree = "<group>"; };
 		A8CC41951AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveInvitationsNotifictionTableViewCell.m; sourceTree = "<group>"; };
 		A8CC41961AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActiveInvitationsNotifictionTableViewCell.xib; sourceTree = "<group>"; };
+		A8CC44D91AE8D27B002217C8 /* HATransparentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HATransparentView.h; sourceTree = "<group>"; };
+		A8CC44DA1AE8D27B002217C8 /* HATransparentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HATransparentView.m; sourceTree = "<group>"; };
 		A8CCE68C1AB95DA500F3E122 /* Blue_tick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Blue_tick.png; sourceTree = "<group>"; };
 		A8CD86191AAFCF2A00DF3E3B /* ChatModelData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatModelData.h; sourceTree = "<group>"; };
 		A8CD861A1AAFCF2A00DF3E3B /* ChatModelData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatModelData.m; sourceTree = "<group>"; };
 		A8CD861C1AB014D500DF3E3B /* MemberDataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemberDataModel.h; sourceTree = "<group>"; };
 		A8CD861D1AB014D500DF3E3B /* MemberDataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MemberDataModel.m; sourceTree = "<group>"; };
+		A8CDE7F91AE0E60A001395A5 /* TimeSlotDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeSlotDetailsViewController.h; sourceTree = "<group>"; };
+		A8CDE7FA1AE0E60A001395A5 /* TimeSlotDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeSlotDetailsViewController.m; sourceTree = "<group>"; };
+		A8CDE8011AE0E882001395A5 /* VotedTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VotedTableViewController.h; sourceTree = "<group>"; };
+		A8CDE8021AE0E882001395A5 /* VotedTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VotedTableViewController.m; sourceTree = "<group>"; };
+		A8CDE8031AE0E882001395A5 /* VotedTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VotedTableViewController.xib; sourceTree = "<group>"; };
+		A8CDE8061AE0E9EC001395A5 /* ScheduleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleViewController.h; sourceTree = "<group>"; };
+		A8CDE8071AE0E9EC001395A5 /* ScheduleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleViewController.m; sourceTree = "<group>"; };
+		A8CDE8081AE0E9EC001395A5 /* ScheduleViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScheduleViewController.xib; sourceTree = "<group>"; };
 		A8CE457A1ABA5F3D000DB684 /* Schedule_Month.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Schedule_Month.png; sourceTree = "<group>"; };
 		A8CE457C1ABAB4F9000DB684 /* SimpleEventTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleEventTableViewCell.h; sourceTree = "<group>"; };
 		A8CE457D1ABAB4F9000DB684 /* SimpleEventTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SimpleEventTableViewCell.m; sourceTree = "<group>"; };
@@ -1063,6 +1153,10 @@
 		A8CF90EE1ACA81C100766667 /* ReviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReviewViewController.h; sourceTree = "<group>"; };
 		A8CF90EF1ACA81C100766667 /* ReviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReviewViewController.m; sourceTree = "<group>"; };
 		A8CF90F01ACA81C100766667 /* ReviewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ReviewViewController.xib; sourceTree = "<group>"; };
+		A8CFA2DE1AE9F8D800F3D73F /* TimeSelectView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeSelectView.h; sourceTree = "<group>"; };
+		A8CFA2DF1AE9F8D800F3D73F /* TimeSelectView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimeSelectView.m; sourceTree = "<group>"; };
+		A8CFA2E11AEA301C00F3D73F /* DayTimeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DayTimeView.h; sourceTree = "<group>"; };
+		A8CFA2E21AEA301C00F3D73F /* DayTimeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DayTimeView.m; sourceTree = "<group>"; };
 		A8D00ADA1AC8E92900A2BC3A /* AddMoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddMoreViewController.h; sourceTree = "<group>"; };
 		A8D00ADB1AC8E92A00A2BC3A /* AddMoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddMoreViewController.m; sourceTree = "<group>"; };
 		A8D00ADC1AC8E92A00A2BC3A /* AddMoreViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddMoreViewController.xib; sourceTree = "<group>"; };
@@ -1091,6 +1185,19 @@
 		A8D4866B1AC2A03300CC82BB /* ActiveImageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveImageTableViewCell.h; sourceTree = "<group>"; };
 		A8D4866C1AC2A03300CC82BB /* ActiveImageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActiveImageTableViewCell.m; sourceTree = "<group>"; };
 		A8D4866D1AC2A03300CC82BB /* ActiveImageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ActiveImageTableViewCell.xib; sourceTree = "<group>"; };
+		A8DCD9B61B0D89080044D757 /* NoticesMsgManagedModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoticesMsgManagedModel.h; sourceTree = "<group>"; };
+		A8DCD9B71B0D89080044D757 /* NoticesMsgManagedModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoticesMsgManagedModel.m; sourceTree = "<group>"; };
+		A8DFC8F51B09B6D200DB7D1D /* go2_blueTick.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = go2_blueTick.png; sourceTree = "<group>"; };
+		A8DFC8F71B09C73E00DB7D1D /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
+		A8DFC8F91B09CAAC00DB7D1D /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		A8DFC8FB1B09CB4200DB7D1D /* icon@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@3x.png"; sourceTree = "<group>"; };
+		A8E008981AFB049900A34860 /* EventDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDetailsViewController.h; sourceTree = "<group>"; };
+		A8E008991AFB049900A34860 /* EventDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EventDetailsViewController.m; sourceTree = "<group>"; };
+		A8E0089A1AFB049900A34860 /* EventDetailsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EventDetailsViewController.xib; sourceTree = "<group>"; };
+		A8E065A51B145F1A00C65976 /* invitations_social_event.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = invitations_social_event.png; sourceTree = "<group>"; };
+		A8E065AC1B1470EA00C65976 /* VoteMemberTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoteMemberTableViewController.h; sourceTree = "<group>"; };
+		A8E065AD1B1470EA00C65976 /* VoteMemberTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VoteMemberTableViewController.m; sourceTree = "<group>"; };
+		A8E065AE1B1470EA00C65976 /* VoteMemberTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VoteMemberTableViewController.xib; sourceTree = "<group>"; };
 		A8E5C38C1A50FB1000226FD9 /* FriendInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendInfoViewController.h; sourceTree = "<group>"; };
 		A8E5C38D1A50FB1000226FD9 /* FriendInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendInfoViewController.m; sourceTree = "<group>"; };
 		A8E5C3911A50FCF800226FD9 /* FriendInformationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FriendInformationView.xib; sourceTree = "<group>"; };
@@ -1559,7 +1666,7 @@
 		A877C93D19B450C50075D9E8 = {
 			isa = PBXGroup;
 			children = (
-				A877C94F19B450C50075D9E8 /* Time-Line */,
+				A877C94F19B450C50075D9E8 /* GoTwo */,
 				A877C96E19B450C50075D9E8 /* Time-LineTests */,
 				A877C94819B450C50075D9E8 /* Frameworks */,
 				A877C94719B450C50075D9E8 /* Products */,
@@ -1570,8 +1677,8 @@
 		A877C94719B450C50075D9E8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A877C94619B450C50075D9E8 /* Time-Line.app */,
-				A877C96719B450C50075D9E8 /* Time-LineTests.xctest */,
+				A877C94619B450C50075D9E8 /* Go2.app */,
+				A877C96719B450C50075D9E8 /* Go2Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1612,7 +1719,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		A877C94F19B450C50075D9E8 /* Time-Line */ = {
+		A877C94F19B450C50075D9E8 /* GoTwo */ = {
 			isa = PBXGroup;
 			children = (
 				A89117FA19C1F36C00A0960B /* InterfaceMrco.h */,
@@ -1623,6 +1730,7 @@
 				A877C95019B450C50075D9E8 /* Supporting Files */,
 				A8B867F319E2A1840004875F /* TimeLine.xcdatamodeld */,
 			);
+			name = GoTwo;
 			path = "Time-Line";
 			sourceTree = "<group>";
 		};
@@ -1634,10 +1742,10 @@
 				A877C95819B450C50075D9E8 /* AppDelegate.h */,
 				A877C95919B450C50075D9E8 /* AppDelegate.m */,
 				A877C96119B450C50075D9E8 /* Images.xcassets */,
-				A877C95119B450C50075D9E8 /* Time-Line-Info.plist */,
+				A877C95119B450C50075D9E8 /* Go2-Info.plist */,
 				A877C95219B450C50075D9E8 /* InfoPlist.strings */,
 				A877C95519B450C50075D9E8 /* main.m */,
-				A877C95719B450C50075D9E8 /* Time-Line-Prefix.pch */,
+				A877C95719B450C50075D9E8 /* Go2-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1654,10 +1762,37 @@
 		A877C96F19B450C50075D9E8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				A877C97019B450C50075D9E8 /* Time-LineTests-Info.plist */,
+				A877C97019B450C50075D9E8 /* Go2Tests-Info.plist */,
 				A877C97119B450C50075D9E8 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A882F61D1AE6404F00355818 /* MySchedule */ = {
+			isa = PBXGroup;
+			children = (
+				A83CC2161AE75571003AF4F0 /* MSEvent.h */,
+				A83CC2171AE75571003AF4F0 /* MSEvent.m */,
+				A83CC2131AE75567003AF4F0 /* MSEventCell.h */,
+				A83CC2141AE75567003AF4F0 /* MSEventCell.m */,
+				A83CC1FE1AE753CB003AF4F0 /* MSTimeRowHeader.h */,
+				A83CC1FF1AE753CB003AF4F0 /* MSTimeRowHeader.m */,
+				A83CC2001AE753CB003AF4F0 /* MSDayColumnHeader.h */,
+				A83CC2011AE753CB003AF4F0 /* MSDayColumnHeader.m */,
+				A83CC2021AE753CB003AF4F0 /* MSTimeRowHeaderBackground.h */,
+				A83CC2031AE753CB003AF4F0 /* MSTimeRowHeaderBackground.m */,
+				A83CC2041AE753CB003AF4F0 /* MSDayColumnHeaderBackground.h */,
+				A83CC2051AE753CB003AF4F0 /* MSDayColumnHeaderBackground.m */,
+				A83CC2061AE753CB003AF4F0 /* MSGridline.h */,
+				A83CC2071AE753CB003AF4F0 /* MSGridline.m */,
+				A83CC2081AE753CB003AF4F0 /* MSCurrentTimeGridline.h */,
+				A83CC2091AE753CB003AF4F0 /* MSCurrentTimeGridline.m */,
+				A83CC20A1AE753CB003AF4F0 /* MSCurrentTimeIndicator.h */,
+				A83CC20B1AE753CB003AF4F0 /* MSCurrentTimeIndicator.m */,
+				A882F61E1AE6440900355818 /* TimeShow.h */,
+				A882F61F1AE6440900355818 /* TimeShow.m */,
+			);
+			name = MySchedule;
 			sourceTree = "<group>";
 		};
 		A886547E19D3E5A400EEC0A8 /* CalendarView */ = {
@@ -1800,8 +1935,6 @@
 			isa = PBXGroup;
 			children = (
 				A8B7F36E1A2EC899000F7EC5 /* twoIcon */,
-				A8B839651A00DC5500F378E5 /* Icon.png */,
-				A8B839631A00DC0900F378E5 /* Icon@2x.png */,
 				A89514D219D50F4600538486 /* Default.png */,
 				A89F91D719C5D18D00CB7FAE /* powered-by-google-on-white@2x.png */,
 				A894D89A19B5BAF00088E522 /* Stage */,
@@ -1996,6 +2129,20 @@
 			name = Controller;
 			sourceTree = "<group>";
 		};
+		A8A783741AF1C273005E5035 /* SimpleEvent */ = {
+			isa = PBXGroup;
+			children = (
+				A8D973B71AF85A110068F358 /* view */,
+				A8A783751AF1C80D005E5035 /* SimpleEventViewController.h */,
+				A8A783761AF1C80D005E5035 /* SimpleEventViewController.m */,
+				A8A783771AF1C80D005E5035 /* SimpleEventViewController.xib */,
+				A8E008981AFB049900A34860 /* EventDetailsViewController.h */,
+				A8E008991AFB049900A34860 /* EventDetailsViewController.m */,
+				A8E0089A1AFB049900A34860 /* EventDetailsViewController.xib */,
+			);
+			name = SimpleEvent;
+			sourceTree = "<group>";
+		};
 		A8A8C28019C1A67F00362EE5 /* NetWork */ = {
 			isa = PBXGroup;
 			children = (
@@ -2111,6 +2258,14 @@
 		A8B7F36E1A2EC899000F7EC5 /* twoIcon */ = {
 			isa = PBXGroup;
 			children = (
+				A8E065A51B145F1A00C65976 /* invitations_social_event.png */,
+				A82E5AE01B12DC7D004B11F8 /* Join_Grey.png */,
+				A82E5AD91B12DBBA004B11F8 /* NotJoin_Grey.png */,
+				A82E5ADA1B12DBBA004B11F8 /* Join_Rectangle.png */,
+				A82E5ADB1B12DBBA004B11F8 /* NotJoiningRectangle.png */,
+				A8DFC8F91B09CAAC00DB7D1D /* icon.png */,
+				A8DFC8F71B09C73E00DB7D1D /* icon@2x.png */,
+				A8DFC8FB1B09CB4200DB7D1D /* icon@3x.png */,
 				A8D486531AC26ECC00CC82BB /* EventIcon */,
 				A8CE457A1ABA5F3D000DB684 /* Schedule_Month.png */,
 				A8CCE68C1AB95DA500F3E122 /* Blue_tick.png */,
@@ -2210,6 +2365,8 @@
 				A8C683B31A74EDB600384FE1 /* NotiveMsgPageBaseMode.m */,
 				A8A3B9511A7F27C200322354 /* ActiveModifyMsgModel.h */,
 				A8A3B9521A7F27C200322354 /* ActiveModifyMsgModel.m */,
+				A8DCD9B61B0D89080044D757 /* NoticesMsgManagedModel.h */,
+				A8DCD9B71B0D89080044D757 /* NoticesMsgManagedModel.m */,
 			);
 			name = model;
 			sourceTree = "<group>";
@@ -2494,6 +2651,8 @@
 			children = (
 				A8C615151AD5282F00B1EE06 /* ActiveImgModel.h */,
 				A8C615161AD5282F00B1EE06 /* ActiveImgModel.m */,
+				A8CBFF3D1AE497070014B727 /* TimeVoteModel.h */,
+				A8CBFF3E1AE497070014B727 /* TimeVoteModel.m */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -2550,6 +2709,25 @@
 			name = View;
 			sourceTree = "<group>";
 		};
+		A8C8C7A21AE5EC06005FB4BF /* MyC */ = {
+			isa = PBXGroup;
+			children = (
+				A8C8C7B81AE5F0D7005FB4BF /* SCHeadView.h */,
+				A8C8C7B91AE5F0D7005FB4BF /* SCHeadView.m */,
+				A8C8C7BA1AE5F0D7005FB4BF /* SCCell.h */,
+				A8C8C7BB1AE5F0D7005FB4BF /* SCCell.m */,
+				A8C8C7BC1AE5F0D7005FB4BF /* TimeView.h */,
+				A8C8C7BD1AE5F0D7005FB4BF /* TimeView.m */,
+				A8C8C7BE1AE5F0D7005FB4BF /* TimeLabel.h */,
+				A8C8C7BF1AE5F0D7005FB4BF /* TimeLabel.m */,
+				A8C8C7C01AE5F0D7005FB4BF /* TimeCell.h */,
+				A8C8C7C11AE5F0D7005FB4BF /* TimeCell.m */,
+				A8C8C7C21AE5F0D7005FB4BF /* MeetModel.h */,
+				A8C8C7C31AE5F0D7005FB4BF /* MeetModel.m */,
+			);
+			name = MyC;
+			sourceTree = "<group>";
+		};
 		A8C9BA031AD4E02900F55CBF /* EventSetViewController */ = {
 			isa = PBXGroup;
 			children = (
@@ -2600,6 +2778,8 @@
 		A8CA52661ACCDB6E00EE56C5 /* ChildViewController */ = {
 			isa = PBXGroup;
 			children = (
+				A882F61D1AE6404F00355818 /* MySchedule */,
+				A8C8C7A21AE5EC06005FB4BF /* MyC */,
 				A8C615141AD527B900B1EE06 /* Model */,
 				A8C9BA031AD4E02900F55CBF /* EventSetViewController */,
 				A8C438501AAF3DBB000A0735 /* ChatViewController */,
@@ -2612,8 +2792,32 @@
 				A8C614FD1AD51D1C00B1EE06 /* ActiveAlbumsTableViewController.h */,
 				A8C614FE1AD51D1C00B1EE06 /* ActiveAlbumsTableViewController.m */,
 				A8C614FF1AD51D1C00B1EE06 /* ActiveAlbumsTableViewController.xib */,
+				A8CDE7F91AE0E60A001395A5 /* TimeSlotDetailsViewController.h */,
+				A8CDE7FA1AE0E60A001395A5 /* TimeSlotDetailsViewController.m */,
+				A8CDE8011AE0E882001395A5 /* VotedTableViewController.h */,
+				A8CDE8021AE0E882001395A5 /* VotedTableViewController.m */,
+				A8CDE8031AE0E882001395A5 /* VotedTableViewController.xib */,
+				A8CDE8061AE0E9EC001395A5 /* ScheduleViewController.h */,
+				A8CDE8071AE0E9EC001395A5 /* ScheduleViewController.m */,
+				A8CDE8081AE0E9EC001395A5 /* ScheduleViewController.xib */,
+				A8E065AC1B1470EA00C65976 /* VoteMemberTableViewController.h */,
+				A8E065AD1B1470EA00C65976 /* VoteMemberTableViewController.m */,
+				A8E065AE1B1470EA00C65976 /* VoteMemberTableViewController.xib */,
 			);
 			name = ChildViewController;
+			sourceTree = "<group>";
+		};
+		A8CC44D01AE894BE002217C8 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				A8CC44D91AE8D27B002217C8 /* HATransparentView.h */,
+				A8CC44DA1AE8D27B002217C8 /* HATransparentView.m */,
+				A8CFA2E11AEA301C00F3D73F /* DayTimeView.h */,
+				A8CFA2E21AEA301C00F3D73F /* DayTimeView.m */,
+				A8CFA2DE1AE9F8D800F3D73F /* TimeSelectView.h */,
+				A8CFA2DF1AE9F8D800F3D73F /* TimeSelectView.m */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 		A8CF90EA1ACA794400766667 /* Model */ = {
@@ -2644,6 +2848,8 @@
 		A8D486481AC2588800CC82BB /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				A8A783741AF1C273005E5035 /* SimpleEvent */,
+				A8CC44D01AE894BE002217C8 /* View */,
 				A8CA52601ACCD66100EE56C5 /* ActiveDescription */,
 				A8CA525F1ACCD63B00EE56C5 /* ActiveAdd */,
 			);
@@ -2654,6 +2860,7 @@
 			isa = PBXGroup;
 			children = (
 				A8D486601AC26FC700CC82BB /* go2_tick.png */,
+				A8DFC8F51B09B6D200DB7D1D /* go2_blueTick.png */,
 				A8D486561AC26F6400CC82BB /* go2_arrow_left.png */,
 				A8D486571AC26F6400CC82BB /* go2_arrow_right.png */,
 				A8D486581AC26F6400CC82BB /* go2_cross.png */,
@@ -2676,6 +2883,13 @@
 				A8CB12C31AD3CB9F00A5962E /* DateTimeVoteTableViewCell.xib */,
 			);
 			name = View;
+			sourceTree = "<group>";
+		};
+		A8D973B71AF85A110068F358 /* view */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = view;
 			sourceTree = "<group>";
 		};
 		A8F975851A78889300AD0529 /* XMPP */ = {
@@ -3557,9 +3771,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A877C94519B450C50075D9E8 /* Time-Line */ = {
+		A877C94519B450C50075D9E8 /* Go2 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A877C97819B450C50075D9E8 /* Build configuration list for PBXNativeTarget "Time-Line" */;
+			buildConfigurationList = A877C97819B450C50075D9E8 /* Build configuration list for PBXNativeTarget "Go2" */;
 			buildPhases = (
 				2A069FEDA1BD4FB8B712D3E5 /* Check Pods Manifest.lock */,
 				A877C94219B450C50075D9E8 /* Sources */,
@@ -3571,14 +3785,14 @@
 			);
 			dependencies = (
 			);
-			name = "Time-Line";
+			name = Go2;
 			productName = "Time-Line";
-			productReference = A877C94619B450C50075D9E8 /* Time-Line.app */;
+			productReference = A877C94619B450C50075D9E8 /* Go2.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A877C96619B450C50075D9E8 /* Time-LineTests */ = {
+		A877C96619B450C50075D9E8 /* Go2Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A877C97B19B450C50075D9E8 /* Build configuration list for PBXNativeTarget "Time-LineTests" */;
+			buildConfigurationList = A877C97B19B450C50075D9E8 /* Build configuration list for PBXNativeTarget "Go2Tests" */;
 			buildPhases = (
 				A877C96319B450C50075D9E8 /* Sources */,
 				A877C96419B450C50075D9E8 /* Frameworks */,
@@ -3589,9 +3803,9 @@
 			dependencies = (
 				A877C96D19B450C50075D9E8 /* PBXTargetDependency */,
 			);
-			name = "Time-LineTests";
+			name = Go2Tests;
 			productName = "Time-LineTests";
-			productReference = A877C96719B450C50075D9E8 /* Time-LineTests.xctest */;
+			productReference = A877C96719B450C50075D9E8 /* Go2Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -3611,7 +3825,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A877C94119B450C50075D9E8 /* Build configuration list for PBXProject "Time-Line" */;
+			buildConfigurationList = A877C94119B450C50075D9E8 /* Build configuration list for PBXProject "Go2" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -3624,8 +3838,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A877C94519B450C50075D9E8 /* Time-Line */,
-				A877C96619B450C50075D9E8 /* Time-LineTests */,
+				A877C94519B450C50075D9E8 /* Go2 */,
+				A877C96619B450C50075D9E8 /* Go2Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -3645,13 +3859,16 @@
 				A8E5C39D1A51510800226FD9 /* ActivedetailsViewController.xib in Resources */,
 				A894D71719B5932D0088E522 /* BackGroundViewController.xib in Resources */,
 				A8C68E3C1A7B5223006940E9 /* UserApplyTableViewCell.xib in Resources */,
+				A82E5AE11B12DC7D004B11F8 /* Join_Grey.png in Resources */,
 				A894D85719B5BACC0088E522 /* Icon_TickBlack.png in Resources */,
 				A8873A821A75177B0014CD26 /* MJRefresh.bundle in Resources */,
+				A8DFC8FC1B09CB4200DB7D1D /* icon@3x.png in Resources */,
 				A8CF90F21ACA81C100766667 /* ReviewViewController.xib in Resources */,
 				A894D85D19B5BACC0088E522 /* daybackgrd1@2x.png in Resources */,
 				A8CA528D1ACD203100EE56C5 /* ActiveVotingViewController.xib in Resources */,
 				A894D72119B59A930088E522 /* MapViewController.xib in Resources */,
 				A894D85E19B5BACC0088E522 /* daybackgrd2@2x.png in Resources */,
+				A82E5ADD1B12DBBA004B11F8 /* NotJoin_Grey.png in Resources */,
 				A8C615011AD51D1C00B1EE06 /* ActiveAlbumsTableViewController.xib in Resources */,
 				A877C96219B450C50075D9E8 /* Images.xcassets in Resources */,
 				A8D486691AC28F2100CC82BB /* InviteesViewController.xib in Resources */,
@@ -3663,6 +3880,7 @@
 				A894D85119B5BACC0088E522 /* Rectangle_13.png in Resources */,
 				A8D1AA0F1AD769CE00955654 /* EventConfirmTimeTableViewController.xib in Resources */,
 				A894D8AE19B5BB150088E522 /* Tick.png in Resources */,
+				A82E5ADF1B12DBBA004B11F8 /* NotJoiningRectangle.png in Resources */,
 				A8F977821A78893800AD0529 /* build-libidn.sh in Resources */,
 				A8CC01FA1AD6BF7F00A8CC49 /* InviteesTimeTableViewCell.xib in Resources */,
 				A89F91D819C5D18D00CB7FAE /* powered-by-google-on-white@2x.png in Resources */,
@@ -3670,11 +3888,13 @@
 				A8D4865C1AC26F6400CC82BB /* go2_arrow_right.png in Resources */,
 				A894D85919B5BACC0088E522 /* Icon_Upward.png in Resources */,
 				A8BD9B0F1A40266700C5C3FE /* voteDateTableViewCell.xib in Resources */,
+				A8DFC8F81B09C73E00DB7D1D /* icon@2x.png in Resources */,
 				A895D4EF19D17186005371C4 /* free.png in Resources */,
 				A894D72B19B59D6A0088E522 /* NotesViewController.xib in Resources */,
 				A894D8B019B5BB150088E522 /* TIme_Start.png in Resources */,
 				A8C21DC41A529CFF00072757 /* ActiveVoteDateTableViewCell.xib in Resources */,
 				A877C95419B450C50075D9E8 /* InfoPlist.strings in Resources */,
+				A8A783791AF1C80D005E5035 /* SimpleEventViewController.xib in Resources */,
 				A894D86419B5BACC0088E522 /* ProximaNova-Semibold.ttf in Resources */,
 				A894D8B619B5BB150088E522 /* 通知.png in Resources */,
 				A894D8AB19B5BB150088E522 /* Alert_Minute.png in Resources */,
@@ -3682,13 +3902,17 @@
 				A8C68E4B1A7B87D0006940E9 /* UserActiveChangTableViewCell.xib in Resources */,
 				A8A8C27F19C1925F00362EE5 /* GoogleMaps.bundle in Resources */,
 				A8CE45801ABAB4F9000DB684 /* SimpleEventTableViewCell.xib in Resources */,
+				A82E5ADE1B12DBBA004B11F8 /* Join_Rectangle.png in Resources */,
 				A8974F4F19D8524C006AD5C0 /* LoginRegisterViewController.xib in Resources */,
+				A8DFC8FA1B09CAAC00DB7D1D /* icon.png in Resources */,
+				A8DFC8F61B09B6D200DB7D1D /* go2_blueTick.png in Resources */,
 				A8D486611AC26FC700CC82BB /* go2_tick.png in Resources */,
 				A8D4865E1AC26F6400CC82BB /* go2_picture.png in Resources */,
 				A8CBFFC01AB86E8800CF18FC /* Add_Invitees.png in Resources */,
 				A8B8D0471A330A390040C00D /* ActiveTableViewCell.xib in Resources */,
 				A8CAACA21AB190CE0095E353 /* EventInfoShowCell.xib in Resources */,
 				A894D72319B59ADB0088E522 /* LocationViewController.xib in Resources */,
+				A8CDE8051AE0E882001395A5 /* VotedTableViewController.xib in Resources */,
 				A894D8B319B5BB150088E522 /* Icon_HaveEvent.png in Resources */,
 				A891A75719D5949C004843D2 /* GoogleLoginViewController.xib in Resources */,
 				A8C040751AC4121D007A488F /* PurposeEventTimeViewController.xib in Resources */,
@@ -3701,6 +3925,7 @@
 				A8B8D0511A33166D0040C00D /* FriendInfoTableViewCell.xib in Resources */,
 				A8B7F37C1A2ED166000F7EC5 /* bell_press.png in Resources */,
 				A894D85B19B5BACC0088E522 /* Icon_Edit.png in Resources */,
+				A8E0089C1AFB049900A34860 /* EventDetailsViewController.xib in Resources */,
 				A8BDB8481A75E64800967677 /* FriendGroupShowViewController.xib in Resources */,
 				A8CB246A1AB809D800133316 /* FriendAddTableViewController.xib in Resources */,
 				A8C31A051A6CA86B0076CC61 /* FriendsInfoTableViewController.xib in Resources */,
@@ -3711,6 +3936,7 @@
 				A894D8B119B5BB150088E522 /* go_back_today.png in Resources */,
 				A8B862511A43CA6A00D1DEC4 /* SetFriendTableViewCell.xib in Resources */,
 				A894D85F19B5BACC0088E522 /* Icon_Tick.png in Resources */,
+				A8CDE80A1AE0E9EC001395A5 /* ScheduleViewController.xib in Resources */,
 				A8D00AE31AC935CC00A2BC3A /* DateVoteShowTableViewCell.xib in Resources */,
 				A8CE457B1ABA5F3D000DB684 /* Schedule_Month.png in Resources */,
 				A8C6CA421A53DFE4005F6E6F /* MemberListViewController.xib in Resources */,
@@ -3721,6 +3947,7 @@
 				A894D6F819B579560088E522 /* EventCell.xib in Resources */,
 				A894D8B519B5BB150088E522 /* 編輯活動.png in Resources */,
 				A8BB2E7E1A315E220046E1E9 /* ManageViewController.xib in Resources */,
+				A8E065A61B145F1A00C65976 /* invitations_social_event.png in Resources */,
 				A8CC41981AB2E7DE004A8077 /* ActiveInvitationsNotifictionTableViewCell.xib in Resources */,
 				A89514D319D50F4600538486 /* Default.png in Resources */,
 				A8C48CF21AC52EBF009888B2 /* AllDateViewController.xib in Resources */,
@@ -3743,6 +3970,7 @@
 				A8D4866F1AC2A03300CC82BB /* ActiveImageTableViewCell.xib in Resources */,
 				A8B7F3771A2EC938000F7EC5 /* selecte_friend_cycle.png in Resources */,
 				A894D85A19B5BACC0088E522 /* Icon_Cross.png in Resources */,
+				A8E065B01B1470EA00C65976 /* VoteMemberTableViewController.xib in Resources */,
 				A8B7F3871A2EF752000F7EC5 /* UserInfoTableViewController.xib in Resources */,
 				A8B7F3741A2EC8C5000F7EC5 /* smile_1.png in Resources */,
 				A894D71D19B594730088E522 /* ViewController.xib in Resources */,
@@ -3834,14 +4062,18 @@
 				A8F977371A78893800AD0529 /* XMPPvCardTempAdr.m in Sources */,
 				A8F977711A78893800AD0529 /* XMPPSRVResolver.m in Sources */,
 				A8B867F519E2A1840004875F /* TimeLine.xcdatamodeld in Sources */,
+				A83CC20E1AE753CB003AF4F0 /* MSTimeRowHeaderBackground.m in Sources */,
+				A8E0089B1AFB049900A34860 /* EventDetailsViewController.m in Sources */,
 				A8F9774D1A78893800AD0529 /* XMPPCapabilitiesCoreDataStorage.m in Sources */,
 				A8B95C1F1A0534F800C6B037 /* YQViewController.m in Sources */,
 				A896FFB519D5593D0056F4FF /* TPKeyboardAvoidingScrollView.m in Sources */,
 				A896FFB619D5593D0056F4FF /* TPKeyboardAvoidingTableView.m in Sources */,
 				A89514D019D4F90B00538486 /* LoginViewController.m in Sources */,
 				A838B4431A0CA45500D35F14 /* SetingsNavigationController.m in Sources */,
+				A83CC20F1AE753CB003AF4F0 /* MSDayColumnHeaderBackground.m in Sources */,
 				A8F977721A78893800AD0529 /* XMPPStringPrep.m in Sources */,
 				A8F977161A78893800AD0529 /* XMPPRosterCoreDataStorage.m in Sources */,
+				A8CDE8041AE0E882001395A5 /* VotedTableViewController.m in Sources */,
 				A8F976F91A78893800AD0529 /* XMPPDeprecatedPlainAuthentication.m in Sources */,
 				A8F977201A78893800AD0529 /* XMPPIQ+LastActivity.m in Sources */,
 				A8F977321A78893800AD0529 /* XMPPvCardAvatarCoreDataStorageObject.m in Sources */,
@@ -3853,6 +4085,7 @@
 				A88E35A319E9767C0025CAFB /* NotificationViewController.m in Sources */,
 				A8C6150B1AD51E2E00B1EE06 /* SDWaitingView.m in Sources */,
 				A8CF90ED1ACA799F00766667 /* ActiveDataMode.m in Sources */,
+				A8E065AF1B1470EA00C65976 /* VoteMemberTableViewController.m in Sources */,
 				A8D486681AC28F2100CC82BB /* InviteesViewController.m in Sources */,
 				A8C02E941A4AB6B400191528 /* JsonFromObject.m in Sources */,
 				A8D00AE21AC935CC00A2BC3A /* DateVoteShowTableViewCell.m in Sources */,
@@ -3864,6 +4097,7 @@
 				A8F9773A1A78893800AD0529 /* XMPPvCardTempEmail.m in Sources */,
 				A8C615091AD51E2E00B1EE06 /* SDBrowserImageView.m in Sources */,
 				A8F976F81A78893800AD0529 /* XMPPDeprecatedDigestAuthentication.m in Sources */,
+				A8C8C7C51AE5F0D7005FB4BF /* SCCell.m in Sources */,
 				A8F9775E1A78893800AD0529 /* XMPPStreamManagement.m in Sources */,
 				A886548D19D3E5C800EEC0A8 /* MAWeekView.m in Sources */,
 				A8C31A091A6CE3F10076CC61 /* AliasModifyViewController.m in Sources */,
@@ -3871,6 +4105,7 @@
 				A8F9775B1A78893800AD0529 /* XMPPBlocking.m in Sources */,
 				A8F977081A78893800AD0529 /* XMPPParser.m in Sources */,
 				A8F9777F1A78893800AD0529 /* DDXMLDocument.m in Sources */,
+				A8CBFF3F1AE497070014B727 /* TimeVoteModel.m in Sources */,
 				A8B7F38A1A2F0C5E000F7EC5 /* camera.m in Sources */,
 				A8F977791A78893800AD0529 /* DDTTYLogger.m in Sources */,
 				A8F9770B1A78893800AD0529 /* XMPPBandwidthMonitor.m in Sources */,
@@ -3889,6 +4124,7 @@
 				A8B529C319F635B9009286AA /* NSManagedObjectContext+MagicalRecord.m in Sources */,
 				A8F977091A78893800AD0529 /* XMPPPresence.m in Sources */,
 				A8BD9B0E1A40266700C5C3FE /* voteDateTableViewCell.m in Sources */,
+				A83CC2181AE75571003AF4F0 /* MSEvent.m in Sources */,
 				A8F9777C1A78893800AD0529 /* DDMultiFormatter.m in Sources */,
 				A8F9774F1A78893800AD0529 /* XMPPCapsResourceCoreDataStorageObject.m in Sources */,
 				A8B867E719E297CF0004875F /* NSString+StringManageMd5.m in Sources */,
@@ -3923,6 +4159,7 @@
 				A8BD34311A1303A1005A38FE /* RepeatViewController.m in Sources */,
 				A8F9773B1A78893800AD0529 /* XMPPvCardTempLabel.m in Sources */,
 				A8BB2E7D1A315E220046E1E9 /* ManageViewController.m in Sources */,
+				A8CDE8091AE0E9EC001395A5 /* ScheduleViewController.m in Sources */,
 				A8BFCE641A2F4FD80081CEE8 /* UserInfo.m in Sources */,
 				A8F977661A78893800AD0529 /* XMPPMessage+XEP_0224.m in Sources */,
 				A8BF229C1A0A23AE00E42F25 /* DayShowView.m in Sources */,
@@ -3934,6 +4171,7 @@
 				A8D486511AC266A600CC82BB /* AddNewActiveViewController.m in Sources */,
 				A8403A6F1A3732CD00F8444D /* FriendSearchViewController.m in Sources */,
 				A8F9772E1A78893800AD0529 /* XMPPMessage+XEP0045.m in Sources */,
+				A8A783781AF1C80D005E5035 /* SimpleEventViewController.m in Sources */,
 				A8F977191A78893800AD0529 /* XMPPRosterMemoryStorage.m in Sources */,
 				A8F9775D1A78893800AD0529 /* XMPPStreamManagementStanzas.m in Sources */,
 				A8B5461719F894AA00C73A24 /* CalendarAccountViewController.m in Sources */,
@@ -3952,6 +4190,7 @@
 				A8975B6D19EA896C006DFDC3 /* BackgroundRefreshViewController.m in Sources */,
 				A8F9772F1A78893800AD0529 /* XMPPMUC.m in Sources */,
 				A8F976FD1A78893800AD0529 /* XMPPXFacebookPlatformAuthentication.m in Sources */,
+				A83CC2151AE75567003AF4F0 /* MSEventCell.m in Sources */,
 				A8F977341A78893800AD0529 /* XMPPvCardCoreDataStorageObject.m in Sources */,
 				A894D6E419B578270088E522 /* EventCell.m in Sources */,
 				A8D1AA091AD7682900955654 /* InviteesJoinOrReplyTableViewController.m in Sources */,
@@ -3963,13 +4202,16 @@
 				A8CB2F341AB6DD8D00F59FC4 /* AcceptFriendTableViewCell.m in Sources */,
 				A894D70419B57F690088E522 /* BackGroundViewController.m in Sources */,
 				A8B529B619F635B9009286AA /* MagicalImportFunctions.m in Sources */,
+				A8CDE7FB1AE0E60A001395A5 /* TimeSlotDetailsViewController.m in Sources */,
 				A894D6E319B578270088E522 /* CalendarCell.m in Sources */,
+				A8CFA2E31AEA301C00F3D73F /* DayTimeView.m in Sources */,
 				A8B529C919F635B9009286AA /* MagicalRecord+Actions.m in Sources */,
 				A8B9CBDE1A37FB3C00DA0C54 /* LPPopupListView.m in Sources */,
 				A8B867E319E296E20004875F /* NSManagedObject+Explain.m in Sources */,
 				A8F9775A1A78893800AD0529 /* XMPPMessageDeliveryReceipts.m in Sources */,
 				A8B95C1D1A0534F800C6B037 /* YQNavigationController.m in Sources */,
 				A886549419D3E61700EEC0A8 /* DayViewController.m in Sources */,
+				A8CC44DB1AE8D27B002217C8 /* HATransparentView.m in Sources */,
 				A8BBD7951A35EACA0036CB9E /* Friend.m in Sources */,
 				A8BD343D1A1359C2005A38FE /* RepeatUntilViewController.m in Sources */,
 				A8C683B41A74EDB600384FE1 /* NotiveMsgPageBaseMode.m in Sources */,
@@ -3995,6 +4237,7 @@
 				A8F977521A78893800AD0529 /* XMPPMessageArchiving_Contact_CoreDataObject.m in Sources */,
 				A8F977151A78893800AD0529 /* XMPPRoster.xcdatamodel in Sources */,
 				A894D70719B57F7F0088E522 /* DateDetailsViewController.m in Sources */,
+				A882F6201AE6440900355818 /* TimeShow.m in Sources */,
 				A8C615171AD5282F00B1EE06 /* ActiveImgModel.m in Sources */,
 				A8873A831A75177B0014CD26 /* MJRefreshBaseView.m in Sources */,
 				A8D4866E1AC2A03300CC82BB /* ActiveImageTableViewCell.m in Sources */,
@@ -4005,6 +4248,7 @@
 				A89B676B19D980DA00415108 /* BaseMode.m in Sources */,
 				A894D6F419B5786A0088E522 /* PublicMethodsViewController.m in Sources */,
 				A8F976FC1A78893800AD0529 /* XMPPSCRAMSHA1Authentication.m in Sources */,
+				A8C8C7C41AE5F0D7005FB4BF /* SCHeadView.m in Sources */,
 				A8CB24691AB809D800133316 /* FriendAddTableViewController.m in Sources */,
 				A8C21DC31A529CFF00072757 /* ActiveVoteDateTableViewCell.m in Sources */,
 				A8F977771A78893800AD0529 /* DDFileLogger.m in Sources */,
@@ -4012,6 +4256,7 @@
 				A8B529C419F635B9009286AA /* NSManagedObjectContext+MagicalSaves.m in Sources */,
 				A8C48CF91AC54492009888B2 /* ModalAnimation.m in Sources */,
 				A8F977281A78893800AD0529 /* XMPPRoomHybridStorage.m in Sources */,
+				A8C8C7C61AE5F0D7005FB4BF /* TimeView.m in Sources */,
 				A896FFB419D5593D0056F4FF /* TPKeyboardAvoidingCollectionView.m in Sources */,
 				A894D70119B57F5E0088E522 /* AddEventViewController.m in Sources */,
 				A8B867E219E296E20004875F /* CoreDataUtil.m in Sources */,
@@ -4042,11 +4287,14 @@
 				A8F977561A78893800AD0529 /* XMPPvCardAvatarModule.m in Sources */,
 				A8F9776C1A78893800AD0529 /* NSXMLElement+XEP_0335.m in Sources */,
 				A8C68E401A7B60CA006940E9 /* UserAgreeAndReTableViewCell.m in Sources */,
+				A8C8C7C71AE5F0D7005FB4BF /* TimeLabel.m in Sources */,
 				A8B529BE19F635B9009286AA /* NSManagedObject+MagicalDataImport.m in Sources */,
+				A8C8C7C81AE5F0D7005FB4BF /* TimeCell.m in Sources */,
 				A8F977261A78893800AD0529 /* XMPPRoomOccupantCoreDataStorageObject.m in Sources */,
 				A8F977101A78893800AD0529 /* XMPPGoogleSharedStatus.m in Sources */,
 				A8C7CFBA1AD662B5008CB037 /* ActiveSetingTableViewController.m in Sources */,
 				A8F977741A78893800AD0529 /* GCDAsyncSocket.m in Sources */,
+				A83CC2111AE753CB003AF4F0 /* MSCurrentTimeGridline.m in Sources */,
 				A894D6E219B578270088E522 /* CLCalendarCell.m in Sources */,
 				A890BA2D19E8CCDE0052C10F /* SetingViewController.m in Sources */,
 				A8F977811A78893800AD0529 /* DDXMLNode.m in Sources */,
@@ -4079,6 +4327,7 @@
 				A8F977231A78893800AD0529 /* XMPPRoom.xcdatamodeld in Sources */,
 				A8B529B719F635B9009286AA /* NSAttributeDescription+MagicalDataImport.m in Sources */,
 				A8E5C38E1A50FB1000226FD9 /* FriendInfoViewController.m in Sources */,
+				A83CC2101AE753CB003AF4F0 /* MSGridline.m in Sources */,
 				A8F977491A78893800AD0529 /* XMPPSoftwareVersion.m in Sources */,
 				A8F977351A78893800AD0529 /* XMPPvCardTempCoreDataStorageObject.m in Sources */,
 				A8F9770C1A78893800AD0529 /* XMPPCoreDataStorage.m in Sources */,
@@ -4096,9 +4345,12 @@
 				A898C8FA19B4635900559F53 /* CLEvent.m in Sources */,
 				A8F9776D1A78893800AD0529 /* DDList.m in Sources */,
 				A8F976FE1A78893800AD0529 /* XMPPXOAuth2Google.m in Sources */,
+				A83CC2121AE753CB003AF4F0 /* MSCurrentTimeIndicator.m in Sources */,
+				A83CC20C1AE753CB003AF4F0 /* MSTimeRowHeader.m in Sources */,
 				A8CB2F2F1AB6B81500F59FC4 /* FriendsProfilesTableViewController.m in Sources */,
 				A8F9772C1A78893800AD0529 /* XMPPRoomMessageMemoryStorageObject.m in Sources */,
 				A8F976F71A78893800AD0529 /* XMPPAnonymousAuthentication.m in Sources */,
+				A83CC20D1AE753CB003AF4F0 /* MSDayColumnHeader.m in Sources */,
 				A8C68E4A1A7B87D0006940E9 /* UserActiveChangTableViewCell.m in Sources */,
 				A8F9770D1A78893800AD0529 /* XMPPFileTransfer.m in Sources */,
 				A886548A19D3E5C800EEC0A8 /* MAEvent.m in Sources */,
@@ -4125,6 +4377,7 @@
 				A8F9776B1A78893800AD0529 /* XMPPMessage+XEP_0333.m in Sources */,
 				A898C8FF19B463E700559F53 /* CalendarDateUtil.m in Sources */,
 				A894D6E019B578270088E522 /* JCDatePicker.m in Sources */,
+				A8C8C7C91AE5F0D7005FB4BF /* MeetModel.m in Sources */,
 				A8F977111A78893800AD0529 /* XMPPProcessOne.m in Sources */,
 				A8F977751A78893800AD0529 /* DDAbstractDatabaseLogger.m in Sources */,
 				A8873A841A75177B0014CD26 /* MJRefreshConst.m in Sources */,
@@ -4152,6 +4405,8 @@
 				A8F9774B1A78893800AD0529 /* NSString+XEP_0106.m in Sources */,
 				A8BFB5941A70ED6E002741D4 /* ActiveBaseInfoMode.m in Sources */,
 				A8956F2519EC222F0016674E /* AccountViewController.m in Sources */,
+				A8CFA2E01AE9F8D800F3D73F /* TimeSelectView.m in Sources */,
+				A8DCD9B81B0D89080044D757 /* NoticesMsgManagedModel.m in Sources */,
 				A8B529CA19F635B9009286AA /* MagicalRecord+ErrorHandling.m in Sources */,
 				A8F977391A78893800AD0529 /* XMPPvCardTempBase.m in Sources */,
 			);
@@ -4170,7 +4425,7 @@
 /* Begin PBXTargetDependency section */
 		A877C96D19B450C50075D9E8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A877C94519B450C50075D9E8 /* Time-Line */;
+			target = A877C94519B450C50075D9E8 /* Go2 */;
 			targetProxy = A877C96C19B450C50075D9E8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -4278,14 +4533,14 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Time-Line/Time-Line-Prefix.pch";
-				INFOPLIST_FILE = "Time-Line/Time-Line-Info.plist";
+				GCC_PREFIX_HEADER = "Time-Line/Go2-Prefix.pch";
+				INFOPLIST_FILE = "Time-Line/Go2-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Time-Line/Vendor/libidn",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Go2;
 				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/**";
 				WRAPPER_EXTENSION = app;
@@ -4305,14 +4560,14 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Time-Line/Time-Line-Prefix.pch";
-				INFOPLIST_FILE = "Time-Line/Time-Line-Info.plist";
+				GCC_PREFIX_HEADER = "Time-Line/Go2-Prefix.pch";
+				INFOPLIST_FILE = "Time-Line/Go2-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Time-Line/Vendor/libidn",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Go2;
 				PROVISIONING_PROFILE = "";
 				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/**";
 				WRAPPER_EXTENSION = app;
@@ -4334,8 +4589,8 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "Time-LineTests/Time-LineTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "Time-LineTests/Go2Tests-Info.plist";
+				PRODUCT_NAME = Go2Tests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -4352,8 +4607,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Time-Line/Time-Line-Prefix.pch";
-				INFOPLIST_FILE = "Time-LineTests/Time-LineTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "Time-LineTests/Go2Tests-Info.plist";
+				PRODUCT_NAME = Go2Tests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -4362,7 +4617,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A877C94119B450C50075D9E8 /* Build configuration list for PBXProject "Time-Line" */ = {
+		A877C94119B450C50075D9E8 /* Build configuration list for PBXProject "Go2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A877C97619B450C50075D9E8 /* Debug */,
@@ -4371,7 +4626,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A877C97819B450C50075D9E8 /* Build configuration list for PBXNativeTarget "Time-Line" */ = {
+		A877C97819B450C50075D9E8 /* Build configuration list for PBXNativeTarget "Go2" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A877C97919B450C50075D9E8 /* Debug */,
@@ -4380,7 +4635,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A877C97B19B450C50075D9E8 /* Build configuration list for PBXNativeTarget "Time-LineTests" */ = {
+		A877C97B19B450C50075D9E8 /* Build configuration list for PBXNativeTarget "Go2Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A877C97C19B450C50075D9E8 /* Debug */,

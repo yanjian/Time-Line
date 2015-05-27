@@ -1,6 +1,6 @@
 //
 //  InviteesJoinOrReplyTableViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/4/10.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -10,6 +10,7 @@
 #import "SetFriendTableViewCell.h"
 #import "MemberDataModel.h"
 #import "UIImageView+WebCache.h"
+#import "UIColor+HexString.h"
 @interface InviteesJoinOrReplyTableViewController (){
     NSMutableArray * joinAndNoJoinArr;
 }
@@ -22,17 +23,21 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Invitees" ;
-    
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
-    [leftBtn setTag:1];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
-    [leftBtn addTarget:self action:@selector(backToEventSettingView:) forControlEvents:UIControlEventTouchUpInside] ;
+    
+    if (self.isOpenModel) {
+        [leftBtn setFrame:CGRectMake(0, 0, 17 , 17)];
+        [leftBtn setTag:1];
+        [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_cross"] forState:UIControlStateNormal] ;
+    }else{
+        [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
+        [leftBtn setTag:2];
+        [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
+    }
+    [leftBtn addTarget:self action:@selector(backToEventSettingView:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
     
-    
     joinAndNoJoinArr = @[].mutableCopy;
-    
     NSMutableArray * joinArr = @[].mutableCopy;
     NSMutableArray * noJoinArr = @[].mutableCopy;
     NSMutableArray * noReplyArr = @[].mutableCopy;
@@ -52,6 +57,8 @@
     }if (noReplyArr.count>0) {
         [joinAndNoJoinArr addObject:noReplyArr];
     }
+    
+    self.tableView.separatorInset = UIEdgeInsetsMake(0, 20, 0, 0);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -99,10 +106,10 @@
     SetFriendTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"joinAndNoJoinID"];
     if (!cell) {
         cell = (SetFriendTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"SetFriendTableViewCell" owner:self options:nil] lastObject];
-        UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-        imageView.image =[UIImage imageNamed:@"selecte_friend_cycle"] ;
-        cell.accessoryView = imageView ;
-        imageView.center = cell.accessoryView.center ;
+//        UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
+//        imageView.image =[UIImage imageNamed:@"selecte_friend_cycle"] ;
+//        cell.accessoryView = imageView ;
+//        imageView.center = cell.accessoryView.center ;
     }
     
     NSArray *joinAndNoJoin = joinAndNoJoinArr[indexPath.section];
@@ -151,21 +158,14 @@
 }
 */
 
-/*
+
 #pragma mark - Table view delegate
 
 // In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Navigation logic may go here, for example:
-    // Create the next view controller.
-    <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:<#@"Nib name"#> bundle:nil];
-    
-    // Pass the selected object to the new view controller.
-    
-    // Push the view controller.
-    [self.navigationController pushViewController:detailViewController animated:YES];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
-*/
+
 
 /*
 #pragma mark - Navigation
@@ -179,6 +179,9 @@
 -(void)backToEventSettingView:(UIButton *)sender {
     switch (sender.tag) {
         case 1:
+            [self dismissViewControllerAnimated:YES completion:nil];
+            break;
+        case 2:
             [self.navigationController popViewControllerAnimated:YES];
             break;
             

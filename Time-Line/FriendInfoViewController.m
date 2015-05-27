@@ -1,6 +1,6 @@
 //
 //  FriendInfoViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14/12/29.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -45,7 +45,7 @@
 	[super viewDidLoad];
 	CGRect frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
 	self.view.frame = frame;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:self action:@selector(searchFriendInfo)];
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:self action:@selector(searchFriendInfo)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addFriendView)];
 
     
@@ -85,9 +85,13 @@
 }
 
 -(void)addFriendView{
-    FriendAddTableViewController *fAddVc = [[FriendAddTableViewController alloc] init];
-    fAddVc.hidesBottomBarWhenPushed = YES ;
-    [self.navigationController pushViewController:fAddVc animated:YES];
+    //暂时屏蔽
+//    FriendAddTableViewController *fAddVc = [[FriendAddTableViewController alloc] init];
+//    fAddVc.hidesBottomBarWhenPushed = YES ;
+//    [self.navigationController pushViewController:fAddVc animated:YES];
+    FriendSearchViewController * friendSearchVc = [[FriendSearchViewController alloc] init] ;
+    friendSearchVc.hidesBottomBarWhenPushed = YES ;
+    [self.navigationController pushViewController:friendSearchVc animated:YES] ;
 }
 
 #pragma mark -创建一个添加组或添加好友的按钮

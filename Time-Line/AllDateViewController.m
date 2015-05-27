@@ -1,6 +1,6 @@
 //
 //  AllDateViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/27.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -43,6 +43,7 @@ typedef NS_ENUM(NSInteger, ClickWho_StartAndEnd) {
     self.view.layer.cornerRadius = 3.0;
     [self creteInitDateTime];
     [ self createDatePicker ];
+    
     
 }
 
@@ -195,8 +196,6 @@ typedef NS_ENUM(NSInteger, ClickWho_StartAndEnd) {
             [self.tableView reloadData];
         }
     }
-    
-    
 }
 
 - (IBAction)addMoreDateTime:(id)sender {

@@ -1,6 +1,6 @@
 //
 //  Time_LineTests.m
-//  Time-LineTests
+//  Go2Tests
 //
 //  Created by IF on 14-9-1.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.

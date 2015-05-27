@@ -1,6 +1,6 @@
 //
 //  main.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-9-1.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.

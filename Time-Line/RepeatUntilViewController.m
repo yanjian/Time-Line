@@ -1,6 +1,6 @@
 //
 //  RepeatUntilViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14/11/12.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -74,11 +74,11 @@
 	self.navigationItem.titleView = titleView;
 	titlelabel.text = @"Repeat";
 
-	UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-	[leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow.png"] forState:UIControlStateNormal];
-
-	[leftBtn setFrame:CGRectMake(0, 2, 21, 25)];
-	[leftBtn addTarget:self action:@selector(disviewcontroller) forControlEvents:UIControlEventTouchUpInside];
+    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
+    [leftBtn setTag:1];
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
+    [leftBtn addTarget:self action:@selector(disviewcontroller) forControlEvents:UIControlEventTouchUpInside];
 	self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
 
 	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height - naviHigth) style:UITableViewStyleGrouped];

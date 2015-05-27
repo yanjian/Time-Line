@@ -488,7 +488,7 @@ BOOL ImageDataHasPNGPreffix(NSData *data) {
         bgTask = UIBackgroundTaskInvalid;
     }];
 }
-
+  
 - (NSUInteger)getSize {
     __block NSUInteger size = 0;
     dispatch_sync(self.ioQueue, ^{

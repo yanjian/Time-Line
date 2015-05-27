@@ -1,6 +1,6 @@
 //
 //  AllDayEventsViewController.h
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-10-15.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -10,6 +10,7 @@
 @protocol AllDayEventsDelegate;
 @interface AllDayEventsViewController : UIViewController
 @property (nonatomic, strong) id <AllDayEventsDelegate> delegate;
+@property (nonatomic, retain) NSArray *allDayEventArr;
 @end
 
 

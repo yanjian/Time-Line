@@ -1,6 +1,6 @@
 //
 //  UserActiveChangTableViewCell.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/1/30.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.

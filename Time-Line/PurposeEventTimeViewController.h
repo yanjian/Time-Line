@@ -1,6 +1,6 @@
 //
 //  PurposeEventTimeViewController.h
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/26.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.

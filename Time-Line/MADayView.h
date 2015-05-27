@@ -1,6 +1,6 @@
 //
 //  MADayView.h
-//  Time-Line
+//  Go2
 //
 //  Created by connor on 14-4-9.
 //  Copyright (c) 2014年 connor. All rights reserved.
@@ -12,7 +12,8 @@
 @class MADayHourView;
 @class MADayGridView;
 @class MAEvent;
-
+@class TimeMoveView;
+@class DayTimeScrollView ;
 @protocol MADayViewDataSource, MADayViewDelegate;
 
 @interface MADayView : UIView {
@@ -20,7 +21,9 @@
 	UIButton *_leftArrow, *_rightArrow;
 	UILabel *_dateLabel;
 	
-	UIScrollView *_scrollView;
+    TimeMoveView * _moveToView; //已经添加
+    
+	DayTimeScrollView *_scrollView;
 	MA_AllDayGridView *_allDayGridView;
 	MADayHourView *_hourView;
 	MADayGridView *_gridView;	

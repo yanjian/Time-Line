@@ -1,6 +1,6 @@
 //
 //  LoginViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14-9-26.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -222,6 +222,8 @@
                     
                     [USER_DEFAULT setObject:userInfoData forKey:CURRENTUSERINFO];
                     [USER_DEFAULT synchronize];
+                    
+                    [g_AppDelegate connect]; //链接到openfire上
                 }
             }
             break;

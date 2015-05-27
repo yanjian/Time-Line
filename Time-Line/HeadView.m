@@ -1,6 +1,6 @@
 //
 //  HeadView.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 14/12/8.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
@@ -8,6 +8,7 @@
 
 #import "HeadView.h"
 #import "FriendGroup.h"
+#import "UIColor+HexString.h"
 
 typedef NS_ENUM(NSInteger, GroupManager) {
     GroupManager_add = 0 ,
@@ -53,7 +54,7 @@ typedef NS_ENUM(NSInteger, GroupManager) {
 
 	UILabel *numLabel = [[UILabel alloc] init];
 	numLabel.textAlignment = NSTextAlignmentRight;
-	[headView addSubview:numLabel];
+	//[headView addSubview:numLabel];  暂时屏蔽
 	_numLabel = numLabel;
 }
 

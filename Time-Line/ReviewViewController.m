@@ -1,6 +1,6 @@
 //
 //  ReviewViewController.m
-//  Time-Line
+//  Go2
 //
 //  Created by IF on 15/3/31.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
@@ -136,20 +136,33 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
                 else {
                     showCount = self.activeDataMode.activeFriendArr.count;
                 }
+                
+                
+                UIScrollView * fivScrollV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 64)];
+                [fivScrollV setShowsHorizontalScrollIndicator:NO];
+                [fivScrollV setShowsVerticalScrollIndicator:NO];
+                
+                fivScrollV.contentSize = CGSizeMake(48 * showCount, 0);
+                UIView * memberView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 48 * showCount, 44)];
+                [fivScrollV addSubview:memberView];
+                
                 for (int i = 0; i < showCount; i++) {
-                    UIImageView *fiv =  [[UIImageView alloc] initWithFrame:CGRectMake((48*i)+(i==0?4:0), 12, 40, 40)];
+                    UIImageView * fiv =  [[UIImageView alloc] initWithFrame:CGRectMake((48*i)+(i==0?4:0), 3, 40, 40)];
                     fiv.layer.masksToBounds = YES ;
                     fiv.layer.cornerRadius = fiv.bounds.size.width/2;
                     id personInfo = self.activeDataMode.activeFriendArr[i];
-                   if ([personInfo isKindOfClass:[Friend class]]) {
+                    if ([personInfo isKindOfClass:[Friend class]]) {
                         Friend *friend = (Friend *)personInfo;
                         NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, friend.imgBig] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                         NSURL *url = [NSURL URLWithString:_urlStr];
                         [fiv sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-                        }
-                    [cell.contentView addSubview:fiv];
-                    
-                 }
+                    }
+                    [memberView addSubview:fiv];
+                }
+                
+                memberView.center = fivScrollV.center ;
+                [cell addSubview:fivScrollV];
+                
             } else if ( indexPath.section == 3  && indexPath.row == 0 ){
                  cell.textLabel.text = [NSString stringWithFormat:@"%i Time slots suggested",self.activeDataMode.activeVoteDate.count] ;
             }else if ( indexPath.section == 4  && indexPath.row == 0 ){
@@ -409,9 +422,13 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
                 id tmpData = [dic objectForKey:@"data"];
                 if ([tmpData isKindOfClass:[NSDictionary class]]) {
                     [MBProgressHUD showSuccess:@"Save Success"];
-                    NSDictionary *tmpDic = (NSDictionary *)tmpData;
-                    NSString *activeId = [tmpDic objectForKey:@"id"];
-                    [self upLoadEventImage:activeId];
+                    if (self.activeDataMode.activeImg) {
+                        NSDictionary *tmpDic = (NSDictionary *)tmpData;
+                        NSString *activeId = [tmpDic objectForKey:@"id"];
+                        [self upLoadEventImage:activeId];
+                    }else{
+                        [self.navigationController popToRootViewControllerAnimated:YES];
+                    }
                 }
             }
             else {
@@ -430,7 +447,12 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
                 id tmpData = [dic objectForKey:@"data"];
                 if ([tmpData isKindOfClass:[NSDictionary class]]) {
                     [MBProgressHUD showSuccess:@"Operation Success"];
-                    [self upLoadEventImage:self.activeDataMode.Id];
+                    if (self.activeDataMode.activeImg) {
+                        [self upLoadEventImage:self.activeDataMode.Id];
+                    }else{
+                         [self.navigationController popToRootViewControllerAnimated:YES];
+                    }
+                    
                 }
             }
         }break;
@@ -441,39 +463,37 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
 }
 
 -(void)upLoadEventImage:(NSString *)eid {
-
-    //上传活动图片
-    NSURL *url = [NSURL URLWithString:[anyTime_EventAddPhoto stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    ASIFormDataRequest *uploadImageRequest = [ASIFormDataRequest requestWithURL:url];
-    [uploadImageRequest setRequestMethod:@"POST"];
-    [uploadImageRequest setPostValue:eid forKey:@"eid"];
-    NSData *data = UIImagePNGRepresentation(self.activeDataMode.activeImg);
-    NSMutableData *imageData = [NSMutableData dataWithData:data];
-    [uploadImageRequest setStringEncoding:NSUTF8StringEncoding];
-    [uploadImageRequest setPostFormat:ASIMultipartFormDataPostFormat];
-    NSString *tmpDate = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyyMMddss"];
-    
-    [uploadImageRequest addData:imageData withFileName:[NSString stringWithFormat:@"%@.jpg", tmpDate]  andContentType:@"image/jpeg" forKey:@"f1"];
-    [uploadImageRequest setTag:anyTime_EventAddPhoto_tag];
-    __block ASIFormDataRequest *uploadRequest = uploadImageRequest;
-    [uploadImageRequest setCompletionBlock: ^{
-        NSString *responseStr = [uploadRequest responseString];
-        NSLog(@"数据更新成功：%@", responseStr);
-        id obj = [responseStr objectFromJSONString];
-        if ([obj isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *tmpDic = (NSDictionary *)obj;
-            int statusCode = [[tmpDic objectForKey:@"statusCode"] integerValue];
-            if (statusCode == 1) {
-                [self.navigationController popToRootViewControllerAnimated:YES];
+        //上传活动图片
+        NSURL *url = [NSURL URLWithString:[anyTime_EventAddPhoto stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        ASIFormDataRequest *uploadImageRequest = [ASIFormDataRequest requestWithURL:url];
+        [uploadImageRequest setRequestMethod:@"POST"];
+        [uploadImageRequest setPostValue:eid forKey:@"eid"];
+        NSData *data = UIImagePNGRepresentation(self.activeDataMode.activeImg);
+        NSMutableData *imageData = [NSMutableData dataWithData:data];
+        [uploadImageRequest setStringEncoding:NSUTF8StringEncoding];
+        [uploadImageRequest setPostFormat:ASIMultipartFormDataPostFormat];
+        NSString *tmpDate = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyyMMddss"];
+        
+        [uploadImageRequest addData:imageData withFileName:[NSString stringWithFormat:@"%@.jpg", tmpDate]  andContentType:@"image/jpeg" forKey:@"f1"];
+        [uploadImageRequest setTag:anyTime_EventAddPhoto_tag];
+        __block ASIFormDataRequest *uploadRequest = uploadImageRequest;
+        [uploadImageRequest setCompletionBlock: ^{
+            NSString *responseStr = [uploadRequest responseString];
+            NSLog(@"数据更新成功：%@", responseStr);
+            id obj = [responseStr objectFromJSONString];
+            if ([obj isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *tmpDic = (NSDictionary *)obj;
+                int statusCode = [[tmpDic objectForKey:@"statusCode"] integerValue];
+                if (statusCode == 1) {
+                    [self.navigationController popToRootViewControllerAnimated:YES];
+                }
             }
-        }
-    }];
-    [uploadImageRequest setFailedBlock: ^{
-        NSLog(@"请求失败：%@", [uploadRequest responseString]);
-        [MBProgressHUD showError:@"Please connect to the Internet"];
-    }];
-    [uploadImageRequest startAsynchronous];
-
+        }];
+        [uploadImageRequest setFailedBlock: ^{
+            NSLog(@"请求失败：%@", [uploadRequest responseString]);
+            [MBProgressHUD showError:@"Please connect to the Internet"];
+        }];
+        [uploadImageRequest startAsynchronous];
 }
 
 
