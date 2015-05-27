@@ -204,7 +204,6 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 			else {
 				NSLog(@"登陆错误");
 			}
-
 			break;
 
 		case LoginUser_GetUserInfo_Tag: {
@@ -213,7 +212,6 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 			}
 			break;
 		}
-
 		default:
 			break;
 	}
