@@ -1,4 +1,6 @@
-# Fingertips: Presentation mode for your iOS app
+# Fingertips
+
+### Presentation mode for your iOS app
 
 Fingertips is a small library (one class) meant for presentations from iOS devices that shows all touches and gestures so that the audience can see them. 
 
@@ -6,9 +8,9 @@ This is only designed for the iPad 2 and iPhone 4S (or later), which feature [ha
 
 Just drop in our replacement `UIWindow` subclass and your app will automatically determine when an external screen is available. It will show every touch on-screen with a nice partially-transparent graphic that automatically fades out when the touch ends. 
 
-Here's a [demo video](http://vimeo.com/22136667).
-
 Fingertips requires iOS 5.0 or greater and ARC. 
+
+![](screenshot.gif)
 
 ## Configuration
 
@@ -20,8 +22,10 @@ You shouldn't need to configure anything, but if you want to tweak some knobs:
  * `strokeColor`: change default `touchImage` stroke color (defaults to black)
  * `fillColor`: change default `touchImage` fill color (defaults to white)
 
+If you ever need to debug Fingertips, just set the `DEBUG_FINGERTIP_WINDOW` environment variable to `YES` in Xcode or set the runtime property `alwaysShowTouches` to `YES`.
+
 ## License
 
-Copyright (c) 2011-2013 MapBox, Inc.
+Copyright (c) 2011-2015 Mapbox, Inc.
 
-The Fingertips library should be accompanied by a LICENSE file. This file contains the license relevant to this distribution. If no license exists, please contact [MapBox](http://mapbox.com).
+The Fingertips library should be accompanied by a LICENSE file. This file contains the license relevant to this distribution. If no license exists, please contact [Mapbox](http://mapbox.com).

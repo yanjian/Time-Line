@@ -10,14 +10,19 @@
 #import "ActiveInfoTableViewController.h"
 #import "ActiveVotingViewController.h"
 #import "ChatViewController.h"
-#import "ActiveAlbumsTableViewController.h"
+#import "ActiveAlbumsViewController.h"
 #import "ActiveEventMode.h"
 #import "ActiveSetingTableViewController.h"
 #import "TimeVoteModel.h"
+#import "ManageViewController.h"
 
-@interface ActiveDestinationViewController ()<ASIHTTPRequestDelegate>
+@interface ActiveDestinationViewController ()<ASIHTTPRequestDelegate,ActiveSetingTableViewControllerDelegate>
 {
     ActiveEventMode  * ac;
+    ActiveInfoTableViewController * activeInfoVc ;
+    ActiveVotingViewController * activeVotingVc ;
+    ChatViewController *chatVc;
+    ActiveAlbumsViewController * activeAlbumsVc ;
 }
 @end
 
@@ -35,8 +40,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Event";
+    [self.buttonBarView.selectedBar setBackgroundColor:[UIColor orangeColor]];
+    
     self.containerView.bounces = NO ; //XLButtonBarPagerTabStripViewController中的属性  
-    [self colorWithNavigationBar];
+  //  [self colorWithNavigationBar];
     
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
@@ -53,11 +60,14 @@
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
     
     self.navigationController.interactivePopGestureRecognizer.delegate =(id) self ;
+    
+    [self loadActiveData];
 }
 
 
--(ActiveEventMode * )loadActiveData{
-    __block ActiveEventMode *activeEvent = nil;
+-(void )loadActiveData{
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    
     ASIHTTPRequest *activeRequest = [t_Network httpGet:@{ @"eid":self.activeEventInfo.Id }.mutableCopy Url:anyTime_Events Delegate:nil Tag:anyTime_Events_tag];
     [activeRequest setDownloadCache:g_AppDelegate.anyTimeCache];
     [activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy | ASIAskServerIfModifiedWhenStaleCachePolicy];
@@ -66,7 +76,7 @@
     [activeRequest setCompletionBlock: ^{
         NSError *error = [request error];
         if (error) {
-            return;
+            return ;
         }
         NSString *responseStr = [request responseString];
         id objData =  [responseStr objectFromJSONString];
@@ -76,47 +86,50 @@
             if ([statusCode isEqualToString:@"1"]) {
                 id tmpObj = [objDataDic objectForKey:@"data"];
                 if ([tmpObj isKindOfClass:[NSDictionary class]]) {
+                    [MBProgressHUD hideHUDForView:self.view animated:YES] ;
+                    
                     NSDictionary *trueDataObj = (NSDictionary *)tmpObj;
                     ActiveEventMode *_tmpActiveEvent = [[ActiveEventMode alloc] init];
                     [_tmpActiveEvent parseDictionary:trueDataObj];
-                    activeEvent = _tmpActiveEvent;
+                    ac = _tmpActiveEvent;
+                    [self reloadPagerTabStripView];
                 }
             }
         }
     }];
     
     [activeRequest setFailedBlock: ^{
+        [MBProgressHUD hideHUDForView:self.view animated:YES] ;
         [MBProgressHUD showError:@"Load data failed, please check your network"];
     }];
-    
-    [activeRequest startSynchronous];
-    return activeEvent ;
+    [activeRequest startAsynchronous];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    [self colorWithNavigationBar];
+ //   [self colorWithNavigationBar];
 }
 
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    [self.manageViewController fefreshTableView] ;
+}
 
 -(NSArray *)childViewControllersForPagerTabStripViewController:(XLPagerTabStripViewController *)pagerTabStripViewController{
-    
-    ac = [self loadActiveData];
 
-    ActiveInfoTableViewController * activeInfoVc  = [[ActiveInfoTableViewController alloc]   init];
+    activeInfoVc  = [[ActiveInfoTableViewController alloc]   init];
     activeInfoVc.activeEvent = ac ;
-    
     activeInfoVc.activeDestinationBlank = ^(){
         [pagerTabStripViewController moveToViewControllerAtIndex:1];//这里
     };
     
-    ActiveVotingViewController * activeVotingVc   = [[ActiveVotingViewController alloc] init];
+    activeVotingVc   = [[ActiveVotingViewController alloc] init];
     activeVotingVc.activeEvent = ac ;
     
-    ChatViewController *chatVc = [[ChatViewController alloc] init] ;
+    chatVc = [[ChatViewController alloc] init] ;
     chatVc.activeEvent = ac ;
     
-    ActiveAlbumsTableViewController * activeAlbumsVc   = [[ActiveAlbumsTableViewController alloc] init];
+    activeAlbumsVc   = [[ActiveAlbumsViewController alloc] init];
     activeAlbumsVc.eid = ac.Id ;
     return @[activeInfoVc,activeVotingVc,chatVc,activeAlbumsVc];
 }
@@ -134,7 +147,6 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 -(void)backToEventView:(UIButton *) sender{
@@ -145,10 +157,18 @@
         case 2:{
                 ActiveSetingTableViewController * activeSetingVC = [[ActiveSetingTableViewController alloc] init];
                 activeSetingVC.activeEvent = ac ;
+                activeSetingVC.delegate = self ;
+            
                 [self.navigationController pushViewController:activeSetingVC animated:YES];
             }break;
         default:
             break;
+    }
+}
+
+-(void)activeSetingTableViewControllerDelegate:(ActiveSetingTableViewController *) activeViewController isChange:(BOOL) isChange{
+    if(isChange){
+        [self loadActiveData];//刷新数据
     }
 }
 @end

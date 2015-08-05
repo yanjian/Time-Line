@@ -130,7 +130,7 @@ NS_ENUM (NSInteger, voteAndFixDateType) {
 	[super viewDidLoad];
 
 	//  self.navigationController.navigationBarHidden=NO;
-	// self.navigationController.navigationBar.barTintColor =blueColor;
+	// self.navigationController.navigationBar.barTintColor =defineBlueColor;
 
 	voteDateArr = [NSMutableArray arrayWithCapacity:0];
 	fixDateArr = [NSMutableArray arrayWithCapacity:0];
@@ -243,10 +243,10 @@ NS_ENUM (NSInteger, voteAndFixDateType) {
 		NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, self.activeEventMode.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 		NSLog(@"%@", _urlStr);
 		NSURL *url = [NSURL URLWithString:_urlStr];
-		[_activeImgView sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"] completed:nil];
+		[_activeImgView sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"go2_grey"] completed:nil];
 		return;
 	}
-	_activeImgView.image = [UIImage imageNamed:@"018.jpg"];
+	_activeImgView.image = [UIImage imageNamed:@"go2_grey"];
 }
 
 #pragma mark -创建表格中的选项卡
@@ -282,15 +282,13 @@ NS_ENUM (NSInteger, voteAndFixDateType) {
 				NSString *end = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"YYYY年 M月d日 HH:mm" interval:(i + 1) * 12];
 				[self addVoteDateWithEventStartTime:start endTime:end isAllDay:NO];
 			}
-		}
-		else if ([@"2" isEqualToString:type]) {//可以投票时间
+		}else if ([@"2" isEqualToString:type]) {//可以投票时间
 			voteDateArr = [NSMutableArray arrayWithArray:activeEventMode.time];//编辑时赋值给newVoteArr ；
 			_voteBtn.selected = YES;
 			_selectedBtnIndex = 0;
 			voteDateOfSections = voteDateArr.count;
 		}
-	}
-	else {
+	} else {
 		_selectedBtnIndex = 0;//默认设置选择的是voteBtn；
 		[_voteBtn setSelected:YES];
 		voteDateOfSections = 2; //默认显示2个表格cell ；
@@ -300,7 +298,6 @@ NS_ENUM (NSInteger, voteAndFixDateType) {
 			[self addVoteDateWithEventStartTime:start endTime:end isAllDay:NO];//---------------------------------------
 		}
 	}
-
 
 	UIView *voteView = [[UIView alloc] initWithFrame:CGRectMake(0, _fixBtn.frame.size.height, kScreen_Width, voteDateOfSections * voteTableViewCellHight + footerCellHeight)];
 
@@ -1033,7 +1030,7 @@ NS_ENUM (NSInteger, voteAndFixDateType) {
 
 	UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
 	navigationController.navigationBar.translucent = NO;
-	navigationController.navigationBar.barTintColor = blueColor;
+	navigationController.navigationBar.barTintColor = defineBlueColor;
 
 	if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
 		navigationController.modalPresentationStyle = UIModalPresentationFormSheet;

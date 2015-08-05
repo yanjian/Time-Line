@@ -16,7 +16,6 @@
 
 @property (weak, nonatomic) IBOutlet  UITableView    *  dateShowTableView ;
 @property (nonatomic , retain) ActiveDataMode *activeDataMode;
-
 @property (nonatomic , assign) BOOL isEdit ;
 @property (strong, nonatomic) ActiveEventMode *activeEvent ;
 @end

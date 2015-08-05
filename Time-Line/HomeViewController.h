@@ -19,4 +19,8 @@
 - (void)fetchDataResult:(void (^)(UIBackgroundFetchResult result))completionHandler;
 
 @property (nonatomic, assign) BOOL isRefreshUIData;//是否刷新ui数据
+
+-(void) backToToday ;//回到今天日期
+
+- (void)oClickArrow:(UIView *) clickView ;//显示月日历
 @end

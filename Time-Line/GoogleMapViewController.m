@@ -31,7 +31,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //self.navigationController.navigationBar.barTintColor = blueColor;
+    //self.navigationController.navigationBar.barTintColor = defineBlueColor;
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow.png"] forState:UIControlStateNormal];
     [leftBtn setFrame:CGRectMake(0, 2, 21, 25)];

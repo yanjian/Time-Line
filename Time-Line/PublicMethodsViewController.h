@@ -11,7 +11,7 @@
 @interface PublicMethodsViewController : UIViewController
 
 + (PublicMethodsViewController *)getPublicMethods;
-
++(int)compareOneDay:(NSDate *)oneDay withAnotherDay:(NSDate *)anotherDay ;//时间比较
 - (NSString *)getcurrentTime:(NSString *)format;
 - (NSString *)getcurrentTime:(NSString *)format interval:(NSInteger)interval;
 

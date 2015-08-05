@@ -1,8 +1,7 @@
 //
 //  MBFingerTipWindow.m
 //
-//  Created by Justin R. Miller on 3/29/11.
-//  Copyright 2011-2013 MapBox. All rights reserved.
+//  Copyright 2011-2015 Mapbox, Inc. All rights reserved.
 //
 
 #import "MBFingerTipWindow.h"
@@ -13,20 +12,17 @@
     #error "ARC must be enabled for MBFingerTipWindow.m"
 #endif
 
-// Turn this on to debug touches during development.
-//
-#ifdef TARGET_IPHONE_SIMULATOR
-    #define DEBUG_FINGERTIP_WINDOW 0
-#else
-    #define DEBUG_FINGERTIP_WINDOW 0
-#endif
-
 @interface MBFingerTipView : UIImageView
 
 @property (nonatomic, assign) NSTimeInterval timestamp;
 @property (nonatomic, assign) BOOL shouldAutomaticallyRemoveAfterTimeout;
 @property (nonatomic, assign, getter=isFadingOut) BOOL fadingOut;
 
+@end
+
+#pragma mark -
+
+@interface MBFingerTipOverlayWindow : UIWindow
 @end
 
 #pragma mark -
@@ -83,13 +79,6 @@
     self.strokeColor = [UIColor blackColor];
     self.fillColor = [UIColor whiteColor];
     
-    self.overlayWindow = [[UIWindow alloc] initWithFrame:self.frame];
-    
-    self.overlayWindow.userInteractionEnabled = NO;
-    self.overlayWindow.windowLevel = UIWindowLevelStatusBar;
-    self.overlayWindow.backgroundColor = [UIColor clearColor];
-    self.overlayWindow.hidden = NO;
-
     self.touchAlpha   = 0.5;
     self.fadeDuration = 0.3;
     
@@ -115,6 +104,21 @@
 }
 
 #pragma mark -
+
+- (UIWindow *)overlayWindow
+{
+    if ( ! _overlayWindow)
+    {
+        _overlayWindow = [[MBFingerTipOverlayWindow alloc] initWithFrame:self.frame];
+        
+        _overlayWindow.userInteractionEnabled = NO;
+        _overlayWindow.windowLevel = UIWindowLevelStatusBar;
+        _overlayWindow.backgroundColor = [UIColor clearColor];
+        _overlayWindow.hidden = NO;
+    }
+    
+    return _overlayWindow;
+}
 
 - (UIImage *)touchImage
 {
@@ -148,6 +152,18 @@
     return _touchImage;
 }
 
+#pragma mark - Setter
+
+- (void)setAlwaysShowTouches:(BOOL)flag
+{
+	if (_alwaysShowTouches != flag)
+	{
+		_alwaysShowTouches = flag;
+
+        [self updateFingertipsAreActive];
+	}
+}
+
 #pragma mark -
 #pragma mark Screen notifications
 
@@ -177,11 +193,14 @@
 
 - (void)updateFingertipsAreActive;
 {
-#if DEBUG_FINGERTIP_WINDOW
-    self.active = YES;
-#else
-    self.active = [self anyScreenIsMirrored];
-#endif    
+    if (self.alwaysShowTouches || ([[[[NSProcessInfo processInfo] environment] objectForKey:@"DEBUG_FINGERTIP_WINDOW"] boolValue]))
+    {
+        self.active = YES;
+    }
+    else
+    {
+        self.active = [self anyScreenIsMirrored];
+    }
 }
 
 #pragma mark -
@@ -359,5 +378,29 @@
 #pragma mark -
 
 @implementation MBFingerTipView
+
+@end
+
+#pragma mark -
+
+@implementation MBFingerTipOverlayWindow
+
+// UIKit tries to get the rootViewController from the overlay window.
+// Instead, try to find the rootViewController on some other application window.
+// Fixes problems with status bar hiding, because it considers the overlay window a candidate for controlling the status bar.
+
+- (UIViewController *)rootViewController
+{
+    for (UIWindow *window in [[UIApplication sharedApplication] windows])
+    {
+        if (self == window)
+            continue;
+
+        UIViewController *realRootViewController = window.rootViewController;
+        if (realRootViewController != nil)
+            return realRootViewController;
+    }
+    return [super rootViewController];
+}
 
 @end

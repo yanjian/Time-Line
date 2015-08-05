@@ -15,33 +15,37 @@
 -(instancetype)initChatModelDataWithActiveEventModel:(ActiveEventMode *)activeEvent{
     self = [super init];
     if (self) {
-        self.activeEvent = activeEvent ;
         self.messages = [NSMutableArray arrayWithCapacity:0];
         self.avatars  = [NSMutableDictionary dictionary] ;
+        self.users    = [NSMutableDictionary dictionary] ;
         self.memberTempArr = [NSMutableArray array];
-        
         self.avatarImageBlank = [JSQMessagesAvatarImageFactory avatarImageWithImage:[UIImage imageNamed:@"smile_1"] diameter:kJSQMessagesCollectionViewAvatarSizeDefault] ;//默认头像
 
-        [self loadFakeMessages];
-        
-        NSArray * memberArr = self.activeEvent.member ;
-       
-        NSMutableDictionary *userDic = [NSMutableDictionary dictionary] ;
-
-        for (NSDictionary *memberDic in memberArr) {
-            MemberDataModel *memberDataMode = [[MemberDataModel alloc] init];
-            [memberDataMode parseDictionary:memberDic];
-            [self.memberTempArr addObject:memberDataMode];
+        if (activeEvent) {
+            self.activeEvent = activeEvent ;
+            
+            [self loadFakeMessages];
+            
+            NSArray * memberArr = self.activeEvent.member ;
+            
+            for (NSDictionary *memberDic in memberArr) {
+                MemberDataModel *memberDataMode = [[MemberDataModel alloc] init];
+                [memberDataMode parseDictionary:memberDic];
+                [self.memberTempArr addObject:memberDataMode];
+            }
+            
+            for ( MemberDataModel *memberDataMode in self.memberTempArr) {
+                NSString * imgSmall = [memberDataMode.imgBig stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
+                NSString * imgPath  = [[NSString stringWithFormat:@"%@/%@",BASEURL_IP,imgSmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                
+                [self.avatars setObject:[NSURL URLWithString:imgPath] forKey:[memberDataMode.uid stringValue]] ;
+                [self.users   setObject:memberDataMode.username forKey:[memberDataMode.uid stringValue]] ;
+            }
         }
         
-        for ( MemberDataModel *memberDataMode in self.memberTempArr) {
-            [userDic    setObject:memberDataMode.username forKey:[memberDataMode.uid stringValue]] ;
-        }
-        
-        self.users = userDic;
-
         JSQMessagesBubbleImageFactory *bubbleFactory = [[JSQMessagesBubbleImageFactory alloc] init];
         self.outgoingBubbleImageData = [bubbleFactory outgoingMessagesBubbleImageWithColor:[UIColor jsq_messageBubbleLightGrayColor]];
+       
         self.incomingBubbleImageData = [bubbleFactory incomingMessagesBubbleImageWithColor:[UIColor jsq_messageBubbleGreenColor]];
     }
     return self ;
@@ -56,14 +60,18 @@
         chatContent.unreadMessage = @(UNREADMESSAGE_YES) ;//变为已读
         if (chatContent.imgSmall && ![chatContent.imgSmall isEqualToString:@""]) {//是否是图片
             JSQPhotoMediaItem *photoItem = [[JSQPhotoMediaItem alloc] initWithImage:[UIImage imageWithData:[NSData dataWithBase64String:chatContent.imgSmall]]];
-            JSQMessage *photoMessage = [JSQMessage messageWithSenderId:chatContent.uid
-                                                           displayName:chatContent.username
-                                                                 media:photoItem];
+            if (![[UserInfo currUserInfo].Id isEqualToString:chatContent.uid]) {
+                 photoItem.appliesMediaViewMaskAsOutgoing = NO ;
+            }
+            JSQMessage *photoMessage = [[JSQMessage alloc] initWithSenderId:chatContent.uid
+                                                            senderDisplayName:chatContent.username
+                                                                         date:[[PublicMethodsViewController getPublicMethods] stringToDate:chatContent.time]
+                                                                        media:photoItem];
             [self.messages addObject:photoMessage];
         }else{
             JSQMessage *reallyMessage =[[JSQMessage alloc] initWithSenderId:chatContent.uid
                                                           senderDisplayName:chatContent.username
-                                                                       date:[NSDate distantPast]
+                                                                       date:[[PublicMethodsViewController getPublicMethods] stringToDate:chatContent.time]
                                                                        text:chatContent.text];
             [self.messages addObject:reallyMessage] ;
         }

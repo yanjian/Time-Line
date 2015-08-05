@@ -29,7 +29,7 @@
     self.title = @"Add a friend" ;
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
     [leftBtn addTarget:self action:@selector(backToAddFriendsView) forControlEvents:UIControlEventTouchUpInside] ;
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
@@ -53,6 +53,7 @@
     searchBar.tintColor = [UIColor whiteColor];
     [searchBar sizeToFit];
     self.tableView.tableHeaderView = searchBar ;
+    self.tableView.separatorInset  = UIEdgeInsetsMake(0, 60, 0, 0);
     self.tableView.tableFooterView = [UIView new];
 }
 

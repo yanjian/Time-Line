@@ -63,10 +63,12 @@ static NSString * eventDetailsCellId = @"eventDetailsCellID" ;
     UIView * footerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 50)] ;
     UIButton * deleteBtn = [[UIButton alloc ] init];
    // [deleteBtn setBackgroundColor:[UIColor grayColor]];
-    deleteBtn.frame = CGRectMake(0, 3, kScreen_Width, 44);
+    deleteBtn.frame = CGRectMake(10, 3, kScreen_Width-20, 44);
     
     [deleteBtn setTitle:@"Delete" forState:UIControlStateNormal];
-    [deleteBtn setTitleColor:purple forState:UIControlStateNormal];
+    [deleteBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [deleteBtn setBackgroundColor:[UIColor redColor]];
+    deleteBtn.layer.cornerRadius = 5.f;
     [deleteBtn addTarget:self action:@selector(deleteSimpleEvent:) forControlEvents:UIControlEventTouchUpInside];
     [footerView addSubview:deleteBtn] ;
     self.eventDetailTableView.tableFooterView = footerView ;
@@ -297,7 +299,6 @@ static NSString * eventDetailsCellId = @"eventDetailsCellID" ;
         ibActionSheet=[[IBActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Event" otherButtonTitles:nil, nil];
     }
     [ibActionSheet showInView:self.navigationController.view];
-
 }
 
 
@@ -310,7 +311,7 @@ static NSString * eventDetailsCellId = @"eventDetailsCellID" ;
             NSLog(@"-------------->>><<<<<>>>>> %@",self.event.startDate);
             
             AnyEvent *anyEvent = [AnyEvent MR_createEntity];
-            
+
             NSPredicate *pre = [NSPredicate predicateWithFormat:@"cid==%@",self.event.cId];
             NSArray * caArr  = [Calendar MR_findAllWithPredicate:pre];
             Calendar *ca     = [caArr lastObject];

@@ -58,6 +58,7 @@ typedef NS_ENUM(NSInteger, LoginOrLogoutType) {
 //基本IP
 //测试： http://t2.oxozoom.com:8080/myCalendar
 //真实环境  http://w.oxozoom.com:8080/myCalendar
+//#define BASEURL_IP  http://t2.oxozoom.com:8080/Go2   // 最新
 #define BASEURL_IP @"http://t2.oxozoom.com:8080/myCalendar"
 
 //googel搜索地址自动补全
@@ -161,6 +162,9 @@ typedef NS_ENUM(NSInteger, EventsAllDayAlert) {
 
 #define FRIENDS_OPTIONSNOTIFICTION @"friendOptionNotifiction"
 #define FRIENDS_OPTIONSINFO        @"friendOptionInfo"
+
+#define DELETEEVENTNOTI @"DeleteEventNotifictaion"
+#define DELETEEVENTNOTI_INFO @"DeleteEventIdInfo"
 //==========================================================================================================
 
 //可配置IP

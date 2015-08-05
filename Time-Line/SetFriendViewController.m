@@ -44,7 +44,7 @@
 	self.view.frame = frame;
 
 	UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, naviHigth)];
-	rview.backgroundColor = blueColor;
+	rview.backgroundColor = defineBlueColor;
 
 	//   导航： 右边的按钮
 	UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect];

@@ -53,17 +53,16 @@
             scroll.frame = self.bounds;
             scroll.backgroundColor = [UIColor whiteColor];
             UIImageView *imageView = [[UIImageView alloc] init];
-            imageView.image = self.image;
+            imageView.image  = self.image;
             _scrollImageView = imageView;
             [scroll addSubview:imageView];
-            imageView.frame = CGRectMake(0, 0, scroll.bounds.size.width, self.image.size.height);
+            imageView.frame  = CGRectMake(10, 64, kScreen_Width-2*10, kScreen_Height-2*64);
             scroll.backgroundColor = SDPhotoBrowserBackgrounColor;
             _scroll = scroll;
-            [self addSubview:scroll];
+            [self addSubview: scroll ];
             self.contentMode = UIViewContentModeScaleToFill;
         }
     }
-    
     _scroll.contentSize = CGSizeMake(0, self.image.size.height);
 }
 
@@ -80,17 +79,15 @@
 {
     SDWaitingView *waiting = [[SDWaitingView alloc] init];
     waiting.bounds = CGRectMake(0, 0, 100, 100);
-    waiting.mode = SDWaitingViewProgressMode;
-    _waitingView = waiting;
+    waiting.mode   = SDWaitingViewProgressMode;
+    _waitingView   = waiting;
     [self addSubview:waiting];
-    
-    
+
     __weak SDBrowserImageView *imageViewWeak = self;
 
     [self sd_setImageWithURL:url placeholderImage:placeholder options:SDWebImageRetryFailed progress:^(NSInteger receivedSize, NSInteger expectedSize) {
         
         imageViewWeak.progress = (CGFloat)receivedSize / expectedSize;
-        
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
         
         [imageViewWeak removeWaitingView];

@@ -1,8 +1,7 @@
 //
 //  MBFingerTipWindow.h
 //
-//  Created by Justin R. Miller on 3/29/11.
-//  Copyright 2011-2013 MapBox. All rights reserved.
+//  Copyright 2011-2015 Mapbox, Inc. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -24,7 +23,10 @@
 /** If using the default touchImage, the color with which to stroke the shape. Defaults to black. */
 @property (nonatomic, strong) UIColor *strokeColor;
 
-/** If using the default touchImage, the color with whicih to fill the shape. Defaults to white. */
+/** If using the default touchImage, the color with which to fill the shape. Defaults to white. */
 @property (nonatomic, strong) UIColor *fillColor;
+
+/** Sets whether touches should always show regardless of whether the display is mirroring. Defaults to NO. */
+@property (nonatomic, assign) BOOL alwaysShowTouches;
 
 @end

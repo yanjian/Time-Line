@@ -20,6 +20,8 @@
 #import "FriendInfoViewController.h"
 #import "NoticesViewController.h"
 #import "NoticesMsgManagedModel.h"
+#import "ManageAndScheduleParentViewController.h"
+
 
 #import "GCDAsyncSocket.h"
 #import "XMPP.h"
@@ -62,7 +64,8 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-	self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	self.window.backgroundColor = [UIColor whiteColor];
     
 	[GMSServices provideAPIKey:GOOGLE_API_KEY];//google地图key值
@@ -130,13 +133,9 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 
 - (void)setupViewControllers {
-    UIViewController *manageViewController = [[ManageViewController alloc] init];
+    UIViewController *manageViewController = [[ManageAndScheduleParentViewController alloc] init];
     NavigationController *manageNavigationController = [[NavigationController alloc]
                                                    initWithRootViewController:manageViewController];
-    
-    UIViewController *homeViewController = [[HomeViewController alloc] init];
-    NavigationController *homeNavigationController = [[NavigationController alloc]
-                                                    initWithRootViewController:homeViewController];
     
     UIViewController *noticesViewController = [[NoticesViewController alloc] init];
     NavigationController *notesNavigationController = [[NavigationController alloc]
@@ -150,14 +149,39 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
                                                    initWithRootViewController:setingViewController];
 
     self.tabBarController = [[UITabBarController alloc] init];
-    self.tabBarController.viewControllers = [NSArray arrayWithObjects:manageNavigationController, homeNavigationController, notesNavigationController,friendInfoNavigationController,setingNavigationController, nil];
-    self.tabBarController.tabBar.translucent = NO;
-    self.tabBarController.selectedIndex = DEFAULT_TAB;
+    
+    self.tabBarController.viewControllers = [NSArray arrayWithObjects:manageNavigationController,notesNavigationController,friendInfoNavigationController,setingNavigationController, nil];
+
+    UITabBar *tabBar = _tabBarController.tabBar;
+    UITabBarItem *eventItem = [tabBar.items objectAtIndex:0];
+    UITabBarItem *invitationItem = [tabBar.items objectAtIndex:1];
+    UITabBarItem *friendItem = [tabBar.items objectAtIndex:2];
+    UITabBarItem *setingItem = [tabBar.items objectAtIndex:3];
+    eventItem.selectedImage = [[UIImage imageNamed:@"Updates_Filled"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    eventItem.image = [[UIImage imageNamed:@"Updates_NoFill"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    invitationItem.selectedImage = [[UIImage imageNamed:@"Invitations_Filled"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    invitationItem.image = [[UIImage imageNamed:@"Invitations_NoFill"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    friendItem.selectedImage = [[UIImage imageNamed:@"Friends_Filled"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    friendItem.image = [[UIImage imageNamed:@"Friends_NoFill"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    
+    setingItem.selectedImage = [[UIImage imageNamed:@"Settings_Filled"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+    setingItem.image = [[UIImage imageNamed:@"Settings_NoFill"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
     
     self.window.rootViewController = self.tabBarController;
     [self.window makeKeyAndVisible];
-   
 }
+
+-(UITabBarController *)tabBarController {
+    if(!_tabBarController){
+        _tabBarController = [[UITabBarController alloc] init];
+        _tabBarController.tabBar.translucent = NO;
+        _tabBarController.selectedIndex = DEFAULT_TAB;
+    }
+    return _tabBarController ;
+}
+
 
 - (NSTimeInterval)getRefreshFetchTimetimeInterval {
 	//@"15 minutes",@"30 minutes",@"1 hour",@"2 hour",@"never"
@@ -205,7 +229,6 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 				NSLog(@"登陆错误");
 			}
 			break;
-
 		case LoginUser_GetUserInfo_Tag: {
 			if ([@"-1000" isEqualToString:str]) {
 				[self userLogin];
@@ -261,7 +284,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 			UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ALERT"
 			                                                message:notification.alertBody
 			                                               delegate:nil
-			                                      cancelButtonTitle:@"确定"
+			                                      cancelButtonTitle:@"Confirm"
 			                                      otherButtonTitles:nil];
 			[alert show];
 		}
@@ -323,10 +346,10 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 //网络改变
 - (void)noReachabilityChanged {
-//    UIAlertView *alert;
-//    alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请检查你的网络连接" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
-//    [alert show];
-	NSLog(@"无网络连接");
+    UIAlertView *alert;
+    alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"请检查你的网络连接" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles: nil];
+    [alert show];
+
 }
 
 - (void)application:(UIApplication *)application performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler {
@@ -717,26 +740,27 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
         NSDictionary *bodyDic = [body objectFromJSONString] ;
         
         NSString * msgType = [NSString stringWithFormat:@"%@",[bodyDic objectForKey:@"type"]];
-        if( [ @"1"  isEqualToString: msgType ] ||[ @"2"  isEqualToString: msgType ] || [ @"3"  isEqualToString: msgType ] || [ @"11"  isEqualToString: msgType ]){//1.对方要添加你为好友信息 ,2.同意添加对方为好友 , 3.拒绝添加对方为好友 ,11.活动新增或邀请成员
-            NoticesMsgManagedModel * noticeMsgManaged = [NoticesMsgManagedModel MR_createEntity];
-            noticeMsgManaged.nId       = @([[bodyDic objectForKey:@"id"] integerValue]);
-            noticeMsgManaged.isReceive = @([[bodyDic objectForKey:@"isReceive"] integerValue]);
-            noticeMsgManaged.message   = [bodyDic objectForKey:@"message"];
-            noticeMsgManaged.time      = [bodyDic objectForKey:@"time"];
-            noticeMsgManaged.type      = @([msgType integerValue]);
-            noticeMsgManaged.uid       = @([[bodyDic objectForKey:@"uid"] integerValue]);
-            noticeMsgManaged.isRead    = self.isRead; //未读//在这里的信息都表示没有读取的
-            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
-                if (contextDidSave) {
-                     [[NSNotificationCenter defaultCenter] postNotificationName:FRIENDS_OPTIONSNOTIFICTION object:self userInfo:@{FRIENDS_OPTIONSINFO:noticeMsgManaged}];
-                }
-            }];
-        }else{
-            ChatContentModel * chatContent = [self saveChatInfoForActive:bodyDic];
-            //发送通知
-            [[NSNotificationCenter defaultCenter] postNotificationName:CHATGROUP_ACTIVENOTIFICTION object:self userInfo:@{CHATGROUP_USERINFO:chatContent}];
+        if(![ @"4"  isEqualToString: msgType ]){//4.表示删除。。。。不推送通知
+            if( [ @"1"  isEqualToString: msgType ] ||[ @"2"  isEqualToString: msgType ] || [ @"3"  isEqualToString: msgType ] || [ @"11"  isEqualToString: msgType ]){//1.对方要添加你为好友信息 ,2.同意添加对方为好友 , 3.拒绝添加对方为好友 ,11.活动新增或邀请成员
+                NoticesMsgManagedModel * noticeMsgManaged = [NoticesMsgManagedModel MR_createEntity];
+                noticeMsgManaged.nId       = @([[bodyDic objectForKey:@"id"] integerValue]);
+                noticeMsgManaged.isReceive = @([[bodyDic objectForKey:@"isReceive"] integerValue]);
+                noticeMsgManaged.message   = [bodyDic objectForKey:@"message"];
+                noticeMsgManaged.time      = [bodyDic objectForKey:@"time"];
+                noticeMsgManaged.type      = @([msgType integerValue]);
+                noticeMsgManaged.uid       = @([[bodyDic objectForKey:@"uid"] integerValue]);
+                noticeMsgManaged.isRead    = self.isRead; //未读//在这里的信息都表示没有读取的
+                [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
+                    if (contextDidSave) {
+                         [[NSNotificationCenter defaultCenter] postNotificationName:FRIENDS_OPTIONSNOTIFICTION object:self userInfo:@{FRIENDS_OPTIONSINFO:noticeMsgManaged}];
+                    }
+                }];
+            }else{
+                ChatContentModel * chatContent = [self saveChatInfoForActive:bodyDic];
+                //发送通知
+                [[NSNotificationCenter defaultCenter] postNotificationName:CHATGROUP_ACTIVENOTIFICTION object:self userInfo:@{CHATGROUP_USERINFO:chatContent}];
+            }
         }
-    
 //		if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
 //			UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:displayName
 //			                                                    message:body
@@ -769,7 +793,8 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
             
             NSData * imgSmallData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,imgsmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]] ;
             chatContent.imgSmall =  [imgSmallData base64String];
-        }else if ( [bodyDic objectForKey:@"text"]){
+            chatContent.text = @"[Picture]";
+        }else if ( [bodyDic objectForKey:@"text"] || ![@"" isEqualToString:[bodyDic objectForKey:@"text"]] ){
             chatContent.text = [bodyDic objectForKey:@"text"];
         }
     }else if([@"10" isEqualToString:msgType]){

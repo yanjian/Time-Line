@@ -89,7 +89,7 @@
 - (UIButton *)createLeftButton {
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
     [leftBtn addTarget:self action:@selector(dimssGoogleView:) forControlEvents:UIControlEventTouchUpInside] ;
 	return leftBtn;
 }
@@ -97,7 +97,7 @@
 - (UIButton *)createRightBtn:(NSString *)title {
 	UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
 	[rightBtn setTitle:title forState:UIControlStateNormal];
-    [rightBtn setTitleColor:blueColor forState:UIControlStateNormal];
+    [rightBtn setTitleColor:defineBlueColor forState:UIControlStateNormal];
 	[rightBtn setFrame:CGRectMake(0, 0, 60, 20)];
 	[rightBtn addTarget:self action:@selector(bindGoogleAccountSkip:) forControlEvents:UIControlEventTouchUpInside];
 	return rightBtn;

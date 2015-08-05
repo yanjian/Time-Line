@@ -39,8 +39,6 @@
     if (self)
     {
         self.title = @"Invitations" ;
-        [self.tabBarItem setImage:[UIImage imageNamed:@"Invitations_NoFill"]];
-        self.tabBarItem.title = @"Invitations";
     }
     return self;
 }
@@ -93,12 +91,12 @@
 	[self.tableView footerEndRefreshing];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
-    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
-    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
-}
+//- (void)viewWillAppear:(BOOL)animated {
+//    [super viewWillAppear:animated];
+//    
+//    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
+//    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+//}
 
 - (void)loadUserRequestInfo:(NSInteger)num {
 	ASIHTTPRequest *msgRequest = [t_Network httpGet:@{ @"num":@(num) }.mutableCopy Url:anyTime_GetUserMessage2 Delegate:nil Tag:anyTime_GetUserMessage2_tag];
@@ -122,13 +120,16 @@
 	                        NSLog(@"%@", dic);
 	                        NoticesMsgModel *noticeMsg = [NoticesMsgModel new];
 	                        [noticeMsg parseDictionary:dic];
-	                        [_noticeArr addObject:noticeMsg];
+                            if ([noticeMsg.type integerValue] != 4) {//是表示对方删除我得信息---排除在外......
+                                [_noticeArr addObject:noticeMsg];
+                            }
 						}
 					}
 				}
 	            [_tableView reloadData];  //刷新table
 			}
 	        else {
+                
 			}
 		}
 	}];
@@ -186,14 +187,14 @@
                     NSLog(@"%@", _urlStr);
                     NSURL *url = [NSURL URLWithString:_urlStr];
                     [activeCell.showImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-                    [activeCell.titleAndName setTextColor: blueColor];
+                    [activeCell.titleAndName setTextColor: defineBlueColor];
                     [activeCell.titleAndName setText:[msgDic objectForKey:@"fname"]];
                     [activeCell.note setText:[msgDic objectForKey:@"msg"]]  ;
                     if([noticeMsg.isRead intValue] == 1 ){
                         // [activeCell.pointLab setHidden:YES]; 暂时
                     }else{
                         [activeCell.pointLab setHidden:NO];
-                        [activeCell.pointLab setBackgroundColor:blueColor];
+                        [activeCell.pointLab setBackgroundColor:defineBlueColor];
                     }
                     
                 }
@@ -206,14 +207,14 @@
                     NSLog(@"%@", _urlStr);
                     NSURL *url = [NSURL URLWithString:_urlStr];
                     [activeCell.showImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-                    [activeCell.titleAndName setTextColor: blueColor];
+                    [activeCell.titleAndName setTextColor: defineBlueColor];
                     [activeCell.titleAndName setText:[msgDic objectForKey:@"fname"]];
                     [activeCell.note setText:[msgDic objectForKey:@"msg"]]  ;
                     if([noticeMsg.isRead intValue] == 1 ){
                         [activeCell.pointLab setHidden:YES];
                     }else{
                         [activeCell.pointLab setHidden:NO];
-                        [activeCell.pointLab setBackgroundColor:blueColor];
+                        [activeCell.pointLab setBackgroundColor:defineBlueColor];
                     }
                 }
                 return activeCell;
@@ -243,7 +244,7 @@
 //                    NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 //                    NSLog(@"%@", _urlStr);
 //                    NSURL *url = [NSURL URLWithString:_urlStr];
-//                    [activeCell.showImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+//                    [activeCell.showImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"go2_grey"]];
 //                }else{
 //                    activeCell.showShotTitle.hidden = NO ;
 //                    [activeCell.showImg setBackgroundColor:[UIColor colorWithHexString:@"2e9ef1"]];

@@ -32,7 +32,7 @@
 	//创建一个左边按钮
 	UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue"] forState:UIControlStateNormal] ;
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
 	[leftBtn addTarget:self action:@selector(onClickClose) forControlEvents:UIControlEventTouchUpInside];
 
 	UIBarButtonItem *leftButton = [[UIBarButtonItem alloc] initWithCustomView:leftBtn];

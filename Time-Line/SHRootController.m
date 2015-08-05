@@ -32,7 +32,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationController.navigationBar.barTintColor = blueColor;
+    self.navigationController.navigationBar.barTintColor = defineBlueColor;
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     
     [leftBtn setBackgroundImage:[UIImage imageNamed:@"Icon_BackArrow.png"] forState:UIControlStateNormal];
@@ -155,7 +155,7 @@
     [self.view addSubview:_lineGraph];
     
     eventlabel=[[UILabel alloc]initWithFrame:CGRectMake(0, _lineGraph.frame.origin.y+_lineGraph.frame.size.height-10, self.view.frame.size.width, 50)];
-    eventlabel.backgroundColor=blueColor;
+    eventlabel.backgroundColor=defineBlueColor;
     eventlabel.textAlignment=NSTextAlignmentCenter;
     eventlabel.textColor=[UIColor whiteColor];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);

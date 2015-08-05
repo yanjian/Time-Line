@@ -114,7 +114,7 @@
     
     self.navigationController.navigationBarHidden=NO;
    // self.navigationController.navigationBar.translucent=NO;
-    self.navigationController.navigationBar.barTintColor =blueColor;
+    self.navigationController.navigationBar.barTintColor =defineBlueColor;
     _tableView=[[UITableView alloc] initWithFrame:CGRectMake(0, 64, kScreen_Width, kScreen_Height) style:UITableViewStylePlain];
     _tableView.delegate=self;
     _tableView.dataSource=self;

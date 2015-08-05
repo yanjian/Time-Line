@@ -8,7 +8,6 @@
 
 #import "TimeSlotDetailsViewController.h"
 #import "VotedTableViewController.h"
-#import "ScheduleViewController.h"
 
 @interface TimeSlotDetailsViewController ()
 
@@ -40,9 +39,8 @@
 -(NSArray *)childViewControllersForPagerTabStripViewController:(XLPagerTabStripViewController *)pagerTabStripViewController{
     VotedTableViewController * voteVc = [[VotedTableViewController alloc] init];
     voteVc.voteMemberArr = self.voteMemberArr ;
-    
-    ScheduleViewController * sheduleVc = [[ScheduleViewController alloc] init];
-    return @[voteVc/*,sheduleVc*/];
+
+    return @[voteVc];
 }
 
 

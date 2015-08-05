@@ -573,7 +573,7 @@
 				NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, self.activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 				NSLog(@"%@", _urlStr);
 				NSURL *url = [NSURL URLWithString:_urlStr];
-				[_activeImgView sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+				[_activeImgView sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"go2_grey"]];
 
 				[cell.contentView addSubview:_activeImgView];
 			}

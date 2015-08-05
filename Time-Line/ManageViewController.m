@@ -4,7 +4,6 @@
 //
 //  Created by IF on 14/12/5.
 //  Copyright (c) 2014年 zhilifang. All rights reserved.
-//
 
 #define latestCount @"latestCount"
 #define latestEventMsg @"latestEventMsg"
@@ -26,6 +25,7 @@
 //#import "AddActiveViewController.h"
 #import "ActiveDestinationViewController.h"
 #import "SimpleEventViewController.h"
+#import "HomeViewController.h"
 
 typedef NS_ENUM (NSInteger, ShowActiveType) {
 	ShowActiveType_upcoming     = 0,
@@ -39,34 +39,33 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 
 @interface ManageViewController () <UITableViewDelegate, UITableViewDataSource,
-                                    UIScrollViewDelegate, ASIHTTPRequestDelegate, ActivedetailsViewControllerDelegate,UISearchBarDelegate,UISearchDisplayDelegate,UIActionSheetDelegate>
+                                    UIScrollViewDelegate, ASIHTTPRequestDelegate, ActivedetailsViewControllerDelegate,UISearchBarDelegate>
 {
-    NSMutableArray *readyActiveArr ;
-	NSMutableArray *_activeArr;  //用于显示活动的数组
-	NSMutableArray *_tmpActiveArr;   //抓取到的数据都放在这个里面的（除隐藏的活动，直接放到_activeArr中的）
-	ShowActiveType _showActiveType;
-	NSMutableArray *_selectActiveBtnArr;
-    NSArray *_configs;
-    UISearchBar * mySearchBar ;
-    NSMutableDictionary *  latestMsgDic ;//存放最新的活动数据
-    NSArray *resultDataArr;
-}
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
-@property (nonatomic, strong) UISearchDisplayController *searchController;
+	NSMutableArray * _tmpActiveArr;   //抓取到的数据都放在这个里面的（除隐藏的活动，直接放到_activeArr中的）
+	ShowActiveType   _showActiveType;
+	NSMutableArray * _selectActiveBtnArr;
+    NSArray        * _configs;
 
+    NSMutableDictionary *  latestMsgDic ;//存放最新的活动数据
+    NSMutableArray      *  resultDataArr;
+}
+@property (strong, nonatomic)     IBOutlet UITableView *tableView;
+@property (nonatomic,assign)      BOOL isSearch ;
+@property (nonatomic,retain )     UISearchBar  * mySearchBar ;
+
+@property (nonatomic ,assign) BOOL isSearchExe;
 @end
 
 @implementation ManageViewController
-
+@synthesize _activeArr;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
-        self.title = @"Event" ;
-        [self.tabBarItem setImage:[UIImage imageNamed:@"Updates_NoFill"]];
-        self.tabBarItem.title = @"Updates";
+        self.view.frame =  CGRectMake (0, 0, kScreen_Width, kScreen_Height);
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshEventData:) name:DELETEEVENTNOTI object:nil];
     }
     return self;
 }
@@ -74,100 +73,41 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	CGRect frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
-	self.view.frame = frame;
 
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:self action:@selector(searchNewActive)];
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Create" style:UIBarButtonItemStylePlain target:self action:@selector(createNewActive)];
-    
-
-	_activeArr = [NSMutableArray array]; //创建一个数组
-
-	_showActiveType = ShowActiveType_All; //默认查询所有的活动
-
-	_selectActiveBtnArr = [NSMutableArray array];
-    
+	_activeArr = [NSMutableArray array];
+    _selectActiveBtnArr = [NSMutableArray array];
     latestMsgDic = [NSMutableDictionary dictionary];
     
-   // _configs = @[@"To be confirm", @"Confirm", @"Past", @"Hide", @"Refused notification"];
+	_showActiveType = ShowActiveType_All; //默认查询所有的活动
 
-//	UIView *selectView = [[UIView alloc] initWithFrame:CGRectMake(0, 1, frame.size.width, 25)];
-//	for (int i = 0; i < 3; i++) {
-//		UIButton *allBtn = [[UIButton alloc] initWithFrame:CGRectMake(selectView.frame.size.width / 3 * i, 0, selectView.frame.size.width / 3, 25)];
-//		[allBtn setBackgroundImage:[UIImage imageNamed:@"TIme_Start"] forState:UIControlStateSelected];
-//		allBtn.titleLabel.font = [UIFont systemFontOfSize:12.f];
-//		if (i == 0) {
-//			[allBtn setSelected:YES];
-//			allBtn.tag = ShowActiveType_All;
-//			[allBtn setTitle:@"ALL" forState:UIControlStateNormal];
-//		}
-//		else if (i == 1) {
-//			allBtn.tag = ShowActiveType_upcoming;
-//			[allBtn setTitle:@"UpComing" forState:UIControlStateNormal];
-//		}
-//		else if (i == 2) {
-//			allBtn.tag = 2;
-//			[allBtn setTitle:@"More" forState:UIControlStateNormal];
-//		}
-//
-//		[allBtn addTarget:self action:@selector(clickTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
-//		[selectView addSubview:allBtn];
-//		[_selectActiveBtnArr addObject:allBtn];
-//	}
-//	[selectView setBackgroundColor:blueColor];
-//	[self.view addSubview:selectView];
-
-//	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0,
-//	                                                               selectView.frame.size.height,
-//	                                                               frame.size.width,
-//	                                                               frame.size.height - (selectView.frame.size.height + selectView.frame.origin.y + naviHigth))
-//	                                              style:UITableViewStyleGrouped];
-    
-    self.tableView =[[UITableView alloc] initWithFrame:CGRectMake(0,
-                                                                  0,
-                                                                  frame.size.width,
-                                                                  frame.size.height)
-                                                 style:UITableViewStyleGrouped];
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    self.tableView.separatorInset = UIEdgeInsetsMake(0, 50, 0, 0);
+    self.tableView.separatorInset  = UIEdgeInsetsMake(0, 50, 0, 0);
     self.tableView.tableFooterView = [UIView new] ;
-    self.view=self.tableView;
-
     
-    //创建searchbar
-    mySearchBar  = [[UISearchBar alloc] init];
-    mySearchBar.delegate = self;
-    mySearchBar.placeholder = @"Event name?";
-    mySearchBar.translucent = YES ;
-    if ([mySearchBar respondsToSelector:@selector(barTintColor)]) {
-        [mySearchBar setBarTintColor:[UIColor colorWithHexString:@"f8f0f0"]];
-    }
-    
-    
-    self.searchController = [[UISearchDisplayController alloc] initWithSearchBar:mySearchBar contentsController:self];
-    self.searchDisplayController.delegate = self;
-    self.searchDisplayController.searchResultsDataSource = self;
-    self.searchDisplayController.searchResultsDelegate = self;
-    
-    
-    self.tableView.tableHeaderView = mySearchBar;
-    
+    UIView *headerView = [[UISearchBar alloc] initWithFrame:self.mySearchBar.frame];
+    self.tableView.tableHeaderView = headerView;
+    [self.tableView addSubview:self.mySearchBar];
     
     //收到信息的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fetchChatGroupInfo:) name:CHATGROUP_ACTIVENOTIFICTION object:nil];
-    
-    //把searchbar赋给表头，创建searchController
 
-    
-
-    
 	 [self setupRefresh];
   }
 
 - (BOOL)shouldAutomaticallyForwardAppearanceMethods {
     return YES;
+}
+
+-(UISearchBar *)mySearchBar{
+    if (!_mySearchBar) {
+        //创建searchbar
+        _mySearchBar  = [[UISearchBar alloc] init];
+        _mySearchBar.delegate = self;
+        _mySearchBar.placeholder = @"Search";
+        _mySearchBar.translucent = YES ;
+        _mySearchBar.delegate = self ;
+        [_mySearchBar sizeToFit];
+    }
+    return _mySearchBar ;
 }
 
 /**
@@ -202,16 +142,12 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 	[self.tableView footerEndRefreshing];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-	[super viewWillAppear:animated];
-    
-    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
-    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
-}
-
--(void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:animated];
-}
+//- (void)viewWillAppear:(BOOL)animated {
+//	[super viewWillAppear:animated];
+//    
+//    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
+//    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+//}
 
 
 -(void)fetchChatGroupInfo:(NSNotification *)notification{
@@ -241,7 +177,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
         }else{
             [latestMsgDic setObject:@{latestCount:@(1),latestEventMsg:chatContent.text==nil?@"":chatContent.text,latestMsgTime:objDate1,latestUserName:chatContent.username==nil?@"":chatContent.username }.mutableCopy forKey:chatContent.eid];
         }
-        [self.tableView reloadData];
+        [self fefreshTableView ];
     }
 }
 
@@ -316,15 +252,11 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     [self showActiveWhatWithActiveType:_showActiveType];
     
-    if (tableView == self.searchController.searchResultsTableView) {
-        readyActiveArr = [NSMutableArray arrayWithArray:resultDataArr];
-        self.searchController.searchResultsTableView.separatorStyle = UITableViewCellSelectionStyleNone;
-        return readyActiveArr.count ;
+    if (self.isSearch) {
+        return resultDataArr.count ;
     }else{
-     // self.tableView.separatorStyle = UITableViewCellSelectionStyleNone;
-    return _activeArr.count ;
+       return _activeArr.count ;
     }
-	 
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -340,47 +272,28 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-	//	static NSString   *activeId   = @"activeManagerCellId";
-        EventInfoShowCell *activeCell = (EventInfoShowCell *) [tableView cellForRowAtIndexPath:indexPath];// [tableView dequeueReusableCellWithIdentifier:activeId];
-		if (!activeCell) {
+       EventInfoShowCell *activeCell = (EventInfoShowCell *) [tableView cellForRowAtIndexPath:indexPath];
+       if (!activeCell) {
 			activeCell = (EventInfoShowCell *)[[[NSBundle mainBundle] loadNibNamed:@"EventInfoShowCell" owner:self options:nil] firstObject];
             activeCell.showShortTitle.hidden = YES ;
             
         }
-		if (readyActiveArr.count > 0 || _activeArr.count>0) {
-            
+		if (resultDataArr.count > 0 || _activeArr.count>0) {
              ActiveBaseInfoMode *activeEvent = nil;
-             if (tableView == self.searchController.searchResultsTableView) {
-                activeEvent = readyActiveArr[indexPath.row];
+             if (self.isSearch) {
+                activeEvent = resultDataArr[indexPath.row];
              }else{
                 activeEvent = _activeArr[indexPath.row];
              }
             [self loadUnreadMsg:activeEvent.Id];
 			activeCell.activeEvent = activeEvent;
 
-//			if ([activeEvent.status integerValue] == ActiveStatus_upcoming) {
-//				if ([activeEvent.type integerValue] == 2) {
-//					activeCell.activeStateLab.text = @"UpComing(Voting)";
-//				}
-//				else {
-//					activeCell.activeStateLab.text = @"UpComing";
-//				}
-//			}
-//			else if ([activeEvent.status integerValue] == ActiveStatus_toBeConfirm) {
-//				activeCell.activeStateLab.text = @"To be Confirm";
-//			}
-//			else if ([activeEvent.status integerValue] == ActiveStatus_confirmed) {
-//				activeCell.activeStateLab.text = @"Confirmed";
-//			}
-//			else if ([activeEvent.status integerValue] == ActiveStatus_past) {
-//				activeCell.activeStateLab.text = @"Past";
-//			}
             if ( activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl] ) {
                 activeCell.showShortTitle.hidden = YES ;
                 NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 NSLog(@"%@", _urlStr);
                 NSURL *url = [NSURL URLWithString:_urlStr];
-                [activeCell.activePic sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+                [activeCell.activePic sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"go2_grey"]];
             }else{
                 activeCell.showShortTitle.hidden = NO ;
                 [activeCell.activePic setBackgroundColor: [UIColor colorWithHexString:@"2e9ef1"]];
@@ -417,46 +330,18 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-//	if (tableView == self.popTableView) {
-//		if (indexPath.row == 0) { //
-//			_showActiveType = ShowActiveType_toBeConfirm;
-//			[self.tableView reloadData];
-//		}
-//		else if (indexPath.row == 1) {
-//			_showActiveType = ShowActiveType_confirmed;
-//			[self.tableView reloadData];
-//		}
-//		else if (indexPath.row == 2) {
-//			_showActiveType = ShowActiveType_past;
-//			[self.tableView reloadData];
-//		}
-//		else if (indexPath.row == 3) {
-//			_showActiveType = ShowActiveType_hide;
-//			[self featchHideActivity];
-//		}
-//		else if (indexPath.row == 4) {
-//			_showActiveType = ShowActiveType_refusedNot;
-//			[self.tableView reloadData];
-//		}
-//		return;
-//	}
     ActiveBaseInfoMode *activeEvent = nil ;
-    if (tableView == self.searchController.searchResultsTableView) {
-        activeEvent = readyActiveArr[indexPath.row];
+    if (self.isSearch) {
+        activeEvent = resultDataArr[indexPath.row];
     }else{
         activeEvent = _activeArr[indexPath.row];
     }
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-//	ActivedetailsViewController *activeDetailVC = [[ActivedetailsViewController alloc] init]; //放弃使用
-//    
-//	activeDetailVC.delegate = self;
-//	activeDetailVC.activeEventInfo = activeEvent;
-//	[self.navigationController pushViewController:activeDetailVC animated:YES];
-    
+
     UIStoryboard *storyboarb = [UIStoryboard storyboardWithName:@"ActiveDestination" bundle:[NSBundle mainBundle]];
      ActiveDestinationViewController * activeDesc =( ActiveDestinationViewController *)  [storyboarb instantiateViewControllerWithIdentifier:@"ActiveDescriptionId"];
      activeDesc.activeEventInfo = activeEvent;
+     activeDesc.manageViewController = self ;
      activeDesc.hidesBottomBarWhenPushed = YES ;
     [self.navigationController pushViewController:activeDesc animated:YES];
 }
@@ -494,7 +379,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 				}
 			}
 		}
-	    [self.tableView reloadData];
+	    [self fefreshTableView ];
 	}];
 	[hideRequest setFailedBlock: ^{
 	    [MBProgressHUD showError:@"Load data failed, please check your network"];
@@ -512,10 +397,10 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 	}
 	if (_showActiveType == ShowActiveType_hide) {//在隐藏的活动页面就单独抓取
 		[self featchHideActivity];
-	}
-	else {
+	}else {
 		_tmpActiveArr = [NSMutableArray arrayWithCapacity:0];
-		ASIHTTPRequest *activeRequest = [t_Network httpGet:nil Url:anyTime_GetEventBasicInfo Delegate:self Tag:anyTime_GetEventBasicInfo_tag];
+		
+        ASIHTTPRequest *activeRequest = [t_Network httpGet:nil Url:anyTime_GetEventBasicInfo Delegate:self Tag:anyTime_GetEventBasicInfo_tag];
 		[activeRequest setDownloadCache:g_AppDelegate.anyTimeCache];
 		[activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy | ASIAskServerIfModifiedWhenStaleCachePolicy];
 		[activeRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy];
@@ -523,29 +408,6 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 	}
 }
 
-- (void)clickTouchUpInside:(UIButton *)sender {
-//	for (UIButton *button in _selectActiveBtnArr) {
-//		button.selected = NO;
-//	}
-//	sender.selected = YES;
-//	if (sender.tag == 2) { //more 按钮
-//		CGPoint startPoint = CGPointMake(CGRectGetMidX(sender.frame), CGRectGetMaxY(sender.frame) + 20);
-//
-//		[self.popover showAtPoint:startPoint popoverPostion:DXPopoverPositionDown withContentView:self.popTableView inView:self.view];
-//		__weak typeof(self) weakSelf = self;
-//
-//		self.popover.didDismissHandler = ^{
-//			[weakSelf bounceTargetView:sender];
-//		};
-//	}
-//	else {
-//		if (_showActiveType != sender.tag) {//这里tag 的值 要与 _showActiveType的值一致 好处理
-//			[self bounceTargetView:sender];
-//			_showActiveType = sender.tag;
-//			[_tableView reloadData];
-//		}
-//	}
-}
 
 - (void)bounceTargetView:(UIView *)targetView {
 	targetView.transform = CGAffineTransformMakeScale(0.9, 0.9);
@@ -639,13 +501,12 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 						[_tmpActiveArr addObject:activeEvent];
 					}
 				}
-				[self.tableView reloadData];
+				[self fefreshTableView ];
 			}else {
 				//[MBProgressHUD showError:@"Request Fail"];
 			}
 			[MBProgressHUD hideHUDForView:self.view animated:YES];
 		} break;
-
 		default:
 			break;
 	}
@@ -665,64 +526,71 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
     
 }
 
--(void)searchNewActive{
-       [self.searchController.searchBar becomeFirstResponder];
-}
 
-
--(void)createNewActive{
-    UIActionSheet *activeSheet = [[UIActionSheet alloc] initWithTitle:@"Add Event" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Social",@"Personal", nil];
-    [activeSheet showInView:self.view];
-    
-    
-}
-
-
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
-    
-    if (buttonIndex == 0) {
-//        AddActiveViewController *addActiveVC = [[AddActiveViewController alloc] init];
-//        [self.navigationController  pushViewController:addActiveVC animated:YES ] ;
-        AddNewActiveViewController * antVC  =[[AddNewActiveViewController alloc] init];
-        antVC.hidesBottomBarWhenPushed = YES ;
-        [self.navigationController  pushViewController:antVC animated:YES ] ;
-        
-    }else if (buttonIndex == 1){
-        SimpleEventViewController * simpleEventVC = [[SimpleEventViewController alloc] init];
-        simpleEventVC.hidesBottomBarWhenPushed = YES ;
-        [self.navigationController pushViewController:simpleEventVC animated:YES];
-    }
-    
-}
-
+/**
+ *点击搜索执行的方法
+ *
+ */
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
     if (searchBar.text) {
+        self.isSearch = YES ;
+        [searchBar resignFirstResponder];
+        
         NSString *searchStr = [NSString stringWithFormat:@"*%@*",searchBar.text];
         NSPredicate *filterPre= [NSPredicate predicateWithFormat:@"title LIKE %@",searchStr];
         NSArray * filterArr = [_activeArr filteredArrayUsingPredicate:filterPre];
-        resultDataArr = [NSArray arrayWithArray:filterArr];
+        resultDataArr = [NSMutableArray arrayWithArray:filterArr];
+        [self.tableView reloadData];
     }
 }
 
--(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
-{
-    NSString *searchStr = [NSString stringWithFormat:@"*%@*",searchString];
-    NSPredicate *filterPre= [NSPredicate predicateWithFormat:@"title LIKE %@",searchStr];
-    NSArray * filterArr = [_activeArr filteredArrayUsingPredicate:filterPre];
-    resultDataArr = [NSArray arrayWithArray:filterArr];
-    return(YES);
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText{
+    if (searchBar.text && ![@"" isEqualToString:searchBar.text]) {
+        self.isSearch = YES ;
+        NSString *searchStr = [NSString stringWithFormat:@"*%@*",searchBar.text];
+        NSPredicate *filterPre= [NSPredicate predicateWithFormat:@"title LIKE %@",searchStr];
+        NSArray * filterArr = [_activeArr filteredArrayUsingPredicate:filterPre];
+        resultDataArr = [NSMutableArray arrayWithArray:filterArr];
+       
+    }else{
+        self.isSearch = NO ;
+        [searchBar resignFirstResponder];
+        [resultDataArr removeAllObjects];
+        
+    }
+    [self fefreshTableView ];
 }
 
 
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
-{
-    return  NO ;
+
+//刷新表格
+-(void)fefreshTableView{
+     [self.tableView reloadData];
 }
 
-
-- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar{
-    [self.tableView reloadData];
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView{
+//    if ([self.mySearchBar becomeFirstResponder]) {
+//        [self.mySearchBar resignFirstResponder];
+//    }
+//    if (scrollView.contentOffset.y < 44) {
+//        self.tableView.contentInset = UIEdgeInsetsZero;
+//    } else {
+//        self.tableView.contentInset = UIEdgeInsetsMake(-CGRectGetHeight(self.mySearchBar.bounds), 0, 0, 0);
+//    }
 }
+
+/**
+ *
+ *删除事件时发出的通知处理
+ */
+-(void)refreshEventData:(NSNotification *) notification{
+    NSString * eventId =  [notification.userInfo objectForKey:DELETEEVENTNOTI_INFO];
+    NSPredicate * pre = [NSPredicate predicateWithFormat:@"Id == %@",eventId];
+    ActiveBaseInfoMode * activeBaseInfo =  [[_tmpActiveArr filteredArrayUsingPredicate:pre] lastObject];
+    [_tmpActiveArr removeObject:activeBaseInfo];
+    [self fefreshTableView ];
+}
+
 
 - (NSString *)monthStringWithInteger:(NSUInteger)month {
 	NSString *monthStr;
@@ -779,6 +647,11 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 			break;
 	}
 	return monthStr;
+}
+
+-(void)dealloc{
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:DELETEEVENTNOTI];
 }
 
 @end

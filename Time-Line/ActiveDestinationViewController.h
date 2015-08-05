@@ -9,6 +9,13 @@
 #import "XLButtonBarPagerTabStripViewController.h"
 #import "ActiveBaseInfoMode.h"
 #import "UIColor+HexString.h"
+
+@class ManageViewController ;
+
 @interface ActiveDestinationViewController : XLButtonBarPagerTabStripViewController
 @property (nonatomic, retain)  ActiveBaseInfoMode *activeEventInfo;
+
+@property (nonatomic, retain)  ManageViewController *manageViewController;
+
 @end
+

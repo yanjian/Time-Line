@@ -23,7 +23,7 @@
 	self.view.frame = frame;
 
 	UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, 44)];
-	rview.backgroundColor = blueColor;
+	rview.backgroundColor = defineBlueColor;
 
 	[self loadData];
 

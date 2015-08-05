@@ -15,11 +15,11 @@ typedef NS_ENUM(NSInteger, NavStyleType) {
     NavStyleType_LeftModelOpen = 1
 };
 
-
+@protocol InviteesViewControllerDelegate ;
 @interface InviteesViewController : UIViewController
 
-@property (nonatomic , retain) ActiveDataMode *activeDataMode;
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (nonatomic , retain) ActiveDataMode      * activeDataMode;
+@property (strong, nonatomic) IBOutlet UITableView * tableView;
 @property (assign, nonatomic)  NavStyleType  navStyleType;
 
 @property (retain, nonatomic)  NSMutableArray * joinArr ;//存放参加的用户的id ；
@@ -27,7 +27,17 @@ typedef NS_ENUM(NSInteger, NavStyleType) {
 @property (retain, nonatomic)  NSMutableArray * joinAllArr ;
 
 @property (nonatomic,assign)   BOOL             isEdit ;
-@property (strong, nonatomic) ActiveEventMode *activeEvent ;
+@property (strong, nonatomic) ActiveEventMode * activeEvent ;
 
+@property (nonatomic,assign) id<InviteesViewControllerDelegate> delegate ;
 
 @end
+
+
+@protocol InviteesViewControllerDelegate <NSObject>
+
+@optional
+-(void)inviteesViewController:(InviteesViewController *)inviteesViewController ;
+
+@end
+

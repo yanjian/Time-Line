@@ -22,7 +22,6 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 @interface AddNewActiveViewController ()<UITableViewDataSource,UITableViewDelegate,UIActionSheetDelegate,PECropViewControllerDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate,UITextFieldDelegate,getlocationDelegate,MKMapViewDelegate>
 {
     ActiveImageTableViewCell *  activeImgCell;
-    UIDatePicker *  datePicker;
     UITextField  *  titleFiled ;
     UITextField  *  descFiled ;
     UIView       *  datePickerView ;
@@ -38,6 +37,8 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 @property (nonatomic,retain) UIPopoverController *popover;
 
 @property (nonatomic,assign) BOOL isClickDueDateVote ;
+@property (nonatomic,retain) UIButton *leftBtn ;
+@property (nonatomic,retain) UIButton *rightBtn ;
 
 @end
 
@@ -48,24 +49,13 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Event Details";
-    [self colorWithNavigationBar];
+ //   [self colorWithNavigationBar];
     
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setFrame:CGRectMake(0, 0, 17 , 17)];
-    [leftBtn setTag:1];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_cross"] forState:UIControlStateNormal] ;
-    [leftBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
-   
-    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
-    [rightBtn setTag:2];
-    [rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_right"] forState:UIControlStateNormal] ;
-    [rightBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
-    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.rightBtn] ;
     self.navigationController.interactivePopGestureRecognizer.delegate =(id) self ;
     
+    self.addNewActiveTableView.separatorStyle = UITableViewCellSeparatorStyleNone ;
     
     activeDataMode = [[ActiveDataMode alloc] init];//开始初始化一个
     
@@ -81,7 +71,27 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     [self createDatePicker];
     
 }
+-(UIButton *)leftBtn{
+    if (!_leftBtn) {
+        _leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_leftBtn setFrame:CGRectMake(0, 0, 17 , 17)];
+        [_leftBtn setTag:1];
+        [_leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_cross"] forState:UIControlStateNormal] ;
+        [_leftBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _leftBtn ;
+}
 
+-(UIButton *)rightBtn{
+    if (!_rightBtn) {
+         _rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
+        [_rightBtn setTag:2];
+        [_rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_right"] forState:UIControlStateNormal] ;
+        [_rightBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _rightBtn ;
+}
 
 
 -(void)createVariousView{
@@ -130,24 +140,11 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     
     [toolBar setItems: array];
     
-    
-    datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 44, 0, 0)];
-    [datePicker setBackgroundColor:[UIColor whiteColor]];
-    datePicker.datePickerMode = UIDatePickerModeDate ;
-    if (!self.isEdit) {
-        NSDate * nowDate = [NSDate new];
-        dueVoteDate = [nowDate dateByAddingTimeInterval:7*24*60*60] ;//默认在当前时间上添加7天 ；
-        datePicker.date = dueVoteDate ;
-    }
-    
-    [datePickerView addSubview:toolBar];
-    [datePickerView addSubview:datePicker];
-    [self.view addSubview:datePickerView];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    [self colorWithNavigationBar];
+   // [self colorWithNavigationBar];
 }
 
 /**
@@ -164,26 +161,6 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
         [textField resignFirstResponder];
     }
     return  YES ;
-}
-
-
--(void)done{
-    NSDate *select = [datePicker date];
-    dueVoteDate = select ;
-
-    [addNewActiveTableView reloadSections:[NSIndexSet indexSetWithIndex:4] withRowAnimation:UITableViewRowAnimationNone];
-    [self docancel];
-}
-
-- (void)docancel{
-    [UIView beginAnimations:nil context:nil];
-    [UIView setAnimationDuration:0.3];
-    CGPoint dateViewPoin =  datePickerView.center;
-    dateViewPoin.y+=300;
-    datePickerView.center = dateViewPoin ;
-    addNewActiveTableView.frame = CGRectMake(0, 0, addNewActiveTableView.frame.size.width, addNewActiveTableView.frame.size.height);
-    [UIView commitAnimations];
-    self.isClickDueDateVote = NO ;
 }
 
 
@@ -207,11 +184,8 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
-    if(self.isClickDueDateVote){
-        [self docancel];
-    }
+    
     if (4 == textField.tag) {
-        
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.3];
         if (coorDic) {
@@ -224,7 +198,7 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 5;
+    return 4;
 }
 
 
@@ -272,11 +246,13 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
             NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, self.activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
             NSURL *url = [NSURL URLWithString:_urlStr];
             
-            [activeImgCell.activeImag sd_setImageWithURL:url placeholderImage:ResizeImage([UIImage imageNamed:@"018.jpg"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds))  completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+            [activeImgCell.activeImag sd_setImageWithURL:url placeholderImage:ResizeImage([UIImage imageNamed:@"go2_grey"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds))  completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
                 UIImage *reSizeImg = ResizeImage(image,CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds));
                 activeImgCell.activeImag.image = reSizeImg ;
             }];
         }
+       
+        [self addCellSeparator:160 cell:activeImgCell];
         return activeImgCell ;
     }else{
         UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:AddNewActiveCellId] ;
@@ -291,12 +267,16 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
                 titleFiled.text = self.activeEvent.title ;
             }
             [cell.contentView addSubview:titleFiled];
+            
+            [self addCellSeparator:64 cell:cell];
         }else if(indexPath.section == 2 && indexPath.row == 0){
             descFiled.placeholder = @"Description";
             if (self.isEdit) {//编辑数据
                 descFiled.text = self.activeEvent.note ;
             }
             [cell.contentView addSubview:descFiled];
+            
+            [self addCellSeparator:64 cell:cell];
         }else if(indexPath.section == 3 && indexPath.row == 0){
             cell.accessoryType  = UITableViewCellAccessoryDisclosureIndicator ;
             cell.textLabel.text = @"Location:" ;
@@ -309,13 +289,14 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
             }else{
                 cell.detailTextLabel.text = coorName ;
             }
-           
+            
+            [self addCellSeparator:64 cell:cell];
         }else if(indexPath.section == 3 && indexPath.row == 1){
             
             cell.accessoryType  = UITableViewCellAccessoryNone ;
             cell.selectionStyle = UITableViewCellSelectionStyleNone ;
-            MKMapView *vMap = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                          kScreen_Width, 160)];
+            MKMapView *vMap = [[MKMapView alloc] initWithFrame:CGRectMake(10, 0,
+                                                                          kScreen_Width-20, 160)];
 
             vMap.delegate = self;
             vMap.centerCoordinate = CLLocationCoordinate2DMake([[coorDic objectForKey:LATITUDE] doubleValue], [[coorDic objectForKey:LONGITUDE] doubleValue]);
@@ -329,18 +310,8 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
             annotation.title = coorName;
             [vMap addAnnotation:annotation];
             [cell addSubview:vMap];
-        }else if(indexPath.section == 4 && indexPath.row == 0){
-            cell.accessoryType  = UITableViewCellAccessoryDisclosureIndicator ;
-            cell.textLabel.text = @"Due date to vote:" ;
-            cell.detailTextLabel.textColor = [UIColor blackColor ];
-            if (self.isEdit) {
-                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
-                [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE]];
-                cell.detailTextLabel.text = [self stringFromNSDate:[dateFormatter dateFromString:self.activeEvent.voteEndTime]];
-            }else{
-                cell.detailTextLabel.text = [self stringFromNSDate:dueVoteDate];
-            }
+            
+            [self addCellSeparator:160 cell:cell];
         }
         return cell ;
     }
@@ -365,21 +336,6 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
         LocationViewController *locationView = [[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
         locationView.detelegate = self;
         [self.navigationController pushViewController:locationView animated:YES];
-    }else if (indexPath.section==4 && indexPath.row ==0){
-        if (!self.isClickDueDateVote){
-            [UIView beginAnimations:nil context:nil];
-            [UIView setAnimationDuration:0.3];
-            CGPoint dateViewPoin =  datePickerView.center;
-            dateViewPoin.y-=300;
-            datePickerView.center = dateViewPoin ;
-            if (coorDic) {
-                 addNewActiveTableView.frame = CGRectMake(0, -240, addNewActiveTableView.frame.size.width, addNewActiveTableView.frame.size.height);
-            }else{
-                addNewActiveTableView.frame = CGRectMake(0, -150, addNewActiveTableView.frame.size.width, addNewActiveTableView.frame.size.height);
-            }
-            [UIView commitAnimations];
-            self.isClickDueDateVote = YES ;
-        }
     }
 }
 
@@ -473,7 +429,7 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:controller];
     navigationController.navigationBar.translucent = NO;
-    navigationController.navigationBar.barTintColor = blueColor;
+    [navigationController.navigationBar setBarTintColor:[UIColor colorWithHexString:@"31aaeb"]];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -511,7 +467,7 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
             activeDataMode.activeDesc        = descFiled.text ;
             activeDataMode.activeLocName     = coorName ;
             activeDataMode.activeCoordinate  = coorDic ;
-            activeDataMode.activeDueVoteDate = [datePicker date] ;
+           // activeDataMode.activeDueVoteDate = [datePicker date] ;
             activeDataMode.activeImg         = activeImgCell.activeImag.image ;
             inviteesVC.activeDataMode = activeDataMode ;
             inviteesVC.navStyleType = NavStyleType_LeftRightSame ;
@@ -541,6 +497,13 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"EEE d MMM"];
     return [dateFormatter stringFromDate:parmDate];
+}
+
+//添加分割线
+-(void)addCellSeparator:(CGFloat) LocaltionY cell:(UITableViewCell *) cell{
+    UIView * separator = [[UIView alloc] initWithFrame:CGRectMake(10, LocaltionY-1, cell.frame.size.width -20, 1)];
+    separator.backgroundColor = [UIColor colorWithHexString:@"eeecec"];
+    [cell.contentView addSubview:separator];
 }
 
 @end

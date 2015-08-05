@@ -24,6 +24,8 @@
 }
 @property (strong, nonatomic)  UITableView *tableView;
 
+@property (strong, nonatomic) UIButton * addFriendBtn ;
+
 @end
 
 @implementation FriendInfoViewController
@@ -35,28 +37,39 @@
     if (self)
     {
         self.title = @"Friends"; 
-        [self.tabBarItem setImage:[UIImage imageNamed:@"Friends_NoFill"]];
-        self.tabBarItem.title = @"Friends";
     }
     return self;
 }
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
+    
 	CGRect frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
 	self.view.frame = frame;
 //    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Search" style:UIBarButtonItemStylePlain target:self action:@selector(searchFriendInfo)];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addFriendView)];
-
     
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.addFriendBtn];
+    
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height - naviHigth) style:UITableViewStyleGrouped];
+    self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    [self.view addSubview:self.tableView];
+    [self setupRefresh];
+
 	[self loadData];//加载数据
 
-	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height - naviHigth) style:UITableViewStyleGrouped];
-	self.tableView.dataSource = self;
-	self.tableView.delegate = self;
-	[self.view addSubview:self.tableView];
-	[self setupRefresh];
-	//[self createAddFriendBtn];
+    //[self createAddFriendBtn];
+}
+
+-(UIButton *)addFriendBtn{
+    if (!_addFriendBtn) {
+        _addFriendBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_addFriendBtn setFrame:CGRectMake(0, 0, 20 , 20)];
+        [_addFriendBtn setTag:1];
+        [_addFriendBtn setBackgroundImage:[UIImage imageNamed:@"Friends_Normal"] forState:UIControlStateNormal] ;
+        [_addFriendBtn addTarget:self action:@selector(addFriendView) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _addFriendBtn ;
 }
 
 /**
@@ -226,20 +239,18 @@
 			cell.nickName.text = friend.username;
 		}
 	}
-
-	// cell.userNote.text = friend.alias;
+    // cell.userNote.text = friend.alias;
 	return cell;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-	HeadView *headView = [[HeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 40)];
+	HeadView * headView = [[HeadView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 40)];
 	headView.delegate = self;
     headView.friendGroup = _groupArr[section];
     
     headView.headGroupNewFriendBlock=^(NSString * groupName){
         __block FriendGroup *friendGroup = [[FriendGroup alloc] init];
         friendGroup.name = groupName;
-        
         ASIHTTPRequest *addGroupsRequest = [t_Network httpPostValue:@{ @"name": friendGroup.name }.mutableCopy Url:anyTime_AddFTeam Delegate:nil Tag:anyTime_AddFTeam_tag];
         __block ASIHTTPRequest *groupsRequest = addGroupsRequest;
         [addGroupsRequest setCompletionBlock: ^{//请求成功
@@ -254,7 +265,7 @@
                 }
             }
         }];
-        
+
         [addGroupsRequest setFailedBlock: ^{//请求失败
             NSLog(@"%@", [groupsRequest responseString]);
         }];

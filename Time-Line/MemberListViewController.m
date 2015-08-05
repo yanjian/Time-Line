@@ -25,7 +25,7 @@
 
 
 	UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, naviHigth)];
-	rview.backgroundColor = blueColor;
+	rview.backgroundColor = defineBlueColor;
 
 	UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
 	rightBtn.frame = CGRectMake(15, 30, 21, 25);

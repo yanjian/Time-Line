@@ -31,11 +31,11 @@
     [super viewDidLoad];
     //主页面
     UIView *rview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 64)];
-    rview.backgroundColor = blueColor;
+    rview.backgroundColor = defineBlueColor;
 
     // 导航
     UIView *zview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 64)];
-    zview.backgroundColor = blueColor;
+    zview.backgroundColor = defineBlueColor;
     
     // 右边xiew上返回button
     _rbutton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -99,7 +99,7 @@
      SetingViewController *setVC=[[SetingViewController alloc] init];
      SetingsNavigationController *nc=[[SetingsNavigationController alloc] initWithRootViewController:setVC];
      nc.navigationBar.translucent=NO;
-     nc.navigationBar.barTintColor=blueColor;
+     nc.navigationBar.barTintColor=defineBlueColor;
      [self presentViewController:nc animated:YES completion:nil];
      self.isRefreshUIData=NO;
      */
@@ -109,7 +109,7 @@
     UINavigationController *nc=[[UINavigationController alloc] initWithRootViewController:setVC];
     nc.navigationBar.translucent=NO;
     nc.navigationItem.hidesBackButton=YES;
-    nc.navigationBar.barTintColor=blueColor;
+    nc.navigationBar.barTintColor=defineBlueColor;
     self.swiper = [[SloppySwiper alloc] initWithNavigationController:nc];
     nc.delegate = self.swiper;
     [self presentViewController:nc animated:NO completion:nil];

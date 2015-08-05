@@ -20,7 +20,7 @@
 static NSString * cellId = @"activeInfoID";
 static NSString * cellStyleV1 = @"cellStyleV1ID";
 
-@interface ActiveInfoTableViewController ()<ASIHTTPRequestDelegate>{
+@interface ActiveInfoTableViewController ()<ASIHTTPRequestDelegate,InviteesViewControllerDelegate>{
     ActiveImageTableViewCell * activeImgCell ;
     UILabel * inviteCountLab;
     NSMutableArray *joinArr ;//存放参加的用户的id ；
@@ -32,6 +32,7 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
     UIView *_joinAndNoJoinView;
     NSArray *_joinAndNoJoinArr;
     NSString *_joinStatus;
+    
 }
 @end
 
@@ -43,6 +44,8 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
     joinArr = @[].mutableCopy ;
     selectFriendArr = @[].mutableCopy ;
     userId = [UserInfo currUserInfo].Id;
+    
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone ;
     
     [self createJoinActiveBtn];
 }
@@ -59,11 +62,10 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
         NSString *uid = [dic objectForKey:@"uid"];
         
         if ([userInfo.Id isEqualToString:[NSString stringWithFormat:@"%@", uid]]) {
-            int join = [[dic objectForKey:@"join"] integerValue];
+            NSInteger join = [[dic objectForKey:@"join"] integerValue];
             if (join == 1) {
                 _joinStatus = @"1";//参加
-            }
-            else {
+            }else if(join == 2 ) {
                 _joinStatus = @"2";//bu参加
             }
         }
@@ -84,9 +86,12 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
     if ([_joinStatus isEqualToString:@"1"]) {//表示参加
         [joinBtn setSelected:YES];
         [noJoinBtn setSelected:NO];
-    }else {
+    }else if([_joinStatus isEqualToString:@"2"]){
         [noJoinBtn setSelected:YES];
         [joinBtn setSelected:NO];
+    }else{
+        [joinBtn setSelected:NO];
+        [noJoinBtn setSelected:NO];
     }
     _joinAndNoJoinArr = [NSArray arrayWithObjects:joinBtn, noJoinBtn, nil];
     [_joinAndNoJoinView addSubview:joinBtn];
@@ -128,6 +133,16 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
             }
         }
         break;
+        case anyTime_Events_tag:{
+            NSString *statusCode = [tmpDic objectForKey:@"statusCode"];
+            if ([statusCode isEqualToString:@"1"]) {
+                NSDictionary * dataDic = [tmpDic objectForKey:@"data"];
+                ActiveEventMode *_tmpActiveEvent = [[ActiveEventMode alloc] init];
+                [_tmpActiveEvent parseDictionary:dataDic];
+                activeEvent = _tmpActiveEvent;
+                [self.tableView reloadData];
+            }
+        }break;
         default:
             break;
     }
@@ -150,10 +165,9 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.section == 0 && indexPath.row == 0) {
+    if ( indexPath.section == 0  && indexPath.row == 0) {
         return 160.f;
-    }
-    if (indexPath.section == 8 && indexPath.row == 0) {
+    }else if ( indexPath.section == 8 && indexPath.row == 0 ) {
         if (activeEvent.coordinate && ![activeEvent.coordinate isEqualToString:@""]) {
             return 160.f;
         }else{
@@ -168,6 +182,7 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
         inviteCountLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 20)];
         [joinArr removeAllObjects];
         [selectFriendArr removeAllObjects];
+        joinCount = 0 ;
         for (NSDictionary *tmpDic in activeEvent.member) {
             int join = [[tmpDic objectForKey:@"join"] integerValue];//参加的人：1表示已经参加，2表示不参加
             if (join == 1) {//参加的人数
@@ -176,13 +191,12 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
             }
             [selectFriendArr addObject:[tmpDic objectForKey:@"uid"]];
         }
-        inviteCountLab.text = [NSString stringWithFormat:@"%lu Invites - %i Going" , (unsigned long)activeEvent.member.count,joinCount] ;
+        inviteCountLab.text = [NSString stringWithFormat:@"%lu Invites  -  %i Going" , (unsigned long)activeEvent.member.count,joinCount] ;
         inviteCountLab.textAlignment = NSTextAlignmentCenter ;
         inviteCountLab.backgroundColor = [UIColor whiteColor];
         inviteCountLab.textColor = [UIColor grayColor];
         return inviteCountLab ;
     }
-   
     return nil ;
 }
 
@@ -202,14 +216,14 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0 && indexPath.row == 0) {
         if (!activeImgCell) {
-            activeImgCell =(ActiveImageTableViewCell *)[[[UINib nibWithNibName:@"ActiveImageTableViewCell" bundle:nil] instantiateWithOwner:nil options:nil] firstObject];
+            activeImgCell = (ActiveImageTableViewCell *)[[[UINib nibWithNibName:@"ActiveImageTableViewCell" bundle:nil] instantiateWithOwner:nil options:nil] firstObject];
         }
         NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSURL *url = [NSURL URLWithString:_urlStr];
-        [activeImgCell.activeImag sd_setImageWithURL:url placeholderImage:ResizeImage([UIImage imageNamed:@"018.jpg"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds))  completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+        [activeImgCell.activeImag sd_setImageWithURL:url placeholderImage:ResizeImage([UIImage imageNamed:@"go2_grey"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds))  completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
             UIImage *reSizeImg = nil;
             if (!image) {
-                reSizeImg =  ResizeImage([UIImage imageNamed:@"018.jpg"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds));
+                reSizeImg =  ResizeImage([UIImage imageNamed:@"go2_grey"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds));
             }else{
             reSizeImg = ResizeImage(image,CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds));
             }
@@ -217,17 +231,19 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
         }];
         return activeImgCell ;
     }else{
-         if (indexPath.section == 1||indexPath.section == 2 || indexPath.section == 5 || indexPath.section == 6 ||indexPath.section == 8){
+         if (indexPath.section == 1||indexPath.section == 2 || indexPath.section == 5 || indexPath.section == 6 || indexPath.section == 8){
             UITableViewCell * cell
 //             = [tableView dequeueReusableCellWithIdentifier:cellId] ;
 //            if (!cell) {
-                 = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
-                cell.selectionStyle = UITableViewCellSelectionStyleNone ;
-                cell.textLabel.textAlignment = NSTextAlignmentCenter ;
+             = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellId];
+             cell.textLabel.textAlignment = NSTextAlignmentCenter ;
+             cell.selectionStyle = UITableViewCellSelectionStyleNone;
 //            }
             if(indexPath.section == 1 && indexPath.row == 0){
                 cell.textLabel.font = [UIFont fontWithName:@"Avenir Next Medium" size:20];
-                 cell.textLabel.text = activeEvent.title ;
+                cell.textLabel.text = activeEvent.title ;
+                
+                [self addCellSeparator:64 cell:cell];
             }else if(indexPath.section == 2 && indexPath.row == 0){
                 
                 for (UIView * view in cell.subviews) {
@@ -263,15 +279,17 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
                 [addBtn setImage:[UIImage imageNamed:@"add_default"] forState:UIControlStateNormal];
                 [addBtn addTarget:self action:@selector(addFriendsList:) forControlEvents:UIControlEventTouchUpInside];
                 cell.accessoryView = addBtn ;
-  
+               
             }else if ( indexPath.section == 5  && indexPath.row == 0 ){
                 [cell.contentView addSubview:_joinAndNoJoinView];
+                [self addCellSeparator:64 cell:cell];
             }else if ( indexPath.section == 6  && indexPath.row == 0 ){
                 cell.textLabel.text = activeEvent.note ;
+                [self addCellSeparator:64 cell:cell];
             }else if ( indexPath.section == 8  && indexPath.row == 0 ){
                 if (activeEvent.coordinate && ![@"" isEqualToString:activeEvent.coordinate]) {
                     NSArray *tmpArr = [activeEvent.coordinate componentsSeparatedByString:@";"];
-                    MKMapView *vMap = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0,kScreen_Width, 160)];
+                    MKMapView *vMap = [[MKMapView alloc] initWithFrame:CGRectMake(10, 0,kScreen_Width-20, 160)];
                     vMap.delegate = self;
                     vMap.centerCoordinate = CLLocationCoordinate2DMake([tmpArr[0] doubleValue], [tmpArr[1] doubleValue]);
                     vMap.camera.altitude = 20;
@@ -290,10 +308,11 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
              UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellStyleV1] ;
              if (!cell) {
                  cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellStyleV1];
-                 cell.selectionStyle = UITableViewCellSelectionStyleNone ;
+                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
              }
-
              if ( indexPath.section == 3  && indexPath.row == 0 ){
+                 [self addCellSeparator:2 cell:cell];
+                 
                  UIImage *icon = [UIImage imageNamed:@"Alert_Hour"];
                  CGSize itemSize = CGSizeMake(20, 20);
                  UIGraphicsBeginImageContextWithOptions(itemSize, NO ,0.0);
@@ -308,6 +327,7 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
                  }else{
                      cell.detailTextLabel.text = @"Voting" ;
                  }
+                 [self addCellSeparator:64 cell:cell];
              }else if ( indexPath.section == 4  && indexPath.row == 0 ){
                  cell.textLabel.text = @"Due date to vote:" ;
                  NSDate * voteEndTime = [self StringToDate:@"yyyy-MM-DD HH:mm" formaterDate:activeEvent.voteEndTime];
@@ -315,6 +335,7 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
                  [dateFormatter setDateFormat:@"EEE d MMM"];
                  NSString *dateAndTime =  [dateFormatter stringFromDate:voteEndTime];
                  cell.detailTextLabel.text =  dateAndTime;
+                 [self addCellSeparator:64 cell:cell];
              }else if ( indexPath.section == 7  && indexPath.row == 0 ){
                  cell.textLabel.text = @"Location:" ;
                  if(activeEvent.location && ![@"" isEqualToString:activeEvent.location]){
@@ -322,6 +343,7 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
                  }else{
                      cell.detailTextLabel.text = @"No location" ;
                  }
+                 [self addCellSeparator:64 cell:cell];
              }
              return cell;
          }
@@ -330,27 +352,43 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
 }
 
 
--(void)addFriendsList:(UIButton *)sender {
+-(void)addFriendsList:(UIButton *) sender {
     InviteesViewController * inviteesVc = [[InviteesViewController alloc] init];
     inviteesVc.navStyleType = NavStyleType_LeftModelOpen ;
     inviteesVc.eid = self.activeEvent.Id ;
-    inviteesVc.joinArr = joinArr ;
+    inviteesVc.joinArr    = joinArr ;
     inviteesVc.joinAllArr = selectFriendArr ;
-    NavigationController *navC= [[NavigationController alloc] initWithRootViewController:inviteesVc];
+    inviteesVc.delegate   = self ;
+    NavigationController *navC = [[NavigationController alloc] initWithRootViewController:inviteesVc];
     navC.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
-    [navC.navigationBar setBarTintColor:[UIColor colorWithHexString:@"31aaeb"]];
+    [navC.navigationBar setBarTintColor: RGB(39, 135, 237)];
     [self.navigationController presentViewController:navC animated:YES completion:nil];
+}
+
+
+-(void)inviteesViewController:(InviteesViewController *)inviteesViewController {
+    [self refreshActiveEventData:self.activeEvent.Id] ;
+    [inviteesViewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+/**
+ *
+ *重新刷新数据：网络 中
+ */
+-(void)refreshActiveEventData:(NSString *)eventId{
+    ASIHTTPRequest *aEventRequest = [t_Network httpPostValue:@{@"eid":eventId}.mutableCopy Url:anyTime_Events Delegate:self Tag:anyTime_Events_tag];
+    [aEventRequest startAsynchronous];
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if ([userId isEqualToString:self.activeEvent.create]) {//是自己创建的就不跳转咯......
+   // if ([userId isEqualToString:self.activeEvent.create] ) {//是自己创建的就不跳转咯......
         if ( indexPath.section == 3 && indexPath.row == 0 ) {
-            if (self.activeDestinationBlank ) {
-                self.activeDestinationBlank();
+            if ( self.activeDestinationBlank ) {
+                 self.activeDestinationBlank();
             }
         }
-    }
+   // }
 }
 
 -(void)openModeMember:(UIGestureRecognizer *) gestureRecognizer{
@@ -366,69 +404,16 @@ static NSString * cellStyleV1 = @"cellStyleV1ID";
     inviteesJoinOrReplyVC.memberArr = memberArr ;
     NavigationController *navC= [[NavigationController alloc] initWithRootViewController:inviteesJoinOrReplyVC];
     navC.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
-    [navC.navigationBar setBarTintColor:[UIColor colorWithHexString:@"31aaeb"]];
+    [navC.navigationBar setBarTintColor: RGB(39, 135, 237)];
     [self presentViewController:navC animated:YES completion:nil];
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
+
+-(void)addCellSeparator:(CGFloat) LocaltionY cell:(UITableViewCell *) cell{
+    UIView * separator = [[UIView alloc] initWithFrame:CGRectMake(10, LocaltionY-1, cell.frame.size.width -20, 1)];
+    separator.backgroundColor = [UIColor colorWithHexString:@"eeecec"];
+    [cell.contentView addSubview:separator];
 }
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Table view delegate
-
-// In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Navigation logic may go here, for example:
-    // Create the next view controller.
-    <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:<#@"Nib name"#> bundle:nil];
-    
-    // Pass the selected object to the new view controller.
-    
-    // Push the view controller.
-    [self.navigationController pushViewController:detailViewController animated:YES];
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 #pragma marke - 格式化时间Date
 - (NSDate *)StringToDate:(NSString *)format formaterDate:(NSString *) dateStr {

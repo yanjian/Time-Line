@@ -62,6 +62,7 @@
     [super viewDidDisappear:animated];
 }
 
+
 #pragma  mark - 取消网络请求队列
 -(void)cancelNetWorkrequestQueue{
     for (ASIHTTPRequest *request in g_ASIQuent.operations) {

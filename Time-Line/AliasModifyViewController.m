@@ -24,7 +24,7 @@
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
     [leftBtn setTag:1];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
     [leftBtn addTarget:self action:@selector(aliasTouchUpInside:) forControlEvents:UIControlEventTouchUpInside] ;
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
@@ -32,7 +32,7 @@
 
 	UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
 	[rightBtn setTag:2];
-	[rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_blueTick"] forState:UIControlStateNormal];
+	[rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_tick"] forState:UIControlStateNormal];
 	[rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
 	[rightBtn addTarget:self action:@selector(aliasTouchUpInside:) forControlEvents:UIControlEventTouchUpInside];
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn];

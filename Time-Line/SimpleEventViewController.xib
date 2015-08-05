@@ -33,6 +33,7 @@
                 <constraint firstItem="fbQ-u5-2vk" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="fJu-q9-SoO"/>
             </constraints>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+            <point key="canvasLocation" x="23" y="96"/>
         </view>
     </objects>
 </document>

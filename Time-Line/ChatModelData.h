@@ -20,7 +20,7 @@
 
 @property (strong, nonatomic) JSQMessagesBubbleImage *incomingBubbleImageData;
 
-@property (strong, nonatomic) NSDictionary *users;
+@property (strong, nonatomic) NSMutableDictionary *users;
 @property (strong, nonatomic) ActiveEventMode * activeEvent;
 
 @property (strong, nonatomic) NSMutableArray * memberTempArr;

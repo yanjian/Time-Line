@@ -117,7 +117,7 @@
 // Fingertips
 #define COCOAPODS_POD_AVAILABLE_Fingertips
 #define COCOAPODS_VERSION_MAJOR_Fingertips 0
-#define COCOAPODS_VERSION_MINOR_Fingertips 3
+#define COCOAPODS_VERSION_MINOR_Fingertips 4
 #define COCOAPODS_VERSION_PATCH_Fingertips 0
 
 // JSONKit-NoWarning
@@ -129,7 +129,7 @@
 // JSQMessagesViewController
 #define COCOAPODS_POD_AVAILABLE_JSQMessagesViewController
 #define COCOAPODS_VERSION_MAJOR_JSQMessagesViewController 7
-#define COCOAPODS_VERSION_MINOR_JSQMessagesViewController 0
+#define COCOAPODS_VERSION_MINOR_JSQMessagesViewController 1
 #define COCOAPODS_VERSION_PATCH_JSQMessagesViewController 0
 
 // JSQSystemSoundPlayer
@@ -195,7 +195,7 @@
 // SloppySwiper
 #define COCOAPODS_POD_AVAILABLE_SloppySwiper
 #define COCOAPODS_VERSION_MAJOR_SloppySwiper 0
-#define COCOAPODS_VERSION_MINOR_SloppySwiper 3
+#define COCOAPODS_VERSION_MINOR_SloppySwiper 4
 #define COCOAPODS_VERSION_PATCH_SloppySwiper 0
 
 // TBXML

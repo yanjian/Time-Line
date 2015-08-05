@@ -42,8 +42,6 @@
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
 	if (self) {
         self.title = @"Settings" ;
-        [self.tabBarItem setImage:[UIImage imageNamed:@"Settings_NoFill"]];
-        self.tabBarItem.title = @"Settings";
 	}
 	return self;
 }
@@ -284,12 +282,12 @@
 				}
 			}
 		} else {
-            dataStr = [dataStr stringByReplacingOccurrencesOfString:@"\r\n" withString:@""];
-			if ([@"1" isEqualToString:dataStr]) {
+//            dataStr = [dataStr stringByReplacingOccurrencesOfString:@"\r\n" withString:@""];
+//			if ([@"1" isEqualToString:dataStr]) {
                 [UserInfo currUserInfo].loginStatus = UserLoginStatus_NO ; //登陆状态改为没有登陆
                 [UserInfo userInfoWithArchive:[UserInfo currUserInfo]];
                 [g_AppDelegate initLoginView:LoginOrLogoutType_ModelOpen];
-			}
+//			}
 			isLogout = NO;
 		}
 	}

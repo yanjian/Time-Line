@@ -45,7 +45,7 @@
 - (void)didMoveToSuperview
 {
     [self setupScrollView];
-    
+
     [self setupToolbars];
 }
 
@@ -131,9 +131,7 @@
         [imageView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(photoClick:)]];
         [_scrollView addSubview:imageView];
     }
-    
-    
-    
+
     [self setupImageOfImageViewForIndex:self.currentImageIndex];
     
 }
@@ -142,6 +140,7 @@
 - (void)setupImageOfImageViewForIndex:(NSInteger)index
 {
     SDBrowserImageView *imageView = _scrollView.subviews[index];
+    imageView.contentMode = UIViewContentModeScaleToFill ;
     if (imageView.hasLoadedImage) return;
     if ([self highQualityImageURLForIndex:index]) {
         [imageView setImageWithURL:[self highQualityImageURLForIndex:index] placeholderImage:[self placeholderImageForIndex:index]];
@@ -189,20 +188,20 @@
     [super layoutSubviews];
     
     CGRect rect = self.bounds;
-    rect.size.width += SDPhotoBrowserImageViewMargin * 2;
+    //rect.size.width += SDPhotoBrowserImageViewMargin * 2;
     
     _scrollView.bounds = rect;
     _scrollView.center = self.center;
     
-    CGFloat y = SDPhotoBrowserImageViewMargin;
-    CGFloat w = _scrollView.frame.size.width - SDPhotoBrowserImageViewMargin * 2;
-    CGFloat h = _scrollView.frame.size.height - SDPhotoBrowserImageViewMargin * 2;
+    CGFloat y = 0.f;//SDPhotoBrowserImageViewMargin;
+    CGFloat w = _scrollView.frame.size.width;// - SDPhotoBrowserImageViewMargin * 2;
+    CGFloat h = _scrollView.frame.size.height;// - SDPhotoBrowserImageViewMargin * 2;
     
     _scrollView.showsHorizontalScrollIndicator = NO;
     _scrollView.showsVerticalScrollIndicator = NO;
     
     [_scrollView.subviews enumerateObjectsUsingBlock:^(SDBrowserImageView *obj, NSUInteger idx, BOOL *stop) {
-        CGFloat x = SDPhotoBrowserImageViewMargin + idx * (SDPhotoBrowserImageViewMargin * 2 + w);
+        CGFloat x = idx *  w ;//SDPhotoBrowserImageViewMargin + idx * (SDPhotoBrowserImageViewMargin * 2 + w);
         obj.frame = CGRectMake(x, y, w, h);
     }];
     

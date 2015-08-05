@@ -33,7 +33,7 @@
 
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
     [leftBtn addTarget:self action:@selector(backFromEventTouchUpInside:) forControlEvents:UIControlEventTouchUpInside] ;
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
@@ -55,7 +55,8 @@
 	else {
 		self.tableView.tableFooterView = [UIView new];
 	}
-
+    self.tableView.separatorInset = UIEdgeInsetsMake(0, 10, 0, 10);
+    
 	self.tableView.tableHeaderView = self.tableHead;
 	self.tableView.separatorInset  = UIEdgeInsetsZero;
 

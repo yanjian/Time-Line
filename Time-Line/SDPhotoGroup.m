@@ -36,10 +36,7 @@
     [photoItemArray enumerateObjectsUsingBlock:^(SDPhotoItem *obj, NSUInteger idx, BOOL *stop) {
         UIButton *btn = [[UIButton alloc] init];
         [btn sd_setImageWithURL:[NSURL URLWithString:obj.thumbnail_pic] forState:UIControlStateNormal];
-        
-        
-        btn.tag = idx;
-        
+         btn.tag = idx;
         [btn addTarget:self action:@selector(buttonClick:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:btn];
     }];
@@ -68,7 +65,7 @@
 
 - (void)buttonClick:(UIButton *)button
 {
-    SDPhotoBrowser *browser = [[SDPhotoBrowser alloc] init];
+    SDPhotoBrowser *browser = [[SDPhotoBrowser alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
     browser.sourceImagesContainerView = self; // 原图的父控件
     browser.imageCount = self.photoItemArray.count; // 图片总数
     browser.currentImageIndex = button.tag;

@@ -68,7 +68,7 @@ static BOOL isShown = false;
         self.isMultipleSelection = multipleSelection;
 
         self.navigationBarView = [[UIView alloc] init];
-        self.navigationBarView.backgroundColor = blueColor;
+        self.navigationBarView.backgroundColor = defineBlueColor;
         [self addSubview:self.navigationBarView];
 
         self.separatorLineView = [[UIView alloc] init];

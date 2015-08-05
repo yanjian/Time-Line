@@ -22,7 +22,7 @@
     self.title = @"Add Friends" ;
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
     [leftBtn addTarget:self action:@selector(backToFriendsView) forControlEvents:UIControlEventTouchUpInside] ;
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
@@ -91,7 +91,7 @@
     }else if(indexPath.section == 1) {
         cell.contentView.backgroundColor = [UIColor redColor];
     }else{
-        cell.contentView.backgroundColor = blueColor;
+        cell.contentView.backgroundColor = defineBlueColor;
     }
     [cell.contentView addSubview:contentLab];
     return cell;

@@ -11,6 +11,7 @@
 #import "UIImageView+WebCache.h"
 #import "UIColor+HexString.h"
 #import "AddNewActiveViewController.h"
+#import "IBActionSheet.h"
 #import "InviteesTimeTableViewCell.h"
 #import "EventConfirmTimeTableViewController.h"
 #import "InviteesJoinOrReplyTableViewController.h"
@@ -20,17 +21,21 @@
 
 static NSString * cellActiveSeting = @"cellActiveSeting" ;
 
-@interface ActiveSetingTableViewController ()<EventConfirmTimeTableViewControllerDelegate>{
+@interface ActiveSetingTableViewController ()<EventConfirmTimeTableViewControllerDelegate,IBActionSheetDelegate>{
     NSMutableArray * memberArr ;
     NSString * userId;
     NSMutableArray * timeArr;
     ActiveTimeVoteMode *activeTime ;//用户选择的时间
+    IBActionSheet * ibActionSheet;
+    
+    BOOL isChange;
 }
 
 @end
 
 @implementation ActiveSetingTableViewController
 @synthesize activeEvent;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Event Settings" ;
@@ -46,9 +51,9 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
     
      if ([userId isEqualToString:self.activeEvent.create]) {
         UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [rightBtn setFrame:CGRectMake(0, 0, 35, 18)];
+        [rightBtn setFrame:CGRectMake(0, 0, 23, 23)];
         [rightBtn setTag:2];
-        [rightBtn setTitle:@"Edit" forState:UIControlStateNormal] ;
+        [rightBtn setBackgroundImage:[UIImage imageNamed:@"Go2Icon_Edit"] forState:UIControlStateNormal] ;
         [rightBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
         self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
      }
@@ -71,20 +76,27 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
     }
     
     [self createDeleteEventBtn];
-
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(activeSetingTableViewControllerDelegate:isChange:)]) {
+        [self.delegate activeSetingTableViewControllerDelegate:self isChange:isChange];
+    }
+}
+
 -(void)createDeleteEventBtn{
     UIControl * deleteBtn = [[UIControl alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 88)];
-    UIButton * deletebtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 44)];
-    
+    UIButton  * deletebtn = [[UIButton alloc] initWithFrame:CGRectMake(10, 0, kScreen_Width-20, 44)];
     [deletebtn setTitle:@"Delete Event" forState:UIControlStateNormal];
-    [deletebtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [deletebtn setBackgroundColor:[UIColor clearColor]];
+    [deletebtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [deletebtn setBackgroundColor:[UIColor redColor]];
+    deletebtn.layer.cornerRadius = 5.0f;
     [deleteBtn addSubview:deletebtn];
     deletebtn.center = deleteBtn.center ;
     [deletebtn addTarget:self action:@selector(deleteEventData:) forControlEvents:UIControlEventTouchUpInside];
@@ -139,15 +151,13 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
             NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
             NSLog(@"%@", _urlStr);
             NSURL *url = [NSURL URLWithString:_urlStr];
-            [cell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+            [cell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"go2_grey"]];
         }else{
              cell.showNoImgTitle.hidden = NO ;
             [cell.activeImg setBackgroundColor: [UIColor colorWithHexString:@"2e9ef1"]];
             cell.showNoImgTitle.text = [[activeEvent.title substringToIndex:1] uppercaseString];
         }
 
-        
-        
         cell.activeTitle.text = self.activeEvent.title ;
         for (MemberDataModel * member in memberArr) {
             NSNumber * uidStr = member.uid;
@@ -265,7 +275,7 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
             NSDictionary *objDataDic = (NSDictionary *)objData;
             NSString *statusCode = [objDataDic objectForKey:@"statusCode"];
             if ([statusCode isEqualToString:@"1"]) {
-                
+                isChange = YES ;//设置成功.....
             }
         }
     }];
@@ -291,8 +301,8 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
             
             EventConfirmTimeTableViewController *eventConfirmVc = [[EventConfirmTimeTableViewController alloc] init];
             eventConfirmVc.timeArr = timeArr ;
-            eventConfirmVc.etArr = etArr ;
-            eventConfirmVc.eid = self.activeEvent.Id ;
+            eventConfirmVc.etArr   = etArr ;
+            eventConfirmVc.eid     = self.activeEvent.Id ;
             eventConfirmVc.delegate = self ;
             [self.navigationController pushViewController:eventConfirmVc animated:YES];
         }else{
@@ -309,6 +319,7 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
     for (ActiveTimeVoteMode *tmpATime in timeArr) {
         if ([tmpATime.Id intValue] == [tid intValue]) {
             activeTime = tmpATime ;
+            isChange   = YES ;
             break ;
         }
     }
@@ -342,31 +353,40 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
 }
 
 -(void)deleteEventData:(UIButton *)sender {
+    ibActionSheet=[[IBActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:@"Delete Event" otherButtonTitles:nil, nil];
+     [ibActionSheet showInView:self.navigationController.view];
+}
+
+
+#pragma -ibactionsheet的代理
+-(void)actionSheet:(IBActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
     
-    ASIHTTPRequest *activeNoti = [t_Network httpPostValue:@{ @"eid":self.activeEvent.Id }.mutableCopy Url:anyTime_QuitEvent Delegate:nil Tag:anyTime_QuitEvent_tag];
-    __block ASIHTTPRequest *request = activeNoti;
-    [activeNoti setCompletionBlock: ^{
-        NSError *error = [request error];
-        if (error) {
-            return;
-        }
-        NSString *responseStr = [request responseString];
-        id objData =  [responseStr objectFromJSONString];
-        if ([objData isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *objDataDic = (NSDictionary *)objData;
-            NSString *statusCode = [objDataDic objectForKey:@"statusCode"];
-            if ([statusCode isEqualToString:@"1"]) {
-                if (self.delegate && [self.delegate respondsToSelector:@selector(activeSetingTableViewController:eventId:)] ){
-                    [self.delegate activeSetingTableViewController:self eventId:self.activeEvent.Id];
-                }
-                [self.navigationController popToRootViewControllerAnimated:YES];
+    if (buttonIndex==0) {
+        ASIHTTPRequest *activeNoti = [t_Network httpPostValue:@{ @"eid":self.activeEvent.Id }.mutableCopy Url:anyTime_QuitEvent Delegate:nil Tag:anyTime_QuitEvent_tag];
+        __block ASIHTTPRequest *request = activeNoti;
+        [activeNoti setCompletionBlock: ^{
+            NSError *error = [request error];
+            if (error) {
+                return;
             }
-        }
-    }];
+            NSString *responseStr = [request responseString];
+            id objData =  [responseStr objectFromJSONString];
+            if ([objData isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *objDataDic = (NSDictionary *)objData;
+                NSString *statusCode = [objDataDic objectForKey:@"statusCode"];
+                if ([statusCode isEqualToString:@"1"]) {
+                    //删除事件的通知
+                    [[NSNotificationCenter defaultCenter] postNotificationName:DELETEEVENTNOTI object:self userInfo:@{DELETEEVENTNOTI_INFO:self.activeEvent.Id}] ;
+                    [self.navigationController popToRootViewControllerAnimated:YES];
+                }
+            }
+        }];
+        
+        [activeNoti setFailedBlock: ^{
+            [MBProgressHUD showError:@"Delete failed, please check your network"];
+        }];
+        [activeNoti startSynchronous];
+    }
     
-    [activeNoti setFailedBlock: ^{
-        [MBProgressHUD showError:@"Delete failed, please check your network"];
-    }];
-    [activeNoti startSynchronous];
 }
 @end

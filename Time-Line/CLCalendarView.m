@@ -91,16 +91,15 @@
 - (void)loadLable {
 	NSLog(@"%@", _time);
 
-	NSArray *array = [NSArray arrayWithObjects:@"Sun", @"Mon", @"Tue", @"Wed", @"Thu", @"Fri", @"Sat", nil];
+	NSArray *array = [NSArray arrayWithObjects:@"S", @"M", @"T", @"W", @"T", @"F", @"Sa", nil];
 
 	for (int i = 0; i < 7; i++) {
-		UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(kScreen_Width / 7 * i, 5, kScreen_Width / 6, 15)]; // x,y,w,h
+		UILabel *lab = [[UILabel alloc] initWithFrame:CGRectMake(kScreen_Width / 7 * i, 5, kScreen_Width / 6, 15)];
 		lab.font = [UIFont systemFontOfSize:13]; // label size = 13
-		lab.textColor = [UIColor whiteColor];
+		lab.textColor = [UIColor colorWithHexString:@"31aaeb"];
 		lab.backgroundColor = [UIColor clearColor]; // 透明
 		if (_time.length <= 0) {
-			lab.textColor = [UIColor blackColor];
-//            星期背景色
+			lab.textColor = [UIColor colorWithHexString:@"31aaeb"];
 			lab.backgroundColor = [UIColor whiteColor];
 		}
 
@@ -419,12 +418,26 @@
                 cell.eventTitle.text = anyEvent.eventTitle ;
                 cell.eventColor.backgroundColor = [UIColor colorWithHexString:anyEvent.backgroundColor];
                 NSString *starttime = anyEvent.startDate;
-                NSRange range = [starttime rangeOfString:@"日"];
-                NSString *startstrs = [starttime substringWithRange:NSMakeRange(range.location + 1, starttime.length - range.location - 1)];
+               
                 
                 NSString *endtime = anyEvent.endDate;
-                NSString *endstrs = [endtime substringWithRange:NSMakeRange(range.location + 1, endtime.length - range.location - 1)];
-                cell.eventTime.text = [NSString stringWithFormat:@"%@ - %@",startstrs,endstrs];
+               
+                if ( 1 == [anyEvent.isAllDay integerValue]) {
+                    NSRange range = [starttime rangeOfString:@"日"];
+                    NSString *startstrs = [starttime substringWithRange:NSMakeRange(0,range.location )];
+                    startstrs = [startstrs stringByReplacingOccurrencesOfString:@"年 " withString:@"-"];
+                    startstrs = [startstrs stringByReplacingOccurrencesOfString:@"月" withString:@"-"];
+            
+                    NSString *endstrs   = [endtime substringWithRange:NSMakeRange(0, range.location )];
+                    endstrs = [endstrs stringByReplacingOccurrencesOfString:@"年 " withString:@"-"];
+                    endstrs = [endstrs stringByReplacingOccurrencesOfString:@"月" withString:@"-"];
+                    cell.eventTime.text = [NSString stringWithFormat:@"%@ - %@",startstrs,endstrs];
+                }else{
+                    NSRange range = [starttime rangeOfString:@"日"];
+                    NSString *startstrs = [starttime substringWithRange:NSMakeRange(range.location + 1, starttime.length - range.location - 1)];
+                     NSString *endstrs = [endtime substringWithRange:NSMakeRange(range.location + 1, endtime.length - range.location - 1)];
+                    cell.eventTime.text = [NSString stringWithFormat:@"%@ - %@",startstrs,endstrs];
+                }
                 return cell ;
             }else{
                 ActiveBaseInfoMode *activeEvent =(ActiveBaseInfoMode *) undifineObj;
@@ -432,7 +445,7 @@
                 if (!cell) {
                     cell = (ComplicatedEventTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"ComplicatedEventTableViewCell" owner:self options:nil] objectAtIndex:0];
                 }
-                if (indexPath.row == 0  ) {
+                if ( indexPath.row == 0  ) {
                     [cell.dayAndWeekView setHidden:NO];
                     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
                     [formatter setDateFormat:@"YYYY年 M月dd日"];
@@ -459,7 +472,7 @@
                     NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                     NSLog(@"%@", _urlStr);
                     NSURL *url = [NSURL URLWithString:_urlStr];
-                    [cell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"018.jpg"]];
+                    [cell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"go2_grey"]];
                 }else{
                     [cell.activeImg setBackgroundColor: [UIColor colorWithHexString:@"31aaeb"]];
                 }

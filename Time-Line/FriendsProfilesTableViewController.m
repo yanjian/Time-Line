@@ -31,7 +31,7 @@
     self.title = @"Friend's Profile" ;
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
     [leftBtn addTarget:self action:@selector(backToInvitationsView) forControlEvents:UIControlEventTouchUpInside] ;
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
@@ -133,7 +133,7 @@
                 NSLog(@"%@", _urlStr);
                 NSURL *url = [NSURL URLWithString:_urlStr];
                 [activeCell.userHeadImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-                [activeCell.userName setTextColor: blueColor];
+                [activeCell.userName setTextColor: defineBlueColor];
                 [activeCell.userName setText:self.friend.username];
                 [activeCell.userAlias setText:self.friend.alias==nil? self.friend.email:self.friend.alias]  ;
 
@@ -143,7 +143,7 @@
                 NSLog(@"%@", _urlStr);
                 NSURL *url = [NSURL URLWithString:_urlStr];
                 [activeCell.userHeadImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
-                [activeCell.userName setTextColor: blueColor];
+                [activeCell.userName setTextColor: defineBlueColor];
                 [activeCell.userName setText:[self.messageDic objectForKey:@"fname"]];
                 
                 [activeCell.userAlias setText:[self.messageDic objectForKey:@"msg"]]  ;
@@ -176,23 +176,23 @@
 //            }
             switch (showButtonType) {
                 case ShowButtonType_Accept:{
-                    [acceptBtn setTitleColor:blueColor forState:UIControlStateNormal] ;
+                    [acceptBtn setTitleColor:defineBlueColor forState:UIControlStateNormal] ;
                     [acceptBtn setTitle:@"Acccept Friend Request" forState:UIControlStateNormal] ;
-                    [acceptBtn.layer setBorderColor:blueColor.CGColor];
+                    [acceptBtn.layer setBorderColor:defineBlueColor.CGColor];
                     [acceptBtn.layer setBorderWidth:2.f];
                     [acceptBtn addTarget:self action:@selector(acceptFriendRequest:) forControlEvents:UIControlEventTouchUpInside];
                 }break;
                 case ShowButtonType_Friend:{
                     [acceptBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal] ;
                     [acceptBtn setTitle:@"Friend" forState:UIControlStateNormal] ;
-                    [acceptBtn setBackgroundColor:blueColor];
+                    [acceptBtn setBackgroundColor:defineBlueColor];
                     [acceptBtn addTarget:self action:@selector(relieveFriendRelationship:) forControlEvents:UIControlEventTouchUpInside];
 
                 }break ;
                 case ShowButtonType_Add:{
-                    [acceptBtn setTitleColor:blueColor forState:UIControlStateNormal] ;
+                    [acceptBtn setTitleColor:defineBlueColor forState:UIControlStateNormal] ;
                     [acceptBtn setTitle:@"Add as friend" forState:UIControlStateNormal] ;
-                    [acceptBtn.layer setBorderColor:blueColor.CGColor];
+                    [acceptBtn.layer setBorderColor:defineBlueColor.CGColor];
                     [acceptBtn.layer setBorderWidth:2.f];
                     [acceptBtn addTarget:self action:@selector(addFriendRequest:) forControlEvents:UIControlEventTouchUpInside];
                 }break ;
@@ -349,39 +349,6 @@
     }
 }
 
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
 
 #pragma mark - Table view delegate
 
@@ -411,7 +378,6 @@
         }
     }
 }
-
 
 -(void)updateUserOfGroup{
     NSArray * tmpArr = self.dataArr[self.lastIndexPath.section];

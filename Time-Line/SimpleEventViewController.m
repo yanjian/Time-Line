@@ -67,7 +67,7 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self colorWithNavigationBar];
+   // [self colorWithNavigationBar];
     self.title = @"Event Details" ;
     
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -218,7 +218,7 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
 -(void)createSimpleEnvenCalendar{
     calendarLab = [[UILabel alloc] initWithFrame:CGRectMake(STARTENDSPACING, 0, kScreen_Width-(STARTENDSPACING+XSPACING+5), CELLOFLABLEH)] ;
     calendarLab.textAlignment = NSTextAlignmentRight ;
-    calendarLab.adjustsFontSizeToFitWidth = YES ;
+    calendarLab.lineBreakMode = NSLineBreakByTruncatingMiddle ;
     if (self.isEdit) {
         calendarLab.text = self.event.calendarAccount ;
     }
@@ -244,7 +244,7 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-    [self colorWithNavigationBar];
+   // [self colorWithNavigationBar];
 }
 
 /**
@@ -328,7 +328,15 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
         
         NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:17]};
         CGSize size = [self.calendarObj.summary boundingRectWithSize:CGSizeMake(320, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
-        CircleDrawView *cd =[[CircleDrawView alloc] initWithFrame:CGRectMake((kScreen_Width-XSPACING-size.width-30), 12, 20, 20)];
+        CircleDrawView * cd = nil ;
+        if (size.width > 200.f) {
+             calendarLab.frame = CGRectMake(110, 0, kScreen_Width - (110+XSPACING+5), CELLOFLABLEH) ;
+             cd = [[CircleDrawView alloc] initWithFrame:CGRectMake(90, 12, 20, 20)];
+        }else{
+            
+             cd = [[CircleDrawView alloc] initWithFrame:CGRectMake((kScreen_Width-XSPACING-size.width-30), 12, 20, 20)];
+        }
+       
         if (self.isEdit) {
             cd.hexString = self.event.backgroundColor;
             calendarLab.text = self.event.calendarAccount;
@@ -554,7 +562,10 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
     }
     eventData.eId            = [self generateUniqueEventID];
     eventData.eventTitle     = eventTitle.text;
-    eventData.location       = eventLocation.text;
+    if ( ![@"Location" isEqualToString:eventLocation.text] && eventLocation.text ) {
+         eventData.location  = eventLocation.text;
+    }
+   
     NSLog(@"%@",[[PublicMethodsViewController getPublicMethods] stringformatWithDate:startDate]);
     
     if(isAllDay){

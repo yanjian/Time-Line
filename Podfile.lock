@@ -38,10 +38,10 @@ PODS:
   - CupertinoYankee (0.1.1)
   - EAIntroView (2.6.4)
   - EGOTableViewPullRefreshAndLoadMore (1.0.4)
-  - Fingertips (0.3.0)
+  - Fingertips (0.4.0)
   - FXBlurView (1.6.3)
   - JSONKit-NoWarning (1.2)
-  - JSQMessagesViewController (7.0.0):
+  - JSQMessagesViewController (7.1.0):
     - JSQSystemSoundPlayer (~> 2.0.1)
   - JSQSystemSoundPlayer (2.0.1)
   - Masonry (0.4.0)
@@ -56,7 +56,7 @@ PODS:
     - SDWebImage/Core (= 3.7.2)
   - SDWebImage/Core (3.7.2)
   - SHLineGraphView (1.0.6)
-  - SloppySwiper (0.3.0)
+  - SloppySwiper (0.4.0)
   - TBXML (1.5)
   - UIColor-HexString (1.0.1)
   - XLPagerTabStrip (1.0.0)
@@ -94,10 +94,10 @@ SPEC CHECKSUMS:
   CupertinoYankee: 742ab22e47518167d0c78d2eaa5aed5b6e26af3b
   EAIntroView: df7dc18da73e1831d06878b9c0e13da78e6bb3ce
   EGOTableViewPullRefreshAndLoadMore: 118a0824590db042d42e08fcc442b93cebf15e73
-  Fingertips: bccd316dda073afb49ab4aac206a77a3d01231c7
+  Fingertips: 09678a650eecad2c1733dfdd5cb4004600ce2899
   FXBlurView: c6d23f3d35af2c6282296a2930f61c6e2c788d01
   JSONKit-NoWarning: 3d27e6f9e6846ecf741e8c64dcadd7d5aa7193cb
-  JSQMessagesViewController: 9fd7e9ac96e9fc91f2deca86928e2cc916aeebaa
+  JSQMessagesViewController: ca11f86fa68ca70835f05e169df9244147c1dc40
   JSQSystemSoundPlayer: c5850e77a4363ffd374cd851154b9af93264ed8d
   Masonry: a950d1934075b87bc941720a1439f1990fa0ead7
   MSCollectionViewCalendarLayout: fba6fefdb3a340cb3e4f10725c6b3a530e6f6817
@@ -108,9 +108,9 @@ SPEC CHECKSUMS:
   SBJson: 68f16f446bd6047dc3dd1ec4919a468c2cd7fedd
   SDWebImage: 71b7cdc1d1721d6a82ed62889030225f2c249e29
   SHLineGraphView: eb2be643fe2b9778e10e702836a1b474083ab9da
-  SloppySwiper: 7d1e6af56b3f5dd6407d6130c8aec1319c4275da
+  SloppySwiper: 5325a412ecd80eefa171f5544b07539a891b1c32
   TBXML: 9f9dadb239f2f2af1dadb87fe43a0ce6e479379a
   UIColor-HexString: 3b6e52edc3ba2d9053128c7eea60b4558526feb2
   XLPagerTabStrip: 1614c2a5a078e0ef378a825e84534d56066bea88
 
-COCOAPODS: 0.35.0
+COCOAPODS: 0.37.2

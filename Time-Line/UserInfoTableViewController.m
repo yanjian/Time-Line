@@ -36,21 +36,16 @@
     UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [leftBtn setTag:1];
     [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Arrow_Left_Blue.png"] forState:UIControlStateNormal] ;
+    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
     [leftBtn addTarget:self action:@selector(profileTobackSetingView:) forControlEvents:UIControlEventTouchUpInside] ;
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
     
 	self.userInfo = [UserInfo currUserInfo];
-	NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-	                            [UIColor blackColor], NSForegroundColorAttributeName, nil];
-
-	[self.navigationController.navigationBar setTitleTextAttributes:attributes];
-
 	UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
 	[rightBtn setTag:2];
-    [rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_blueTick"] forState:UIControlStateNormal];
+    [rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_tick"] forState:UIControlStateNormal];
 	[rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
 	[rightBtn addTarget:self action:@selector(profileTobackSetingView:) forControlEvents:UIControlEventTouchUpInside];
 	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:rightBtn];
@@ -119,11 +114,12 @@
 }
 
 #pragma mark -选择完相片后回调的方法
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *) info {
 	UIImage *image = info[UIImagePickerControllerEditedImage];
 	if (image.size.width > 140) {
 		image = ResizeImage(image, 140, 140);
 	}
+    
 	self.imageUser.image = image;
 	//上传头像
 	NSURL *url = [NSURL URLWithString:[UserInfo_UploadImg stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
@@ -168,26 +164,22 @@
 #pragma mark -该方法是UIActionsheet的回调
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
 	NSLog(@"%i", buttonIndex);
-	if (buttonIndex == 0) {
+	if ( buttonIndex == 0 ) {
 		if (isSelectSex) {
 			self.userInfo.gender = gender_woman;
 			[self.tableView reloadData];
-		}
-		else {
+		}else {
 			ShouldStartCamera(self, YES);
 		}
-	}
-	else if (buttonIndex == 1) {
-		if (isSelectSex) {
+	}else if ( buttonIndex == 1 ) {
+		if ( isSelectSex ) {
 			self.userInfo.gender = gender_man;
 			[self.tableView reloadData];
-		}
-		else {
+		} else {
 			ShouldStartPhotoLibrary(self, YES);
 		}
-	}
-	else if (buttonIndex == 2) {
-		if (!isSelectSex) {
+	}else if ( buttonIndex == 2 ) {
+		if ( !isSelectSex ) {
 			[SJAvatarBrowser showImage:self.imageUser];
 		}
 	}
@@ -198,13 +190,11 @@
 		case 1: {
 			[self.navigationController popViewControllerAnimated:YES];
 		} break;
-
 		case 2: {
 			if (self.userInfo) {
 				self.userInfoBlank(self, self.userInfo);
 			}
 		} break;
-
 		default:
 			break;
 	}
@@ -219,15 +209,13 @@
 		textNick.delegate = self;
 		textNick.alertViewStyle = UIAlertViewStylePlainTextInput;
 		[textNick show];
-	}
-	else if (indexPath.row == 2) {
+	} else if ( indexPath.row == 2 ) {
 		isClickNick = NO;
 		UIAlertView *textPhone = [[UIAlertView alloc] initWithTitle:@"Enter Phone" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Confirm", nil];
 		textPhone.delegate = self;
 		textPhone.alertViewStyle = UIAlertViewStylePlainTextInput;
 		[textPhone show];
-	}
-	else if (indexPath.row == 3) {
+	} else if ( indexPath.row == 3 ) {
 		isSelectSex = YES;
 		action = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Female", @"Male", nil];
 		[action showInView:self.view];
@@ -238,8 +226,7 @@
 	if (buttonIndex == 1) {
 		if (isClickNick) {
 			self.userInfo.nickname = [alertView textFieldAtIndex:0].text;
-		}
-		else {
+		}else {
 			self.userInfo.phone = [alertView textFieldAtIndex:0].text;
 		}
 		[self.tableView reloadData];

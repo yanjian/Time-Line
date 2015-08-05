@@ -201,7 +201,7 @@
 
 
 	UIView *dayview = [[UIView alloc]initWithFrame:CGRectMake(-1, calendarView.frame.origin.y + calendarView.frame.size.height, self.view.frame.size.width + 1, 40)];
-	dayview.backgroundColor = blueColor;
+	dayview.backgroundColor = defineBlueColor;
 	dayview.layer.borderWidth = 0.7;
 	dayview.layer.borderColor = [[UIColor grayColor] CGColor];
 	UILabel *daylabel = [[UILabel alloc]initWithFrame:CGRectMake(10, 0, 180, 40)];

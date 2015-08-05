@@ -13,8 +13,8 @@
 #import "FriendSearchViewController.h"
 #import "UIImageView+WebCache.h"
 #import "SetFriendTableViewCell.h"
-#import "PurposeEventTimeViewController.h"
-
+//#import "PurposeEventTimeViewController.h"
+#import "NewPurposeEventTimeViewController.h"
 @interface InviteesViewController () <HeadViewDelegate,UITableViewDelegate, UITableViewDataSource, UIActionSheetDelegate, ASIHTTPRequestDelegate>
 {
     UIButton *addBtn;
@@ -83,6 +83,7 @@
 
 #pragma mark 加载数据
 - (void)loadData {
+    [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
     ASIHTTPRequest *_friendGroups = [t_Network httpGet:nil Url:anyTime_GetFTlist Delegate:self Tag:anyTime_GetFTlist_tag];
     [_friendGroups setDownloadCache:g_AppDelegate.anyTimeCache];
     [_friendGroups setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy | ASIAskServerIfModifiedWhenStaleCachePolicy];
@@ -98,6 +99,7 @@
     id groupObj = [responeStr objectFromJSONString];
     switch (request.tag) {
         case anyTime_GetFTlist_tag: {
+            [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
             NSMutableArray *fgArray = [NSMutableArray array];
             if ([groupObj isKindOfClass:[NSDictionary class]]) {
                 NSString *statusCode = [groupObj objectForKey:@"statusCode"];
@@ -118,7 +120,7 @@
                 }
             }
         }
-            break;
+        break;
             
         case anyTime_GetFriendList_tag: {
             if ([groupObj isKindOfClass:[NSDictionary class]]) {
@@ -149,7 +151,11 @@
         case anyTime_AddEventMember_tag:{
             NSString *statusCode = [groupObj objectForKey:@"statusCode"];
             if ([statusCode isEqualToString:@"1"]) {
+                [MBProgressHUD hideHUDForView:self.view animated:YES];
                 [MBProgressHUD showSuccess:@"Success"];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(inviteesViewController:)]) {
+                    [self.delegate inviteesViewController:self] ;
+                }
             }else{
                 [MBProgressHUD showError:@" Fail "];
             }
@@ -163,6 +169,7 @@
 - (void)requestFailed:(ASIHTTPRequest *)request {
     NSError *error = [request error];
     if (error) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
         [MBProgressHUD showError:@"Newwork error"];
     }
 }
@@ -327,9 +334,9 @@
 -(void)saveSelectFriendsData:(UIButton *)sender {
     NSMutableArray * tmpArr = [NSMutableArray array];
     for (Friend * friend in _selectFriendArr) {
-        [tmpArr addObject:@{@"fid":friend.fid}];
+        [tmpArr addObject:@{@"uid":friend.fid}];
     }
-    
+    [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
     ASIHTTPRequest *_inviteFriend = [t_Network httpPostValue:@{@"eid":self.eid,@"member":[tmpArr JSONString]}.mutableCopy Url:anyTime_AddEventMember Delegate:self Tag:anyTime_AddEventMember_tag];
     [_inviteFriend startAsynchronous];
     
@@ -352,13 +359,20 @@
                     return ;
                 }
                 self.activeDataMode.activeFriendArr = _selectFriendArr ;
-                PurposeEventTimeViewController * purposeEventVC = [[PurposeEventTimeViewController alloc] init] ;
+//                PurposeEventTimeViewController * purposeEventVC = [[PurposeEventTimeViewController alloc] init] ;
+//                if (self.isEdit){
+//                    purposeEventVC.isEdit = self.isEdit ;
+//                    purposeEventVC.activeEvent = self.activeEvent ;
+//                }
+//                purposeEventVC.activeDataMode = self.activeDataMode ;
+               
+                NewPurposeEventTimeViewController * newPurpose = [[NewPurposeEventTimeViewController alloc] init];
                 if (self.isEdit){
-                    purposeEventVC.isEdit = self.isEdit ;
-                    purposeEventVC.activeEvent = self.activeEvent ;
+                    newPurpose.isEdit = self.isEdit ;
+                    newPurpose.activeEvent = self.activeEvent ;
                 }
-                purposeEventVC.activeDataMode = self.activeDataMode ;
-                [self.navigationController pushViewController:purposeEventVC animated:YES] ;
+                newPurpose.activeDataMode = self.activeDataMode ;
+                [self.navigationController pushViewController:newPurpose animated:YES] ;
             }else if(self.navStyleType == NavStyleType_LeftModelOpen){
                 
             }
@@ -370,6 +384,5 @@
     }
     
 }
-
 
 @end

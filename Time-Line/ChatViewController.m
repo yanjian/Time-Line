@@ -10,7 +10,17 @@
 #import "ChatContentModel.h"
 #import "MemberDataModel.h"
 #import "UserInfo.h"
+#import "camera.h"
+#import "utilities.h"
+#import "SJAvatarBrowser.h"
+#import "UIImageView+WebCache.h"
 
+@interface ChatViewController (){
+     UIActionSheet *action;
+     UIImage   * sendImage;
+}
+
+@end
 @implementation ChatViewController
 
 - (void)viewDidLoad
@@ -23,12 +33,13 @@
     self.senderDisplayName = [UserInfo currUserInfo].username;
     
     self.showLoadEarlierMessagesHeader = NO ;
+    
     self.chatModelData = [[ChatModelData alloc] initChatModelDataWithActiveEventModel:self.activeEvent];
-    self.inputToolbar.contentView.leftBarButtonItem = nil;//先屏蔽掉发送图片功能
+    
     //收到信息的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fetchChatGroupInfo:) name:CHATGROUP_ACTIVENOTIFICTION object:nil];
     
-    self.showLoadEarlierMessagesHeader = YES;
+    self.showLoadEarlierMessagesHeader = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -36,12 +47,10 @@
     [super viewWillAppear:animated];
     //告诉接受到的信息在存入到数据库时已读
     g_AppDelegate.isRead = @(UNREADMESSAGE_YES);
-
 }
 
 - (NSString *)titleForPagerTabStripViewController:(XLPagerTabStripViewController *)pagerTabStripViewController{
     return @"UPDATES" ;
-    
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -67,17 +76,27 @@
                                                           text:text];
     [self.chatModelData.messages addObject:message];
     [self finishSendingMessageAnimated:YES];
-   
-    //
+    [self netWorkSendChatMsgChatStr:text withChatImage:nil] ;//聊天信息发送到对方
+}
+
+-(void)netWorkSendChatMsgChatStr:(NSString *)chatmsg withChatImage:(UIImage *)chatImage {
     NSURL *url = [NSURL URLWithString:[anyTime_SendMsg stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     ASIFormDataRequest *uploadImageRequest = [ASIFormDataRequest requestWithURL:url];
     [uploadImageRequest setStringEncoding:NSUTF8StringEncoding];
     [uploadImageRequest setRequestMethod:@"POST"];
     [uploadImageRequest setPostFormat:ASIMultipartFormDataPostFormat];
-    [uploadImageRequest setPostValue:text forKey:@"msg"];
+    
+    [uploadImageRequest setPostValue:chatmsg==nil?@"":chatmsg forKey:@"msg"];
     [uploadImageRequest setPostValue:self.activeEvent.Id forKey:@"eid"];
     [uploadImageRequest setTimeOutSeconds:20];
-    [uploadImageRequest addData:[NSData new] withFileName:@""  andContentType:@"image/jpeg" forKey:@"f1"];
+    if(chatImage){
+        NSData *data = UIImagePNGRepresentation(chatImage);
+        NSMutableData *imageData = [NSMutableData dataWithData:data];
+        NSString *tmpDate = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyyMMddss"];
+        [uploadImageRequest addData:imageData withFileName:[NSString stringWithFormat:@"%@.jpg", tmpDate]  andContentType:@"image/jpeg" forKey:@"f1"];
+    }else{
+       [uploadImageRequest addData:[NSData new] withFileName:@""  andContentType:@"image/jpeg" forKey:@"f1"];
+    }
     [uploadImageRequest setTag:anyTime_SendMsg_tag];
     __block ASIFormDataRequest *uploadRequest = uploadImageRequest;
     [uploadImageRequest setCompletionBlock: ^{
@@ -90,7 +109,7 @@
             if (statusCode == 1) {
                 id dataDic = [tmpDic objectForKey:@"data"];
                 if ([dataDic isKindOfClass:[NSDictionary class]]) {
-                     [g_AppDelegate saveChatInfoForActive:dataDic];
+                    [g_AppDelegate saveChatInfoForActive:dataDic];
                 }
             }
         }
@@ -101,35 +120,69 @@
     [uploadImageRequest startAsynchronous];
 }
 
+
+
 -(void)fetchChatGroupInfo:(NSNotification *) notification {
-    
-     self.showTypingIndicator = !self.showTypingIndicator;
-    
-    [self scrollToBottomAnimated:YES];
-    
     ChatContentModel * chatContent = [notification.userInfo objectForKey:CHATGROUP_USERINFO];
-    JSQMessage *message;
-    if (chatContent.imgSmall) {
-        JSQPhotoMediaItem *photoItem = [[JSQPhotoMediaItem alloc] initWithImage:[UIImage imageWithData:[NSData dataWithBase64String:chatContent.imgSmall]]];
-         message = [JSQMessage messageWithSenderId:chatContent.uid
-                                                       displayName:chatContent.username
-                                                             media:photoItem];
+    
+    if ([chatContent.eid isEqualToString:self.activeEvent.Id]) {//收到的通知与打开的活动的eid是相同的就显示在聊天上.....
         
-       
-    }else if(chatContent.text){
-        message = [[JSQMessage alloc] initWithSenderId:chatContent.uid
-                                     senderDisplayName:chatContent.username
-                                                  date:[NSDate distantPast]
-                                                  text:chatContent.text];
+        self.showTypingIndicator = !self.showTypingIndicator;
+        [self scrollToBottomAnimated:YES];
+        JSQMessage *message;
+        if (chatContent.imgSmall && ![@"" isEqualToString:chatContent.imgSmall]) {
+            JSQPhotoMediaItem *photoItem = [[JSQPhotoMediaItem alloc] initWithImage:[UIImage imageWithData:[NSData dataWithBase64String:chatContent.imgSmall]]];
+            photoItem.appliesMediaViewMaskAsOutgoing = NO ;
+            
+            message = [[JSQMessage alloc] initWithSenderId:chatContent.uid
+                                         senderDisplayName:chatContent.username
+                                                      date:[[PublicMethodsViewController getPublicMethods] stringToDate:chatContent.time]
+                                                     media:photoItem];
+        }else if(chatContent.text){
+            message = [[JSQMessage alloc] initWithSenderId:chatContent.uid
+                                         senderDisplayName:chatContent.username
+                                                      date:[[PublicMethodsViewController getPublicMethods] stringToDate:chatContent.time] //[NSDate distantPast]
+                                                      text:chatContent.text];
+        }
+        [JSQSystemSoundPlayer jsq_playMessageReceivedSound];
+        [self.chatModelData.messages addObject:message];
+        [self finishReceivingMessageAnimated:YES];
     }
-   
-    [JSQSystemSoundPlayer jsq_playMessageReceivedSound];
-    [self.chatModelData.messages addObject:message];
-    [self finishReceivingMessageAnimated:YES];
+}
+
+
+- (void)didPressAccessoryButton:(UIButton *)sender
+{
+    action = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Camera", @"Photo", nil];
+    [action showInView:self.view];
 
 }
 
 
+#pragma mark -该方法是UIActionsheet的回调
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSLog(@"%i", buttonIndex);
+    if ( buttonIndex == 0 ) {
+       ShouldStartCamera(self, YES);
+    }else if ( buttonIndex == 1 ) {
+       ShouldStartPhotoLibrary(self, YES);
+    }
+}
+
+
+
+#pragma mark -选择完相片后回调的方法
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *) info {
+    UIImage *image = info[UIImagePickerControllerEditedImage];
+    if (image.size.width > 140) {
+        image = ResizeImage(image, 140, 140);
+    }
+    sendImage = image ;
+    [self.chatModelData addPhotoMediaMessage:image senderId:self.senderId displayName:self.senderDisplayName ] ;
+    [self finishReceivingMessageAnimated:YES];
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    [self netWorkSendChatMsgChatStr:nil withChatImage:sendImage] ;//聊天信息发送到对方
+}
 
 - (id<JSQMessageData>)collectionView:(JSQMessagesCollectionView *)collectionView messageDataForItemAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -142,30 +195,14 @@
     
     if ([message.senderId isEqualToString:self.senderId]) {
         return self.chatModelData.outgoingBubbleImageData;
+    }else{
+        return  self.chatModelData.incomingBubbleImageData ;
     }
-    
-    return self.chatModelData.incomingBubbleImageData;
 }
 
 - (id<JSQMessageAvatarImageDataSource>)collectionView:(JSQMessagesCollectionView *)collectionView avatarImageDataForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    JSQMessage *message = [self.chatModelData.messages objectAtIndex:indexPath.item];
-    if (self.chatModelData.avatars[message.senderId]==nil) {
-        for (MemberDataModel *memberData in self.chatModelData.memberTempArr) {
-            if ([message.senderId isEqualToString: memberData.uid.stringValue]) {
-                if (memberData.imgSmall) {
-                    NSString * imgSmall = [memberData.imgSmall stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                    NSString * imgPath = [[NSString stringWithFormat:@"%@/%@",BASEURL_IP,imgSmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                    
-                    NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:imgPath]];
-                    
-                    self.chatModelData.avatars[message.senderId] =  [JSQMessagesAvatarImageFactory avatarImageWithImage:[UIImage imageWithData:imgData]   diameter:kJSQMessagesCollectionViewAvatarSizeDefault];;
-                }
-            }
-        }
-        //[self.collectionView reloadData];
-        return self.chatModelData.avatarImageBlank;
-    }else return [self.chatModelData.avatars objectForKey:message.senderId];
+    return nil ;
 }
 
 - (NSAttributedString *)collectionView:(JSQMessagesCollectionView *)collectionView attributedTextForCellTopLabelAtIndexPath:(NSIndexPath *)indexPath
@@ -212,6 +249,10 @@
     
     JSQMessage *msg = [self.chatModelData.messages objectAtIndex:indexPath.item];
     
+    
+    NSLog(@"%@",[self.chatModelData.avatars objectForKey:msg.senderId]) ;
+    [cell.avatarImageView sd_setImageWithURL:[self.chatModelData.avatars objectForKey:msg.senderId] placeholderImage:[UIImage imageNamed:@"smile_1"]] ;
+    
     if (!msg.isMediaMessage) {
         
         if ([msg.senderId isEqualToString:self.senderId]) {
@@ -220,7 +261,6 @@
         else {
             cell.textView.textColor = [UIColor whiteColor];
         }
-        
         cell.textView.linkTextAttributes = @{ NSForegroundColorAttributeName : cell.textView.textColor,
                                               NSUnderlineStyleAttributeName : @(NSUnderlineStyleSingle | NSUnderlinePatternSolid) };
     }
@@ -252,7 +292,6 @@
             return 0.0f;
         }
     }
-    
     return kJSQMessagesCollectionViewCellLabelHeightDefault;
 }
 - (CGFloat)collectionView:(JSQMessagesCollectionView *)collectionView
@@ -277,7 +316,14 @@
 
 - (void)collectionView:(JSQMessagesCollectionView *)collectionView didTapMessageBubbleAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"Tapped message bubble!");
+    JSQMessage *msg = [self.chatModelData.messages objectAtIndex:indexPath.item];
+    if (msg.isMediaMessage) {
+        if ([msg.media isKindOfClass:[JSQPhotoMediaItem class]]){
+            JSQPhotoMediaItem * tmpMediaIeem =  (JSQPhotoMediaItem *) msg.media ;
+            UIImageView * tmpImgView = [[UIImageView alloc] initWithImage:tmpMediaIeem.image];
+            [SJAvatarBrowser showImage:tmpImgView];
+        }
+    }
 }
 
 - (void)collectionView:(JSQMessagesCollectionView *)collectionView didTapCellAtIndexPath:(NSIndexPath *)indexPath touchLocation:(CGPoint)touchLocation

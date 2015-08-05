@@ -14,7 +14,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="018" translatesAutoresizingMaskIntoConstraints="NO" id="c12-qi-H0d">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="go2_grey.png" translatesAutoresizingMaskIntoConstraints="NO" id="c12-qi-H0d">
                         <rect key="frame" x="43" y="1" width="270" height="87"/>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" alpha="0.34999999999999964" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" enabled="NO" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TZS-VS-lH5">
@@ -69,10 +69,10 @@
                 <outlet property="shieldLab" destination="TZS-VS-lH5" id="3Rz-QL-DoX"/>
                 <outlet property="weekNumber" destination="bpa-TB-aH1" id="D7a-i0-lse"/>
             </connections>
-            <point key="canvasLocation" x="93" y="220"/>
+            <point key="canvasLocation" x="581" y="421"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="018" width="2048" height="1536"/>
+        <image name="go2_grey.png" width="180" height="180"/>
     </resources>
 </document>

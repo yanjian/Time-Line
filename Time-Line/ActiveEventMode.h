@@ -10,15 +10,15 @@
 #import "ActiveBaseInfoMode.h"
 @interface ActiveEventMode : ActiveBaseInfoMode
 
-@property (nonatomic, copy)     NSString *location;
-@property (nonatomic, copy)     NSString *note;
-@property (nonatomic, copy)     NSString *coordinate;
-@property (nonatomic, copy)     NSString *eventVote;
-@property (nonatomic, copy)     NSString *veTime;
-@property (nonatomic, retain)   NSArray *time;
-@property (nonatomic, retain)   NSArray *etList;
-@property (nonatomic, assign)   NSInteger timeSize;
-@property (nonatomic, copy)     NSString *voteEndTime;
-@property (nonatomic, retain)   NSArray *evList;
+@property (nonatomic, copy)     NSString * location;
+@property (nonatomic, copy)     NSString * note;
+@property (nonatomic, copy)     NSString * coordinate;
+@property (nonatomic, copy)     NSString * eventVote;
+@property (nonatomic, copy)     NSString * veTime;
+@property (nonatomic, retain)   NSArray  * time;
+@property (nonatomic, retain)   NSArray  * etList;
+@property (nonatomic, assign)   NSInteger  timeSize;
+@property (nonatomic, copy)     NSString * voteEndTime;
+@property (nonatomic, retain)   NSArray  * evList;
 
 @end

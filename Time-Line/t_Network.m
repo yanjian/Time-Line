@@ -97,7 +97,7 @@
         allKeyArr=[value allKeys];
     }
     
-    NSString *urlString=[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *urlString = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     ASIFormDataRequest *request = [ASIFormDataRequest requestWithURL:[NSURL URLWithString:urlString]];
     [request setDelegate:delegate];
     [request setRequestMethod:@"POST"];

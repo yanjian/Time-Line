@@ -22,23 +22,24 @@
     UILabel *titleLabel;
     BOOL isSuccess;
     NSMutableArray *_tmpActiveArr;
+    BOOL ison;
 }
 @property (nonatomic, strong) UIWindow *subWindow;
 @end
 
 @implementation HomeViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self)
-    {
-        self.title = @"Schedule";
-        [self.tabBarItem setImage:[UIImage imageNamed:@"Schedule_NoFill"]];
-        self.tabBarItem.title = @"Schedule";
-    }
-    return self;
-}
+//- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+//{
+//    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+//    if (self)
+//    {
+//
+//        [self.tabBarItem setImage:[UIImage imageNamed:@"Schedule_NoFill"]];
+//        self.tabBarItem.title = @"Schedule";
+//    }
+//    return self;
+//}
 
 - (void)viewDidLoad
 {
@@ -49,40 +50,34 @@
 #pragma 初始化导航栏内容
 - (void)initNavigationItem
 {
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Schedule_Month"] forState:UIControlStateNormal];
-    [leftBtn setFrame:CGRectMake(0, 2, 21, 15)];
-    [leftBtn addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
+//    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Schedule_Month"] forState:UIControlStateNormal];
+//    [leftBtn setFrame:CGRectMake(0, 2, 21, 15)];
+//    [leftBtn addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
+//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
     
     
     //    UIButton*  rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     //    [rightBtn setBackgroundImage:[UIImage imageNamed:@"add_action"] forState:UIControlStateNormal];
     //    [rightBtn setFrame:CGRectMake(0, 2, 30, 25)];
     //    [rightBtn addTarget:self action:@selector(setYVbutton) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Today" style:UIBarButtonItemStylePlain target:self action:@selector(backToToday)];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Today" style:UIBarButtonItemStylePlain target:self action:@selector(backToToday)];
     
-    _scrollview = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
-    _scrollview .contentSize = CGSizeMake(0, kScreen_Height);
-    //    _scrollview.contentOffset = CGPointMake(kScreen_Width, 0);
-    _scrollview.backgroundColor = [UIColor whiteColor];
-    _scrollview.pagingEnabled = NO;
-    _scrollview.bounces = NO;//最后一页滑不动
-    _scrollview.showsHorizontalScrollIndicator=NO;
-    self.view =_scrollview ;
+    
+    self.view = self.scrollview ;
     
     calendarView = [[CLCalendarView alloc] init];
-    calendarView.frame = CGRectMake (0, 0, kScreen_Width, kScreen_Height);
+    calendarView.frame = CGRectMake (0, 0, kScreen_Width, kScreen_Height-110);
     calendarView.dataSuorce = self;
-    calendarView.delegate = self;
-    calendarView.time=@"time";
-    [_scrollview addSubview:calendarView];
+    calendarView.delegate   = self;
+    calendarView.time       = @"time";
+    [self.scrollview addSubview:calendarView];
     
-    titleLabel.text=[NSString stringWithFormat:@"Today %@",[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"dd/M"]];
-    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 180, 30)];
-    titleLabel.textAlignment = NSTextAlignmentCenter;
-    titleLabel.font=[UIFont boldSystemFontOfSize:20.0f];
-    titleLabel.textColor = [UIColor whiteColor];
+//    titleLabel.text=[NSString stringWithFormat:@"Today %@",[[PublicMethodsViewController getPublicMethods] getcurrentTime:@"dd/M"]];
+//    titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 180, 30)];
+//    titleLabel.textAlignment = NSTextAlignmentCenter;
+//    titleLabel.font=[UIFont boldSystemFontOfSize:20.0f];
+//    titleLabel.textColor = [UIColor whiteColor];
     
     //    UIControl *titleView = [[UIControl alloc]initWithFrame:CGRectMake(0, 0, 180, 30)];
     //    [titleView addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
@@ -91,14 +86,26 @@
 }
 
 
+-(UIScrollView *)scrollview{
+    if (!_scrollview) {
+        _scrollview = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height)];
+        _scrollview .contentSize = CGSizeMake(0, kScreen_Height);
+      //_scrollview.contentOffset = CGPointMake(kScreen_Width, 0);
+      //_scrollview.backgroundColor = [UIColor redColor] ;
+        _scrollview.backgroundColor = [UIColor whiteColor];
+        _scrollview.pagingEnabled = NO;
+        _scrollview.bounces = NO;//最后一页滑不动
+        _scrollview.showsHorizontalScrollIndicator=NO;
+    }
+    return _scrollview;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
-    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+//    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
+//    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
 
-    
-    
     _tmpActiveArr = [NSMutableArray arrayWithCapacity:0];
     ASIHTTPRequest *activeRequest = [t_Network httpGet:nil Url:anyTime_GetEventBasicInfo Delegate:self Tag:anyTime_GetEventBasicInfo_tag];
     [activeRequest setDownloadCache:g_AppDelegate.anyTimeCache];
@@ -1065,23 +1072,23 @@
 /**
  * 点击titleView 导航箭头按钮
  */
-- (void)oClickArrow {
-//    if (ison) {
-//        ison=NO;
-//        [UIView beginAnimations:@"clockwiseAnimation" context:NULL];
-//        [UIView setAnimationDuration:1.0f];
-//        [UIView setAnimationDelegate:self];
-//       // rightBtn_arrow.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 90.0f);
-//        [UIView commitAnimations];
-//    }else{
-//        ison=YES;
-//        [UIView beginAnimations:@"clockwiseAnimation" context:NULL];
-//        [UIView setAnimationDuration:1.0f];
-//        [UIView setAnimationDelegate:self];
-//      //  rightBtn_arrow.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 180.0f);
-//        [UIView commitAnimations];
-//        
-//    }
+- (void)oClickArrow:(UIView *) clickView {
+    if (!ison) {
+        ison=YES;
+        [UIView beginAnimations:@"clockwiseAnimation" context:NULL];
+        [UIView setAnimationDuration:1.0f];
+        [UIView setAnimationDelegate:self];
+        clickView.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 90.0f);
+        [UIView commitAnimations];
+    }else{
+        ison=NO;
+        [UIView beginAnimations:@"clockwiseAnimation" context:NULL];
+        [UIView setAnimationDuration:1.0f];
+        [UIView setAnimationDelegate:self];
+        clickView.transform = CGAffineTransformMakeRotation((180.0f * M_PI) / 180.0f);
+        [UIView commitAnimations];
+        
+    }
     calendarView.displayMode = !calendarView.displayMode;
 }
 

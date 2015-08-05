@@ -69,7 +69,7 @@
     [calendarview addSubview:self.tableView];
     UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [rightBtn setFrame:CGRectMake(0, 0, 25, 17)];
-    [rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_blueTick"] forState:UIControlStateNormal] ;
+    [rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_tick"] forState:UIControlStateNormal] ;
     [rightBtn addTarget:self action:@selector(synchronizeGoogleData:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem=[[UIBarButtonItem alloc] initWithCustomView:rightBtn];
     [self.navigationItem setHidesBackButton:YES animated:YES];

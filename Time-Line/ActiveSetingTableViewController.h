@@ -8,17 +8,24 @@
 
 #import <UIKit/UIKit.h>
 #import "ActiveEventMode.h"
-@protocol ActiveSetingDelegate ;
+@protocol ActiveSetingTableViewControllerDelegate;
 @interface ActiveSetingTableViewController : UITableViewController
+
 @property (strong, nonatomic) ActiveEventMode * activeEvent ;
-@property (nonatomic,assign)  id<ActiveSetingDelegate>  delegate;
+
+@property (nonatomic,assign) id<ActiveSetingTableViewControllerDelegate> delegate;
+
 @end
 
 
-
-@protocol ActiveSetingDelegate <NSObject>
+@protocol ActiveSetingTableViewControllerDelegate <NSObject>
 
 @optional
--(void)activeSetingTableViewController:(ActiveSetingTableViewController *)activeSetingVC eventId:(NSString *)eventId;
+
+/***
+ *
+ *用户是否在该页面设置了东西：isChange --> YES 表示用户在页面有改动：---刷新父页面---
+ */
+-(void)activeSetingTableViewControllerDelegate:(ActiveSetingTableViewController *) activeViewController isChange:(BOOL) isChange;
 
 @end

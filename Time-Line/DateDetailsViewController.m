@@ -42,7 +42,7 @@
 }
 
 - (void)initNavigationItem {
-	self.navigationController.navigationBar.barTintColor = blueColor;
+	self.navigationController.navigationBar.barTintColor = defineBlueColor;
 
 	_detaileTableview = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height - 64) style:UITableViewStyleGrouped];
 	_detaileTableview.delegate = self;

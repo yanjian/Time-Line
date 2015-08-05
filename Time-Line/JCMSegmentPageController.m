@@ -285,7 +285,7 @@ static const float TAB_BAR_HEIGHT = 0.f;//64.0f;
 	   SetingViewController *setVC=[[SetingViewController alloc] init];
 	   SetingsNavigationController *nc=[[SetingsNavigationController alloc] initWithRootViewController:setVC];
 	   nc.navigationBar.translucent=NO;
-	   nc.navigationBar.barTintColor=blueColor;
+	   nc.navigationBar.barTintColor=defineBlueColor;
 	   [self presentViewController:nc animated:YES completion:nil];
 	   self.isRefreshUIData=NO;
 	 */
@@ -296,7 +296,7 @@ static const float TAB_BAR_HEIGHT = 0.f;//64.0f;
 	UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:setVC];
 	nc.navigationBar.translucent = NO;
 	nc.navigationItem.hidesBackButton = YES;
-	nc.navigationBar.barTintColor = blueColor;
+	nc.navigationBar.barTintColor = defineBlueColor;
 	swiper = [[SloppySwiper alloc] initWithNavigationController:nc];
 	nc.delegate = swiper;
 	[self presentViewController:nc animated:YES completion:nil];

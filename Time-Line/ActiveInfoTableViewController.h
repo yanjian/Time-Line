@@ -13,7 +13,12 @@
 @ class ActiveDestinationViewController ;
 typedef void(^ActiveDestinationBlank)(void);
 
+
 @interface ActiveInfoTableViewController : UITableViewController<XLPagerTabStripChildItem,MKMapViewDelegate>
 @property (strong, nonatomic) ActiveEventMode *activeEvent ;
 @property (strong, nonatomic) ActiveDestinationBlank activeDestinationBlank;
+
+
+
+-(void)refreshActiveEventData:(NSString *)eventId ;
 @end
