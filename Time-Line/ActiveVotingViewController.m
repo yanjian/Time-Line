@@ -30,30 +30,28 @@ static NSString * cellVotingId = @"cellVotingId";
 
 @implementation ActiveVotingViewController
 @synthesize activeTimeVoteArr,activeEvent ;
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     _selectIndexPathDic = @{}.mutableCopy ;
     
     NSMutableArray * timeArr = @[].mutableCopy ;
-    for (NSDictionary *tmpDic in activeEvent.time ) {
-        ActiveTimeVoteMode * activeTimeVote = [[ActiveTimeVoteMode  alloc] init];
-        [activeTimeVote parseDictionary:tmpDic];
+    for (NSDictionary *tmpDic in activeEvent.proposeTimes ) {
+        ActiveTimeVoteMode * activeTimeVote = [ActiveTimeVoteMode  modelWithDictionary:tmpDic];
         [timeArr addObject:activeTimeVote];
     }
     self.activeTimeVoteArr = timeArr ;
     
     NSMutableArray * voteTimeArr = @[].mutableCopy ;
-    for (NSDictionary *timeVoteDic in activeEvent.etList) {
-        TimeVoteModel * timeVoteModel = [[TimeVoteModel alloc] init];
-        [timeVoteModel parseDictionary:timeVoteDic];
+    for (NSDictionary *timeVoteDic in activeEvent.voteRecords) {
+        TimeVoteModel * timeVoteModel = [TimeVoteModel modelWithDictionary:timeVoteDic];
         [voteTimeArr addObject:timeVoteModel];
     }
     self.voteTimeArr = voteTimeArr ;
     
     NSMutableArray * memberArr = @[].mutableCopy ;
-    for (NSDictionary *memberDic in activeEvent.member) {
-        MemberDataModel * memberDataModel = [[MemberDataModel alloc] init];
-        [memberDataModel parseDictionary:memberDic];
+    for (NSDictionary *memberDic in activeEvent.invitees) {
+        MemberDataModel * memberDataModel = [MemberDataModel modelWithDictionary:memberDic];
         [memberArr addObject:memberDataModel];
     }
     self.voteMemberArr = memberArr ;
@@ -105,41 +103,52 @@ static NSString * cellVotingId = @"cellVotingId";
         cell.voteCount.text = @"0" ;
         
     }
+    
     ActiveTimeVoteMode * activeTimeVote = [activeTimeVoteArr objectAtIndex:indexPath.section];
-    if ([activeTimeVote.finalTime integerValue]== 2) {//表示时间已经确定(只要有一个确定就表示为真)
+    
+    if ( [activeTimeVote.finalTime integerValue] == 2 ) {//表示时间已经确定(只要有一个确定就表示为真)
         isTimeConfirm = true ;
     }
-    NSPredicate *pre = [NSPredicate predicateWithFormat:@"tid == %@",activeTimeVote.Id];
+    
+    NSPredicate * pre = [NSPredicate predicateWithFormat:@"ptid == %@",activeTimeVote.Id];
     NSArray * voteArr =  [self.voteTimeArr filteredArrayUsingPredicate:pre];
-    if (voteArr.count>0) {
+    
+    if ( voteArr.count > 0) {
         cell.voteCount.text = [NSString stringWithFormat:@"%lu",(unsigned long)voteArr.count];
     }
-    for (TimeVoteModel *timeVote in voteArr) {
-        if ([timeVote.uid integerValue] == [[UserInfo currUserInfo].Id integerValue] ) {
+    for (TimeVoteModel * timeVote in voteArr) {
+        if ( [ timeVote.uid isEqualToString:[UserInfo currUserInfo].Id ]    ) {
             UIButton * btnTmp =(UIButton *) cell.accessoryView ;
             [_selectIndexPathDic setObject:@(btnTmp.tag) forKey:[NSString stringWithFormat:@"%li", (long)btnTmp.tag]];
             btnTmp.selected = YES ;
             break;
         }
     }
+    
+    NSPredicate * createTimePre = [NSPredicate predicateWithFormat:@"uid == %@",activeTimeVote.createId];
+    NSArray * createArr =  [self.voteMemberArr filteredArrayUsingPredicate:createTimePre];
+    [createArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+         MemberDataModel * memberDataModel = (MemberDataModel *) obj ;
+         cell.suggestLab.text = [NSString stringWithFormat:@"suggested by %@",[memberDataModel.user objectForKey:@"username"]];
+    }];
 
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE]];
-    NSDate * start = [dateFormatter dateFromString:activeTimeVote.startTime];
-    NSDate * end = [dateFormatter dateFromString:activeTimeVote.endTime];
+    NSDate * start = [dateFormatter dateFromString:activeTimeVote.start];
+    NSDate * end   = [dateFormatter dateFromString:activeTimeVote.end];
     
     cell.startTimeLab.text = [NSString stringWithFormat:@"From - %@",[self formaterDate:start]] ;
     cell.endTimeLab.text   = [NSString stringWithFormat:@"To - %@",[self formaterDate:end]] ;
   
-    cell.suggestLab.text   = @"suggested by  " ;
+   
     return cell;
 }
 
 
 -(void)userVoteTimeDate:(UIButton *)sender{
     ActiveTimeVoteMode * activeTimeVote = [activeTimeVoteArr objectAtIndex:sender.tag];
-    NSString *indexPathStr = [NSString stringWithFormat:@"%li", (long)sender.tag];
+    NSString * indexPathStr = [NSString stringWithFormat:@"%li", (long)sender.tag];
     if (![_selectIndexPathDic objectForKey:indexPathStr]) {
         sender.selected = YES ;
         [_selectIndexPathDic setObject:@(sender.tag) forKey:indexPathStr];
@@ -149,45 +158,10 @@ static NSString * cellVotingId = @"cellVotingId";
         [_selectIndexPathDic removeObjectForKey:indexPathStr];
         voteTimeType = voteTimeType_cancel ;
     }
-    ASIHTTPRequest *voteTimeRequest = [t_Network httpPostValue:@{ @"eid":activeTimeVote.eid, @"tid":activeTimeVote.Id, @"type":@(voteTimeType_Vote) }.mutableCopy Url:anyTime_VoteTimeForEvent Delegate:self Tag:anyTime_VoteTimeForEvent_tag];
+    ASIHTTPRequest *voteTimeRequest = [t_Network httpPostValue:@{@"method":@"voteTime",@"eid":activeTimeVote.eid, @"timeId":activeTimeVote.Id }.mutableCopy Url:Go2_socials Delegate:self Tag:Go2_socialsVoteTime_Tag];
     
     [voteTimeRequest startAsynchronous];
 }
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
 
 #pragma mark - Table view delegate
 
@@ -239,9 +213,9 @@ static NSString * cellVotingId = @"cellVotingId";
     NSLog(@"%@", [request responseString]);
     id groupObj = [responeStr objectFromJSONString];
     switch (request.tag) {
-        case anyTime_VoteTimeForEvent_tag: {
-            NSString *statusCode = [groupObj objectForKey:@"statusCode"];
-            if ([statusCode isEqualToString:@"1"]) {
+        case Go2_socialsVoteTime_Tag: {
+            int statusCode = [[groupObj objectForKey:@"statusCode"] intValue];
+            if ( statusCode  == 1 ) {
                 [MBProgressHUD showSuccess:@"Vote success!"];
             }
         }

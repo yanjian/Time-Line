@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ActiveDataMode.h"
-#import "ActiveEventMode.h"
+#import "ActiveEventModel.h"
 
 typedef NS_ENUM(NSInteger, NavStyleType) {
     NavStyleType_LeftRightSame = 0,
@@ -27,7 +27,7 @@ typedef NS_ENUM(NSInteger, NavStyleType) {
 @property (retain, nonatomic)  NSMutableArray * joinAllArr ;
 
 @property (nonatomic,assign)   BOOL             isEdit ;
-@property (strong, nonatomic) ActiveEventMode * activeEvent ;
+@property (strong, nonatomic) ActiveEventModel * activeEvent ;
 
 @property (nonatomic,assign) id<InviteesViewControllerDelegate> delegate ;
 

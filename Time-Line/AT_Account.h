@@ -13,9 +13,9 @@
 
 @interface AT_Account : NSManagedObject
 
-@property (nonatomic, retain) NSString *account;
-@property (nonatomic, retain) NSNumber *accountType;
-@property (nonatomic, retain) NSSet *ca;
+@property (nonatomic, retain) NSString * account;
+@property (nonatomic, retain) NSNumber * accountType;
+@property (nonatomic, retain) NSSet    * ca;
 @end
 
 @interface AT_Account (CoreDataGeneratedAccessors)

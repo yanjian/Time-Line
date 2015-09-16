@@ -13,9 +13,11 @@
 #import "UIImageView+WebCache.h"
 #import "LPPopupListView.h"
 @interface FriendSearchViewController () <UITableViewDelegate, UITableViewDataSource,UISearchBarDelegate, LPPopupListViewDelegate> {
-	NSMutableArray *searchFriendArr;
+	__block NSMutableArray *searchFriendArr;
 	NSIndexPath *selectIndexPath;//用户选择的行数
 }
+@property (strong, nonatomic) UIButton *leftBtn;
+@property (strong, nonatomic) UISearchBar * searchBar;
 @property (strong, nonatomic) IBOutlet UITextField *searchText;
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) IBOutlet UIButton *searchBtn;
@@ -27,39 +29,43 @@
 	[super viewDidLoad];
 	self.view.frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
     self.title = @"Add a friend" ;
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
-    [leftBtn addTarget:self action:@selector(backToAddFriendsView) forControlEvents:UIControlEventTouchUpInside] ;
-    
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
-
-    [self createTableHead];
-}
-
-#pragma mark -创建搜索视图
-- (void)createTableHead {
-	
-    UISearchBar * searchBar = [[UISearchBar alloc] init];
-    searchBar.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0);
-    searchBar.delegate = self;
-    searchBar.placeholder = @"Account name /Email";
-    searchBar.backgroundColor = [UIColor clearColor];
-    searchBar.translucent = YES ;
-//    [[[[searchBar.subviews objectAtIndex : 0 ] subviews ] objectAtIndex : 0 ] removeFromSuperview ];
-//    
-//    [searchBar setBackgroundColor :[ UIColor clearColor ]];
-    searchBar.tintColor = [UIColor whiteColor];
-    [searchBar sizeToFit];
-    self.tableView.tableHeaderView = searchBar ;
+   
+    self.tableView.tableHeaderView = self.searchBar ;
     self.tableView.separatorInset  = UIEdgeInsetsMake(0, 60, 0, 0);
     self.tableView.tableFooterView = [UIView new];
 }
 
+-(UIButton *)leftBtn{
+    if (!_leftBtn) {
+        _leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
+        [_leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
+        [_leftBtn addTarget:self action:@selector(backToAddFriendsView) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _leftBtn ;
+}
+
+#pragma mark -创建搜索视图
+-(UISearchBar *)searchBar{
+    if (!_searchBar) {
+        _searchBar = [[UISearchBar alloc] init];
+        _searchBar.frame = CGRectMake(0, 0, self.tableView.bounds.size.width, 0);
+        _searchBar.delegate = self;
+        _searchBar.placeholder = @"Account name /Email";
+        _searchBar.backgroundColor = [UIColor clearColor];
+        _searchBar.translucent = YES ;
+        
+        _searchBar.tintColor = [UIColor whiteColor];
+        [_searchBar sizeToFit];
+
+    }
+    return _searchBar;
+}
+
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning];
-	// Dispose of any resources that can be recreated.
 }
 
 
@@ -75,26 +81,34 @@
 	if (searchText && ![searchText isEqualToString:@""]) {
         searchFriendArr = [NSMutableArray array];
 		[MBProgressHUD showMessage:@"Search..."];
-		ASIHTTPRequest *request = [t_Network httpGet:@{ @"uid":searchText }.mutableCopy Url:anyTime_FindUser Delegate:nil Tag:anyTime_FindUser_tag];
-		__block ASIHTTPRequest *searchRequest = request;
+		ASIHTTPRequest *request = [t_Network httpGet:@{@"method":@"queryUser",@"text":searchText }.mutableCopy
+                                                 Url:Go2_Friends
+                                            Delegate:nil
+                                                 Tag:Go2_Friends_queryUser_Tag];
+		__block typeof(request) searchRequest = request;
 		[request setCompletionBlock: ^{
 		    NSString *responseStr = [searchRequest responseString];
 		    NSLog(@"%@", responseStr);
 		    NSDictionary *tmpObj = [responseStr objectFromJSONString];
-		    NSString *statusCode = [tmpObj objectForKey:@"statusCode"];
-		    if ([statusCode isEqualToString:@"1"]) {
-		        id friendObj = [tmpObj objectForKey:@"data"];
+		    int statusCode = [[tmpObj objectForKey:@"statusCode"] intValue];
+		    if ( statusCode ==1 ) {
+		        id friendObj = [tmpObj objectForKey:@"datas"];
 		        if ([friendObj isKindOfClass:[NSArray class]]) {
 		            NSArray *friendArr = (NSArray *)friendObj;
-		            for (NSDictionary *dic in friendArr) {
-		                NSString *nickName = [dic objectForKeyedSubscript:@"nickName"];
-		                NSMutableDictionary *ndic = [NSMutableDictionary dictionaryWithDictionary:dic];
-		                [ndic removeObjectForKey:@"nickName"];
-		                if (nickName)
-							[ndic setObject:nickName forKey:@"nickname"];
-		                Friend * friend = [Friend friendWithDict:ndic];
-		                [searchFriendArr addObject:friend];
-					}
+                    
+                    [friendArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                         Friend  * friend = [Friend modelWithDictionary:obj];
+                         [searchFriendArr addObject:friend];
+                    }];
+//		            for (NSDictionary *dic in friendArr) {
+//		                NSString *nickName = [dic objectForKeyedSubscript:@"nickName"];
+//		                NSMutableDictionary *ndic = [NSMutableDictionary dictionaryWithDictionary:dic];
+//		                [ndic removeObjectForKey:@"nickName"];
+//		                if (nickName)
+//							[ndic setObject:nickName forKey:@"nickname"];
+//		                Friend * friend = [Friend friendWithDict:ndic];
+//		                [searchFriendArr addObject:friend];
+//					}
 				}
 			}
 		    [MBProgressHUD hideHUD];
@@ -131,8 +145,7 @@
 
 	Friend *friend = searchFriendArr[indexPath.section];
 
-
-	NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, friend.imgSmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BaseGo2Url_IP, friend.thumbnail] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	NSLog(@"%@", _urlStr);
 	NSURL *url = [NSURL URLWithString:_urlStr];
 	[cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
@@ -153,15 +166,16 @@
     FriendsProfilesTableViewController * friendsProfileVC = [[FriendsProfilesTableViewController alloc] init] ;
     friendsProfileVC.isSendRequest = YES ;
     friendsProfileVC.friend = friend ;
-    friendsProfileVC.friendsAddProfileblack = ^(NSString *groupId){
-        ASIHTTPRequest *addFriendRequest = [t_Network httpPostValue:@{ @"fid":friend.Id, @"tid":groupId, @"name":friend.username }.mutableCopy Url:anyTime_AddFriend Delegate:nil Tag:anyTime_AddFriend_tag];
-        __block ASIHTTPRequest *friendRequest = addFriendRequest;
+    friendsProfileVC.friendsAddProfileblack = ^(){
+        ASIHTTPRequest *addFriendRequest = [t_Network httpPostValue:@{@"method":@"sendFriendInvitee",@"fid":friend.Id }.mutableCopy Url:Go2_Friends Delegate:nil Tag:Go2_Friends_sendFriendInvitee_Tag];
+        __block typeof(addFriendRequest) friendRequest = addFriendRequest;
+        
         [addFriendRequest setCompletionBlock: ^{
             NSString *responseStr = [friendRequest responseString];
             NSLog(@"%@", responseStr);
             id objTmp = [responseStr objectFromJSONString];
-            NSString *statusCode = [objTmp objectForKey:@"statusCode"];
-            if ([statusCode isEqualToString:@"1"]) {
+            int statusCode = [[objTmp objectForKey:@"statusCode"] intValue];
+            if ( statusCode == 1 ) {
                 [MBProgressHUD showSuccess:@"Friend request sent. Please wait for confirmation"];
             }else {
                 [MBProgressHUD showError:@"Fail to send friend request"];
@@ -180,38 +194,6 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
-//	selectIndexPath = indexPath;
-//    Friend *friend = searchFriendArr[indexPath.section];
-//    
-//    FriendsProfilesTableViewController * friendsProfileVC = [[FriendsProfilesTableViewController alloc] init] ;
-//    friendsProfileVC.isSendRequest = YES ;
-//    friendsProfileVC.friend = friend ;
-//    friendsProfileVC.friendsAddProfileblack = ^(NSString *groupId){
-//        ASIHTTPRequest *addFriendRequest = [t_Network httpPostValue:@{ @"fid":friend.Id, @"tid":groupId, @"name":friend.username }.mutableCopy Url:anyTime_AddFriend Delegate:nil Tag:anyTime_AddFriend_tag];
-//        __block ASIHTTPRequest *friendRequest = addFriendRequest;
-//        [addFriendRequest setCompletionBlock: ^{
-//            NSString *responseStr = [friendRequest responseString];
-//            NSLog(@"%@", responseStr);
-//            id objTmp = [responseStr objectFromJSONString];
-//            NSString *statusCode = [objTmp objectForKey:@"statusCode"];
-//            if ([statusCode isEqualToString:@"1"]) {
-//                [MBProgressHUD showSuccess:@"Friend request sent. Please wait for confirmation"];
-//            }else {
-//                [MBProgressHUD showError:@"Fail to send friend request"];
-//            }
-//        }];
-//        [addFriendRequest setFailedBlock: ^{
-//            [MBProgressHUD showError:@"Fail to send friend request"];
-//        }];
-//        [addFriendRequest startAsynchronous];
-//    };
-//    
-//    [self.navigationController pushViewController:friendsProfileVC animated:YES];
-    
-//	LPPopupListView *lpopView = [[LPPopupListView alloc] initWithTitle:@"Select Group" list:nil selectedIndexes:nil point:CGPointMake(20, 70) size:CGSizeMake(kScreen_Width - 40, kScreen_Height - 100) multipleSelection:NO];
-//	lpopView.titleLabel.textAlignment = NSTextAlignmentCenter;
-//	lpopView.delegate = self;
-//	[lpopView showInView:self.view animated:YES];
 }
 
 #pragma mark -LPPopupListView的代理
@@ -223,14 +205,5 @@
     [self.navigationController popViewControllerAnimated:YES] ;
 }
 
-/*
-   #pragma mark - Navigation
-
-   // In a storyboard-based application, you will often want to do a little preparation before navigation
-   - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-   }
- */
 
 @end

@@ -21,6 +21,8 @@
 }
 @property(strong, nonatomic) HATransparentView *transparentView;
 @property (nonatomic,retain) UILabel * placeholderLab ;
+@property (nonatomic,retain) UIButton *leftBtn;
+@property (nonatomic,retain) UIButton *rightBtn ;
 @end
 
 @implementation PurposeEventTimeViewController
@@ -29,19 +31,9 @@
     [super viewDidLoad];
     self.title = @"Purpose Event Time" ;
     
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
-    [leftBtn setTag:1];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
-    [leftBtn addTarget:self action:@selector(backToEventDeatailsView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
-    
-    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
-    [rightBtn setTag:2];
-    [rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_right"] forState:UIControlStateNormal] ;
-    [rightBtn addTarget:self action:@selector(backToEventDeatailsView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
+  
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.rightBtn] ;
     
     self.navigationController.interactivePopGestureRecognizer.delegate =(id) self ;
 
@@ -60,6 +52,28 @@
             [voteTimeArr addObject:@{startTime:startDate,endTime:endDate,@"id":[tmpDic objectForKey:@"id"]}];
         }
     }
+}
+
+-(UIButton *)leftBtn{
+    if (!_leftBtn) {
+         _leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
+        [_leftBtn setTag:1];
+        [_leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
+        [_leftBtn addTarget:self action:@selector(backToEventDeatailsView:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _leftBtn;
+}
+
+-(UIButton *)rightBtn{
+    if (!_rightBtn) {
+        _rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
+        [_rightBtn setTag:2];
+        [_rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_right"] forState:UIControlStateNormal] ;
+        [_rightBtn addTarget:self action:@selector(backToEventDeatailsView:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _rightBtn;
 }
 
 -(void)createPlaceholderLab{

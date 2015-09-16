@@ -32,6 +32,15 @@ typedef enum {
 @property (nonatomic, strong) NSString *type;
 @property (nonatomic, strong) NSString *username;
 
+//go2新增
+@property (nonatomic, strong) NSString *createTime ;
+@property (nonatomic, strong) NSString *deviceToken ;
+@property (nonatomic, strong) NSString *img ;
+@property (nonatomic, strong) NSString *lastLoginTime;
+@property (nonatomic, strong) NSString *thumbnail;
+
+
+
 @property (nonatomic, assign) UserLoginStatus loginStatus;//登陆状态
 @property (nonatomic, assign) AccountType accountType;//登陆账号的类型
 

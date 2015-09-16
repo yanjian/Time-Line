@@ -11,6 +11,7 @@
 #import "AddEventViewController.h"
 #import "AnyEvent.h"
 #import "AT_Event.h"
+#import "Go2Account.h"
 #import "RecurrenceModel.h"
 #import "Calendar.h"
 #import "AddActiveViewController.h"
@@ -23,6 +24,7 @@
     BOOL isSuccess;
     NSMutableArray *_tmpActiveArr;
     BOOL ison;
+    BOOL isEventEdit;//表示数据是编辑还是新增
 }
 @property (nonatomic, strong) UIWindow *subWindow;
 @end
@@ -50,20 +52,6 @@
 #pragma 初始化导航栏内容
 - (void)initNavigationItem
 {
-//    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [leftBtn setBackgroundImage:[UIImage imageNamed:@"Schedule_Month"] forState:UIControlStateNormal];
-//    [leftBtn setFrame:CGRectMake(0, 2, 21, 15)];
-//    [leftBtn addTarget:self action:@selector(oClickArrow) forControlEvents:UIControlEventTouchUpInside];
-//    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:leftBtn];
-    
-    
-    //    UIButton*  rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    //    [rightBtn setBackgroundImage:[UIImage imageNamed:@"add_action"] forState:UIControlStateNormal];
-    //    [rightBtn setFrame:CGRectMake(0, 2, 30, 25)];
-    //    [rightBtn addTarget:self action:@selector(setYVbutton) forControlEvents:UIControlEventTouchUpInside];
-//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Today" style:UIBarButtonItemStylePlain target:self action:@selector(backToToday)];
-    
-    
     self.view = self.scrollview ;
     
     calendarView = [[CLCalendarView alloc] init];
@@ -103,8 +91,6 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-//    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
-//    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
 
     _tmpActiveArr = [NSMutableArray arrayWithCapacity:0];
     ASIHTTPRequest *activeRequest = [t_Network httpGet:nil Url:anyTime_GetEventBasicInfo Delegate:self Tag:anyTime_GetEventBasicInfo_tag];
@@ -116,7 +102,6 @@
     dateArr = [NSMutableArray array];
     
     NSInteger cDay = calendarDateCount;
-    //NSInteger cMonthCount = [CalendarDateUtil numberOfDaysInMonth:[CalendarDateUtil getCurrentMonth]];
     NSInteger weekDay = [CalendarDateUtil getWeekDayWithDate:[CalendarDateUtil dateSinceNowWithInterval:-(cDay - 1)]];
     NSInteger startIndex = -(cDay - 1  + weekDay - 1);
     for (int i = startIndex; i < startIndex + (7* 5 * 12); i+=7) {
@@ -535,57 +520,57 @@
 }
 
 //
--(NSString *)assemblyStringWithLocalAnyEvent:(AnyEvent *)anyEvent{
+-(NSMutableDictionary *)assemblyStringWithLocalAnyEvent:(AnyEvent *)anyEvent{
 
     NSString *startEventDate=  [[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"yyyy-MM-dd HH:mm:ss" dateString:anyEvent.startDate];//开始事件的时间
     NSString *endEventDate=  [[PublicMethodsViewController getPublicMethods] formaterStringfromDate:@"yyyy-MM-dd HH:mm:ss" dateString:anyEvent.endDate];//开始事件的时间
-    NSDictionary *anyEventDic=[NSMutableDictionary dictionaryWithCapacity:0];
-    // {"title":"标题","location":"地点","coordinates":"坐标","startTime":"开始时间","endTime":"结束时间","timeZone":"时区","note":"备注说明","allDay":"","recurrence":"","recurringEventId":"","status":"","originalStartTime":""}
     
+    NSMutableDictionary * anyEventDic = [NSMutableDictionary dictionaryWithCapacity:0];
     
-   // [anyEventDic setValue:anyEvent.calendar.cid forKey:@"calendarId"];
-    //{"calendarId":"日历id","title":"标题","location":"地点","coordinates":"坐标","startTime":"开始时间","endTime":"结束时间","timeZone":"时区","note":"备注说明","allDay":"",   "recurrence":"","recurringEventId":"","status":"", "originalStartTime":""}
-    [anyEventDic setValue:anyEvent.eventTitle forKey:@"title"];
-    [anyEventDic setValue:anyEvent.location forKey:@"location"];
-    [anyEventDic setValue:anyEvent.coordinate forKey:@"coordinates"];
-    [anyEventDic setValue:startEventDate forKey:@"startTime"];
-    [anyEventDic setValue:endEventDate forKey:@"endTime"];
     Calendar *ca=anyEvent.calendar;
     if (ca.cid) {
         [anyEventDic setValue:ca.cid forKey:@"cid"];
+       
     }
     if (anyEvent.eId) {
         [anyEventDic setValue:anyEvent.eId forKey:@"id"];
     }
+    
+    [anyEventDic setValue:anyEvent.eventTitle forKey:@"title"];
+    [anyEventDic setValue:anyEvent.location forKey:@"location"];
+    [anyEventDic setValue:anyEvent.coordinate forKey:@"coordinates"];
+    [anyEventDic setValue:startEventDate forKey:@"start"];
+    [anyEventDic setValue:endEventDate forKey:@"end"];
     [anyEventDic setValue:anyEvent.recurrence==nil?@"":anyEvent.recurrence forKey:@"recurrence"];
     [anyEventDic setValue:anyEvent.status forKey:@"status"];
     [anyEventDic setValue:anyEvent.recurringEventId==nil?@"":anyEvent.recurringEventId forKey:@"recurringEventId"];
     [anyEventDic setValue:anyEvent.originalStartTime==nil?@"":anyEvent.originalStartTime forKey:@"originalStartTime"];
-    [anyEventDic setValue:anyEvent.calendar.timeZone forKey:@"timeZone"];
-    [anyEventDic setValue:anyEvent.note==nil?@"":anyEvent.note forKey:@"note"];
-    [anyEventDic setValue:anyEvent.isAllDay forKey:@"allDay"];
+    [anyEventDic setValue:anyEvent.calendar.timeZone forKey:@"timezone"];
+    [anyEventDic setValue:anyEvent.note==nil?@"":anyEvent.note forKey:@"description"];
+    [anyEventDic setValue:anyEvent.isAllDay forKey:@"isAllDay"];
     [anyEventDic setValue:anyEvent.sequence forKey:@"sequence"];
-    return [anyEventDic JSONString];
+    [anyEventDic setValue:@0 forKey:@"comfirmed"];
+    return anyEventDic ;
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request{
     NSString *responseStr=[request responseString];
     NSLog(@"json ==== %@",responseStr);
     switch (request.tag) {
-        case Google_CalendarEventOperation_tag:{
+        case Go2_Google_Event_Tag:{
             id responseObj=[responseStr objectFromJSONString];
             if ([responseObj isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *responseDic=(NSDictionary *)responseObj;
-                NSString *statusCode=[responseDic objectForKey:@"statusCode"];
-                if ([statusCode isEqualToString:@"-3"]||[statusCode isEqualToString:@"-2"]||[statusCode isEqualToString:@"-1"]) {
+                int statusCode=[[responseDic objectForKey:@"statusCode"] intValue];
+                if ( statusCode == -3||statusCode == -2||statusCode == -1 ) {
                     NSLog(@"message ======== %@",[responseDic objectForKey:@"message"]);
                     return;
                 }
-                if ([statusCode isEqualToString:@"0"]) {
+                if ( statusCode==0 ) {
                     NSLog(@"message ======== 失败");
                     return;
                 }
-                if ([statusCode isEqualToString:@"1"]) {
+                if ( statusCode == 1 ) {
                     NSDictionary *dataDic= [responseDic objectForKey:@"data"];
                     
                     AnyEvent *anyEvent   = [request.userInfo objectForKey:@"anyEvent"];
@@ -635,16 +620,16 @@
             }
             break;
         }
-        case Local_SingleEventOperation_Tag:{
+        case Go2_Local_privateEvent_Tag:{
             id responseObj = [responseStr objectFromJSONString];
             if ([responseObj isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *responseDic = (NSDictionary *)responseObj;
-                NSString *statusCode=[responseDic objectForKey:@"statusCode"];
-                if ([statusCode isEqualToString:@"1"]) {
+                int statusCode=[[responseDic objectForKey:@"statusCode"] intValue];
+                if ( statusCode == 1 ) {
                     AnyEvent *anyEvent   = [request.userInfo objectForKey:@"anyEvent"];
                     NSPredicate * pre    = [NSPredicate predicateWithFormat:@"eId == %@",anyEvent.eId];
                     anyEvent = [[AnyEvent MR_findAllWithPredicate:pre] lastObject];
-                    
+                    anyEvent.isSync = @(isSyncData_YES);
                     
                     
                     if ([anyEvent.isDelete intValue] == isDeleteData_YES) {//本地如果为1 表示这条数据是要删除的
@@ -659,23 +644,24 @@
                         [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
                     }
                     NSDictionary *dataDic = [responseDic objectForKey:@"data"];
-                    if(dataDic){
-                            anyEvent.isSync = @(isSyncData_YES);
-                           
+                    
+                    if(dataDic && [dataDic isKindOfClass:[NSDictionary class]]){
+                       
+                        if (!isEventEdit) {
                             NSString *location = [dataDic objectForKey:@"location"];
                             if (![location isEqualToString:@""] && location) {
-                                 anyEvent.location = [dataDic objectForKey:@"location"];
+                                anyEvent.location = [dataDic objectForKey:@"location"];
                             }
                             anyEvent.eId = [dataDic objectForKey:@"id"];
                             NSString *repeat = [dataDic objectForKey:@"repeat"];
                             if (![@"" isEqualToString:repeat]) {
                                 anyEvent.repeat = repeat;
-
+                                
                             }
                             
                             NSString *originalStartTime = [dataDic objectForKey:@"originalStartTime"] ;
                             if (![originalStartTime isEqualToString:@""]&&originalStartTime) {
-                                 anyEvent.originalStartTime = originalStartTime;
+                                anyEvent.originalStartTime = originalStartTime;
                             }
                             
                             NSString *recurringEventId = [dataDic objectForKey:@"recurringEventId"];
@@ -683,28 +669,33 @@
                                 anyEvent.recurringEventId = recurringEventId;
                             }
                             
-                            NSString *statrstring = [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"startTime"]];
+                            NSString *statrstring = [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"start"]];
                             anyEvent.sequence = [dataDic objectForKey:@"sequence"];
                             
                             NSString *recurrence = [dataDic objectForKey:@"recurrence"];
                             if (![@"" isEqualToString:recurrence]&&recurrence) {
-                                 anyEvent.recurrence = [dataDic objectForKey:@"recurrence"];
+                                anyEvent.recurrence = [dataDic objectForKey:@"recurrence"];
                             }
                             anyEvent.created = [[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
                             anyEvent.updated = [[PublicMethodsViewController getPublicMethods] rfc3339DateFormatter:[NSDate new]];
-                            anyEvent.status  = [dataDic objectForKey:@"status"];
+                            anyEvent.status  = [NSString stringWithFormat:@"%i", [[dataDic objectForKey:@"status"] intValue]];
                             anyEvent.startDate= statrstring;
-                            anyEvent.endDate   = [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"endTime"]];
-                            if ([dataDic objectForKey:@"calendar"]) {
-                                Calendar *ca     =[dataDic objectForKey:@"calendar"];
-                                anyEvent.calendar= ca;
-                                anyEvent.creator = ca.account;
+                            anyEvent.endDate   = [[PublicMethodsViewController getPublicMethods] stringFormaterDate:@"YYYY年 M月d日HH:mm" dateString:[dataDic objectForKey:@"end"]];
+                            if ([dataDic objectForKey:@"cid"]) {
+                               
+                                NSPredicate * pre    = [NSPredicate predicateWithFormat:@"cid == %@", [dataDic objectForKey:@"cid"]];//这里只查询没有同步的数据同步
+                                Calendar *ca      = [[Calendar MR_findAllWithPredicate:pre] lastObject];
+                                anyEvent.calendar = ca;
+                                anyEvent.creator  = ca.account;
                                 anyEvent.creatorDisplayName = ca.summary;
                                 anyEvent.organizer = ca.account;
                                 anyEvent.orgDisplayName = ca.summary;
+                                [ca addAnyEventObject:anyEvent] ;
                             }
-                        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
-                     }
+                        }
+                    }
+                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
+
                 }else{
                     NSLog(@"message ======== %@",[responseDic objectForKey:@"message"]);
                 }
@@ -733,11 +724,7 @@
             }
             break;
         }
-        case Local_SingleEventOperation_fetch_Tag:{
-            
-            break;
-        }
-        case Google_DeleteCalendarEvent_tag:{
+        case Go2_Google_Delete_Tag:{
            id requestDic= [responseStr objectFromJSONString];
             if ([requestDic isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *tmpDic=(NSDictionary *)requestDic;
@@ -765,7 +752,7 @@
             }
             break;
         }
-        case Google_CalendarEventRepeat_tag:{
+        case Go2_Google_CalendarEventRepeat_tag:{
             id tmpObj= [request.responseString objectFromJSONString];
             if ([tmpObj isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *dic= (NSDictionary *) tmpObj;
@@ -806,6 +793,7 @@
             NSError *error = [request error];
             if (error) {
                 [MBProgressHUD showError:@"error"];
+                return;
             }
             NSString *requestStr =  [request responseString];
             NSDictionary *dic = [requestStr objectFromJSONString];
@@ -1185,41 +1173,64 @@
                         NSLog(@"%@",jsonEvent);
                         NSMutableDictionary *paramDic;
                         if ([anyEvent.eId hasPrefix:@"event"]) {//有event前缀的表示是本地生成的一个Eid //新增
-                            paramDic=@{@"cid":anyEvent.calendar.cid,@"type":@1,@"text":jsonEvent}.mutableCopy;
+                            isEventEdit = NO ;
+                            paramDic=@{@"method":@"addEvent",@"calendarId":anyEvent.calendar.cid,@"accountId": ca.go2Account.accountId,@"params":jsonEvent}.mutableCopy;
+                            
                         }else{//表示修改
-                            paramDic=@{@"cid":anyEvent.calendar.cid,@"eid":anyEvent.eId,@"type":@2,@"text":jsonEvent}.mutableCopy;
+                            isEventEdit = YES ;
+                            paramDic=@{@"method":@"updateEvent",@"calendarId":anyEvent.calendar.cid,@"accountId": ca.go2Account.accountId,@"eventId":anyEvent.eId,@"params":jsonEvent}.mutableCopy;
                         }
-                        ASIHTTPRequest *googleRequest= [t_Network httpPostValue:paramDic  Url:Google_CalendarEventOperation Delegate:self Tag:Google_CalendarEventOperation_tag userInfo:@{@"anyEvent":anyEvent}];
+                        ASIHTTPRequest *googleRequest= [t_Network httpPostValue:paramDic
+                                                                            Url:Go2_Google_Event Delegate:self
+                                                                            Tag:Go2_Google_Event_Tag
+                                                                       userInfo:@{@"anyEvent":anyEvent}];
                         [googleRequest startSynchronous];
                     }else{
                         if ([anyEvent.isDelete intValue]==isDeleteData_YES||[anyEvent.isDelete intValue]==isDeleteData_record) {
                             if (anyEvent.eId) {
-                                ASIHTTPRequest *deleteGoogleRequest= [t_Network httpPostValue:@{@"cid":ca.cid,@"eid":anyEvent.eId}.mutableCopy Url:Google_DeleteCalendarEvent Delegate:self Tag:Google_DeleteCalendarEvent_tag userInfo:@{@"anyEvent": anyEvent}];
+                                ASIHTTPRequest *deleteGoogleRequest = [t_Network httpPostValue:@{@"method":@"deleteEvent",@"calendarId":anyEvent.calendar.cid,@"accountId": ca.go2Account.accountId,@"eventId":anyEvent.eId }.mutableCopy
+                                               Url:Go2_Google_Event
+                                          Delegate:self
+                                               Tag:Go2_Google_Delete_Tag
+                                          userInfo:@{@"anyEvent": anyEvent}];
                                 [deleteGoogleRequest startSynchronous];
                             }
                            
                         }else{
                             NSLog(@"%@=====%@",ca.cid,anyEvent.eId);
-                            ASIHTTPRequest *request =  [t_Network httpGet:@{@"cid":ca.cid,@"eid":anyEvent.recurringEventId}.mutableCopy Url:Google_CalendarEventRepeat Delegate:self Tag:Google_CalendarEventRepeat_tag userInfo:@{@"anyEvent":anyEvent}];
+                            ASIHTTPRequest *request =  [t_Network
+                            httpGet:@{@"method":@"getGetRepeatEvent",@"calendarId":anyEvent.calendar.cid,@"accountId": ca.go2Account.accountId,@"eventId":anyEvent.eId }.mutableCopy
+                                  Url:Go2_Google_Event
+                             Delegate:self
+                                  Tag:Go2_Google_CalendarEventRepeat_tag
+                             userInfo:@{@"anyEvent":anyEvent}];
                             [request startSynchronous];
                         }
                     }
                 }else if([ca.type intValue]==AccountTypeLocal) {//是local日历同步到本地服务器上
-                    if([anyEvent.isDelete intValue]==isDeleteData_NO){//不是删除数据
-                        NSString *jsonEvent= [self assemblyStringWithLocalAnyEvent:anyEvent];
-                        NSLog(@"%@",jsonEvent);
-                        NSMutableDictionary *paramDic;
+                    if( [anyEvent.isDelete intValue] == isDeleteData_NO ){//不是删除数据
+                        NSMutableDictionary *eventDic= [self assemblyStringWithLocalAnyEvent:anyEvent];
+                        NSLog(@"%@",eventDic);
                         if ([anyEvent.eId hasPrefix:@"event"]) {//新增
-                            paramDic=@{@"cid":anyEvent.calendar.cid,@"type":@1,@"text":jsonEvent}.mutableCopy;
+                            [eventDic setValue:@"add" forKey:@"method"];
                         }else{//更新
-                            paramDic=@{@"cid":anyEvent.calendar.cid,@"id":anyEvent.eId,@"type":@2,@"text":jsonEvent}.mutableCopy;
+                            [eventDic setValue:@"update" forKey:@"method"];
+                            [eventDic setValue:anyEvent.eId forKey:@"id"];
                         }
-                        ASIHTTPRequest *localRequest= [t_Network httpPostValue:paramDic  Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"anyEvent":anyEvent}];
+                        ASIHTTPRequest *localRequest= [t_Network httpPostValue:eventDic
+                                                        Url:Go2_Local_privateEvent
+                                                   Delegate:self
+                                                        Tag:Go2_Local_privateEvent_Tag
+                                                   userInfo:@{@"anyEvent":anyEvent}];
                         [localRequest startSynchronous];
                     }else{
                         if ([anyEvent.isDelete intValue]==isDeleteData_YES||[anyEvent.isDelete intValue]==isDeleteData_record) {
                             if (anyEvent.eId) {
-                                ASIHTTPRequest *deleteLocalRequest= [t_Network httpPostValue:@{@"id":anyEvent.eId,@"type":@(3)}.mutableCopy Url:Local_SingleEventOperation Delegate:self Tag:Local_SingleEventOperation_Tag userInfo:@{@"anyEvent": anyEvent}];
+                                ASIHTTPRequest *deleteLocalRequest= [t_Network httpPostValue:@{@"method":@"delete",@"peid":anyEvent.eId}.mutableCopy
+                                             Url:Go2_Local_privateEvent
+                                        Delegate:self
+                                             Tag:Go2_Local_privateEvent_Tag
+                                        userInfo:@{@"anyEvent": anyEvent}];
                                 [deleteLocalRequest startSynchronous];
                             }
                         }else if([anyEvent.isDelete intValue]==isDeleteData_mode){

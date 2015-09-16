@@ -15,6 +15,9 @@
 #import "AT_Account.h"
 #import "CircleDrawView.h"
 
+
+#import "Go2Account.h"
+
 #define Status @"statusCode"
 #define Data   @"data"
 #define Google_Items  @"items"
@@ -97,19 +100,26 @@
     for (NSIndexPath *indexPath in self.allArr) {
         id dataObj=[[self.googleCalendarDataArr objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
         
-        if ([dataObj isKindOfClass:[GoogleCalendarData class]]) {
+        if ([dataObj isKindOfClass:[GoogleCalendarData class]]) {//google日历事件请求
             GoogleCalendarData *googleData=(GoogleCalendarData *)dataObj;
-            int flag=0;
-            if (googleData.isPrimary) {
-                flag=1;
+        
+            if (![googleData.accessRole isEqualToString:@"reader"]) {//对于只读的日历就不请求事件数据
+                int flag= googleData.isPrimary ? 1: 0 ;
+                
+                NSDictionary *googleDic= @{@"cid": googleData.Id,@"account":googleData.account,
+                                           @"summary":googleData.summary,@"timeZone":googleData.timeZone,
+                                           @"backgroundColor":googleData.backgroundColor,
+                                           @"type":@(AccountTypeGoogle),@"isVisible":@(0),
+                                           @"isDefault":@(flag),@"isNotification":@(flag)};
+                
+                ASIHTTPRequest *googleRequest=[t_Network httpPostValue:@{@"accountId":googleData.accountId,@"calendarId":googleData.Id}.mutableCopy Url:Go2_Google_getCalendarEvents Delegate:self
+                                                                   Tag:Go2_Google_getCalendarEvents_Tag
+                                                              userInfo:@{@"googleData":googleDic}];
+                
+                [g_ASIQuent addOperation:googleRequest];
+                [self addRequestTAG:Get_Google_GetCalendarEvent_Tag];
             }
-            NSDictionary *googleDic=@{@"cid": googleData.Id,@"account":googleData.account,@"summary":googleData.summary,@"timeZone":googleData.timeZone,@"backgroundColor":googleData.backgroundColor,@"type":@(AccountTypeGoogle),@"isVisible":@(0),@"isDefault":@(flag),@"isNotification":@(flag)};
-            
-            ASIHTTPRequest *googleRequest=[t_Network httpPostValue:@{@"cid":googleData.Id}.mutableCopy Url:Get_Google_GetCalendarEvent Delegate:self Tag:Get_Google_GetCalendarEvent_Tag userInfo:@{@"googleData":googleDic}];
-            [g_ASIQuent addOperation:googleRequest];
-            [self addRequestTAG:Get_Google_GetCalendarEvent_Tag];
-            
-        }else if ([dataObj isKindOfClass:[LocalCalendarData class]]){
+        }else if ([dataObj isKindOfClass:[LocalCalendarData class]]){//本地日历事件请求
             LocalCalendarData *localData=(LocalCalendarData *)dataObj;
             NSDictionary *localDic=@{@"cid": localData.Id,@"account":localData.emailAccount,@"summary":localData.calendarName,@"timeZone":[[NSTimeZone defaultTimeZone] name],@"backgroundColor":localData.color,@"type":@(AccountTypeLocal),@"isVisible":@(0),@"isDefault":@(0),@"isNotification":@(0)};
             
@@ -120,8 +130,6 @@
     }
     
     [g_ASIQuent go];
-    
-
 }
 
 //取消网络请求队列
@@ -269,10 +277,10 @@
     NSLog(@"%@",responseStr);
      NSMutableSet *googleSet=[NSMutableSet setWithCapacity:0];
     switch (request.tag) {
-        case Get_Google_GetCalendarEvent_Tag:{
+        case Go2_Google_getCalendarEvents_Tag:{
             NSDictionary *eventDic=[responseStr objectFromJSONString];
-            NSString *status=[eventDic objectForKey:Status];
-            if ([@"1" isEqualToString:status]) {//状态成功
+            int status=[[eventDic objectForKey:Status] intValue];
+            if ( status == 1 ) {//状态成功
                 NSMutableDictionary *userinfo= [[request.userInfo objectForKey:@"googleData"] mutableCopy];
                 id eventData=[eventDic objectForKey:Data];
                 Calendar *calendar=[Calendar MR_createEntity];
@@ -300,8 +308,8 @@
                 [self paseUserInfo:userinfo calendarData:calendar];
                 [calendar addAnyEvent:googleSet];
                 
-                for (AT_Account *at in self.calendarAccountArr) {
-                    if ([at.accountType intValue]==AccountTypeGoogle) {
+                for (Go2Account *at in self.calendarAccountArr) {
+                    if ([at.type intValue] == AccountTypeGoogle) {
                         [at addCaObject:calendar];
                     }
                 }

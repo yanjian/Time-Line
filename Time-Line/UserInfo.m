@@ -25,7 +25,14 @@
 #define TYPE              @"type"
 #define USERNAME          @"username"
 #define LOGINSTATUS       @"loginStatus"
-#define ACCOUNTTYPE      @"accountType"
+#define ACCOUNTTYPE       @"accountType"
+
+#define CREATETIME        @"createTime"
+#define DEVICETOKEN       @"deviceToken"
+#define IMG               @"img"
+#define LASTLOGINTIME     @"lastLoginTime"
+#define THUMBNAIL         @"thumbnail"
+
 
 static UserInfo *sharedAccountManagerInstance = nil;
 
@@ -96,29 +103,40 @@ static UserInfo *sharedAccountManagerInstance = nil;
 		self.username = [deCoder decodeObjectForKey:USERNAME];
 		self.loginStatus = [[deCoder decodeObjectForKey:LOGINSTATUS] integerValue];
 		self.accountType = [[deCoder decodeObjectForKey:ACCOUNTTYPE] integerValue];
+        self.createTime  = [deCoder decodeObjectForKey:CREATETIME];
+        self.deviceToken = [deCoder decodeObjectForKey:DEVICETOKEN];
+        self.img         = [deCoder decodeObjectForKey:IMG];
+        self.lastLoginTime = [deCoder decodeObjectForKey:LASTLOGINTIME];
+        self.thumbnail     =[deCoder decodeObjectForKey:THUMBNAIL];
 	}
 	return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)enCoder {
-	[enCoder encodeObject:self.Id forKey:ID];
-	[enCoder encodeObject:self.accountBinds forKey:ACCOUNTBINDS];
-	[enCoder encodeObject:self.authCode forKey:AUTHCODE];
-	[enCoder encodeObject:self.email forKey:EMAIL];
-	[enCoder encodeObject:self.gRefreshToken forKey:GREFRESHTOKEN];
-	[enCoder encodeObject:@(self.gender) forKey:GENDER];
-	[enCoder encodeObject:self.googleToken forKey:GOOGLETOKEN];
-	[enCoder encodeObject:self.imgUrl forKey:IMGURL];
-	[enCoder encodeObject:self.imgUrlSmall forKey:IMGURLSMALL];
-	[enCoder encodeObject:self.nickname forKey:NICKNAME];
-	[enCoder encodeObject:self.password forKey:PWD];
-	[enCoder encodeObject:self.phone forKey:PHONE];
-	[enCoder encodeObject:self.registerTime forKey:REGISTERTIME];
-	[enCoder encodeObject:self.tokenTime forKey:TOKENTIME];
-	[enCoder encodeObject:self.type forKey:TYPE];
-	[enCoder encodeObject:self.username forKey:USERNAME];
-	[enCoder encodeObject:@(self.loginStatus) forKey:LOGINSTATUS];
-	[enCoder encodeObject:@(self.accountType) forKey:ACCOUNTTYPE];
+	[enCoder encodeObject:self.Id                  forKey:ID];
+	[enCoder encodeObject:self.accountBinds        forKey:ACCOUNTBINDS];
+	[enCoder encodeObject:self.authCode            forKey:AUTHCODE];
+	[enCoder encodeObject:self.email               forKey:EMAIL];
+	[enCoder encodeObject:self.gRefreshToken       forKey:GREFRESHTOKEN];
+	[enCoder encodeObject:@(self.gender)           forKey:GENDER];
+	[enCoder encodeObject:self.googleToken         forKey:GOOGLETOKEN];
+	[enCoder encodeObject:self.imgUrl              forKey:IMGURL];
+	[enCoder encodeObject:self.imgUrlSmall         forKey:IMGURLSMALL];
+	[enCoder encodeObject:self.nickname            forKey:NICKNAME];
+	[enCoder encodeObject:self.password            forKey:PWD];
+	[enCoder encodeObject:self.phone               forKey:PHONE];
+	[enCoder encodeObject:self.registerTime        forKey:REGISTERTIME];
+	[enCoder encodeObject:self.tokenTime           forKey:TOKENTIME];
+	[enCoder encodeObject:self.type                forKey:TYPE];
+	[enCoder encodeObject:self.username            forKey:USERNAME];
+	[enCoder encodeObject:@(self.loginStatus)      forKey:LOGINSTATUS];
+	[enCoder encodeObject:@(self.accountType)      forKey:ACCOUNTTYPE];
+    [enCoder encodeObject:self.createTime          forKey:CREATETIME];
+    [enCoder encodeObject:self.deviceToken         forKey:DEVICETOKEN];
+    [enCoder encodeObject:self.img                 forKey:IMG];
+    [enCoder encodeObject:self.lastLoginTime       forKey:LASTLOGINTIME];
+    [enCoder encodeObject:self.thumbnail           forKey:THUMBNAIL];
+
 }
 
 @end

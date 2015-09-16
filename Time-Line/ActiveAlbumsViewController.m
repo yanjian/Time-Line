@@ -29,18 +29,17 @@
     self.view.frame = CGRectMake(0, 0, kScreen_Width, kScreen_Height);
     
     _activeArray = @[].mutableCopy;
-    ASIHTTPRequest *request = [t_Network httpGet:@{ @"eid":self.eid }.mutableCopy Url:anyTime_GetEventChatImg Delegate:nil Tag:anyTime_GetEventChatImg_tag];
+    ASIHTTPRequest *request = [t_Network httpGet:@{@"method":@"getImages", @"eid":self.eid }.mutableCopy Url:Go2_socials Delegate:nil Tag:Go2_GetEventChatImg_tag];
     __block ASIHTTPRequest *aliasRequest = request;
     [request setCompletionBlock: ^{
         NSString *responseStr = [aliasRequest responseString];
         id objGroup = [responseStr objectFromJSONString];
         if ([objGroup isKindOfClass:[NSDictionary class]]) {
-            NSString *statusCode = [objGroup objectForKey:@"statusCode"];
-            if ([statusCode isEqualToString:@"1"]) {
-                NSArray *tmpArr =  [objGroup objectForKey:@"data"];
+            int statusCode = [[objGroup objectForKey:@"statusCode"] intValue];
+            if ( statusCode == 1 ) {
+                NSArray *tmpArr =  [objGroup objectForKey:@"datas"];
                 for (NSDictionary *dic in tmpArr) {
-                    ActiveImgModel * activeImg = [[ActiveImgModel alloc] init];
-                    [activeImg parseDictionary:dic] ;
+                    ActiveImgModel * activeImg = [ActiveImgModel modelWithDictionary:dic];
                     [_activeArray addObject:activeImg] ;
                 }
             }
@@ -103,7 +102,7 @@
     
     UIImageView *imgView = [[UIImageView alloc] init];
     
-    NSString *_urlStr = [activeImg.imgSmall stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *_urlStr = [ [NSString stringWithFormat:@"%@%@",BaseGo2Url_IP,activeImg.thumbnail] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSLog(@"%@", _urlStr);
     NSURL *url = [NSURL URLWithString:_urlStr];
     
@@ -125,7 +124,7 @@
     NSMutableArray *imgList = [NSMutableArray arrayWithCapacity:_activeArray.count];
     for (int i = 0; i < _activeArray.count; i++) {
         ActiveImgModel * activeImg = _activeArray[i] ;
-        NSString *_urlStr = [activeImg.imgBig stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *_urlStr = [[NSString stringWithFormat:@"%@%@",BaseGo2Url_IP,activeImg.img ]stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         [imgList addObject:[NSURL URLWithString:_urlStr]];
     }
     

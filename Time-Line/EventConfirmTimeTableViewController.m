@@ -27,13 +27,6 @@
     [leftBtn addTarget:self action:@selector(backToEventSettingView:) forControlEvents:UIControlEventTouchUpInside] ;
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
     
-//    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [rightBtn setFrame:CGRectMake(0, 0, 35, 18)];
-//    [rightBtn setTag:2];
-//    [rightBtn setTitle:@"Edit" forState:UIControlStateNormal] ;
-//    [rightBtn addTarget:self action:@selector(backToEventSettingView:) forControlEvents:UIControlEventTouchUpInside] ;
-//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
-    
     self.navigationController.interactivePopGestureRecognizer.delegate =(id) self ;
 }
 
@@ -72,23 +65,24 @@
     ActiveTimeVoteMode * activeTime = self.timeArr[indexPath.section];
    
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE]];
     
-    NSDate  * startDate = [dateFormatter dateFromString:activeTime.startTime] ;
-    NSDate  * endDate   = [dateFormatter dateFromString:activeTime.endTime] ;
+    NSDate  * startDate = [dateFormatter dateFromString:activeTime.start] ;
+    NSDate  * endDate   = [dateFormatter dateFromString:activeTime.end] ;
     
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
     cell.startTimeOrDay.text = [NSString stringWithFormat:@"From - %@",[self formaterDate:startDate] ]  ;
     cell.timeOrEenTime.text  = [NSString stringWithFormat:@"  To - %@",[self formaterDate:endDate]];
     
     UIButton * selectBtn = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 70, 30)];
-    if([activeTime.finalTime integerValue] == 2){
+    if([activeTime.status integerValue] == 1){
         selectBtn.selected = YES;
     }
     [selectBtn setTitle:@"SELECT" forState:UIControlStateNormal];
     [selectBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [selectBtn setTitleColor:purple forState:UIControlStateSelected];
-    selectBtn.tag =  [activeTime.Id integerValue];
+    selectBtn.tag =  indexPath.section ;
     [selectBtn addTarget:self action:@selector(comfirmActiveTime:) forControlEvents:UIControlEventTouchUpInside];
     cell.accessoryView = selectBtn ;
     cell.showTimeInterval.text = @"0";
@@ -97,17 +91,18 @@
 
 -(void)comfirmActiveTime:(UIButton *)sender{
     sender.selected = NO ;
-    ASIHTTPRequest *request = [t_Network httpGet:@{ @"eid":self.eid, @"tid":@(sender.tag) }.mutableCopy Url:anyTime_ConfirmEventTime Delegate:nil Tag:anyTime_ConfirmEventTime_tag];
+     ActiveTimeVoteMode * activeTime = self.timeArr[sender.tag];
+    ASIHTTPRequest *request = [t_Network httpGet:@{@"method":@"confirmTime",@"eid":self.eid, @"timeId":activeTime.Id }.mutableCopy Url:Go2_socials Delegate:nil Tag:Go2_ConfirmEventTime_tag];
     __block ASIHTTPRequest *aliasRequest = request;
     [request setCompletionBlock: ^{
         NSString *responseStr = [aliasRequest responseString];
         id objGroup = [responseStr objectFromJSONString];
         if ([objGroup isKindOfClass:[NSDictionary class]]) {
-            NSString *statusCode = [objGroup objectForKey:@"statusCode"];
-            if ([statusCode isEqualToString:@"1"]) {
+            int statusCode = [[objGroup objectForKey:@"statusCode"] intValue];
+            if ( statusCode == 1 ) {
                 sender.selected = YES ;
                 if (self.delegate && [self.delegate respondsToSelector:@selector(eventConfirmTimeTableViewControllerDelegate:setTimeId:)]) {
-                    [self.delegate eventConfirmTimeTableViewControllerDelegate:self setTimeId:[NSString stringWithFormat:@"%i",sender.tag]];
+                    [self.delegate eventConfirmTimeTableViewControllerDelegate:self setTimeId:activeTime.Id];
                 }
             }
         }
@@ -117,67 +112,6 @@
     }];
     [request startAsynchronous];
 }
-
-
-/*
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the specified item to be editable.
-    return YES;
-}
-*/
-
-/*
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
-}
-*/
-
-/*
-// Override to support rearranging the table view.
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-}
-*/
-
-/*
-// Override to support conditional rearranging of the table view.
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Return NO if you do not want the item to be re-orderable.
-    return YES;
-}
-*/
-
-/*
-#pragma mark - Table view delegate
-
-// In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Navigation logic may go here, for example:
-    // Create the next view controller.
-    <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:<#@"Nib name"#> bundle:nil];
-    
-    // Pass the selected object to the new view controller.
-    
-    // Push the view controller.
-    [self.navigationController pushViewController:detailViewController animated:YES];
-}
-*/
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 -(void)backToEventSettingView:(UIButton *) sender {
     switch (sender.tag) {

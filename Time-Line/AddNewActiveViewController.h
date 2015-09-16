@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
-#import "ActiveEventMode.h"
+#import "ActiveEventModel.h"
 
 @interface AddNewActiveViewController : UIViewController{
     UITableView * _addNewActiveTableView ;
@@ -17,6 +17,6 @@
 
 
 @property (assign, nonatomic) BOOL isEdit ;// 为Yes 表示是编辑 ，为no 表示是新增
-@property (strong, nonatomic) ActiveEventMode *activeEvent ;
+@property (strong, nonatomic) ActiveEventModel * activeEvent ;
 
 @end

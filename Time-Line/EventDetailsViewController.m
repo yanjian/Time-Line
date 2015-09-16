@@ -17,7 +17,7 @@
 #define XSPACING 20
 
 static NSString * eventDetailsCellId = @"eventDetailsCellID" ;
-@interface EventDetailsViewController ()<IBActionSheetDelegate,MKMapViewDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface EventDetailsViewController ()<IBActionSheetDelegate,SimpleEventViewControllerDelegate,MKMapViewDelegate,UITableViewDataSource,UITableViewDelegate>
 {
     UILabel   * titleLab ;
     UILabel   * startTimeLab ;
@@ -252,6 +252,7 @@ static NSString * eventDetailsCellId = @"eventDetailsCellID" ;
     SimpleEventViewController *simpleEventVC = [[SimpleEventViewController alloc] init] ;
     simpleEventVC.isEdit = YES ;
     simpleEventVC.event = self.event ;
+    simpleEventVC.delegate = self ;
     [self.navigationController pushViewController:simpleEventVC animated:YES];
 }
 
@@ -351,14 +352,6 @@ static NSString * eventDetailsCellId = @"eventDetailsCellID" ;
         }else{
            [self deleteAllEventsInData];
         }
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        for (UIViewController* obj in [self.navigationController viewControllers]) {
-            if ([obj isKindOfClass:[HomeViewController class]]) {
-                HomeViewController *homeVc= (HomeViewController *)obj;
-                homeVc.isRefreshUIData=YES;
-                [self.navigationController popToViewController:homeVc animated:YES];
-            }
-        }
     }else if (buttonIndex==1){
         if(self.event.recurrence){
             RecurrenceModel *recuMode = [[RecurrenceModel alloc] initRecrrenceModel:self.event.recurrence];
@@ -375,28 +368,13 @@ static NSString * eventDetailsCellId = @"eventDetailsCellID" ;
             recuMode.until       = [tempFormatter stringFromDate:startD];
             currEvent.recurrence = [recuMode description];
             currEvent.isSync     = @(isSyncData_NO);
-            
-            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-            for (UIViewController* obj in [self.navigationController viewControllers]) {
-                if ([obj isKindOfClass:[HomeViewController class]]) {
-                    HomeViewController *homeVc = (HomeViewController *)obj;
-                    homeVc.isRefreshUIData = YES;
-                    [self.navigationController popToViewController:homeVc animated:YES];
-                }
-            }
         }
     }else if(buttonIndex==2){
         [self deleteAllEventsInData];
-        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-        for (UIViewController* obj in [self.navigationController viewControllers]) {
-            if ([obj isKindOfClass:[HomeViewController class]]) {
-                HomeViewController *homeVc= (HomeViewController *)obj;
-                homeVc.isRefreshUIData=YES;
-                [self.navigationController popToViewController:homeVc animated:YES];
-            }
-        }
-        
     }
+    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }];
 }
 
 -(void)deleteAllEventsInData{
@@ -455,6 +433,10 @@ static NSString * eventDetailsCellId = @"eventDetailsCellID" ;
             }
         }
     }
+}
+
+-(void)dissSimpleEventViewController:(SimpleEventViewController *) simpleEventVC {
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 @end

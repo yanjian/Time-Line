@@ -13,8 +13,8 @@
 #import "SJAvatarBrowser.h"
 
 
-#define  SMALL @"small"
-#define  BIG   @"big"
+#define  SMALL @"thumbnail"
+#define  BIG   @"img"
 
 @interface UserInfoTableViewController () <UIImagePickerControllerDelegate, UIActionSheetDelegate, UIAlertViewDelegate> {
 	UIActionSheet *action;
@@ -55,7 +55,7 @@
 
 	self.userFixationArr = [NSMutableArray arrayWithObjects:@"Nick Name", @"Account", @"Phone", @"Gender", nil];
 
-	NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, self.userInfo.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BaseGo2Url_IP, self.userInfo.thumbnail] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	NSLog(@"%@", _urlStr);
 	NSURL *url = [NSURL URLWithString:_urlStr];
 	[self.imageUser sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed: ^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
@@ -117,20 +117,21 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *) info {
 	UIImage *image = info[UIImagePickerControllerEditedImage];
 	if (image.size.width > 140) {
-		image = ResizeImage(image, 140, 140);
+		image = ResizeImage(image, 50, 50);
 	}
     
 	self.imageUser.image = image;
 	//上传头像
-	NSURL *url = [NSURL URLWithString:[UserInfo_UploadImg stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+	NSURL *url = [NSURL URLWithString:[Go2_UploadServlet stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 	ASIFormDataRequest *uploadImageRequest = [ASIFormDataRequest requestWithURL:url];
 	NSData *data = UIImagePNGRepresentation(self.imageUser.image);
 	NSMutableData *imageData = [NSMutableData dataWithData:data];
 	[uploadImageRequest setStringEncoding:NSUTF8StringEncoding];
 	[uploadImageRequest setRequestMethod:@"POST"];
 	[uploadImageRequest setPostFormat:ASIMultipartFormDataPostFormat];
+    [uploadImageRequest setPostValue:self.userInfo.Id forKey:@"uid"];
 	NSString *tmpDate = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyyMMddss"];
-	[uploadImageRequest addData:imageData withFileName:[NSString stringWithFormat:@"%@.jpg", tmpDate]  andContentType:@"image/jpeg" forKey:@"f1"];
+	[uploadImageRequest addData:imageData withFileName:[NSString stringWithFormat:@"%@.jpg", tmpDate]  andContentType:@"image/jpeg" forKey:@"file"];
 	[uploadImageRequest setTag:UserInfo_UploadImg_tag];
 	__block ASIFormDataRequest *uploadRequest = uploadImageRequest;
 	[uploadImageRequest setCompletionBlock: ^{
@@ -144,11 +145,11 @@
 	            NSDictionary *dicData = [tmpDic objectForKey:@"data"];
 	            NSString *smallPath = [dicData objectForKey:SMALL];
 	            if (smallPath) {
-	                self.userInfo.imgUrlSmall = smallPath;
+	                self.userInfo.thumbnail = smallPath;
 				}
 	            NSString *bigPath = [dicData objectForKey:BIG];
 	            if (bigPath) {
-	                self.userInfo.imgUrl = bigPath;
+	                self.userInfo.img = bigPath;
 				}
 	            [UserInfo userInfoWithArchive:self.userInfo];
 			}

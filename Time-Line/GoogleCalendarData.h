@@ -11,6 +11,7 @@
 
 @interface GoogleCalendarData : BaseMode <NSCoding> //<NSCopying,NSMutableCopying>
 @property (nonatomic, copy) NSString *Id;
+@property (nonatomic, copy) NSString *accountId;
 @property (nonatomic, copy) NSString *summary;
 @property (nonatomic, copy) NSString *timeZone;
 @property (nonatomic, copy) NSString *backgroundColor;

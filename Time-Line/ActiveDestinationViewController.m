@@ -16,14 +16,19 @@
 #import "TimeVoteModel.h"
 #import "ManageViewController.h"
 
+//#import "Go2ChildTableViewController.h"
+
 @interface ActiveDestinationViewController ()<ASIHTTPRequestDelegate,ActiveSetingTableViewControllerDelegate>
 {
-    ActiveEventMode  * ac;
     ActiveInfoTableViewController * activeInfoVc ;
     ActiveVotingViewController * activeVotingVc ;
-    ChatViewController *chatVc;
+   // Go2ChildTableViewController *chatVc;
     ActiveAlbumsViewController * activeAlbumsVc ;
 }
+
+@property (nonatomic,strong)   UIButton *leftBtn ;
+@property (nonatomic,strong)   UIButton *rightBtn ;
+
 @end
 
 @implementation ActiveDestinationViewController
@@ -42,67 +47,11 @@
     self.title = @"Event";
     [self.buttonBarView.selectedBar setBackgroundColor:[UIColor orangeColor]];
     
-    self.containerView.bounces = NO ; //XLButtonBarPagerTabStripViewController中的属性  
-  //  [self colorWithNavigationBar];
-    
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
-    [leftBtn setTag:1];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
-    [leftBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
-    
-    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn setFrame:CGRectMake(0, 0, 22, 17)];
-    [rightBtn setTag:2];
-    [rightBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Menu"] forState:UIControlStateNormal] ;
-    [rightBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
-    
+    self.containerView.bounces = NO ; //XLButtonBarPagerTabStripViewController中的属性
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.rightBtn] ;
     self.navigationController.interactivePopGestureRecognizer.delegate =(id) self ;
     
-    [self loadActiveData];
-}
-
-
--(void )loadActiveData{
-    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    
-    ASIHTTPRequest *activeRequest = [t_Network httpGet:@{ @"eid":self.activeEventInfo.Id }.mutableCopy Url:anyTime_Events Delegate:nil Tag:anyTime_Events_tag];
-    [activeRequest setDownloadCache:g_AppDelegate.anyTimeCache];
-    [activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy | ASIAskServerIfModifiedWhenStaleCachePolicy];
-    [activeRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy];
-    __block ASIHTTPRequest *request = activeRequest;
-    [activeRequest setCompletionBlock: ^{
-        NSError *error = [request error];
-        if (error) {
-            return ;
-        }
-        NSString *responseStr = [request responseString];
-        id objData =  [responseStr objectFromJSONString];
-        if ([objData isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *objDataDic = (NSDictionary *)objData;
-            NSString *statusCode = [objDataDic objectForKey:@"statusCode"];
-            if ([statusCode isEqualToString:@"1"]) {
-                id tmpObj = [objDataDic objectForKey:@"data"];
-                if ([tmpObj isKindOfClass:[NSDictionary class]]) {
-                    [MBProgressHUD hideHUDForView:self.view animated:YES] ;
-                    
-                    NSDictionary *trueDataObj = (NSDictionary *)tmpObj;
-                    ActiveEventMode *_tmpActiveEvent = [[ActiveEventMode alloc] init];
-                    [_tmpActiveEvent parseDictionary:trueDataObj];
-                    ac = _tmpActiveEvent;
-                    [self reloadPagerTabStripView];
-                }
-            }
-        }
-    }];
-    
-    [activeRequest setFailedBlock: ^{
-        [MBProgressHUD hideHUDForView:self.view animated:YES] ;
-        [MBProgressHUD showError:@"Load data failed, please check your network"];
-    }];
-    [activeRequest startAsynchronous];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -118,20 +67,20 @@
 -(NSArray *)childViewControllersForPagerTabStripViewController:(XLPagerTabStripViewController *)pagerTabStripViewController{
 
     activeInfoVc  = [[ActiveInfoTableViewController alloc]   init];
-    activeInfoVc.activeEvent = ac ;
+    activeInfoVc.activeEvent = self.activeEventInfo ;
     activeInfoVc.activeDestinationBlank = ^(){
         [pagerTabStripViewController moveToViewControllerAtIndex:1];//这里
     };
     
     activeVotingVc   = [[ActiveVotingViewController alloc] init];
-    activeVotingVc.activeEvent = ac ;
-    
-    chatVc = [[ChatViewController alloc] init] ;
-    chatVc.activeEvent = ac ;
-    
+    activeVotingVc.activeEvent = self.activeEventInfo ;
+
+    //chatVc = [[Go2ChildTableViewController alloc] init] ;
+   // chatVc.activeEvent = self.activeEventInfo ;
+
     activeAlbumsVc   = [[ActiveAlbumsViewController alloc] init];
-    activeAlbumsVc.eid = ac.Id ;
-    return @[activeInfoVc,activeVotingVc,chatVc,activeAlbumsVc];
+    activeAlbumsVc.eid =  self.activeEventInfo.Id ;
+    return @[activeInfoVc,activeVotingVc,/*chatVc,*/activeAlbumsVc];
 }
 
 
@@ -156,7 +105,7 @@
             }break;
         case 2:{
                 ActiveSetingTableViewController * activeSetingVC = [[ActiveSetingTableViewController alloc] init];
-                activeSetingVC.activeEvent = ac ;
+                activeSetingVC.activeEvent = self.activeEventInfo ;
                 activeSetingVC.delegate = self ;
             
                 [self.navigationController pushViewController:activeSetingVC animated:YES];
@@ -168,7 +117,37 @@
 
 -(void)activeSetingTableViewControllerDelegate:(ActiveSetingTableViewController *) activeViewController isChange:(BOOL) isChange{
     if(isChange){
-        [self loadActiveData];//刷新数据
+        [activeInfoVc refreshActiveEventData:self.activeEventInfo.Id];
+         self.activeEventInfo = activeInfoVc.activeEvent;
     }
 }
+
+
+
+
+//----------------------------- get method --------------------------------------
+
+-(UIButton *)leftBtn{
+    if (!_leftBtn) {
+        _leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
+        [_leftBtn setTag:1];
+        [_leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
+        [_leftBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
+        
+    }
+    return _leftBtn ;
+}
+
+-(UIButton *)rightBtn{
+    if (!_rightBtn) {
+        _rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_rightBtn setFrame:CGRectMake(0, 0, 22, 17)];
+        [_rightBtn setTag:2];
+        [_rightBtn setBackgroundImage:[UIImage imageNamed:@"Icon_Menu"] forState:UIControlStateNormal] ;
+        [_rightBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _rightBtn ;
+}
+
 @end

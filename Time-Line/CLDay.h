@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "CalendarDateUtil.h"
 
-@interface CLDay : NSObject
+@interface CLDay : BaseMode
 
 @property (nonatomic, strong) NSMutableArray *events;
 

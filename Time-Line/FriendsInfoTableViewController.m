@@ -60,7 +60,7 @@
 	self.tableView.tableHeaderView = self.tableHead;
 	self.tableView.separatorInset  = UIEdgeInsetsZero;
 
-	NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, self.friendInfo.imgBig] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, self.friendInfo.img] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 	NSLog(@"%@", _urlStr);
 	NSURL *url = [NSURL URLWithString:_urlStr];
 	[self.friendHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed: ^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
@@ -105,7 +105,7 @@
 	}
 	else if (indexPath.row == 2) {
 		cell.textLabel.text = @"Phone:";
-		cell.detailTextLabel.text = @"";
+		cell.detailTextLabel.text = friendInfo.phone;
 	}
 	else if (indexPath.row == 3) {
 		cell.textLabel.text = @"Nick Name:";
@@ -129,7 +129,7 @@
 	if (indexPath.section == 0) {
 		if (indexPath.row == 1) {
 			AliasModifyViewController *aliasVC = [[AliasModifyViewController alloc] initWithNibName:@"AliasModifyViewController" bundle:nil];
-			aliasVC.fid = friendInfo.fid;
+			aliasVC.fid = friendInfo.Id;
 
 			aliasVC.alias = (_modifyAlias == nil || [_modifyAlias isEqualToString:@""]) ? friendInfo.alias : _modifyAlias;
 			aliasVC.aliasModify = ^(AliasModifyViewController *selfViewCOntroller, NSString *modifyAlias) {

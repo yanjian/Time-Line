@@ -9,13 +9,13 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import "XLPagerTabStripViewController.h"
-#import "ActiveEventMode.h"
+#import "ActiveEventModel.h"
 @ class ActiveDestinationViewController ;
 typedef void(^ActiveDestinationBlank)(void);
 
 
 @interface ActiveInfoTableViewController : UITableViewController<XLPagerTabStripChildItem,MKMapViewDelegate>
-@property (strong, nonatomic) ActiveEventMode *activeEvent ;
+@property (strong, nonatomic) ActiveEventModel *activeEvent ;
 @property (strong, nonatomic) ActiveDestinationBlank activeDestinationBlank;
 
 

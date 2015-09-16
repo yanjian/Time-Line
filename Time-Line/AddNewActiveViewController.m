@@ -22,8 +22,7 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 @interface AddNewActiveViewController ()<UITableViewDataSource,UITableViewDelegate,UIActionSheetDelegate,PECropViewControllerDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate,UITextFieldDelegate,getlocationDelegate,MKMapViewDelegate>
 {
     ActiveImageTableViewCell *  activeImgCell;
-    UITextField  *  titleFiled ;
-    UITextField  *  descFiled ;
+
     UIView       *  datePickerView ;
     NSString     *  coorName;
     NSDictionary *  coorDic;//坐标点
@@ -39,6 +38,9 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 @property (nonatomic,assign) BOOL isClickDueDateVote ;
 @property (nonatomic,retain) UIButton *leftBtn ;
 @property (nonatomic,retain) UIButton *rightBtn ;
+@property (nonatomic,retain) UITextField  *titleFiled ;
+@property (nonatomic,retain) UITextField  *descFiled ;
+@property (nonatomic,retain) MKMapView    *vMap;
 
 @end
 
@@ -61,14 +63,15 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     
     if (self.isEdit) {
         selectFriendArr = @[].mutableCopy ;
-        if (self.activeEvent.coordinate && ![self.activeEvent.coordinate isEqualToString:@""]) {
-            NSArray * coorArr = [self.activeEvent.coordinate componentsSeparatedByString:@";"];
-            coorDic = @{LATITUDE:coorArr[0],LONGITUDE:coorArr[1]};
+        if ( self.activeEvent.location  &&  ![self.activeEvent.location isEqualToString:@""] ) {
+            NSDictionary * locatonDic = [self.activeEvent.location objectFromJSONString];
+            coorDic = @{LATITUDE:[locatonDic objectForKey:@"latitude"],LONGITUDE:[locatonDic objectForKey:@"longitude"]};
+            coorName = [locatonDic objectForKey:@"location"] ;
         }
     }
     
-    [self createVariousView] ;
-    [self createDatePicker];
+    // [self createVariousView] ;
+    //[self createDatePicker];
     
 }
 -(UIButton *)leftBtn{
@@ -94,27 +97,45 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 }
 
 
--(void)createVariousView{
-    //活动标题
-    titleFiled=[[UITextField alloc]initWithFrame:CGRectMake(15, 0, kScreen_Width-30, 64)];
-    titleFiled.delegate = self;
-    titleFiled.tag = 3;
-    titleFiled.font=[UIFont boldSystemFontOfSize:20.0f];
-    titleFiled.textAlignment=NSTextAlignmentCenter;
-    [titleFiled setBorderStyle:UITextBorderStyleNone];
-    titleFiled.returnKeyType = UIReturnKeyDone ;
-    
-    //活动描述
-    descFiled=[[UITextField alloc]initWithFrame:CGRectMake(15, 0, kScreen_Width-30, 64)];
-    descFiled.delegate = self;
-    descFiled.tag = 4;
-    descFiled.font=[UIFont boldSystemFontOfSize:15.0f];
-    descFiled.returnKeyType = UIReturnKeyDone ;
-    [descFiled setBorderStyle:UITextBorderStyleNone];
-
-    
+-(UITextField *)titleFiled{
+    if (!_titleFiled) {
+        _titleFiled = [[UITextField alloc]initWithFrame:CGRectMake(15, 0, kScreen_Width-30, 64)];
+        _titleFiled.delegate = self;
+        _titleFiled.tag = 3;
+        _titleFiled.font = [UIFont boldSystemFontOfSize:20.0f];
+        _titleFiled.textAlignment=NSTextAlignmentCenter;
+        [_titleFiled setBorderStyle:UITextBorderStyleNone];
+        _titleFiled.returnKeyType = UIReturnKeyDone ;
+    }
+    return _titleFiled ;
 }
 
+-(UITextField *)descFiled{
+    //活动描述
+    if (!_descFiled) {
+        _descFiled=[[UITextField alloc]initWithFrame:CGRectMake(15, 0, kScreen_Width-30, 64)];
+        _descFiled.delegate = self;
+        _descFiled.tag = 4;
+        _descFiled.font=[UIFont boldSystemFontOfSize:15.0f];
+        _descFiled.returnKeyType = UIReturnKeyDone ;
+        [_descFiled setBorderStyle:UITextBorderStyleNone];
+
+    }
+    return _descFiled ;
+}
+
+
+-(MKMapView *)vMap{
+    if (!_vMap) {
+        _vMap = [[MKMapView alloc] initWithFrame:CGRectMake(10, 0,kScreen_Width-20, 160)];
+        _vMap.delegate = self;
+        _vMap.camera.altitude = 170;
+        _vMap.showsBuildings = YES;
+        _vMap.zoomEnabled = NO ;
+        _vMap.scrollEnabled = NO ;
+    }
+    return _vMap ;
+}
 - (void)createDatePicker
 
 {
@@ -172,11 +193,11 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if ([titleFiled isFirstResponder]) {
-        [titleFiled resignFirstResponder];
+    if ([self.titleFiled isFirstResponder]) {
+        [self.titleFiled resignFirstResponder];
     }
-    if ([descFiled isFirstResponder]) {
-        [descFiled resignFirstResponder];
+    if ([self.descFiled isFirstResponder]) {
+        [self.descFiled resignFirstResponder];
        
     }
      addNewActiveTableView.frame = CGRectMake(0, 0, addNewActiveTableView.frame.size.width, addNewActiveTableView.frame.size.height);
@@ -243,7 +264,7 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
         }
         
         if (self.isEdit) { //编辑数据
-            NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, self.activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, self.activeEvent.img] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
             NSURL *url = [NSURL URLWithString:_urlStr];
             
             [activeImgCell.activeImag sd_setImageWithURL:url placeholderImage:ResizeImage([UIImage imageNamed:@"go2_grey"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds))  completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
@@ -261,33 +282,29 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:AddNewActiveCellId];
         }
         if (indexPath.section == 1 && indexPath.row == 0) {
-            titleFiled.placeholder = @"Event Title";
-            [titleFiled becomeFirstResponder];
+            self.titleFiled.placeholder = @"Event Title";
+            [self.titleFiled becomeFirstResponder];
             if(self.isEdit){//编辑数据
-                titleFiled.text = self.activeEvent.title ;
+                self.titleFiled.text = self.activeEvent.title ;
             }
-            [cell.contentView addSubview:titleFiled];
+            [cell.contentView addSubview:self.titleFiled];
             
             [self addCellSeparator:64 cell:cell];
         }else if(indexPath.section == 2 && indexPath.row == 0){
-            descFiled.placeholder = @"Description";
+            self.descFiled.placeholder = @"Description";
             if (self.isEdit) {//编辑数据
-                descFiled.text = self.activeEvent.note ;
+                self.descFiled.text = self.activeEvent.enventDesc ;
             }
-            [cell.contentView addSubview:descFiled];
+            [cell.contentView addSubview:self.descFiled];
             
             [self addCellSeparator:64 cell:cell];
         }else if(indexPath.section == 3 && indexPath.row == 0){
             cell.accessoryType  = UITableViewCellAccessoryDisclosureIndicator ;
             cell.textLabel.text = @"Location:" ;
             if (self.isEdit) {//编辑数据
-                if(!coorName){
-                   cell.detailTextLabel.text = self.activeEvent.location ;
-                }else{
-                    cell.detailTextLabel.text = coorName ;
-                }
+                   cell.detailTextLabel.text = coorName ;
             }else{
-                cell.detailTextLabel.text = coorName ;
+                   cell.detailTextLabel.text = coorName ;
             }
             
             [self addCellSeparator:64 cell:cell];
@@ -295,21 +312,15 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
             
             cell.accessoryType  = UITableViewCellAccessoryNone ;
             cell.selectionStyle = UITableViewCellSelectionStyleNone ;
-            MKMapView *vMap = [[MKMapView alloc] initWithFrame:CGRectMake(10, 0,
-                                                                          kScreen_Width-20, 160)];
-
-            vMap.delegate = self;
-            vMap.centerCoordinate = CLLocationCoordinate2DMake([[coorDic objectForKey:LATITUDE] doubleValue], [[coorDic objectForKey:LONGITUDE] doubleValue]);
-            vMap.camera.altitude = 170;
-            // vMap.camera.pitch = 70;
-            vMap.showsBuildings = YES;
-            vMap.zoomEnabled = NO ;
-            vMap.scrollEnabled = NO ;
-            MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
-            annotation.coordinate = vMap.centerCoordinate;
-            annotation.title = coorName;
-            [vMap addAnnotation:annotation];
-            [cell addSubview:vMap];
+            
+            self.vMap.centerCoordinate = CLLocationCoordinate2DMake([[coorDic objectForKey:LATITUDE] doubleValue], [[coorDic objectForKey:LONGITUDE] doubleValue]);
+    
+            MKPointAnnotation * annotation = [[MKPointAnnotation alloc] init];
+            annotation.coordinate = self.vMap.centerCoordinate;
+            NSDictionary * locatonDic = [self.activeEvent.location objectFromJSONString];
+            annotation.title = coorName == nil ? [locatonDic objectForKey:@"location"]:coorName;
+            [self.vMap addAnnotation:annotation];
+            [cell addSubview:self.vMap];
             
             [self addCellSeparator:160 cell:cell];
         }
@@ -456,15 +467,15 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
              [self.navigationController popViewControllerAnimated:YES];
         }break;
         case 2:{//open ---> viewController
-            if (titleFiled.text && [@"" isEqualToString:titleFiled.text]) {
+            if (self.titleFiled.text && [@"" isEqualToString:self.titleFiled.text]) {
                 [MBProgressHUD showError:@"You forget give to a cool name of the event"];
                 return;
             }
             InviteesViewController * inviteesVC = [[InviteesViewController alloc] init];
 
             
-            activeDataMode.activeTitle       = titleFiled.text ;
-            activeDataMode.activeDesc        = descFiled.text ;
+            activeDataMode.activeTitle       = self.titleFiled.text ;
+            activeDataMode.activeDesc        = self.descFiled.text ;
             activeDataMode.activeLocName     = coorName ;
             activeDataMode.activeCoordinate  = coorDic ;
            // activeDataMode.activeDueVoteDate = [datePicker date] ;
@@ -475,7 +486,7 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
             if(self.isEdit){
                 activeDataMode.Id = self.activeEvent.Id ;
                 [selectFriendArr removeAllObjects];
-                for (NSDictionary *tmpDic in self.activeEvent.member) {
+                for (NSDictionary *tmpDic in self.activeEvent.invitees) {
                     [selectFriendArr addObject:[tmpDic objectForKey:@"uid"]];
                 }
                 inviteesVC.joinAllArr = selectFriendArr ;

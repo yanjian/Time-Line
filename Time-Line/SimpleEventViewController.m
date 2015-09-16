@@ -12,7 +12,6 @@
 #import "RepeatViewController.h"
 #import "CircleDrawView.h"
 #import "ManageViewController.h"
-#import "HomeViewController.h"
 
 #import "RecurrenceModel.h"
 #import "Calendar.h"
@@ -31,17 +30,6 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
 };
 
 @interface SimpleEventViewController ()<UITextViewDelegate,UITextFieldDelegate,RepeatViewControllerDelegate,CalendarAccountDelegate,getlocationDelegate,UITableViewDataSource,UITableViewDelegate>{
-    UITextField  *  eventTitle ;
-    UILabel      *  eventLocation ;
-    UISwitch     *  eventAllDaySwitch ;
-    UILabel      *  startTimeLable ;
-    UILabel      *  endTimeLable ;
-    UIView       *  pickView ;
-    UIDatePicker *  datePickers ;
-    UILabel      *  repeatsLab;
-    UILabel      *  calendarLab ;
-    UITextView   *  noteTextView ;
-    UILabel      *  placeholderLab;
     
     NSMutableArray * dataArr;
     NSIndexPath    * lastPath;
@@ -59,6 +47,19 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
     
     NSIndexPath * clickIndexPath; //记住用户点击的行
 }
+@property (nonatomic,strong) UIButton     *  rightBtn;
+@property (nonatomic,strong) UIButton     *  leftBtn ;
+@property (nonatomic,strong) UITextField  *  eventTitle ;
+@property (nonatomic,strong) UILabel      *  eventLocation ;
+@property (nonatomic,strong) UISwitch     *  eventAllDaySwitch ;
+@property (nonatomic,strong) UILabel      *  startTimeLable ;
+@property (nonatomic,strong) UILabel      *  endTimeLable ;
+@property (nonatomic,strong) UIView       *  pickView ;
+@property (nonatomic,strong) UIDatePicker *  datePickers ;
+@property (nonatomic,strong) UILabel      *  repeatsLab;
+@property (nonatomic,strong) UILabel      *  calendarLab ;
+@property (nonatomic,strong) UITextView   *  noteTextView ;
+@property (nonatomic,strong) UILabel      *  placeholderLab;
 @property (nonatomic,strong) Calendar *calendarObj;
 
 @end
@@ -70,25 +71,20 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
    // [self colorWithNavigationBar];
     self.title = @"Event Details" ;
     
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    
-    [leftBtn setTag:1];
+    [self.leftBtn setTag:1];
     if(self.isEdit){
-        [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
-        [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
+        [self.leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
+        [self.leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
     }else{
-        [leftBtn setFrame:CGRectMake(0, 0, 17 , 17)];
-        [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_cross"] forState:UIControlStateNormal] ;
+        [self.leftBtn setFrame:CGRectMake(0, 0, 17 , 17)];
+        [self.leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_cross"] forState:UIControlStateNormal] ;
     }
-    [leftBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
     
-    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
-    [rightBtn setTag:2];
-    [rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_tick"] forState:UIControlStateNormal] ;
-    [rightBtn addTarget:self action:@selector(saveEventData:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
+    
+    [self.rightBtn setTag:2];
+    [self.rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.rightBtn] ;
     
     self.navigationController.interactivePopGestureRecognizer.delegate =(id) self ;
     
@@ -97,149 +93,66 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
                @[@{@"allDay":@"All-day"},@{@"starts":@"Starts"},@{@"ends":@"Ends"},@{@"repeats":@"Repeats"}].mutableCopy,
                @[@{@"calendar":@"Calendar"},@{@"note":@"Note"}].mutableCopy,nil];
     
-    //查询默认日历
-    NSPredicate *pre=[NSPredicate predicateWithFormat:@"isDefault==1"];
-    self.calendarObj=[[Calendar MR_findAllWithPredicate:pre] lastObject];
-    
-    
-    [self createSimpleEventTitle];
-    [self createSimpleEventLocation];
-    [self createSimpleEventAllDaySwitch];
-    [self createSimpleEnvenStartAndEnd];
-    [self createDatePicker];
-    [self createSimpleEnvenRepeats];
-    [self createSimpleEnvenCalendar];
-    [self createSimpleEnvenNote];
-}
-
-
--(void)createSimpleEventTitle{
-    eventTitle = [[UITextField alloc] initWithFrame:CGRectMake(XSPACING, 0, kScreen_Width-XSPACING-5, CELLOFLABLEH)] ;
-    eventTitle.placeholder = @"Title" ;
-    eventTitle.adjustsFontSizeToFitWidth = YES ;
-    eventTitle.clearButtonMode = UITextFieldViewModeWhileEditing;
-    eventTitle.delegate = self ;
-    eventTitle.returnKeyType = UIReturnKeyDone ;
-   
-    if (self.isEdit) {
-        eventTitle.text = self.event.eventTitle ;
-    }
-}
-
--(void)createSimpleEventLocation{
-    eventLocation = [[UILabel alloc] initWithFrame:CGRectMake(XSPACING, 0, kScreen_Width-XSPACING-5, CELLOFLABLEH)] ;
-    eventLocation.attributedText = [[NSAttributedString alloc] initWithString:@"Location" attributes:@{NSForegroundColorAttributeName:[UIColor lightGrayColor]}];
-    eventLocation.adjustsFontSizeToFitWidth = YES ;
+    [self.pickView addSubview:self.datePickers];
+    [self.noteTextView addSubview:self.placeholderLab] ;
     
     if (self.isEdit) {
-        eventLocation.text = self.event.location ;
-    }
-    
-}
-
--(void)createSimpleEventAllDaySwitch{
-    eventAllDaySwitch = [[UISwitch alloc] init];
-    [eventAllDaySwitch sizeToFit];
-    [eventAllDaySwitch addTarget:self action:@selector(listeningValueChanged:) forControlEvents:UIControlEventValueChanged] ;
-    eventAllDaySwitch.on = NO ;
-    if (self.isEdit) {
+        self.eventTitle.text    = self.event.eventTitle ;
+        self.eventLocation.text = self.event.location ;
+        
         isAllDay = [self.event.isAllDay boolValue];
         if (isAllDay) {
-            eventAllDaySwitch.on = YES ;
-            
+            _eventAllDaySwitch.on = YES ;
         }else{
-             eventAllDaySwitch.on = NO ;
+            _eventAllDaySwitch.on = NO ;
         }
+        if (self.event.recurrence && ![self.event.recurrence isEqualToString:@""]) {
+            recurObj=[[RecurrenceModel alloc] initRecrrenceModel:self.event.recurrence];
+            self.repeatsLab.text=recurObj.freq;
+        }else{
+            self.repeatsLab.text=@"None";
+        }
+         _calendarLab.text = self.event.calendarAccount ;
+        
+        if (self.event.note) {
+             [self.placeholderLab removeFromSuperview] ;
+             self.noteTextView.text = self.event.note ;
+        }
+        NSPredicate *pre = [NSPredicate predicateWithFormat:@"cid==%@",self.event.cId];
+        self.calendarObj = [[Calendar MR_findAllWithPredicate:pre] lastObject];
+    }else{
+        //查询默认日历
+        NSPredicate *pre = [NSPredicate predicateWithFormat:@"isDefault==1"];
+        self.calendarObj = [[Calendar MR_findAllWithPredicate:pre] lastObject];
+        
+        self.repeatsLab.text=@"None";
     }
     
+    [self createSimpleEnvenStartAndEnd];
 }
 
+
 -(void)createSimpleEnvenStartAndEnd{
-    startTimeLable=[[UILabel alloc] initWithFrame:CGRectMake(STARTENDSPACING, 0, kScreen_Width-(STARTENDSPACING+XSPACING+5), CELLOFLABLEH)] ;
-    startTimeLable.textAlignment = NSTextAlignmentRight ;
-    startTimeLable.adjustsFontSizeToFitWidth = YES ;
-    
-    endTimeLable = [[UILabel alloc] initWithFrame:CGRectMake(STARTENDSPACING, 0, kScreen_Width-(STARTENDSPACING+XSPACING+5), CELLOFLABLEH)] ;
-    endTimeLable.textAlignment = NSTextAlignmentRight ;
-    endTimeLable.adjustsFontSizeToFitWidth = YES ;
-    
-    
     NSDate *currDate = [NSDate date] ;
     startDate =  [currDate dateByAddingTimeInterval:5*60];
     endDate =  [startDate dateByAddingTimeInterval:60*60];
-    
     if (self.isEdit) {
         startDate = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:self.event.startDate];
         endDate   = [[PublicMethodsViewController getPublicMethods] formatWithStringDate:self.event.endDate];
     }
     
-   
     if(!isAllDay){
-         startTimeLable.text  = [self formaterDate:startDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
+         self.startTimeLable.text  = [self formaterDate:startDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
         if([self isSameWithstartDay:startDate endDate:endDate]){
-            endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"HH:mm":@"hh:mm"];
+            self.endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"HH:mm":@"hh:mm"];
         }else{
-           endTimeLable.text  = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
+           self.endTimeLable.text  = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
         }
     }else{
-         startTimeLable.text = [self formaterDate:startDate formaterStyle:@"EEE, MMM d, yyyy"];
+         self.startTimeLable.text = [self formaterDate:startDate formaterStyle:@"EEE, MMM d, yyyy"];
          NSDate * tmpEndDate = [endDate dateByAddingTimeInterval:-1*24*60*60];
-         endTimeLable.text   = [self formaterDate:tmpEndDate formaterStyle:@"EEE, MMM d, yyyy"];
+         self.endTimeLable.text   = [self formaterDate:tmpEndDate formaterStyle:@"EEE, MMM d, yyyy"];
     }
-}
-
--(void)createSimpleEnvenRepeats{
-    repeatsLab = [[UILabel alloc] initWithFrame:CGRectMake(STARTENDSPACING, 0, kScreen_Width-(STARTENDSPACING+XSPACING+5), CELLOFLABLEH)] ;
-    repeatsLab.textAlignment = NSTextAlignmentRight ;
-    repeatsLab.adjustsFontSizeToFitWidth = YES ;
-    if(self.isEdit){
-        if (self.event.recurrence&&![self.event.recurrence isEqualToString:@""]) {
-            recurObj=[[RecurrenceModel alloc] initRecrrenceModel:self.event.recurrence];
-            repeatsLab.text=recurObj.freq;
-        }else{
-            repeatsLab.text=@"None";
-        }
-    }else{
-        repeatsLab.text=@"None";
-    }
-}
-
--(void)createDatePicker{
-    pickView  = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 216)];
-    datePickers = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
-    [datePickers setBackgroundColor:[UIColor whiteColor]];
-    datePickers.datePickerMode = UIDatePickerModeDateAndTime;
-    [datePickers setTimeZone:[NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE]];
-    [datePickers sizeToFit] ;
-    [datePickers addTarget:self action:@selector(datePickerDateChanged:) forControlEvents:UIControlEventValueChanged];
-    [pickView addSubview:datePickers];
-}
-
--(void)createSimpleEnvenCalendar{
-    calendarLab = [[UILabel alloc] initWithFrame:CGRectMake(STARTENDSPACING, 0, kScreen_Width-(STARTENDSPACING+XSPACING+5), CELLOFLABLEH)] ;
-    calendarLab.textAlignment = NSTextAlignmentRight ;
-    calendarLab.lineBreakMode = NSLineBreakByTruncatingMiddle ;
-    if (self.isEdit) {
-        calendarLab.text = self.event.calendarAccount ;
-    }
-}
-
--(void)createSimpleEnvenNote{
-    noteTextView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 120)] ;
-    noteTextView.font = [UIFont fontWithName:@"Arial" size:17.0];
-    noteTextView.scrollEnabled = YES ;
-    noteTextView.returnKeyType = UIReturnKeyDone ;
-    noteTextView.delegate = self ;
-    if (self.isEdit) {
-        if (self.event.note) {
-            noteTextView.text = self.event.note ;
-            return ;
-        }
-    }
-    placeholderLab = [[UILabel alloc] initWithFrame:CGRectMake(XSPACING, 10, kScreen_Width, 20)];
-    placeholderLab.attributedText = [[NSAttributedString alloc] initWithString:@"Note" attributes:@{NSForegroundColorAttributeName:[UIColor lightGrayColor]}];
-    [noteTextView addSubview:placeholderLab] ;
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -304,33 +217,33 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
     }
     
     if ([[tmpDic objectForKey:@"title"] isEqualToString:@"Title"]) {
-        [cell.contentView addSubview:eventTitle];
+        [cell.contentView addSubview:self.eventTitle];
     }else if ([[tmpDic objectForKey:@"location"] isEqualToString:@"Location"]){
         cell.accessoryType =  UITableViewCellAccessoryDisclosureIndicator ;
-        [cell.contentView addSubview:eventLocation];
+        [cell.contentView addSubview:self.eventLocation];
     }else if ([[tmpDic objectForKey:@"allDay"] isEqualToString:@"All-day"]){
         cell.textLabel.text = @"All-day" ;
-        cell.accessoryView = eventAllDaySwitch ;
+        cell.accessoryView = self.eventAllDaySwitch ;
     }else if ([[tmpDic objectForKey:@"starts"] isEqualToString:@"Starts"]){
         cell.textLabel.text = @"Starts" ;
-        [cell.contentView addSubview:startTimeLable];
+        [cell.contentView addSubview:self.startTimeLable];
     }else if ([[tmpDic objectForKey:@"ends"] isEqualToString:@"Ends"]){
         cell.textLabel.text = @"Ends" ;
-        [cell.contentView addSubview:endTimeLable];
+        [cell.contentView addSubview:self.endTimeLable];
     }else if ([[tmpDic objectForKey:@"repeats"] isEqualToString:@"Repeats"]){
         cell.accessoryType =  UITableViewCellAccessoryDisclosureIndicator ;
         cell.textLabel.text = @"Repeats" ;
-        [cell.contentView addSubview:repeatsLab];
+        [cell.contentView addSubview:self.repeatsLab];
     }else if ([[tmpDic objectForKey:@"calendar"] isEqualToString:@"Calendar"]){
         cell.accessoryType =  UITableViewCellAccessoryDisclosureIndicator ;
         cell.textLabel.text = @"Calendar" ;
-        [cell.contentView addSubview:calendarLab];
+        [cell.contentView addSubview:self.calendarLab];
         
         NSDictionary *attribute = @{NSFontAttributeName: [UIFont systemFontOfSize:17]};
         CGSize size = [self.calendarObj.summary boundingRectWithSize:CGSizeMake(320, 0) options: NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading attributes:attribute context:nil].size;
         CircleDrawView * cd = nil ;
         if (size.width > 200.f) {
-             calendarLab.frame = CGRectMake(110, 0, kScreen_Width - (110+XSPACING+5), CELLOFLABLEH) ;
+             self.calendarLab.frame = CGRectMake(110, 0, kScreen_Width - (110+XSPACING+5), CELLOFLABLEH) ;
              cd = [[CircleDrawView alloc] initWithFrame:CGRectMake(90, 12, 20, 20)];
         }else{
             
@@ -338,18 +251,18 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
         }
        
         if (self.isEdit) {
-            cd.hexString = self.event.backgroundColor;
-            calendarLab.text = self.event.calendarAccount;
+            cd.hexString = self.calendarObj.backgroundColor == nil?self.event.backgroundColor:self.calendarObj.backgroundColor ;
+            self.calendarLab.text = self.calendarObj.summary == nil?self.event.calendarAccount:self.calendarObj.summary;
         }else{
-            cd.hexString = self.calendarObj.backgroundColor;
-            calendarLab.text = self.calendarObj.summary;
+            cd.hexString  = self.calendarObj.backgroundColor;
+            self.calendarLab.text = self.calendarObj.summary;
         }
         [cell.contentView addSubview:cd];
         
     }else if ([[tmpDic objectForKey:@"note"] isEqualToString:@"Note"]){
-        [cell.contentView addSubview:noteTextView];
+        [cell.contentView addSubview:self.noteTextView];
     }else if([[tmpDic objectForKey:@"attachedCell"] isEqualToString:@"AttachedCell"]){
-        [cell.contentView addSubview:pickView];
+        [cell.contentView addSubview:self.pickView];
     }
     return cell ;
 }
@@ -365,13 +278,13 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
     if ([[tmpDic objectForKey:@"location"] isEqualToString:@"Location"]){
         LocationViewController * locationVC = [[LocationViewController alloc] init] ;
         locationVC.detelegate = self ;
-        if (eventLocation.text) {
-            locationVC.locationFiled.text = eventLocation.text ;
+        if (self.eventLocation.text) {
+            locationVC.locationFiled.text = self.eventLocation.text ;
         }
         [self.navigationController pushViewController:locationVC animated:YES];
     }else if ([[tmpDic objectForKey:@"starts"] isEqualToString:@"Starts"]){
          dateStartOrEndType = DateStartOrEndType_start ;
-        [datePickers setDate:startDate animated:YES] ;
+        [self.datePickers setDate:startDate animated:YES] ;
         
         NSMutableDictionary * tmpDataDic = tmpArr[indexPath.row+2];
         if ([tmpDataDic objectForKey:@"attachedCell"] && [[tmpDataDic objectForKey:@"attachedCell"] isEqualToString:@"AttachedCell"]) {
@@ -386,7 +299,7 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
         [self showOrHidePickDate:indexPath dataArr:tmpArr] ;
     }else if ([[tmpDic objectForKey:@"ends"] isEqualToString:@"Ends"]){
         dateStartOrEndType = DateStartOrEndType_end ;
-        [datePickers setDate:endDate animated:YES] ;
+        [self.datePickers setDate:endDate animated:YES] ;
         
         NSMutableDictionary * tmpDataDic = tmpArr[indexPath.row-1];
         if ([tmpDataDic objectForKey:@"attachedCell"] && [[tmpDataDic objectForKey:@"attachedCell"] isEqualToString:@"AttachedCell"]) {
@@ -402,25 +315,26 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
     }else if ([[tmpDic objectForKey:@"calendar"] isEqualToString:@"Calendar"]){
         
         CalendarAccountViewController *caVC=[[CalendarAccountViewController alloc] init];
-        caVC.delegate=self;
+        caVC.ca = self.calendarObj ;
+        caVC.delegate = self;
         [self.navigationController pushViewController:caVC animated:YES];
+        
     }else if ([[tmpDic objectForKey:@"repeats"] isEqualToString:@"Repeats"]){
         RepeatViewController *repeatVc = [[RepeatViewController alloc] init];
         repeatVc.recurrObj = recurObj;
         repeatVc.delegate=self;
-        repeatVc.repeatParam = repeatsLab.text ;
+        repeatVc.repeatParam = self.repeatsLab.text ;
         [self.navigationController pushViewController:repeatVc animated:YES];
     }
-    
 }
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
     if (scrollView == self.simpleEventTableView){
-        if (eventTitle.isFirstResponder){
-            [eventTitle resignFirstResponder];
+        if (self.eventTitle.isFirstResponder){
+            [self.eventTitle resignFirstResponder];
         }
-        if (noteTextView.isFirstResponder) {
-            [noteTextView resignFirstResponder];
+        if (self.noteTextView.isFirstResponder) {
+            [self.noteTextView resignFirstResponder];
             [UIView animateWithDuration:0.5f animations:^{
                self.simpleEventTableView.frame = CGRectMake(0, 0, self.simpleEventTableView.bounds.size.width, self.simpleEventTableView.bounds.size.height);
             }];
@@ -449,19 +363,19 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
 -(void)listeningValueChanged:(UISwitch *) sender {
     if (sender.on) {
         isAllDay = YES ;
-        [datePickers setDatePickerMode:UIDatePickerModeDate] ;
-        startTimeLable.text = [self formaterDate:startDate formaterStyle:@"EEE, MMM d, yyyy"];
-        endTimeLable.text = [self formaterDate:endDate formaterStyle:@"EEE, MMM d, yyyy"];
+        [self.datePickers setDatePickerMode:UIDatePickerModeDate] ;
+        self.startTimeLable.text = [self formaterDate:startDate formaterStyle:@"EEE, MMM d, yyyy"];
+        self.endTimeLable.text = [self formaterDate:endDate formaterStyle:@"EEE, MMM d, yyyy"];
 
     }else{
         isAllDay = NO ;
-        [datePickers setDatePickerMode:UIDatePickerModeDateAndTime] ;
+        [self.datePickers setDatePickerMode:UIDatePickerModeDateAndTime] ;
         
-        startTimeLable.text = [self formaterDate:startDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
+        self.startTimeLable.text = [self formaterDate:startDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
         if([self isSameWithstartDay:startDate endDate:endDate]){
-            endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"HH:mm":@"hh:mm"];
+            self.endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"HH:mm":@"hh:mm"];
         }else{
-            endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
+            self.endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
         }
     }
 }
@@ -472,16 +386,16 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
         case DateStartOrEndType_start:{
             startDate =  selectDate ;
             if(!isAllDay){//不是全天
-               startTimeLable.text = [self formaterDate:startDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
+               self.startTimeLable.text = [self formaterDate:startDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
                 
                 if([self isSameWithstartDay:startDate endDate:endDate]){
-                    endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"HH:mm":@"hh:mm"];
+                    self.endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"HH:mm":@"hh:mm"];
                 }else{
-                    endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
+                    self.endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
                 }
 
             }else{
-                startTimeLable.text = [self formaterDate:startDate formaterStyle:@"EEE, MMM d, yyyy"];
+                self.startTimeLable.text = [self formaterDate:startDate formaterStyle:@"EEE, MMM d, yyyy"];
             }
         }
         break;
@@ -489,12 +403,12 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
             endDate = selectDate ;
             if(!isAllDay){//不是全天
                 if([self isSameWithstartDay:startDate endDate:endDate]){
-                    endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"HH:mm":@"hh:mm"];
+                    self.endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"HH:mm":@"hh:mm"];
                 }else{
-                    endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
+                    self.endTimeLable.text = [self formaterDate:endDate formaterStyle:[self timeIs24HourFormat]?@"EEE, MMM d, yyyy  HH:mm":@"EEE, MMM d, yyyy  hh:mm"];
                 }
             }else{
-                endTimeLable.text = [self formaterDate:endDate formaterStyle:@"EEE, MMM d, yyyy"];
+               self.endTimeLable.text = [self formaterDate:endDate formaterStyle:@"EEE, MMM d, yyyy"];
             }
         }
         break ;
@@ -518,23 +432,23 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
 #pragma mark - locationDelegate控制器 的代理
 -(void)getlocation:(NSString*) name coordinate:(NSDictionary *) coordinatesDic{
     if (!name) {
-        eventLocation.text = @"";
+        self.eventLocation.text = @"";
     }else{
-        eventLocation.text = name ;
+        self.eventLocation.text = name ;
     }
     coordinates =  coordinatesDic;
 }
 #pragma mark - calendarAccount控制器 的代理。。。
 - (void)calendarAccountWithAccont:(Calendar *)ca{
     NSLog(@"%@",ca);
-    self.calendarObj=ca;
-    calendarLab.text = ca.summary ;
+    self.calendarObj = ca;
+    self.calendarLab.text = ca.summary ;
     [self.simpleEventTableView reloadRowsAtIndexPaths:@[clickIndexPath] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 #pragma mark -RepeatViewControllerDelegate的代理。。。。
 - (void)selectValueWithDateString:(NSString *)dateString repeatRecurrence:(RecurrenceModel *)recurrence{
-    repeatsLab.text = dateString;
+    self.repeatsLab.text = dateString;
     recurObj = recurrence;
     
     [self.simpleEventTableView reloadRowsAtIndexPaths:@[clickIndexPath] withRowAnimation:UITableViewRowAnimationNone];
@@ -542,9 +456,9 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
 
 #pragma mark - 保存事件
 -(void)saveEventData:(UIButton *) sender {
-    if (!eventTitle.text || [@"" isEqualToString:eventTitle.text]) {
-        if (eventTitle.text.length<=0) {
-            [eventTitle becomeFirstResponder];
+    if (!self.eventTitle.text || [@"" isEqualToString:self.eventTitle.text]) {
+        if (self.eventTitle.text.length<=0) {
+            [self.eventTitle becomeFirstResponder];
         }
         return ;
     }
@@ -561,13 +475,14 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
         eventData=[AnyEvent MR_createEntity];
     }
     eventData.eId            = [self generateUniqueEventID];
-    eventData.eventTitle     = eventTitle.text;
-    if ( ![@"Location" isEqualToString:eventLocation.text] && eventLocation.text ) {
-         eventData.location  = eventLocation.text;
+    eventData.eventTitle     = self.eventTitle.text;
+    if ( ![@"Location" isEqualToString:self.eventLocation.text] && self.eventLocation.text ) {
+        //location={"location":"地址","longitude":经度,"latitude":纬度}
+         NSDictionary * locationDic = @{@"location":self.eventLocation.text,@"longitude":[coordinates objectForKey:LONGITUDE],@"latitude":[coordinates objectForKey:LATITUDE]};
+        eventData.location =  [locationDic JSONString];
     }
    
     NSLog(@"%@",[[PublicMethodsViewController getPublicMethods] stringformatWithDate:startDate]);
-    
     if(isAllDay){
         NSString * startTime =  [NSString stringWithFormat:@"%@%@",[self formaterDate:startDate formaterStyle:@"YYYY年 M月d日"],@"00:00"];
         eventData.startDate  = startTime ;
@@ -581,26 +496,9 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
         eventData.startDate       = [[PublicMethodsViewController getPublicMethods] stringformatWithDate:startDate];
         eventData.endDate         = [[PublicMethodsViewController getPublicMethods] stringformatWithDate:endDate] ;
     }
-    eventData.note            = noteTextView.text;
-    eventData.calendarAccount = calendarLab.text;
-    NSString *coor=nil;
-    if (coordinates) {
-        coor=[NSString stringWithFormat:@"%@;%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
-    }
+    eventData.note            = self.noteTextView.text;
+    eventData.calendarAccount = self.calendarLab.text;
     
-    eventData.coordinate = coor;
-    
-    //    NSString * alertStr=nil;
-    //    if( selectAlertArr) {
-    //        alertStr=[selectAlertArr componentsJoinedByString:@","];
-    //    }
-    //    eventData.a4lerts= alertStr;
-    
-    //    NSString * repeatStr=nil;
-    //    if(selectRepeatArr) {
-    //        repeatStr=[selectRepeatArr componentsJoinedByString:@","];
-    //    }
-    //  eventData.repeat     = repeatStr;
     eventData.recurrence = [recurObj description];
     eventData.isSync     = @(isSyncData_NO);
     eventData.isDelete   = @(isDeleteData_NO);//数据非删除
@@ -625,13 +523,10 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
             [self createLocationNotice:eventData];
         }
 
-        for (UIViewController* obj in [self.navigationController viewControllers]) {
-            if ([obj isKindOfClass:[ManageViewController class]]) {
-                ManageViewController *mVc= (ManageViewController *)obj;
-                [self.navigationController popToViewController:mVc animated:YES];
-                break ;
-            }
+        if(self.delegate && [self.delegate respondsToSelector:@selector(dissSimpleEventViewController:)]){
+            [self.delegate dissSimpleEventViewController:self];
         }
+        
     }];
 }
 
@@ -639,10 +534,14 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
     
     NSPredicate * pre   = [NSPredicate predicateWithFormat:@"eId==%@ ",self.event.eId];
     AnyEvent * anyEvent = [[AnyEvent MR_findAllWithPredicate:pre ] lastObject];
-    anyEvent.eventTitle = eventTitle.text;
-    anyEvent.location   = eventLocation.text ;
+    anyEvent.eventTitle = self.eventTitle.text;
+//    anyEvent.location   = self.eventLocation.text ;
     
-    
+    if ( ![@"Location" isEqualToString:self.eventLocation.text] && self.eventLocation.text ) {
+        NSDictionary * locationDic = @{@"location":self.eventLocation.text,@"longitude":[coordinates objectForKey:LONGITUDE],@"latitude":[coordinates objectForKey:LATITUDE]};
+        eventData.location =  [locationDic JSONString];
+    }
+
     if(isAllDay){
         NSString * startTime =  [NSString stringWithFormat:@"%@%@",[self formaterDate:startDate formaterStyle:@"YYYY年 M月d日"],@"00:00"];
         eventData.startDate  = startTime ;
@@ -657,8 +556,8 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
         eventData.endDate         = [[PublicMethodsViewController getPublicMethods] stringformatWithDate:endDate] ;
     }
     
-    anyEvent.note       = noteTextView.text;
-    anyEvent.calendarAccount= calendarLab.text;
+    anyEvent.note       = self.noteTextView.text;
+    anyEvent.calendarAccount= self.calendarLab.text;
     NSString *coor      = nil;
     if (coordinates) {
         coor = [NSString stringWithFormat:@"%@;%@",[coordinates objectForKey:LATITUDE],[coordinates objectForKey:LONGITUDE]];
@@ -666,22 +565,13 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
         coor = self.event.coordinate ;
     }
     anyEvent.coordinate = coor;
+
     
-//    NSString * alertStr=nil;
-//    if( selectAlertArr) {
-//        alertStr=[selectAlertArr componentsJoinedByString:@","];
-//    }
-//    anyEvent.alerts= alertStr;
-    
-    anyEvent.calendarAccount= calendarLab.text;
+    anyEvent.calendarAccount= self.calendarLab.text;
     if ([recurObj description]) {
         anyEvent.recurrence=[recurObj description];
     }
-//    NSString * repeatStr=nil;
-//    if(selectRepeatArr) {
-//        repeatStr=[selectRepeatArr componentsJoinedByString:@","];
-//    }
-//    anyEvent.repeat = repeatStr;
+
     anyEvent.isSync   = @(isSyncData_NO);//数据没有同步
     anyEvent.isDelete = @(isDeleteData_NO);//数据非删除
     
@@ -711,12 +601,8 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
             [self createLocationNotice:anyEvent];
         }
         
-        for (UIViewController* obj in [self.navigationController viewControllers]) {
-            if ([obj isKindOfClass:[HomeViewController class]]) {
-                HomeViewController *homeVc= (HomeViewController *)obj;
-                homeVc.isRefreshUIData=YES;
-                [self.navigationController popToViewController:homeVc animated:YES];
-            }
+        if(self.delegate && [self.delegate respondsToSelector:@selector(dissSimpleEventViewController:)]){
+            [self.delegate dissSimpleEventViewController:self];
         }
         
     }];
@@ -739,8 +625,8 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
 
 #pragma mark -uitextview 的代理。。。
 - (void)textViewDidChange:(UITextView *)textView{
-    if (placeholderLab) {
-         [placeholderLab removeFromSuperview] ;
+    if (self.placeholderLab) {
+         [self.placeholderLab removeFromSuperview] ;
     }
 }
 
@@ -891,4 +777,137 @@ typedef NS_ENUM(NSInteger, DateStartOrEndType) {
         }
     }
 }
+
+
+
+
+
+//-------------------ui 的get method ---------------------------------
+
+-(UIButton *)rightBtn{
+    if (!_rightBtn) {
+        _rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_rightBtn setFrame:CGRectZero];
+        [_rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_tick"] forState:UIControlStateNormal] ;
+        [_rightBtn addTarget:self action:@selector(saveEventData:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _rightBtn ;
+}
+
+-(UIButton *)leftBtn{
+    if (!_leftBtn) {
+        _leftBtn = [[UIButton alloc] initWithFrame:CGRectZero] ;
+        [_leftBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _leftBtn ;
+}
+
+-(UITextField *)eventTitle{
+    if (!_eventTitle) {
+        _eventTitle = [[UITextField alloc] initWithFrame:CGRectMake(XSPACING, 0, kScreen_Width-XSPACING-5, CELLOFLABLEH)] ;
+        _eventTitle.placeholder = @"Title" ;
+        _eventTitle.adjustsFontSizeToFitWidth = YES ;
+        _eventTitle.clearButtonMode = UITextFieldViewModeWhileEditing;
+        _eventTitle.delegate = self ;
+        _eventTitle.returnKeyType = UIReturnKeyDone ;
+    }
+    return _eventTitle ;
+}
+
+-(UILabel *)eventLocation{
+    if (!_eventLocation) {
+        _eventLocation = [[UILabel alloc] initWithFrame:CGRectMake(XSPACING, 0, kScreen_Width-XSPACING-5, CELLOFLABLEH)] ;
+        _eventLocation.attributedText = [[NSAttributedString alloc] initWithString:@"Location" attributes:@{NSForegroundColorAttributeName:[UIColor lightGrayColor]}];
+        _eventLocation.adjustsFontSizeToFitWidth = YES ;
+    }
+    return _eventLocation;
+}
+
+-(UISwitch *)eventAllDaySwitch{
+    if (!_eventAllDaySwitch) {
+        _eventAllDaySwitch = [[UISwitch alloc] init];
+        [_eventAllDaySwitch sizeToFit];
+        [_eventAllDaySwitch addTarget:self action:@selector(listeningValueChanged:) forControlEvents:UIControlEventValueChanged] ;
+        _eventAllDaySwitch.on = NO ;
+        
+    }
+    return _eventAllDaySwitch ;
+}
+
+
+-(UILabel *)startTimeLable{
+    if (!_startTimeLable) {
+        _startTimeLable=[[UILabel alloc] initWithFrame:CGRectMake(STARTENDSPACING, 0, kScreen_Width-(STARTENDSPACING+XSPACING+5), CELLOFLABLEH)] ;
+        _startTimeLable.textAlignment = NSTextAlignmentRight ;
+        _startTimeLable.adjustsFontSizeToFitWidth = YES ;
+    }
+    return _startTimeLable ;
+}
+
+-(UILabel *)endTimeLable{
+    if (!_endTimeLable) {
+        _endTimeLable = [[UILabel alloc] initWithFrame:CGRectMake(STARTENDSPACING, 0, kScreen_Width-(STARTENDSPACING+XSPACING+5), CELLOFLABLEH)] ;
+        _endTimeLable.textAlignment = NSTextAlignmentRight ;
+        _endTimeLable.adjustsFontSizeToFitWidth = YES ;
+    }
+    return _endTimeLable ;
+    
+}
+
+-(UILabel *)repeatsLab{
+    if (!_repeatsLab) {
+        _repeatsLab = [[UILabel alloc] initWithFrame:CGRectMake(STARTENDSPACING, 0, kScreen_Width-(STARTENDSPACING+XSPACING+5), CELLOFLABLEH)] ;
+        _repeatsLab.textAlignment = NSTextAlignmentRight ;
+        _repeatsLab.adjustsFontSizeToFitWidth = YES ;
+    }
+    return _repeatsLab ;
+}
+
+-(UIView *)pickView{
+    if (!_pickView) {
+        _pickView  = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 216)];
+    }
+    return _pickView ;
+}
+
+-(UIDatePicker *)datePickers{
+    if (!_datePickers) {
+        _datePickers = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
+        [_datePickers setBackgroundColor:[UIColor whiteColor]];
+        _datePickers.datePickerMode = UIDatePickerModeDateAndTime;
+        [_datePickers setTimeZone:[NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE]];
+        [_datePickers sizeToFit] ;
+        [_datePickers addTarget:self action:@selector(datePickerDateChanged:) forControlEvents:UIControlEventValueChanged];
+    }
+    return _datePickers ;
+}
+
+-(UILabel *)calendarLab{
+    if (!_calendarLab) {
+        _calendarLab = [[UILabel alloc] initWithFrame:CGRectMake(STARTENDSPACING, 0, kScreen_Width-(STARTENDSPACING+XSPACING+5), CELLOFLABLEH)] ;
+        _calendarLab.textAlignment = NSTextAlignmentRight ;
+        _calendarLab.lineBreakMode = NSLineBreakByTruncatingMiddle ;
+    }
+    return _calendarLab ;
+}
+
+-(UITextView *)noteTextView{
+    if (!_noteTextView) {
+        _noteTextView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 120)] ;
+        _noteTextView.font = [UIFont fontWithName:@"Arial" size:17.0];
+        _noteTextView.scrollEnabled = YES ;
+        _noteTextView.returnKeyType = UIReturnKeyDone ;
+        _noteTextView.delegate = self ;
+    }
+    return _noteTextView ;
+}
+
+-(UILabel *)placeholderLab{
+    if (!_placeholderLab) {
+        _placeholderLab = [[UILabel alloc] initWithFrame:CGRectMake(XSPACING, 10, kScreen_Width, 20)];
+        _placeholderLab.attributedText = [[NSAttributedString alloc] initWithString:@"Note" attributes:@{NSForegroundColorAttributeName:[UIColor lightGrayColor]}];
+    }
+    return _placeholderLab ;
+}
+
 @end

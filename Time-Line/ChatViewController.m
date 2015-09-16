@@ -30,6 +30,7 @@
     self.title = self.activeEvent.title;
 
     self.senderId = [UserInfo currUserInfo].Id;
+    
     self.senderDisplayName = [UserInfo currUserInfo].username;
     
     self.showLoadEarlierMessagesHeader = NO ;
@@ -80,24 +81,28 @@
 }
 
 -(void)netWorkSendChatMsgChatStr:(NSString *)chatmsg withChatImage:(UIImage *)chatImage {
-    NSURL *url = [NSURL URLWithString:[anyTime_SendMsg stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    ASIFormDataRequest *uploadImageRequest = [ASIFormDataRequest requestWithURL:url];
-    [uploadImageRequest setStringEncoding:NSUTF8StringEncoding];
-    [uploadImageRequest setRequestMethod:@"POST"];
-    [uploadImageRequest setPostFormat:ASIMultipartFormDataPostFormat];
-    
-    [uploadImageRequest setPostValue:chatmsg==nil?@"":chatmsg forKey:@"msg"];
-    [uploadImageRequest setPostValue:self.activeEvent.Id forKey:@"eid"];
-    [uploadImageRequest setTimeOutSeconds:20];
+    ASIFormDataRequest *uploadImageRequest;
     if(chatImage){
+           NSURL *url = [NSURL URLWithString:[Go2_UploadSocialFile stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+            uploadImageRequest = [ASIFormDataRequest requestWithURL:url];
+           [uploadImageRequest setStringEncoding:NSUTF8StringEncoding];
+           [uploadImageRequest setRequestMethod:@"POST"];
+           [uploadImageRequest setPostFormat:ASIMultipartFormDataPostFormat];
+           [uploadImageRequest setPostValue:@"chat" forKey:@"type"];
+           [uploadImageRequest setPostValue:chatmsg==nil?@"":chatmsg forKey:@"msg"];
+           [uploadImageRequest setPostValue:self.activeEvent.Id forKey:@"eid"];
+           [uploadImageRequest setTimeOutSeconds:20];
+
         NSData *data = UIImagePNGRepresentation(chatImage);
         NSMutableData *imageData = [NSMutableData dataWithData:data];
         NSString *tmpDate = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyyMMddss"];
         [uploadImageRequest addData:imageData withFileName:[NSString stringWithFormat:@"%@.jpg", tmpDate]  andContentType:@"image/jpeg" forKey:@"f1"];
     }else{
-       [uploadImageRequest addData:[NSData new] withFileName:@""  andContentType:@"image/jpeg" forKey:@"f1"];
+         uploadImageRequest = [t_Network httpPostValue:@{@"method":@"sendChatMsg",@"msg":chatmsg==nil?@"":chatmsg,@"eid":self.activeEvent.Id}.mutableCopy
+                                                                      Url:Go2_socials
+                                                                 Delegate:nil
+                                                                      Tag:Go2_SendMsg_tag];
     }
-    [uploadImageRequest setTag:anyTime_SendMsg_tag];
     __block ASIFormDataRequest *uploadRequest = uploadImageRequest;
     [uploadImageRequest setCompletionBlock: ^{
         NSString *responseStr = [uploadRequest responseString];
@@ -106,7 +111,7 @@
         if ([obj isKindOfClass:[NSDictionary class]]) {
             NSDictionary *tmpDic = (NSDictionary *)obj;
             NSInteger  statusCode = [[tmpDic objectForKey:@"statusCode"] integerValue];
-            if (statusCode == 1) {
+            if ( statusCode == 1 ) {
                 id dataDic = [tmpDic objectForKey:@"data"];
                 if ([dataDic isKindOfClass:[NSDictionary class]]) {
                     [g_AppDelegate saveChatInfoForActive:dataDic];
@@ -251,6 +256,7 @@
     
     
     NSLog(@"%@",[self.chatModelData.avatars objectForKey:msg.senderId]) ;
+    
     [cell.avatarImageView sd_setImageWithURL:[self.chatModelData.avatars objectForKey:msg.senderId] placeholderImage:[UIImage imageNamed:@"smile_1"]] ;
     
     if (!msg.isMediaMessage) {

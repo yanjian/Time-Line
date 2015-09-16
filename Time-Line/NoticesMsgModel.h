@@ -23,4 +23,12 @@
                                                    // 10 活动更新, 11 活动新增或邀请成员  31(message) xx: message
                                                    //32(notification)event update   -- New members  --Members of the exit   --event update
 
+//-------更换接口新增属性--start-------
+@property (nonatomic, copy) NSString * receiveUid ;
+@property (nonatomic, copy) NSString * status ;
+@property (nonatomic, copy) NSString * uid ;
+@property (nonatomic, copy) NSString * updateTime;
+@property (nonatomic, copy) NSString * createTime;
+//----------------------end---------
+
 @end

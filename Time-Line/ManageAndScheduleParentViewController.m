@@ -14,7 +14,7 @@
 
 #import "CreatePersonalScheduleViewController.h"
 
-@interface ManageAndScheduleParentViewController ()<UIActionSheetDelegate,CreatePersonalScheduleViewControllerDelegate>
+@interface ManageAndScheduleParentViewController ()<UIActionSheetDelegate,CreatePersonalScheduleViewControllerDelegate,SimpleEventViewControllerDelegate>
 
 @property (nonatomic,retain) UIViewController * currentViewController ;
 @property (nonatomic,retain) UIButton * createBtn ;
@@ -149,7 +149,6 @@
 //    UIActionSheet *activeSheet = [[UIActionSheet alloc] initWithTitle:@"Add Event" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Social",@"Personal", nil];
 //    [activeSheet showInView:self.view];
     
-    
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
@@ -176,12 +175,16 @@
     }else if (tag == 1){
         SimpleEventViewController * simpleEventVC = [[SimpleEventViewController alloc] init];
         simpleEventVC.hidesBottomBarWhenPushed = YES ;
+         simpleEventVC.delegate = self ;
         [self.navigationController pushViewController:simpleEventVC animated:YES];
     }
 
 }
 
+-(void)dissSimpleEventViewController:(SimpleEventViewController *) simpleEventVC {
 
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

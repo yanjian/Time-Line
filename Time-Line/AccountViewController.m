@@ -11,6 +11,7 @@
 #import "IBActionSheet.h"
 #import "AT_Account.h"
 
+#import "Go2Account.h"
 @interface AccountViewController () <UITableViewDataSource, UITableViewDelegate, ASIHTTPRequestDelegate, IBActionSheetDelegate>
 @property (nonatomic, retain) UITableView *tableView;
 @end
@@ -20,7 +21,6 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
 	if (self) {
-		// Custom initialization
 	}
 	return self;
 }
@@ -74,8 +74,8 @@
 	}
 
 	id rowAccount = self.accountArr[indexPath.section];
-	if ([rowAccount isKindOfClass:[AT_Account class]]) {
-		AT_Account *account = (AT_Account *)rowAccount;
+	if ([rowAccount isKindOfClass:[Go2Account class]]) {
+		Go2Account *account = (Go2Account *)rowAccount;
 		UILabel *lab = [self createUILabe];
 		UILabel *contextLab = [[UILabel alloc] initWithFrame:CGRectMake(lab.bounds.size.width, 2, 215, 40)];
 		[contextLab setBackgroundColor:[UIColor clearColor]];
@@ -112,13 +112,13 @@
 
 
 	id rowAccount = self.accountArr[section];
-	if ([rowAccount isKindOfClass:[AT_Account class]]) {
-		AT_Account *account = (AT_Account *)rowAccount;
-		if ([account.accountType intValue] == AccountTypeGoogle) {
+	if ([rowAccount isKindOfClass:[Go2Account class]]) {
+		Go2Account *account = (Go2Account *)rowAccount;
+		if ([account.type intValue] == AccountTypeGoogle) {
 			[disconnectBtn setBackgroundColor:[UIColor redColor]];
 			[disconnectBtn addTarget:self action:@selector(disconnectAccount:) forControlEvents:UIControlEventTouchUpInside];
 		}
-		else if ([account.accountType intValue] == AccountTypeLocal) {
+		else if ([account.type intValue] == AccountTypeLocal) {
 			[disconnectBtn setBackgroundColor:[UIColor grayColor]];
 			[disconnectBtn setEnabled:NO];
 		}
@@ -143,25 +143,37 @@
 - (void)actionSheet:(IBActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
 	if (buttonIndex == 0) {
 		id accountData = [self.accountArr lastObject];
-		NSString *accountStr;
-		if ([accountData isKindOfClass:[AT_Account class]]) {
-			AT_Account *account = (AT_Account *)accountData;
-			accountStr = account.account;
+		
+        if ([accountData isKindOfClass:[Go2Account class]]) {
+			Go2Account *  account   = (Go2Account *) accountData;
+            
+            ASIHTTPRequest *request = [t_Network httpGet:@{@"accountId": account.accountId }.mutableCopy Url:Go2_Google_removeBind Delegate:self Tag:Go2_Google_removeBind_Tag];
+            [request startSynchronous];
+            [self.navigationController popViewControllerAnimated:YES];
 		}
-
-		ASIHTTPRequest *request = [t_Network httpGet:@{ @"bindAccout": accountStr }.mutableCopy Url:account_CancelAccountBind Delegate:self Tag:account_CancelAccountBind_Tag];
-		[request startSynchronous];
-		[self.navigationController popViewControllerAnimated:YES];
 	}
 }
 
 - (void)requestFinished:(ASIHTTPRequest *)request {
-	NSLog(@"%@", [request responseString]);
-	AT_Account *account = [self.accountArr lastObject];
-
-	[account MR_deleteEntity];
-
-	[[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    switch ([request tag]) {
+        case Go2_Google_removeBind_Tag:{
+            
+            NSLog(@"%@", [request responseString]);
+            id responseData = [[request responseString] objectFromJSONString];
+            if ([responseData isKindOfClass:[NSDictionary class]]) {
+                int  statusCode = [[responseData objectForKey:@"statusCode"] intValue];
+                if ( statusCode == 1 ) {
+                    Go2Account * account = [self.accountArr lastObject];
+                    [account MR_deleteEntity];
+                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                }
+            }
+            
+        }break;
+            
+        default:
+            break;
+    }
 }
 
 @end

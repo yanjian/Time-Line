@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface NotificationViewController : UIViewController
-@property (nonatomic, retain) NSArray *calendarArray;//日历列表数组用于生成tableview中有多少组
+@property (nonatomic, retain) NSMutableArray *calendarArray;//日历列表数组用于生成tableview中有多少组
 
 @end

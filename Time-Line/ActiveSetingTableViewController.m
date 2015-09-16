@@ -31,6 +31,10 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
     BOOL isChange;
 }
 
+@property (nonatomic,strong) UIButton * leftBtn;
+@property (nonatomic,strong) UIButton * rightBtn;
+@property (nonatomic,strong) UISwitch * purporseSwitch;
+@property (nonatomic,strong) UILabel * purporseLab ;
 @end
 
 @implementation ActiveSetingTableViewController
@@ -39,38 +43,25 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Event Settings" ;
-    
     userId = [UserInfo currUserInfo].Id;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
     
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
-    [leftBtn setTag:1];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
-    [leftBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
-    
-     if ([userId isEqualToString:self.activeEvent.create]) {
-        UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [rightBtn setFrame:CGRectMake(0, 0, 23, 23)];
-        [rightBtn setTag:2];
-        [rightBtn setBackgroundImage:[UIImage imageNamed:@"Go2Icon_Edit"] forState:UIControlStateNormal] ;
-        [rightBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
-     }
+    if ([userId isEqualToString:self.activeEvent.createId]) {
+       self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.rightBtn] ;
+    }
     self.navigationController.interactivePopGestureRecognizer.delegate =(id) self ;
+    
     memberArr = @[].mutableCopy ;
-    for (NSDictionary *memDic in self.activeEvent.member) {
-        MemberDataModel * member = [[MemberDataModel alloc] init];
-        [member parseDictionary:memDic];
+    for (NSDictionary *memDic in self.activeEvent.invitees) {
+        MemberDataModel * member = [MemberDataModel modelWithDictionary:memDic];
         [memberArr addObject:member];
     }
     
     timeArr = @[].mutableCopy ;
-    for (NSDictionary *timeDic in self.activeEvent.time) {
-        ActiveTimeVoteMode * activeTimeVoet = [[ActiveTimeVoteMode alloc] init] ;
-        [activeTimeVoet parseDictionary:timeDic];
+    for (NSDictionary *timeDic in self.activeEvent.proposeTimes) {
+        ActiveTimeVoteMode * activeTimeVoet = [ActiveTimeVoteMode modelWithDictionary:timeDic]  ;
         [timeArr addObject:activeTimeVoet];
-        if ([activeTimeVoet.finalTime intValue] == 2 ) {
+        if ([activeTimeVoet.status intValue] == 1 ) {
             activeTime = activeTimeVoet ;
         }
     }
@@ -99,7 +90,7 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
     deletebtn.layer.cornerRadius = 5.0f;
     [deleteBtn addSubview:deletebtn];
     deletebtn.center = deleteBtn.center ;
-    [deletebtn addTarget:self action:@selector(deleteEventData:) forControlEvents:UIControlEventTouchUpInside];
+    [deletebtn addTarget:self action:@selector( deleteEventData: ) forControlEvents:UIControlEventTouchUpInside];
     self.tableView.tableFooterView = deleteBtn ;
 }
 
@@ -146,23 +137,23 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
             cell.showNoImgTitle.hidden = YES ;
         }
         
-        if (activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl] ) {
+        if (activeEvent.img && ![@"" isEqualToString:activeEvent.img] ) {
             cell.showNoImgTitle.hidden = YES ;
-            NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, activeEvent.img] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
             NSLog(@"%@", _urlStr);
             NSURL *url = [NSURL URLWithString:_urlStr];
             [cell.activeImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"go2_grey"]];
         }else{
              cell.showNoImgTitle.hidden = NO ;
-            [cell.activeImg setBackgroundColor: [UIColor colorWithHexString:@"2e9ef1"]];
-            cell.showNoImgTitle.text = [[activeEvent.title substringToIndex:1] uppercaseString];
+             [cell.activeImg setBackgroundColor: [UIColor colorWithHexString:@"2e9ef1"]];
+             cell.showNoImgTitle.text = [[activeEvent.title substringToIndex:1] uppercaseString];
         }
 
         cell.activeTitle.text = self.activeEvent.title ;
+        
         for (MemberDataModel * member in memberArr) {
-            NSNumber * uidStr = member.uid;
-            if ([uidStr intValue] == [self.activeEvent.create intValue]) {
-                cell.activeDesc.text = [NSString stringWithFormat:@"Host: %@",member.username];
+            if ( [ member.uid isEqualToString:self.activeEvent.createId ]   ) {
+                cell.activeDesc.text = [NSString stringWithFormat:@"Host: %@",[member.user objectForKey:@"username"]];
                 break ;
             }
         }
@@ -180,10 +171,10 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
                     [subView removeFromSuperview];
                 }
                 NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+                [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
                 [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE]];
-                NSDate  * startDate = [dateFormatter dateFromString:activeTime.startTime] ;
-                NSDate  * endDate   = [dateFormatter dateFromString:activeTime.endTime] ;
+                NSDate  * startDate = [dateFormatter dateFromString:activeTime.start] ;
+                NSDate  * endDate   = [dateFormatter dateFromString:activeTime.end] ;
                 
                 UIImageView * alertView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Alert_Hour"]];
                 alertView.frame = CGRectMake(20, 22, 20, 20);
@@ -210,9 +201,9 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
         int noReply = 0 ;
         
         for (MemberDataModel * member in memberArr) {
-            if ([member.join intValue] == 1) {
+            if ([member.isJoining intValue] == 1) {
                 join++;
-            }else if ([member.join intValue] == 2){
+            }else if ([member.isJoining intValue] == 2){
                 noJoin ++ ;
             }else{
                 noReply++;
@@ -233,27 +224,19 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
                 [childView removeFromSuperview];
             }
 
-            UISwitch *purporseSwitch = [[UISwitch alloc] init];
-            purporseSwitch.tag = 1 ;
-            
             for (MemberDataModel * member in memberArr) {
-                if ([member.uid integerValue] == [userId integerValue]) {
-                    if ([member.notification intValue] == 1) {
-                        purporseSwitch.on = YES ;
+                if ([ userId isEqualToString:member.uid ]    ) {
+                    if ([member.isReceiveNotification intValue] == 1) {
+                         self.purporseSwitch.on = YES ;
                     }else{
-                         purporseSwitch.on = NO ;
+                         self.purporseSwitch.on = NO ;
                     }
                     break ;
                 }
             }
             
-            [purporseSwitch addTarget:self action:@selector(switchValueChange:) forControlEvents:UIControlEventValueChanged];
-            cell.accessoryView = purporseSwitch;
-           
-            UILabel * purporseLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-100, 64)];
-            purporseLab.text = @"   Receive notification \n   for new updates";
-            [purporseLab setNumberOfLines:2];
-            [cell.contentView addSubview:purporseLab];
+            cell.accessoryView = self.purporseSwitch;
+            [cell.contentView addSubview:self.purporseLab];
         }        
         return cell ;
     }
@@ -262,8 +245,8 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
 
 -(void)switchValueChange:(UISwitch *) sender{
     
-    ASIHTTPRequest *activeNoti = [t_Network httpPostValue:@{ @"eid":self.activeEvent.Id,@"type":sender.on ? @1 : @2 }.mutableCopy Url:anyTime_EventNotification Delegate:nil Tag:anyTime_EventNotification_tag];
-    __block ASIHTTPRequest *request = activeNoti;
+    ASIHTTPRequest *activeNoti = [t_Network httpPostValue:@{@"method":@"updateNotifyStatus", @"eid":self.activeEvent.Id,@"status":sender.on ? @1 : @2 }.mutableCopy Url:Go2_socials Delegate:nil Tag:Go2_EventNotification_tag];
+    __block typeof(activeNoti) request = activeNoti;
     [activeNoti setCompletionBlock: ^{
         NSError *error = [request error];
         if (error) {
@@ -273,8 +256,8 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
         id objData =  [responseStr objectFromJSONString];
         if ([objData isKindOfClass:[NSDictionary class]]) {
             NSDictionary *objDataDic = (NSDictionary *)objData;
-            NSString *statusCode = [objDataDic objectForKey:@"statusCode"];
-            if ([statusCode isEqualToString:@"1"]) {
+            int statusCode = [[objDataDic objectForKey:@"statusCode"] intValue];
+            if ( statusCode == 1 ) {
                 isChange = YES ;//设置成功.....
             }
         }
@@ -290,10 +273,10 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.section==0 && indexPath.row == 1) {
-        if ([userId isEqualToString:self.activeEvent.create]) {
+    if ( indexPath.section == 0 && indexPath.row == 1 ) {
+        if ([userId isEqualToString:self.activeEvent.createId]) {
             NSMutableArray * etArr = @[].mutableCopy ;
-            for (NSDictionary *etDic in self.activeEvent.etList) {
+            for (NSDictionary *etDic in self.activeEvent.voteRecords) {
                 ActiveVoteTimeModel *activeVote = [[ActiveVoteTimeModel alloc] init];
                 [activeVote parseDictionary:etDic];
                 [etArr addObject:activeVote];
@@ -315,9 +298,9 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
     }
 }
 
--(void)eventConfirmTimeTableViewControllerDelegate:(EventConfirmTimeTableViewController *) eventConfirmVC setTimeId:(NSString *)tid {
+-(void)eventConfirmTimeTableViewControllerDelegate:(EventConfirmTimeTableViewController *) eventConfirmVC setTimeId:(NSString *) tid {
     for (ActiveTimeVoteMode *tmpATime in timeArr) {
-        if ([tmpATime.Id intValue] == [tid intValue]) {
+        if ([ tmpATime.Id isEqualToString: tid ]   ) {
             activeTime = tmpATime ;
             isChange   = YES ;
             break ;
@@ -362,7 +345,10 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
 -(void)actionSheet:(IBActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
     
     if (buttonIndex==0) {
-        ASIHTTPRequest *activeNoti = [t_Network httpPostValue:@{ @"eid":self.activeEvent.Id }.mutableCopy Url:anyTime_QuitEvent Delegate:nil Tag:anyTime_QuitEvent_tag];
+        ASIHTTPRequest *activeNoti = [t_Network httpPostValue:@{@"method":@"delete",@"eid":self.activeEvent.Id }.mutableCopy
+                                                          Url:Go2_socials
+                                                     Delegate:nil
+                                                          Tag:anyTime_QuitEvent_tag];
         __block ASIHTTPRequest *request = activeNoti;
         [activeNoti setCompletionBlock: ^{
             NSError *error = [request error];
@@ -373,8 +359,8 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
             id objData =  [responseStr objectFromJSONString];
             if ([objData isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *objDataDic = (NSDictionary *)objData;
-                NSString *statusCode = [objDataDic objectForKey:@"statusCode"];
-                if ([statusCode isEqualToString:@"1"]) {
+                int statusCode = [[objDataDic objectForKey:@"statusCode"] intValue];
+                if ( statusCode  == 1 ) {
                     //删除事件的通知
                     [[NSNotificationCenter defaultCenter] postNotificationName:DELETEEVENTNOTI object:self userInfo:@{DELETEEVENTNOTI_INFO:self.activeEvent.Id}] ;
                     [self.navigationController popToRootViewControllerAnimated:YES];
@@ -388,5 +374,46 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
         [activeNoti startSynchronous];
     }
     
+}
+
+-(UIButton *)leftBtn{
+    if ( !_leftBtn ) {
+         _leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
+        [_leftBtn setTag:1];
+        [_leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
+        [_leftBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _leftBtn;
+}
+
+-(UIButton *)rightBtn{
+    if (!_rightBtn) {
+         _rightBtn= [UIButton buttonWithType:UIButtonTypeCustom];
+        [_rightBtn setFrame:CGRectMake(0, 0, 23, 23)];
+        [_rightBtn setTag:2];
+        [_rightBtn setBackgroundImage:[UIImage imageNamed:@"Go2Icon_Edit"] forState:UIControlStateNormal] ;
+        [_rightBtn addTarget:self action:@selector(backToEventView:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _rightBtn;
+}
+
+
+-(UISwitch *)purporseSwitch{
+    if (!_purporseSwitch) {
+        _purporseSwitch = [[UISwitch alloc] init];
+        _purporseSwitch.tag = 1 ;
+       [_purporseSwitch addTarget:self action:@selector(switchValueChange:) forControlEvents:UIControlEventValueChanged];
+    }
+    return _purporseSwitch;
+}
+
+-(UILabel *)purporseLab{
+    if (!_purporseLab) {
+         _purporseLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-100, 64)];
+         _purporseLab.text = @"   Receive notification \n   for new updates";
+        [_purporseLab setNumberOfLines:2];
+    }
+    return _purporseLab ;
 }
 @end

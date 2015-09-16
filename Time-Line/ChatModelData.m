@@ -12,7 +12,7 @@
 
 @implementation ChatModelData
 
--(instancetype)initChatModelDataWithActiveEventModel:(ActiveEventMode *)activeEvent{
+-(instancetype)initChatModelDataWithActiveEventModel:(ActiveEventModel *)activeEvent{
     self = [super init];
     if (self) {
         self.messages = [NSMutableArray arrayWithCapacity:0];
@@ -26,20 +26,19 @@
             
             [self loadFakeMessages];
             
-            NSArray * memberArr = self.activeEvent.member ;
+            NSArray * memberArr = self.activeEvent.invitees ;
             
             for (NSDictionary *memberDic in memberArr) {
-                MemberDataModel *memberDataMode = [[MemberDataModel alloc] init];
-                [memberDataMode parseDictionary:memberDic];
+                MemberDataModel *memberDataMode = [MemberDataModel modelWithDictionary:memberDic];
                 [self.memberTempArr addObject:memberDataMode];
             }
             
             for ( MemberDataModel *memberDataMode in self.memberTempArr) {
-                NSString * imgSmall = [memberDataMode.imgBig stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                NSString * imgPath  = [[NSString stringWithFormat:@"%@/%@",BASEURL_IP,imgSmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSString * imgSmall = [memberDataMode.user objectForKey:@"thumbnail"];
+                NSString * imgPath  = [[NSString stringWithFormat:@"%@%@",BaseGo2Url_IP,imgSmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 
-                [self.avatars setObject:[NSURL URLWithString:imgPath] forKey:[memberDataMode.uid stringValue]] ;
-                [self.users   setObject:memberDataMode.username forKey:[memberDataMode.uid stringValue]] ;
+                [self.avatars setObject:[NSURL URLWithString:imgPath] forKey:memberDataMode.uid] ;
+                [self.users   setObject:[memberDataMode.user objectForKey:@"username"] forKey:memberDataMode.uid ] ;
             }
         }
         
@@ -54,10 +53,10 @@
 
 - (void)loadFakeMessages
 {
-    NSPredicate *nspre=[NSPredicate predicateWithFormat:@"eid==%@",self.activeEvent.Id];
-    NSArray *chatContentArr=[ChatContentModel MR_findAllWithPredicate:nspre];
+    NSPredicate * nspre = [NSPredicate predicateWithFormat:@"eid==%@",self.activeEvent.Id];
+    NSArray * chatContentArr = [ChatContentModel MR_findAllWithPredicate:nspre];
     for (ChatContentModel *chatContent in chatContentArr) {
-        chatContent.unreadMessage = @(UNREADMESSAGE_YES) ;//变为已读
+        chatContent.unreadMessage = @( UNREADMESSAGE_YES ) ;//变为已读
         if (chatContent.imgSmall && ![chatContent.imgSmall isEqualToString:@""]) {//是否是图片
             JSQPhotoMediaItem *photoItem = [[JSQPhotoMediaItem alloc] initWithImage:[UIImage imageWithData:[NSData dataWithBase64String:chatContent.imgSmall]]];
             if (![[UserInfo currUserInfo].Id isEqualToString:chatContent.uid]) {

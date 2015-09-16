@@ -11,6 +11,10 @@
 #import "ReviewViewController.h"
 @interface NewPurposeEventTimeViewController ()<Go2DayPlannerViewDelegate>
 
+@property (nonatomic,strong) UIButton *leftBtn ;
+@property (nonatomic,strong) UIButton *rightBtn ;
+@property (nonatomic,strong) Go2DayPlannerView * go2View;
+
 @property (nonatomic,retain) NSMutableArray * voteTimeArr ;
 
 @end
@@ -22,31 +26,47 @@
     
     self.title = @"Purpose Event Time" ;
     
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
-    [leftBtn setTag:1];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
-    [leftBtn addTarget:self action:@selector(backToEventDeatailsView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
+    [self.leftBtn setTag:1];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
     
-    UIButton *rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
-    [rightBtn setTag:2];
-    [rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_right"] forState:UIControlStateNormal] ;
-    [rightBtn addTarget:self action:@selector(backToEventDeatailsView:) forControlEvents:UIControlEventTouchUpInside] ;
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightBtn] ;
+    [self.rightBtn setTag:2];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.rightBtn] ;
+    
+    [self.view addSubview:self.go2View] ;
+}
 
-    
-    Go2DayPlannerView * go2View = [[Go2DayPlannerView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height-60)] ;
-    go2View.backgroundColor = [UIColor whiteColor] ;
-    go2View.delegate = self ;
-    [go2View showEventView:self.activeEvent.time];
-    [self.view addSubview:go2View] ;
+-(UIButton *)leftBtn{
+    if (!_leftBtn) {
+         _leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_leftBtn setFrame:CGRectMake(0, 0, 22, 14)];
+        [_leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
+        [_leftBtn addTarget:self action:@selector(backToEventDeatailsView:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _leftBtn ;
+}
+
+-(UIButton *)rightBtn{
+    if (!_rightBtn) {
+        _rightBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_rightBtn setFrame:CGRectMake(0, 0, 22, 14)];
+        [_rightBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_right"] forState:UIControlStateNormal] ;
+        [_rightBtn addTarget:self action:@selector(backToEventDeatailsView:) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _rightBtn ;
+}
+
+-(Go2DayPlannerView *)go2View{
+    if (!_go2View) {
+        _go2View= [[Go2DayPlannerView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height-60)] ;
+        _go2View.backgroundColor = [UIColor whiteColor] ;
+        _go2View.delegate = self ;
+        [_go2View showEventView:self.activeEvent.proposeTimes];
+    }
+    return _go2View;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 

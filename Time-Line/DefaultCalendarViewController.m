@@ -61,13 +61,22 @@
 	[super viewWillAppear:animated];
 	[self.calendarArray removeAllObjects];
 
-	NSArray *atAccountLs = [AT_Account MR_findAll];
-	for (AT_Account *atAccount in atAccountLs) {
-		NSPredicate *pre = [NSPredicate predicateWithFormat:@"atAccount==%@", atAccount];
-		NSArray *caArr = [Calendar MR_findAllWithPredicate:pre];
-		[self.calendarArray addObject:caArr];
-	}
-	self.calendarLs = [[Calendar MR_findAll] mutableCopy];
+    
+    self.calendarLs = [[Calendar MR_findAll] mutableCopy];
+    NSMutableArray * localArr = [NSMutableArray array];
+    NSMutableArray * googleArr = [NSMutableArray array];
+    [self.calendarLs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([obj isKindOfClass:[Calendar class]]) {
+            Calendar * ca = (Calendar *) obj ;
+            if ([ca.type intValue] == AccountTypeLocal ) {
+                [localArr addObject:ca] ;
+            }else if ([ca.type intValue] == AccountTypeGoogle ){
+                [googleArr addObject:ca];
+            }
+        }
+    }];
+    [self.calendarArray addObject:localArr];
+    [self.calendarArray addObject:googleArr];
 }
 
 - (void)didReceiveMemoryWarning {

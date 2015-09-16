@@ -36,6 +36,9 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
     VoteAndFixTimeType voteAndFixTimeType;
     AllowAddTime  allowAddTime;
 }
+@property (nonatomic,strong) MKMapView *vMap;
+@property (nonatomic,strong) UIScrollView * fivScrollV;
+@property (nonatomic,strong) UILabel * purporseLab;
 @end
 
 @implementation ReviewViewController
@@ -62,7 +65,7 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
     voteAndFixTimeType = VoteAndFixTimeType_Vote;//默认投票
     
     if (self.isEdit) {
-        if ( [self.activeEvent.addTime boolValue] ) {
+        if ( [self.activeEvent.canProposeTime boolValue] ) {
             allowAddTime = AllowAddTime_YES;
         }else{
             allowAddTime = AllowAddTime_NO ;
@@ -73,8 +76,38 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
 }
 
 
+-(MKMapView *)vMap{
+    if (!_vMap){
+        _vMap = [[MKMapView alloc] initWithFrame:CGRectMake(10, 0,kScreen_Width-20, 160)];
+        _vMap.delegate = self;
+        _vMap.camera.altitude = 20;
+        _vMap.showsBuildings = YES;
+        _vMap.zoomEnabled = NO ;
+        _vMap.scrollEnabled = NO ;
+    }
+    return _vMap ;
+}
+
+-(UIScrollView *)fivScrollV{
+    if (!_fivScrollV) {
+         _fivScrollV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 64)];
+        [_fivScrollV setShowsHorizontalScrollIndicator:NO];
+        [_fivScrollV setShowsVerticalScrollIndicator:NO];
+    }
+    return _fivScrollV;
+}
+
+-(UILabel *)purporseLab{
+    if (!_purporseLab) {
+         _purporseLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-100, 64)];
+        [_purporseLab setNumberOfLines:2];
+         _purporseLab.text = @"   Participants can purpose\n   event time";
+    }
+    return _purporseLab ;
+}
+
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 9;
+    return 8;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -151,13 +184,10 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
                     showCount = self.activeDataMode.activeFriendArr.count;
                 }
 
-                UIScrollView * fivScrollV = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 64)];
-                [fivScrollV setShowsHorizontalScrollIndicator:NO];
-                [fivScrollV setShowsVerticalScrollIndicator:NO];
                 
-                fivScrollV.contentSize = CGSizeMake(48 * showCount, 0);
+                self.fivScrollV.contentSize = CGSizeMake(48 * showCount, 0);
                 UIView * memberView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 48 * showCount, 44)];
-                [fivScrollV addSubview:memberView];
+                [self.fivScrollV addSubview:memberView];
                 
                 for (int i = 0; i < showCount; i++) {
                     UIImageView * fiv =  [[UIImageView alloc] initWithFrame:CGRectMake((48*i)+(i==0?4:0), 3, 40, 40)];
@@ -166,15 +196,15 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
                     id personInfo = self.activeDataMode.activeFriendArr[i];
                     if ([personInfo isKindOfClass:[Friend class]]) {
                         Friend *friend = (Friend *)personInfo;
-                        NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, friend.imgBig] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                        NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, friend.thumbnail] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                         NSURL *url = [NSURL URLWithString:_urlStr];
                         [fiv sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
                     }
                     [memberView addSubview:fiv];
                 }
                 
-                memberView.center = fivScrollV.center ;
-                [cell addSubview:fivScrollV];
+                memberView.center = self.fivScrollV.center ;
+                [cell addSubview:self.fivScrollV];
                 
                 [self addCellSeparator:64 cell:cell];
             }else if ( indexPath.section == 3  && indexPath.row == 0 ){
@@ -186,24 +216,19 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
                 [self addCellSeparator:64 cell:cell];
             }else if(indexPath.section == 6  && indexPath.row == 0){
                 if (self.activeDataMode.activeCoordinate) {
-                    MKMapView *vMap = [[MKMapView alloc] initWithFrame:CGRectMake(10, 0,kScreen_Width-20, 160)];
-                    vMap.delegate = self;
-                    vMap.centerCoordinate = CLLocationCoordinate2DMake([[self.activeDataMode.activeCoordinate objectForKey:LATITUDE] doubleValue], [[self.activeDataMode.activeCoordinate objectForKey:LONGITUDE] doubleValue]);
-                    vMap.camera.altitude = 20;
-                    vMap.showsBuildings = YES;
-                    vMap.zoomEnabled = NO ;
-                    vMap.scrollEnabled = NO ;
-                    MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
-                    annotation.coordinate = vMap.centerCoordinate;
-                    annotation.title = self.activeDataMode.activeLocName;
-                    [vMap addAnnotation:annotation];
-                    [cell addSubview:vMap];
+                    self.vMap.centerCoordinate = CLLocationCoordinate2DMake([[self.activeDataMode.activeCoordinate objectForKey:LATITUDE] doubleValue], [[self.activeDataMode.activeCoordinate objectForKey:LONGITUDE] doubleValue]);
                    
+                    MKPointAnnotation *annotation = [[MKPointAnnotation alloc] init];
+                    annotation.coordinate = self.vMap.centerCoordinate;
+                    annotation.title = self.activeDataMode.activeLocName;
+                    [self.vMap addAnnotation:annotation];
+                    [cell addSubview:self.vMap];
+                    
                     [self addCellSeparator:160 cell:cell];
                 }
             }
             return cell ;
-        }else if (indexPath.section == 5 || indexPath.section  == 7 || indexPath.section  == 8 ||indexPath.section  == 9){
+        }else if (indexPath.section == 5 || indexPath.section  == 6 || indexPath.section  == 7 ||indexPath.section  == 8){
             UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:value1ReviewCellID];
             if (!cell) {
                 cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:value1ReviewCellID];
@@ -219,27 +244,16 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
                 
                 [self addCellSeparator:64 cell:cell];
             }else if(indexPath.section == 7 && indexPath.row == 0){
-                cell.textLabel.text = @"Due date to vote:" ;
-                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-                [dateFormatter setDateFormat:@"EEE d MMM"];
-                NSString *dateAndTime =  [dateFormatter stringFromDate:self.activeDataMode.activeDueVoteDate];
-                cell.detailTextLabel.text = dateAndTime ;
-                
-                [self addCellSeparator:64 cell:cell];
-            }else if(indexPath.section == 8 && indexPath.row == 0){
                 for (UIView *childView in cell.contentView.subviews) {
                     [childView removeFromSuperview];
                 }
                 
-                UILabel * purporseLab = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width-100, 64)];
-                [purporseLab setNumberOfLines:2];
-                purporseLab.text = @"   Participants can purpose\n   event time";
                 UISwitch *purporseSwitch = [[UISwitch alloc] init];
                 purporseSwitch.tag = 1 ;
                 purporseSwitch.on  =  allowAddTime == AllowAddTime_YES ? YES : NO ;
                 [purporseSwitch addTarget:self action:@selector(switchValueChange:) forControlEvents:UIControlEventValueChanged];
                 cell.accessoryView = purporseSwitch;
-                [cell.contentView addSubview:purporseLab];
+                [cell.contentView addSubview:self.purporseLab];
                
                 [self addCellSeparator:64 cell:cell];
             }
@@ -281,29 +295,30 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
 -(void)saveEventData:(UIButton *)sender {
     if (self.isEdit) {
         NSMutableDictionary *activeDic =  [NSMutableDictionary dictionaryWithCapacity:0];
-        [activeDic setObject:self.activeDataMode.Id       forKey:@"id"];
-         [activeDic setObject:self.activeEvent.create       forKey:@"create"];//创建者的id
+        [activeDic setObject:self.activeDataMode.Id                forKey:@"id"];
+        [activeDic setObject:self.activeEvent.createId             forKey:@"create"];//创建者的id
         [activeDic setObject:self.activeDataMode.activeTitle       forKey:@"title"];
         if (self.activeDataMode.activeLocName && ![@"" isEqualToString:self.activeDataMode.activeLocName]) {
-            [activeDic setObject:self.activeDataMode.activeLocName     forKey:@"location"];
+            [activeDic setObject:[@{@"location":self.activeDataMode.activeLocName==nil?@"":self.activeDataMode.activeLocName,
+                                    @"latitude":[self.activeDataMode.activeCoordinate objectForKey:LATITUDE]==nil?@"":[self.activeDataMode.activeCoordinate objectForKey:LATITUDE],
+                                    @"longitude":[self.activeDataMode.activeCoordinate objectForKey:LONGITUDE]==nil?@"":[self.activeDataMode.activeCoordinate objectForKey:LONGITUDE],@"description":@""
+                                    } JSONString]
+                          forKey:@"location"];
+
         }
-        if (self.activeDataMode.activeDesc && ![@"" isEqualToString:self.activeDataMode.activeDesc]) {
-            [activeDic setObject:self.activeDataMode.activeDesc        forKey:@"note"];
+        if (self.activeDataMode.activeDesc &&  ! [@"" isEqualToString:self.activeDataMode.activeDesc]) {
+            [activeDic setObject:self.activeDataMode.activeDesc        forKey:@"description"];
         }
         
-        [activeDic setObject:@(voteAndFixTimeType)                 forKey:@"type"];
-        [activeDic setObject:@(allowAddTime)                       forKey:@"addTime"];
-        
-        NSString *dueVoteDate = [self toStringFromDate:@"yyyy-MM-dd HH:mm:ss" formaterDate:self.activeDataMode.activeDueVoteDate];
-        [activeDic setObject:dueVoteDate forKey:@"voteEndTime"];
+        [activeDic setObject:@(allowAddTime)                       forKey:@"canProposeTime"];
         
         NSMutableArray * tmpAddArr = [NSMutableArray array];//存放已经添加的人员
         //找到要添加的人员-----------------start----------------
         NSMutableArray * tmpAddingArr = [NSMutableArray arrayWithArray:self.activeDataMode.activeFriendArr];//存放要添加的人员
         for (Friend *friend in self.activeDataMode.activeFriendArr) {//成员比较那些是添加的人员，那些是删除的人员
-            for (NSDictionary *tmpDic in self.activeEvent.member) {
+            for (NSDictionary *tmpDic in self.activeEvent.invitees) {
                 NSString * uid = [tmpDic objectForKey:@"uid"];
-                if ([friend.fid integerValue] == [uid integerValue]) {
+                if ( [ friend.Id isEqualToString:uid ] ) {
                     [tmpAddingArr removeObject:friend];//存放要添加的人员中移除已经添加的人员
                     [tmpAddArr addObject:friend];
                     break;
@@ -312,20 +327,20 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
         }
         NSMutableArray *addFriendIds = @[].mutableCopy ;
         for (Friend *friend in tmpAddingArr) {
-            [addFriendIds addObject:friend.fid];
+            [addFriendIds addObject:@{@"uid":friend.Id}];
         }
        
         if(addFriendIds.count>0){
-            [activeDic setObject:addFriendIds forKey:@"memberAdd"];
+            [activeDic setObject:[addFriendIds JSONString] forKey:@"invitees"];
         }
         //-----------------------------end---------------------
         
         //找到要删除的人员----------------start------------------
-        NSMutableArray * tmpDelingArr = [NSMutableArray arrayWithArray:self.activeEvent.member];//存放要添加的人员
-        for (NSDictionary *tmpDic in self.activeEvent.member) {//成员比较那些是要铲除的人员
+        NSMutableArray * tmpDelingArr = [NSMutableArray arrayWithArray:self.activeEvent.invitees];//存放要添加的人员
+        for (NSDictionary *tmpDic in self.activeEvent.invitees) {//成员比较那些是要铲除的人员
              NSString * uid = [tmpDic objectForKey:@"uid"];
             for (Friend *friend  in tmpAddArr) {
-                if ([friend.fid integerValue] == [uid integerValue]) {
+                if ( [ friend.Id isEqualToString:uid ] ) {
                     [tmpDelingArr removeObject:tmpDic];
                     break;
                 }
@@ -334,11 +349,14 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
         
         NSMutableArray *delFriendIds = @[].mutableCopy ;
         for (NSDictionary *tmpDic in tmpDelingArr) {
-            [delFriendIds addObject:[tmpDic objectForKey:@"uid"]];
+            NSString * fid = [tmpDic objectForKey:@"uid"] ;
+            if (![fid isEqualToString:[UserInfo currUserInfo].Id]) {//排除自己
+                [delFriendIds addObject:@{ @"uid":fid }];
+            }
         }
        
         if (delFriendIds.count > 0) {
-             [activeDic setObject:delFriendIds forKey:@"memberDel"];
+             [activeDic setObject:[delFriendIds JSONString] forKey:@"deleteInvitees"];
         }
         //-----------------------------end---------------------
         
@@ -347,9 +365,9 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
         NSMutableArray * tmpAddTimeArr = [NSMutableArray arrayWithArray:self.activeDataMode.activeVoteDate];
         
         for (NSDictionary  *timeDic in self.activeDataMode.activeVoteDate) {
-            for (NSDictionary *tmpDic in self.activeEvent.time) {
+            for (NSDictionary *tmpDic in self.activeEvent.proposeTimes) {
                 NSString * timeId = [tmpDic objectForKey:@"id"];
-                if ([[timeDic objectForKey:@"id"] integerValue] == [timeId integerValue]) {
+                if ( [timeId isEqualToString: [timeDic objectForKey:@"id"]] ) {
                     [tmpAddTimeArr removeObject:timeDic];
                     [timeAddArr addObject:timeDic];
                     break;
@@ -363,38 +381,64 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
             
             NSDate *endDate = [tmpDic objectForKey:endTime];
             NSString *end = [self getUTCFormateLocalDate:endDate];
-           [addTimeArr  addObject:@{@"startTime":start,@"endTime":end,@"allDay":@(0),@"finalTime":@(1)}];
+           [addTimeArr  addObject:@{@"start":start,@"end":end,@"isAllday":@(0) }];
         }
         [activeDic setObject:@(0) forKey:@"status"];
         if(addTimeArr.count>0){
-            [activeDic setObject:addTimeArr forKey:@"timeAdd"];
+            [activeDic setObject:[addTimeArr JSONString]forKey:@"proposeTimes"];
         }
         //-----------------------------end----------------
+        
+        NSMutableArray * tmpDeleteTimeArr = [NSMutableArray arrayWithArray:self.activeEvent.proposeTimes];
+        for (NSDictionary  *timeDic in self.activeEvent.proposeTimes) {
+            for (NSDictionary *tmpDic in self.activeDataMode.activeVoteDate) {
+                NSString * timeId = [tmpDic objectForKey:@"id"];
+                if ( [timeId isEqualToString: [timeDic objectForKey:@"id"]] ) {
+                    [tmpDeleteTimeArr removeObject:timeDic];
+                    break;
+                }
+            }
+        }
+        
+        if(tmpDeleteTimeArr.count>0){
+            NSMutableArray *delTimeIds = @[].mutableCopy ;
+            for (NSDictionary *tmpDic in tmpDeleteTimeArr) {
+                NSString * tid = [tmpDic objectForKey:@"id"] ;
+                [delTimeIds addObject:@{ @"id":tid }];
+            }
+            
+            [activeDic setObject:[delTimeIds JSONString]forKey:@"deleteTimes"];
+        }
+
+        
         if (self.activeDataMode.activeCoordinate) {
             [activeDic setObject:[NSString stringWithFormat:@"%@;%@",[self.activeDataMode.activeCoordinate objectForKey:LATITUDE],[self.activeDataMode.activeCoordinate objectForKey:LONGITUDE]] forKey:@"coordinate"] ;
         }
-        NSString * paramStr =  [activeDic JSONString];
-        NSLog(@"%@",paramStr);
+        [activeDic setObject:@"updateSocial" forKey:@"method"];
+        
         [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-        ASIHTTPRequest *addActiveRequest = [t_Network httpPostValue:@{@"event":paramStr}.mutableCopy Url:anyTime_UpdateEvents Delegate:self Tag:anyTime_UpdateEvents_tag];
+        ASIHTTPRequest *addActiveRequest = [t_Network httpPostValue:activeDic Url:Go2_socials Delegate:self Tag:Go2_UpdateEvents_tag];
         [addActiveRequest startAsynchronous];
 
     }else{//新增event
         NSMutableDictionary *activeDic =  [NSMutableDictionary dictionaryWithCapacity:0];
         [activeDic setObject:self.activeDataMode.activeTitle       forKey:@"title"];
-        if (self.activeDataMode.activeLocName && ![@"" isEqualToString:self.activeDataMode.activeLocName]) {
-            [activeDic setObject:self.activeDataMode.activeLocName     forKey:@"location"];
+        
+        //location={"location":"地址"，"latitude":"纬度","longitude":"经度","description":"地址详细描述"}
+        if (self.activeDataMode.activeLocName!=nil && ![@"" isEqualToString:self.activeDataMode.activeLocName]) {
+            [activeDic setObject:[@{@"location":self.activeDataMode.activeLocName==nil?@"":self.activeDataMode.activeLocName,
+                                    @"latitude":[self.activeDataMode.activeCoordinate objectForKey:LATITUDE]==nil?@"":[self.activeDataMode.activeCoordinate objectForKey:LATITUDE],
+                                    @"longitude":[self.activeDataMode.activeCoordinate objectForKey:LONGITUDE]==nil?@"":[self.activeDataMode.activeCoordinate objectForKey:LONGITUDE],@"description":@""
+                                    } JSONString]
+                          forKey:@"location"];
         }
-         if (self.activeDataMode.activeDesc && ![@"" isEqualToString:self.activeDataMode.activeDesc]) {
-               [activeDic setObject:self.activeDataMode.activeDesc        forKey:@"note"];
+       
+        if (self.activeDataMode.activeDesc && ![@"" isEqualToString:self.activeDataMode.activeDesc]) {
+               [activeDic setObject:self.activeDataMode.activeDesc        forKey:@"description"];
          }
-        
-        [activeDic setObject:@(voteAndFixTimeType)                 forKey:@"type"];
-        [activeDic setObject:@(allowAddTime)                       forKey:@"addTime"];
-        
-        NSString *dueVoteDate = [self toStringFromDate:@"yyyy-MM-dd HH:mm:ss" formaterDate:[NSDate dateWithTimeIntervalSinceNow:-100*24*60*60]]; //设置一个初始的时间---//待后台修正后删除该字段
-        [activeDic setObject:dueVoteDate forKey:@"veTime"];
-        
+
+        [activeDic setObject:@(allowAddTime)          forKey:@"canProposeTime"];
+           
         NSMutableArray *voteDateArr = @[].mutableCopy ;
         
         for (NSDictionary * dic in self.activeDataMode.activeVoteDate) {
@@ -403,22 +447,20 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
            
             NSDate *endDate = [dic objectForKey:endTime];
             NSString *end = [self getUTCFormateLocalDate:endDate];
-            [voteDateArr addObject:@{@"startTime":start,@"endTime":end,@"allDay":@(0)}];
+            [voteDateArr addObject:@{@"start":start,@"end":end,@"isAllday":@(0)}];
         }
         
-        [activeDic setObject:[voteDateArr JSONString] forKey:@"time"];
+        [activeDic setObject:[voteDateArr JSONString] forKey:@"proposeTimes"];
         
         NSMutableArray *inviteeArr = @[@{@"uid":[UserInfo currUserInfo].Id}].mutableCopy;
         for (Friend * friend in self.activeDataMode.activeFriendArr) {
-            [inviteeArr addObject:@{@"uid":friend.fid}];
+            [inviteeArr addObject:@{@"uid":friend.Id}];
         }
-        if (self.activeDataMode.activeCoordinate) {
-            [activeDic setObject:[NSString stringWithFormat:@"%@;%@",[self.activeDataMode.activeCoordinate objectForKey:LATITUDE],[self.activeDataMode.activeCoordinate objectForKey:LONGITUDE]] forKey:@"coordinate"] ;
-        }
-       
-        [activeDic setObject:[inviteeArr JSONString] forKey:@"member"];
+        
+        [activeDic setObject:[inviteeArr JSONString] forKey:@"invitees"];
+        [activeDic setObject:@"add" forKey:@"method"];
         [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-        ASIHTTPRequest *addActiveRequest = [t_Network httpPostValue:activeDic Url:anyTime_AddEvents Delegate:self Tag:anyTime_AddEvents_tag];
+        ASIHTTPRequest *addActiveRequest = [t_Network httpPostValue:activeDic Url:Go2_socials Delegate:self Tag:Go2_addSocials_Tag];
         [addActiveRequest startAsynchronous];
     }
     
@@ -431,16 +473,16 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
     NSDictionary *dic = [requestStr objectFromJSONString];
     
     switch (request.tag) {
-        case anyTime_AddEvents_tag:
+        case Go2_addSocials_Tag:
         {
-            NSString *statusCode = [dic objectForKey:@"statusCode"];
+            int statusCode = [[dic objectForKey:@"statusCode"] intValue];
             NSError *error = [request error];
             if (error) {
                 [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
                 [MBProgressHUD showError:@"save fail"];
                 return;
             }
-            if ([statusCode isEqualToString:@"1"]) {
+            if ( statusCode == 1 ) {
                 id tmpData = [dic objectForKey:@"data"];
                 if ([tmpData isKindOfClass:[NSDictionary class]]) {
                     if (self.activeDataMode.activeImg) {
@@ -459,15 +501,15 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
             }
         }
         break;
-        case anyTime_UpdateEvents_tag:{
-            NSString *statusCode = [dic objectForKey:@"statusCode"];
+        case Go2_UpdateEvents_tag:{
+            int statusCode = [[dic objectForKey:@"statusCode"] intValue];
             NSError *error = [request error];
             if (error) {
                 [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
                 [MBProgressHUD showError:@"save fail"];
                 return;
             }
-            if ([statusCode isEqualToString:@"1"]) {
+            if ( statusCode  == 1 ) {
                 id tmpData = [dic objectForKey:@"data"];
                 if ([tmpData isKindOfClass:[NSDictionary class]]) {
                     if (self.activeDataMode.activeImg) {
@@ -493,10 +535,11 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
 
 -(void)upLoadEventImage:(NSString *)eid {
         //上传活动图片
-        NSURL *url = [NSURL URLWithString:[anyTime_EventAddPhoto stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-        ASIFormDataRequest *uploadImageRequest = [ASIFormDataRequest requestWithURL:url];
+        NSURL * url = [NSURL URLWithString:[Go2_UploadSocialFile stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+        ASIFormDataRequest * uploadImageRequest = [ASIFormDataRequest requestWithURL:url];
         [uploadImageRequest setRequestMethod:@"POST"];
-        [uploadImageRequest setPostValue:eid forKey:@"eid"];
+        [uploadImageRequest setPostValue:eid    forKey:@"eid"];
+        [uploadImageRequest setPostValue:@"img" forKey:@"type"];
         NSData *data = UIImagePNGRepresentation(self.activeDataMode.activeImg);
         NSMutableData *imageData = [NSMutableData dataWithData:data];
         [uploadImageRequest setStringEncoding:NSUTF8StringEncoding];
@@ -504,7 +547,7 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
         NSString *tmpDate = [[PublicMethodsViewController getPublicMethods] getcurrentTime:@"yyyyMMddss"];
         
         [uploadImageRequest addData:imageData withFileName:[NSString stringWithFormat:@"%@.jpg", tmpDate]  andContentType:@"image/jpeg" forKey:@"f1"];
-        [uploadImageRequest setTag:anyTime_EventAddPhoto_tag];
+        [uploadImageRequest setTag:Go2_UploadSocialFile_Tag];
         __block ASIFormDataRequest *uploadRequest = uploadImageRequest;
         [uploadImageRequest setCompletionBlock: ^{
             NSString *responseStr = [uploadRequest responseString];
@@ -513,7 +556,7 @@ static NSString * value1ReviewCellID = @"value1ReviewCellID" ;
             if ([obj isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *tmpDic = (NSDictionary *)obj;
                 int statusCode = [[tmpDic objectForKey:@"statusCode"] integerValue];
-                if (statusCode == 1) {
+                if ( statusCode == 1 ) {
                     [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
                     [MBProgressHUD showSuccess:@"Operation Success"];
                     [self.navigationController popToRootViewControllerAnimated:YES];

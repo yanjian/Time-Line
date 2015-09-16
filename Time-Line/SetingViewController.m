@@ -15,12 +15,13 @@
 #import "AccountViewController.h"
 //#import "IBActionSheet.h"
 #import "LoginViewController.h"
-#import "AT_Account.h"
 #import "UserInfoTableViewController.h"
 
+
+#import "Calendar.h"
+#import "Go2Account.h"
 @interface SetingViewController () <UITableViewDataSource, UITableViewDelegate, ASIHTTPRequestDelegate, UIActionSheetDelegate> {
 	BOOL isUserInfo;
-	BOOL isLogout;
 }
 
 @property (nonatomic, strong) UITableView *tableView;
@@ -71,18 +72,15 @@
 	[super viewWillAppear:animated];
 	[accountDataArr removeAllObjects];
 
-	self.calendarListArr = [[AT_Account MR_findAll] mutableCopy];//[g_AppDelegate loadDataFromFile:calendarList];
-	// if (g_NetStatus==NotReachable) {
+	self.calendarListArr = [[Go2Account MR_findAll] mutableCopy];
+    
 	if (self.calendarListArr) {
-		for (AT_Account *atAccount in self.calendarListArr) {
-			[accountDataArr addObject:atAccount];
-		}
+        [self.calendarListArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            [accountDataArr addObject:obj];
+        }];
 		[accountDataArr addObject:@"Add Account"];
 		[self.tableView reloadData];
 	}
-	// }
-//    ASIHTTPRequest *request=[t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
-//    [request startAsynchronous];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -133,17 +131,17 @@
 	if ([tmpObj isKindOfClass:[NSString class]]) {
 		cell.textLabel.text = tmpObj;
 	}
-	else if ([tmpObj isKindOfClass:[AT_Account class]]) {
-		AT_Account *atAccount = (AT_Account *)tmpObj;
+	else if ([tmpObj isKindOfClass:[Go2Account class]]) {
+		Go2Account *atAccount = (Go2Account *)tmpObj;
 		UILabel *lab = [self createUILabe];
 		UILabel *contextLab = [[UILabel alloc] initWithFrame:CGRectMake(lab.bounds.size.width, 2, 215, 40)];
 		contextLab.lineBreakMode = NSLineBreakByTruncatingMiddle;
 		[contextLab setBackgroundColor:[UIColor clearColor]];
-		if ([atAccount.accountType intValue] == AccountTypeGoogle) {
+		if ([atAccount.type intValue] == AccountTypeGoogle) {
 			lab.text = @"G";
 			[contextLab setText:atAccount.account];
 		}
-		else if ([atAccount.accountType intValue] == AccountTypeLocal) {
+		else if ([atAccount.type intValue] == AccountTypeLocal) {
 			lab.text = @"IF";
 			[contextLab setText:atAccount.account];
 		}
@@ -190,7 +188,7 @@
 		UserInfoTableViewController *userInfoVC = [[UserInfoTableViewController alloc] initWithNibName:@"UserInfoTableViewController" bundle:nil];
         userInfoVC.hidesBottomBarWhenPushed = YES ;
 		userInfoVC.userInfoBlank = ^(UserInfoTableViewController *userInfoViewController, UserInfo *userInfo) {
-			ASIHTTPRequest *userRequest = [t_Network httpGet:@{ @"tel":(userInfo.phone == nil ? @"" : userInfo.phone), @"name":(userInfo.nickname == nil ? @"" : userInfo.nickname), @"gender":@(userInfo.gender) }.mutableCopy Url:UserInfo_UpdateUserInfo Delegate:nil Tag:UserInfo_UpdateUserInfo_tag];
+			ASIHTTPRequest *userRequest = [t_Network httpGet:@{@"id":userInfo.Id, @"username":userInfo.username,@"phone":(userInfo.phone == nil ? @"" : userInfo.phone), @"nickname":(userInfo.nickname == nil ? @"" : userInfo.nickname), @"gender":@(userInfo.gender) }.mutableCopy Url:Go2_updateUser Delegate:nil Tag:Go2_updateUser_Tag ];
 
 			__block ASIHTTPRequest *request = userRequest;
 			[userRequest setCompletionBlock: ^{
@@ -224,10 +222,11 @@
                 glvc.hidesBottomBarWhenPushed = YES ;
 				glvc.isBind = YES;
 				glvc.isSeting = YES;
+                
 				[self.navigationController pushViewController:glvc animated:YES];
 			}
 		}
-		else if ([rowData isKindOfClass:[AT_Account class]]) {
+		else if ([rowData isKindOfClass:[Go2Account class]]) {
 			AccountViewController *accountVC = [[AccountViewController alloc] init];
             accountVC.hidesBottomBarWhenPushed = YES ;
 			accountVC.accountArr = [NSMutableArray arrayWithObjects:rowData, nil];
@@ -238,59 +237,45 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
 	if (buttonIndex == 0) {
-		isLogout = YES;
-		ASIHTTPRequest *request =  [t_Network httpGet:nil Url:account_Logoff Delegate:self Tag:account_Logoff_Tag];
-		[request startAsynchronous];
-		NSPredicate *pre = [NSPredicate predicateWithFormat:@"account==%@", [UserInfo currUserInfo].email];
-		NSArray *atAccountArr = [AT_Account MR_findAllWithPredicate:pre];
+        NSArray * caArr = [Calendar MR_findAll];
+        
+        NSArray * go2AccountArr = [Go2Account MR_findAll];
+        if (go2AccountArr.count>0) {//有没有绑定的google账号
+            [go2AccountArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                Go2Account * go2Account = (Go2Account *) obj ;
+                [go2Account.ca enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {//
+                    Calendar * calendar = (Calendar *) obj;
+                    if (![go2Account.account isEqualToString:calendar.account]) {
+                        [go2Account MR_deleteEntity];
+                        [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                    }
+                }];
+            }];
+            
+            //删除本地账号的日历数据和日历列表
+            [caArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                Calendar * calendar = (Calendar *) obj;
+                if ([calendar.type intValue] == AccountTypeLocal) {
+                    [calendar MR_deleteEntity];
+                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+                }
+            }];
+        }else{
+            [caArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                [obj MR_deleteEntity];
+                [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+            }];
+        }
 
-		for (AT_Account *atAccount in atAccountArr) {
-			[atAccount MR_deleteEntity];
-			[[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
-		}
-		if (self.delegate && [self.delegate respondsToSelector:@selector(setingViewControllerDelegate:)]) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(setingViewControllerDelegate:)]) {
 			[self.delegate setingViewControllerDelegate:self];
 		}
+        
+        //测试登陆是用，删除
+        [UserInfo currUserInfo].loginStatus = UserLoginStatus_NO ; //登陆状态改为没有登陆
+        [UserInfo userInfoWithArchive:[UserInfo currUserInfo]];
+        [g_AppDelegate initLoginView:LoginOrLogoutType_ModelOpen];
     }
-}
-
-- (void)requestFinished:(ASIHTTPRequest *)request {
-	NSString *dataStr = [request responseString];
-	if (isLogout) {
-		id objId = [dataStr objectFromJSONString];
-		//{"statusCode":"1","message":"成功","data":[{"account":"yanjaya5201314@gmail.com","type":"1","uid":"74"}]}
-		if ([objId isKindOfClass:[NSDictionary class]]) {
-			NSDictionary *Datadic = (NSDictionary *)objId;
-			NSString *statusCode = [Datadic objectForKey:@"statusCode"];
-			if ([@"1" isEqualToString:statusCode]) {
-				if (!isUserInfo) {
-					[accountDataArr removeAllObjects];
-					NSDictionary *userInfoDic = [Datadic objectForKey:@"data"];
-					[accountDataArr addObject:[userInfoDic objectForKey:@"email"]];
-					ASIHTTPRequest *request = [t_Network httpGet:nil Url:get_AccountBindList Delegate:self Tag:get_AccountBindList_Tag];
-					[request startAsynchronous];
-					isUserInfo = YES;
-				}
-				else {
-					NSArray *bindArr = [Datadic objectForKey:@"data"];
-					for (NSDictionary *dataDic in bindArr) {
-						[accountDataArr addObject:[dataDic objectForKey:@"account"]];
-					}
-					isUserInfo = NO;
-					[self.accountDataArr addObject:@"Add Account"];
-					[self.tableView reloadData];
-				}
-			}
-		} else {
-//            dataStr = [dataStr stringByReplacingOccurrencesOfString:@"\r\n" withString:@""];
-//			if ([@"1" isEqualToString:dataStr]) {
-                [UserInfo currUserInfo].loginStatus = UserLoginStatus_NO ; //登陆状态改为没有登陆
-                [UserInfo userInfoWithArchive:[UserInfo currUserInfo]];
-                [g_AppDelegate initLoginView:LoginOrLogoutType_ModelOpen];
-//			}
-			isLogout = NO;
-		}
-	}
 }
 
 - (void)didReceiveMemoryWarning {

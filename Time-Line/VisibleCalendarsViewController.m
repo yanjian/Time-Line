@@ -47,28 +47,28 @@
 	self.tableView.dataSource = self;
 	self.tableView.delegate = self;
 	[self.view addSubview:self.tableView];
-
-//	UIView *titleView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 40)];
-//	UILabel *titlelabel = [[UILabel alloc]initWithFrame:titleView.frame];
-//	titlelabel.textAlignment = NSTextAlignmentCenter;
-//	titlelabel.font = [UIFont fontWithName:@"Helvetica Neue" size:20.0];
-//	titlelabel.text = @"Visible Calendars";
-//	titlelabel.textColor = [UIColor whiteColor];
-//	[titleView addSubview:titlelabel];
-//	self.navigationItem.titleView = titleView;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
 	[super viewWillAppear:animated];
 	[self.calendarArray removeAllObjects];
 
-	NSArray *atAccountLs = [AT_Account MR_findAll];
-	for (AT_Account *atAccount in atAccountLs) {
-		NSPredicate *pre = [NSPredicate predicateWithFormat:@"atAccount==%@", atAccount];
-		NSArray *caArr = [Calendar MR_findAllWithPredicate:pre];
-		[self.calendarArray addObject:caArr];
-	}
-	self.calendarLs = [[Calendar MR_findAll] mutableCopy];
+   self.calendarLs = [[Calendar MR_findAll] mutableCopy];
+    NSMutableArray * localArr = [NSMutableArray array];
+     NSMutableArray * googleArr = [NSMutableArray array];
+    [self.calendarLs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if ([obj isKindOfClass:[Calendar class]]) {
+            Calendar * ca = (Calendar *) obj ;
+            if ([ca.type intValue] == AccountTypeLocal ) {
+                [localArr addObject:ca] ;
+            }else if ([ca.type intValue] == AccountTypeGoogle ){
+                [googleArr addObject:ca];
+            }
+        }
+    }];
+    [self.calendarArray addObject:localArr];
+    [self.calendarArray addObject:googleArr];
+
 }
 
 - (void)didReceiveMemoryWarning {

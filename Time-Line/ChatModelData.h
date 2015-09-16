@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "JSQMessages.h"
-#import "ActiveEventMode.h"
+#import "ActiveEventModel.h"
 
 @interface ChatModelData : NSObject
 
@@ -21,13 +21,13 @@
 @property (strong, nonatomic) JSQMessagesBubbleImage *incomingBubbleImageData;
 
 @property (strong, nonatomic) NSMutableDictionary *users;
-@property (strong, nonatomic) ActiveEventMode * activeEvent;
+@property (strong, nonatomic) ActiveEventModel * activeEvent;
 
 @property (strong, nonatomic) NSMutableArray * memberTempArr;
 
 @property (strong, nonatomic)  JSQMessagesAvatarImage *avatarImageBlank;
 
--(instancetype)initChatModelDataWithActiveEventModel:(ActiveEventMode *) activeEvent;
+-(instancetype)initChatModelDataWithActiveEventModel:(ActiveEventModel *) activeEvent;
 
 - (void)addPhotoMediaMessage:(UIImage * )image senderId:(NSString *)senderId displayName:(NSString *)name;
 

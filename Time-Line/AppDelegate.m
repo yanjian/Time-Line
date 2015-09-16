@@ -217,22 +217,30 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 - (void)requestFinished:(ASIHTTPRequest *)request {
 	NSString *str = [request responseString];
 	switch (request.tag) {
-		case LOGIN_USER_TAG:
-			if ([@"1" isEqualToString:str]) {
-                [self connect];
-				NSLog(@"登陆成功");
-			}
-			else if ([@"2" isEqualToString:str]) {
-				NSLog(@"已经登陆");
-			}
-			else {
-				NSLog(@"登陆错误");
-			}
-			break;
-		case LoginUser_GetUserInfo_Tag: {
-			if ([@"-1000" isEqualToString:str]) {
-				[self userLogin];
-			}
+        case Go2_UserLogin_Tag:{
+            id tmpDic = [str objectFromJSONString];
+            if ([tmpDic isKindOfClass:[NSDictionary class]]) {
+                int tmpNoLogin = [[tmpDic objectForKey:@"statusCode"] intValue];
+                if ( 1 == tmpNoLogin ) {
+                    [self connect];
+                    NSLog(@"登陆成功");
+                }else if ( 2== tmpNoLogin ) {
+                    NSLog(@"已经登陆");
+                }else {
+                    NSLog(@"登陆错误");
+                }
+
+            }
+        }break;
+		case Go2_getUserInfo_Tag: {
+            id tmpDic = [str objectFromJSONString];
+            if ([tmpDic isKindOfClass:[NSDictionary class]]) {
+                int tmpNoLogin = [[tmpDic objectForKey:@"statusCode"] intValue];
+                if ( -1000 == tmpNoLogin ) {
+                    [self userLogin];
+                }
+            }
+			
 			break;
 		}
 		default:
@@ -246,10 +254,10 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 		NSMutableDictionary *paramDic = [NSMutableDictionary dictionaryWithCapacity:0];
 		AccountType isAccount = currUserInfo.accountType;
 		if (isAccount == AccountTypeLocal) {//本地账号
-			[paramDic setObject:currUserInfo.username forKey:@"uName"];
-			[paramDic setObject:currUserInfo.password forKey:@"uPw"];
+			[paramDic setObject:currUserInfo.username forKey:@"username"];
+			[paramDic setObject:currUserInfo.password forKey:@"pwd"];
 			[paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
-			ASIHTTPRequest *request = [t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
+			ASIHTTPRequest *request = [t_Network httpGet:paramDic Url:Go2_UserLogin Delegate:self Tag:Go2_UserLogin_Tag];
 			[request startSynchronous];
 		}
 		else if (isAccount == AccountTypeGoogle) {//google登陆
@@ -312,7 +320,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 - (void)autoUserWithLogin {
 	//检查用户是否在登录状态 返回-1000表示没有登录
-	ASIHTTPRequest *request = [t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
+	ASIHTTPRequest *request = [t_Network httpGet:nil Url:Go2_getUserInfo Delegate:self Tag:Go2_getUserInfo_Tag];
 	[request startSynchronous];
 }
 
@@ -743,12 +751,12 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
         if(![ @"4"  isEqualToString: msgType ]){//4.表示删除。。。。不推送通知
             if( [ @"1"  isEqualToString: msgType ] ||[ @"2"  isEqualToString: msgType ] || [ @"3"  isEqualToString: msgType ] || [ @"11"  isEqualToString: msgType ]){//1.对方要添加你为好友信息 ,2.同意添加对方为好友 , 3.拒绝添加对方为好友 ,11.活动新增或邀请成员
                 NoticesMsgManagedModel * noticeMsgManaged = [NoticesMsgManagedModel MR_createEntity];
-                noticeMsgManaged.nId       = @([[bodyDic objectForKey:@"id"] integerValue]);
+                noticeMsgManaged.nId       = [bodyDic objectForKey:@"id"] ;
                 noticeMsgManaged.isReceive = @([[bodyDic objectForKey:@"isReceive"] integerValue]);
-                noticeMsgManaged.message   = [bodyDic objectForKey:@"message"];
-                noticeMsgManaged.time      = [bodyDic objectForKey:@"time"];
+                noticeMsgManaged.message   = [[bodyDic objectForKey:@"message"] JSONString];
+                noticeMsgManaged.time      = [bodyDic objectForKey:@"createTime"];
                 noticeMsgManaged.type      = @([msgType integerValue]);
-                noticeMsgManaged.uid       = @([[bodyDic objectForKey:@"uid"] integerValue]);
+                noticeMsgManaged.uid       = [bodyDic objectForKey:@"uid"];
                 noticeMsgManaged.isRead    = self.isRead; //未读//在这里的信息都表示没有读取的
                 [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL contextDidSave, NSError *error) {
                     if (contextDidSave) {
@@ -784,32 +792,44 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 -(ChatContentModel *)saveChatInfoForActive:(NSDictionary * ) bodyDic{
     ChatContentModel * chatContent = [ChatContentModel MR_createEntity];
     chatContent.eid =  [bodyDic objectForKey:@"eid"];
-    NSString * msgType = [NSString stringWithFormat:@"%@",[bodyDic objectForKey:@"type"]];
-    if ([@"15" isEqualToString:msgType]) {//聊天信息
-        if([bodyDic objectForKey:@"imgSmall"]){
-            chatContent.imgBig =  [bodyDic objectForKey:@"imgBig"];
+    NSString * chatType = [NSString stringWithFormat:@"%@" , [bodyDic objectForKey:@"type"]];
+    
+    if ( [ @"15" isEqualToString: chatType ] ) {//聊天信息
+        int msgType = [[bodyDic objectForKey:@"msg_type"] intValue] ; //信息类型：0.表示文本信息，1.表示图片信息，2表示语音信息
+        if( msgType == 0 ){
+           chatContent.text = [bodyDic objectForKey:@"content"] || ![@"" isEqualToString:[bodyDic objectForKey:@"content"]] ? [bodyDic objectForKey:@"content"] : @"" ;
+
+        }else if ( msgType == 1 ){
+            chatContent.imgBig =  [bodyDic objectForKey:@"url"];//大图url
+            NSString *imgsmall = [bodyDic objectForKey:@"thumbnail"] ;//小图
             
-            NSString *imgsmall = [[bodyDic objectForKey:@"imgSmall"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-            
-            NSData * imgSmallData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSString stringWithFormat:@"%@/%@",BASEURL_IP,imgsmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]] ;
+            NSData * imgSmallData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSString stringWithFormat:@"%@%@",BaseGo2Url_IP,imgsmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]] ;
             chatContent.imgSmall =  [imgSmallData base64String];
             chatContent.text = @"[Picture]";
-        }else if ( [bodyDic objectForKey:@"text"] || ![@"" isEqualToString:[bodyDic objectForKey:@"text"]] ){
-            chatContent.text = [bodyDic objectForKey:@"text"];
+        }else if ( msgType == 2 ){
+             NSString * voiceUrl = [bodyDic objectForKey:@"url"];
+             NSData * voiceData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSString stringWithFormat:@"%@%@",BaseGo2Url_IP,voiceUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]] ;
+            NSLog(@"%@",[voiceData base64String]);
+            chatContent.voiceAac = [voiceData base64String];
+            chatContent.text = [bodyDic objectForKey:@"content"] ;
         }
-    }else if([@"10" isEqualToString:msgType]){
+        
+    }else if( [@"10" isEqualToString:chatType] ){
         NSDictionary * eventMsgDic = [self dictionaryWithJsonString: [bodyDic objectForKey:@"message"]]; ;
         if ([eventMsgDic isKindOfClass:[NSDictionary class]]) {
             NSDictionary * eventMsgTmpDic = [[eventMsgDic objectForKey:@"eventMsg"] lastObject];
             chatContent.text = [eventMsgTmpDic objectForKey:@"message"] ;
         }
     }
-    chatContent.time =  [bodyDic objectForKey:@"time"];
-    chatContent.type =   msgType ;
-    chatContent.uid =  [bodyDic objectForKey:@"uid"];
+    
+    chatContent.msg_type = [bodyDic objectForKey:@"msg_type"] ;
+    chatContent.time =  [bodyDic objectForKey:@"createTime"];
+    chatContent.type =   chatType ;
+    chatContent.uid  =  [bodyDic objectForKey:@"uid"];
     chatContent.username =  [bodyDic objectForKey:@"username"];
     chatContent.unreadMessage = self.isRead; //未读//在这里的信息都表示没有读取的
     [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreAndWait];
+    
     return chatContent ;
 }
 

@@ -20,8 +20,15 @@
 @property (copy,nonatomic)   NSString  * nickname ;
 @property (copy,nonatomic)   NSString  * notification;
 @property (retain,nonatomic) NSNumber  * status;
-@property (retain,nonatomic) NSNumber  * uid ;
+@property (retain,nonatomic) NSString  * uid ;
 @property (copy,nonatomic)   NSString  * username ;
 @property (retain,nonatomic) NSNumber  * view ;
+
+
+
+@property (copy,nonatomic)   NSString  * Id ;
+@property (copy,nonatomic)   NSNumber  * isJoining ;
+@property (copy,nonatomic)   NSNumber  * isReceiveNotification;
+@property (nonatomic,retain) NSDictionary * user ;
 
 @end

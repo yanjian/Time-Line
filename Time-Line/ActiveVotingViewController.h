@@ -14,10 +14,10 @@ typedef NS_ENUM(NSInteger, VoteTimeType) {
 #import <UIKit/UIKit.h>
 #import "XLPagerTabStripViewController.h"
 #import "ActiveTimeVoteMode.h"
-#import "ActiveEventMode.h"
+#import "ActiveEventModel.h"
 
 @interface ActiveVotingViewController : UITableViewController<XLPagerTabStripChildItem>
-@property (strong, nonatomic) ActiveEventMode *activeEvent ;
+@property (strong, nonatomic) ActiveEventModel *activeEvent ;
 
 
 @end

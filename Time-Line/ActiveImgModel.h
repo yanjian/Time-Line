@@ -10,7 +10,7 @@
 
 @interface ActiveImgModel : BaseMode
 
-@property (nonatomic , copy) NSString * imgBig;
-@property (nonatomic , copy) NSString * imgSmall;
+@property (nonatomic , copy) NSString * img;
+@property (nonatomic , copy) NSString * thumbnail;
 
 @end

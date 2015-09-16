@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ActiveEventMode.h"
+#import "ActiveEventModel.h"
 @protocol ActiveSetingTableViewControllerDelegate;
 @interface ActiveSetingTableViewController : UITableViewController
 
-@property (strong, nonatomic) ActiveEventMode * activeEvent ;
+@property (strong, nonatomic) ActiveEventModel * activeEvent ;
 
 @property (nonatomic,assign) id<ActiveSetingTableViewControllerDelegate> delegate;
 

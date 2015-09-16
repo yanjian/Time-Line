@@ -148,7 +148,7 @@
         titlelabel.text=@"Edit Event";
     }
     
-    eventDic=[[NSMutableDictionary alloc]initWithCapacity:0];
+    eventDic =[[NSMutableDictionary alloc]initWithCapacity:0];
     alertButtonArr=[[NSMutableArray alloc] initWithCapacity:0];//存放alert按钮的array
     selectAlertArr=[[NSMutableArray alloc] initWithCapacity:0];
     selectRepeatArr=[[NSMutableArray alloc] initWithCapacity:0];

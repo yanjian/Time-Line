@@ -3,7 +3,7 @@
 #import "NavigationController.h"
 #import "UIColor+HexString.h"
 
-@interface NavigationController (){
+@interface NavigationController ()<UIGestureRecognizerDelegate>{
 
 }
 @property (nonatomic,retain) UIView * statusView ;
@@ -23,6 +23,21 @@
     self.navigationBar.layer.shadowColor  = [UIColor blackColor].CGColor ;
     self.navigationBar.layer.shadowRadius = 2.0f;//阴影半径
     self.navigationBar.layer.shadowOpacity = .45f ;
+    
+    //全屏滑动
+    id tag = self.interactivePopGestureRecognizer.delegate;
+    UIPanGestureRecognizer* panRec = [[UIPanGestureRecognizer alloc] initWithTarget:tag action:@selector(handleNavigationTransition:)];
+    panRec.delegate = self ;
+    [self.view addGestureRecognizer:panRec];
+    self.interactivePopGestureRecognizer.enabled = NO ;
+    
+}
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer{
+    if (self.childViewControllers.count ==1) {
+        return NO;
+    }
+    return YES;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle{

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "AnyEvent.h"
 #import "Calendar.h"
-@interface AT_Event : NSObject <NSCopying, NSMutableCopying>
+@interface AT_Event : BaseMode <NSCopying, NSMutableCopying>
 
 @property (nonatomic, retain) NSString *alerts;
 @property (nonatomic, retain) NSString *calendarAccount;

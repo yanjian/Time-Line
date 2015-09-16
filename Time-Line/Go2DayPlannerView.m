@@ -36,6 +36,8 @@
 @property (nonatomic,assign)   CGFloat dayDateHeight ;//日历头的高度
 @property (nonatomic,retain)  NSMutableArray * showDayDateArr ;//存放的时显示在日历上面的日期：Tue 14， Web 15 实际存放的是nsdate
 @property (nonatomic,assign)   CGFloat dayShowLabHeight;//日期lable的高度
+
+@property (nonatomic,retain) NSDateFormatter * formatter;
 @end
 
 @implementation Go2DayPlannerView
@@ -199,6 +201,7 @@
     return _dayTimeView ;
 }
 
+
 -(UIView *)dayHeadView{
     if (!_dayHeadView) {
         _dayHeadView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -242,6 +245,15 @@
     return _dayScrollHeadView;
 }
 
+
+-(NSFormatter *)formatter{
+    if (!_formatter) {
+        _formatter = [[NSDateFormatter alloc] init];
+        NSTimeZone *timeZone = [NSTimeZone timeZoneWithName:@"UTC"];
+        [_formatter setTimeZone:timeZone];
+    }
+    return _formatter ;
+}
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{
     if (scrollView == _dayTimeView || scrollView == _dayScrollHeadView) {
@@ -311,20 +323,16 @@
     if (!eventDateArr || eventDateArr.count <= 0) {
         return ;
     }
-    NSDateFormatter * formatter = [[NSDateFormatter alloc] init];
-    NSTimeZone *timeZone = [NSTimeZone timeZoneWithName:@"UTC"];
-    [formatter setTimeZone:timeZone];
-
-    [formatter setDateFormat:@"yyyy-MM-dd HH:mm"];
 
     [eventDateArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         NSDictionary * timeDic = (NSDictionary *)obj ;
-        NSString  * timeStart = [timeDic objectForKey:@"startTime"];
-        NSString  * timeEnd   = [timeDic objectForKey:@"endTime"];
-        
+        NSString  * timeStart = [timeDic objectForKey:@"start"];
+        NSString  * timeEnd   = [timeDic objectForKey:@"end"];
         NSString  * timeId   = [timeDic objectForKey:@"id"];
         
-        NSDate * showStartDate = [formatter dateFromString:timeStart];
+        [self.formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        
+        NSDate * showStartDate = [self.formatter dateFromString:timeStart];
       
         NSDate * startDate = [self extractDate:showStartDate]; //这里的时间没有时分秒
         __block NSInteger  currDateIndex = -1;//-1 表示没有找到......
@@ -343,7 +351,7 @@
             int yPoint =(int) startTimeInterval/60 * (self.hourSlotHeight/60);
             
             
-            NSDate *showEndDate = [formatter dateFromString:timeEnd];
+            NSDate *showEndDate = [self.formatter dateFromString:timeEnd];
             NSTimeInterval  endTimeInterval =  [showEndDate timeIntervalSince1970] - [showStartDate timeIntervalSince1970];
             
             int showEventHeight = endTimeInterval/60 * (self.hourSlotHeight/60) ;
@@ -351,8 +359,8 @@
             NSDictionary * selectDic = @{startTime:showStartDate,endTime:showEndDate,@"id":timeId} ;
             
             Go2StandardEventView * eventView =[[Go2StandardEventView alloc] initWithFrame:CGRectMake(currDateIndex*self.dayColumnSize.width, yPoint, self.dayColumnSize.width-1, showEventHeight)];
-            
-            eventView.title = [NSString stringWithFormat:@"%@ ~ %@", [[timeStart componentsSeparatedByString:@" "] lastObject],[[timeEnd componentsSeparatedByString:@" "] lastObject] ];
+            [self.formatter setDateFormat:@"HH:mm"];
+            eventView.title = [NSString stringWithFormat:@"%@ ~ %@", [self.formatter stringFromDate:showStartDate],[self.formatter stringFromDate:showEndDate] ];
             eventView.color = [UIColor whiteColor] ;
             eventView.backgroundColor = [UIColor colorWithHexString:@"31aaeb"];
             eventView.delegate  = self ;
@@ -383,7 +391,6 @@
     pickerView.delegate = self ;
     alert.contentView = pickerView ;
     [alert show];
-
 }
 
 

@@ -57,8 +57,6 @@
     return 1;
 }
 
-// Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
-// Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString * aliasId =  @"aliasIdentifier";
@@ -85,6 +83,7 @@
 	[super didReceiveMemoryWarning];
 }
 
+
 - (void)aliasTouchUpInside:(UIButton *)sender {
 	switch (sender.tag) {
 		case 1: {
@@ -93,19 +92,19 @@
 
 		case 2: {
 			NSString *aliasName = [self.aliasText.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-			if (!self.aliasText.text || [@"" isEqualToString:aliasName]) {
+			if (!self.aliasText.text || aliasName.length<=0) {
 				[MBProgressHUD showError:@"Please enter an alias"];
 				return;
 			}
 
-			ASIHTTPRequest *request = [t_Network httpGet:@{ @"fid":self.fid, @"name":aliasName }.mutableCopy Url:anyTime_UpdateFriendNickName Delegate:nil Tag:anyTime_UpdateFriendNickName_tag];
+			ASIHTTPRequest *request = [t_Network httpPostValue:@{@"method":@"updateAlias",@"fid":self.fid, @"alias":aliasName }.mutableCopy Url:Go2_Friends Delegate:nil Tag:Go2_UpdateFriendNickName_tag];
 			__block ASIHTTPRequest *aliasRequest = request;
 			[request setCompletionBlock: ^{
 			    NSString *responseStr = [aliasRequest responseString];
 			    id objGroup = [responseStr objectFromJSONString];
 			    if ([objGroup isKindOfClass:[NSDictionary class]]) {
-			        NSString *statusCode = [objGroup objectForKey:@"statusCode"];
-			        if ([statusCode isEqualToString:@"1"]) {
+			        int statusCode = [[objGroup objectForKey:@"statusCode"] intValue];
+			        if ( statusCode == 1 ) {
 			            if (self.aliasModify) {
 			                self.aliasModify(self, aliasName);
 						}

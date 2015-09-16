@@ -5,7 +5,7 @@
 //  Created by IF on 15/3/16.
 //  Copyright (c) 2015年 zhilifang. All rights reserved.
 //
-typedef void(^FriendsAddProfileBlank)(NSString * groupid) ;
+typedef void(^FriendsAddProfileBlank)(void) ;
 
 typedef NS_ENUM(NSInteger, ShowButtonType) {
     ShowButtonType_Accept = 0,

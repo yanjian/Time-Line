@@ -12,7 +12,11 @@
 #import "AppDelegate.h"
 #import "LocalCalendarData.h"
 #import "AT_Account.h"
-@interface GoogleLoginViewController () <UIWebViewDelegate, ASIHTTPRequestDelegate>
+
+#import "Go2Account.h"
+@interface GoogleLoginViewController () <UIWebViewDelegate, ASIHTTPRequestDelegate>{
+    Go2Account * googleInfoModel;
+}
 
 
 @property (nonatomic, strong) NSMutableDictionary *oauthDic;
@@ -30,7 +34,6 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
 	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
 	if (self) {
-		// Custom initialization
 	}
 	return self;
 }
@@ -107,7 +110,7 @@
 	[super viewWillAppear:animated];
 	self.accountArr = [[NSMutableArray alloc] initWithCapacity:0];
 	[_activityIndicatorView startAnimating];  //启动活动图标
-	[self loadWebPageWithString:Google_OAuth_URL];
+	[self loadWebPageWithString:Go2_Google_OAuth_URL];
 }
 
 - (void)loadWebPageWithString:(NSString *)uilString {
@@ -131,7 +134,7 @@
 		NSLog(@"%@=====%d", [[request URL] absoluteString], navigationType);
 		[_activityIndicatorView setHidden:NO];
 		[_activityIndicatorView startAnimating];
-		if ([callback_Url hasPrefix:Google_Oauth2Callback_Url]) {
+		if ([callback_Url hasPrefix:Go2_Google_Oauth2Callback_Url]) {
 			NSRange rangeStr = [callback_Url rangeOfString:@"error"];//error=access_denied
 			if (rangeStr.location == NSNotFound) {
 				ASIHTTPRequest *googleRequest = [t_Network httpGet:nil Url:callback_Url Delegate:self Tag:1000];
@@ -166,13 +169,21 @@
 			if ([tmpObj isKindOfClass:[NSDictionary class]]) {//绑定账号
 				oauthDic = (NSMutableDictionary *)tmpObj;
 				if (self.isBind) {    //本地账号绑定google账号
-					NSMutableDictionary *paramDic = [NSMutableDictionary dictionaryWithCapacity:0];
-					[paramDic setObject:[oauthDic objectForKey:@"email"] forKey:@"bindAccout"];
-					[paramDic setObject:[oauthDic objectForKey:@"token"] forKey:@"token"];
-					[paramDic setObject:@"refreshToken" forKey:@"refreshToken"];
-					[paramDic setObject:[oauthDic objectForKey:@"tokenTime"] forKey:@"tokenTime"];
-
-					ASIHTTPRequest *request = [t_Network httpGet:paramDic Url:Google_AccountBind Delegate:self Tag:Google_AccountBind_Tag];
+                    int statusCode = [[tmpObj objectForKey:@"statusCode"] intValue];
+                    if ( statusCode == -1 ) {
+                        ASIHTTPRequest *request = [t_Network httpGet:@{@"accountId":@"101251301691538484635"}.mutableCopy Url:Go2_Google_removeBind Delegate:self Tag:Go2_Google_removeBind_Tag];
+                        [request startAsynchronous];
+                        return;
+                    }
+                    
+                    googleInfoModel = [Go2Account MR_createEntity] ;
+                    googleInfoModel.aId       = [oauthDic objectForKey:@"id"];
+                    googleInfoModel.accountId = [oauthDic objectForKey:@"accountId"];
+                    googleInfoModel.token     = [oauthDic objectForKey:@"token"];
+                    googleInfoModel.account   = [oauthDic objectForKey:@"account"];
+                    googleInfoModel.type      = @([[oauthDic objectForKey:@"type"] integerValue]);
+                    
+                    ASIHTTPRequest *request   = [t_Network httpGet:@{@"accountId":googleInfoModel.accountId}.mutableCopy Url:Go2_Google_AccountBind Delegate:self Tag:Go2_Google_AccountBind_Tag];
 					[request startAsynchronous];
 				}
 				else {
@@ -203,12 +214,18 @@
 			break;
 		}
 
-		case Google_AccountBind_Tag: {
+		case Go2_Google_AccountBind_Tag: {
 			id tmpObj = [responseStr objectFromJSONString];
 			if ([tmpObj isKindOfClass:[NSDictionary class]]) {
 				NSDictionary *dic = (NSMutableDictionary *)tmpObj;
-				NSString *param = dic[@"statusCode"];
-				if ([@"-3" isEqualToString:param]) {
+				int statusCode = [dic[@"statusCode"] intValue];
+                
+                if (statusCode == 1) {
+                    ASIHTTPRequest *request = [t_Network httpGet:@{@"accountId":googleInfoModel.accountId}.mutableCopy Url:Go2_Google_getCalendarList Delegate:self Tag:Go2_Google_getCalendarList_Tag];
+                    [request startAsynchronous];
+                }
+                
+				if (-3 == statusCode) {
 					[MBProgressHUD showError:@"This email has been registered or binding"];
 					[self.googleLoginView reload];
 				}
@@ -218,39 +235,35 @@
 		case LOGIN_USER_TAG: {
 			// oauthDic = [request.userInfo mutableCopy];
 			if ([@"1" isEqualToString:responseStr]) {
-				ASIHTTPRequest *request = [t_Network httpGet:nil Url:Get_Google_GetCalendarList Delegate:self Tag:Get_Google_GetCalendarList_Tag];
-				[request startAsynchronous];
+				
 				ASIHTTPRequest *userInfoRequest = [t_Network httpGet:nil Url:LoginUser_GetUserInfo Delegate:self Tag:LoginUser_GetUserInfo_Tag];
 				[userInfoRequest startAsynchronous];
 			}
 		} break;
 
-		case Get_Google_GetCalendarList_Tag: {
+		case Go2_Google_getCalendarList_Tag: {
 			NSMutableDictionary *googleDataDic = [responseStr objectFromJSONString];
 			NSDictionary *dataDic = [googleDataDic objectForKey:@"data"];
 			if ([dataDic isKindOfClass:[NSDictionary class]]) {
 				NSArray *arr = [dataDic objectForKey:@"items"];
 				NSMutableArray *googleArr = [NSMutableArray arrayWithCapacity:0];
 
-				AT_Account *ac = [AT_Account MR_createEntity];
-
-				[self.accountArr addObject:ac];
-
 				for (NSDictionary *dic in arr) {
 					NSLog(@"%@", dic);
-					GoogleCalendarData *gcd = [[GoogleCalendarData alloc] init];
-					[gcd parseDictionary:dic];
+					GoogleCalendarData *gcd = [GoogleCalendarData modelWithDictionary:dic];
 					if ([dic objectForKey:@"primary"]) {
 						gcd.isPrimary = YES;
-						ac.account = [dic objectForKey:@"summary"];
-						ac.accountType = @(AccountTypeGoogle);
-					}
-					[gcd setAccount:ac.account];
+                    }else{
+                        gcd.isPrimary = NO;
+                    }
+					[gcd setAccount:googleInfoModel.account];
+                    [gcd setAccountId:googleInfoModel.accountId];
 					[googleArr addObject:gcd];
 				}
 
 				[self.googleCalendar addObject:googleArr];
-
+                [self.accountArr addObject:googleInfoModel];
+                
 				if (!self.isSeting) {//这里如果是设置页面传来的就不取得本地日历
 					ASIHTTPRequest *request = [t_Network httpGet:nil Url:Local_CalendarOperation Delegate:self Tag:Local_CalendarOperation_Tag];
 					[request startAsynchronous];

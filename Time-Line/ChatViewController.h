@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "JSQMessages.h"
 #import "ChatModelData.h"
-#import "ActiveEventMode.h"
+#import "ActiveEventModel.h"
 #import "XLPagerTabStripViewController.h"
 
 @interface ChatViewController : JSQMessagesViewController<XLPagerTabStripChildItem,UIActionSheetDelegate>{
@@ -19,6 +19,6 @@
 
 @property (strong, nonatomic) ChatModelData *chatModelData;
 
-@property (strong, nonatomic) ActiveEventMode *activeEvent ;
+@property (strong, nonatomic) ActiveEventModel *activeEvent ;
 
 @end

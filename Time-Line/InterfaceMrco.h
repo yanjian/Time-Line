@@ -78,12 +78,14 @@ typedef NS_ENUM(NSInteger, LoginOrLogoutType) {
 #define GOOGLE_ADDRESS_PIC_TAG 3
 
 
+//https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/calendar&redirect_uri=http://t2.oxozoom.com:8080/Go2/Oauth2callback&response_type=code&client_id=535796093828-i6df62gif0ntp4q9fmntpd0klovpragm.apps.googleusercontent.com&access_type=offline&include_granted_scopes=true&approval_prompt=force
+
 //oauth认证url
 #define Google_Base       @"https://accounts.google.com/o/oauth2/auth"
 #define Google_UserInfo   @"https://www.googleapis.com/auth/userinfo.profile"
 #define Google_User_Email @"https://www.googleapis.com/auth/userinfo.email"
 #define Google_Calendar   @"https://www.googleapis.com/auth/calendar"
-#define Google_redirech   [NSString stringWithFormat:@"%@/servlet/Oauth2callback", BASEURL_IP]
+#define Google_redirech   [NSString stringWithFormat:@"%@/servlet/Oauth2callback",]
 //测试环境
 #define Google_Auth_APPID @"124861103249-11bp8t5epj45u5n91li89m4cknvajqrf.apps.googleusercontent.com"
 
@@ -106,7 +108,7 @@ typedef NS_ENUM (NSInteger, UserLoginStatus) {
 
 
 typedef NS_ENUM (NSInteger, AccountType) {
-	AccountTypeGoogle = 0,
+	AccountTypeGoogle = 2,//0
 	AccountTypeLocal = 1
 };
 
@@ -139,6 +141,21 @@ typedef NS_ENUM(NSInteger, EventsAllDayAlert) {
     EventsAllDayAlert_9Hour  = 4,
     EventsAllDayAlert_10Hour = 5
     
+};
+
+typedef NS_ENUM(NSInteger, CalendarList_IsDefault) {//那个是默认日历
+    CalendarList_IsDefault_No  = 0,
+    CalendarList_IsDefault_Yes = 1
+};
+
+typedef NS_ENUM(NSInteger, CalendarList_IsNotification) {//那个日历事件数据是否通知
+    CalendarList_IsNotification_No  = 0,
+    CalendarList_IsNotification_Yes = 1
+};
+
+typedef NS_ENUM(NSInteger, CalendarList_IsVisible) {//那个日历事件数据是否显示
+    CalendarList_IsVisible_No  = 0,
+    CalendarList_IsVisible_Yes = 1
 };
 
 #define		DEFAULT_TAB							0
@@ -227,11 +244,11 @@ typedef NS_ENUM(NSInteger, EventsAllDayAlert) {
 
 //更新或新增google数据  GoogleCalendarEventOperation
 #define Google_CalendarEventOperation [NSString stringWithFormat:@"%@/servlet/GoogleCalendarEventOperation", BASEURL_IP]
-#define Google_CalendarEventOperation_tag 16
+#define Google_CalendarEventOperation_tag 161
 
 // 删除google数据事件
 #define Google_DeleteCalendarEvent [NSString stringWithFormat:@"%@/servlet/DeleteCalendarEvent", BASEURL_IP]
-#define Google_DeleteCalendarEvent_tag 17
+#define Google_DeleteCalendarEvent_tag 171
 
 
 // 删除google数据事件
@@ -420,3 +437,185 @@ typedef NS_ENUM(NSInteger, EventsAllDayAlert) {
 //ConfirmEventTime
 #define anyTime_ConfirmEventTime [NSString stringWithFormat:@"%@/servlet/ConfirmEventTime", BASEURL_IP]
 #define anyTime_ConfirmEventTime_tag 67
+
+
+
+
+
+
+
+// 最新接口Go2   如果url后面有其他参数加上 &     ________
+
+#define BaseGo2Url_IP @"http://t2.oxozoom.com:8080/Go2"
+
+// 登陆接口
+#define Go2_UserLogin  [NSString stringWithFormat:@"%@/public?method=login&", BaseGo2Url_IP]
+#define Go2_UserLogin_Tag  1
+
+// 获取所有Go2日历(只包含本地日历列表（不包含google日历 ）)
+#define Go2_GetCalendars  [NSString stringWithFormat:@"%@/user/privateEvent?method=getCalendars", BaseGo2Url_IP]
+#define Go2_GetCalendars_Tag  2
+
+//获取所有Go2事件
+#define Go2_privateEvent  [NSString stringWithFormat:@"%@/user/privateEvent?method=query&", BaseGo2Url_IP]
+#define Go2_privateEvent_Tag  3
+
+
+
+//获取所有邀请信息  /user/friends
+
+#define Go2_queryInviteesInfo  [NSString stringWithFormat:@"%@/user/friends?method=queryInviteesInfo&", BaseGo2Url_IP]
+#define Go2_queryInviteesInfo_Tag  5
+
+//用户图像更新
+#define Go2_UploadServlet  [NSString stringWithFormat:@"%@/user/UploadServlet", BaseGo2Url_IP]
+#define Go2_UploadServlet_Tag  6
+
+
+//修改个人资料 /user
+#define Go2_updateUser  [NSString stringWithFormat:@"%@/user?method=updateUser&", BaseGo2Url_IP]
+#define Go2_updateUser_Tag  7
+
+
+
+
+//https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/calendar&redirect_uri=http://t2.oxozoom.com:8080/Go2/Oauth2callback&response_type=code&client_id=535796093828-i6df62gif0ntp4q9fmntpd0klovpragm.apps.googleusercontent.com&access_type=offline&include_granted_scopes=true&approval_prompt=force
+
+//oauth认证url
+#define Go2_Google_Base       @"https://accounts.google.com/o/oauth2/auth"
+#define Go2_Google_UserInfo   @"https://www.googleapis.com/auth/userinfo.profile"
+#define Go2_Google_User_Email @"https://www.googleapis.com/auth/userinfo.email"
+#define Go2_Google_Calendar   @"https://www.googleapis.com/auth/calendar"
+#define Go2_Google_redirech   [NSString stringWithFormat:@"%@/Oauth2callback",BaseGo2Url_IP]
+#define Go2_Google_Auth_APPID @"535796093828-i6df62gif0ntp4q9fmntpd0klovpragm.apps.googleusercontent.com"
+
+#define Go2_Google_OAuth_URL [NSString stringWithFormat:@"%@?scope=%@+%@+%@&redirect_uri=%@&response_type=code&client_id=%@&access_type=offline&include_granted_scopes=true&approval_prompt=force", Go2_Google_Base, Go2_Google_UserInfo, Go2_Google_User_Email, Go2_Google_Calendar, Go2_Google_redirech, Go2_Google_Auth_APPID]
+
+//google授权回调url http://t2.oxozoom.com:8080/Go2/Oauth2callback
+#define Go2_Google_Oauth2Callback_Url  [NSString stringWithFormat:@"%@/Oauth2callback", BaseGo2Url_IP]
+
+//日历帐号绑定
+#define Go2_Google_AccountBind [NSString stringWithFormat:@"%@/user/Google?method=bindAccount&", BaseGo2Url_IP]
+#define Go2_Google_AccountBind_Tag 8
+
+//取得google日历
+#define Go2_Google_getCalendarList [NSString stringWithFormat:@"%@/user/Google?method=getCalendarList&", BaseGo2Url_IP]
+#define Go2_Google_getCalendarList_Tag 9
+
+//取得google事件
+#define Go2_Google_getCalendarEvents [NSString stringWithFormat:@"%@/user/Google?method=getCalendarEvents&", BaseGo2Url_IP]
+#define Go2_Google_getCalendarEvents_Tag 10
+
+//新增google事件  --- 修改google事件 method=updateEvent
+#define Go2_Google_Event [NSString stringWithFormat:@"%@/user/Google", BaseGo2Url_IP]
+#define Go2_Google_Event_Tag 11
+#define Go2_Google_Delete_Tag 12 //删除
+#define Go2_Google_CalendarEventRepeat_tag 13
+
+//google重复事件
+#define Go2_Google_getGetRepeatEvent [NSString stringWithFormat:@"%@/user/Google?method=getGetRepeatEvent&", BaseGo2Url_IP]
+#define Go2_Google_getGetRepeatEvent_Tag 14
+
+#define Go2_Google_deleteEvent_Tag 15
+
+//取消绑定 method=removeBind
+#define Go2_Google_removeBind [NSString stringWithFormat:@"%@/user/Google?method=removeBind&", BaseGo2Url_IP]
+#define Go2_Google_removeBind_Tag 16
+
+//得到绑定列表
+#define Go2_Google_getAccounts [NSString stringWithFormat:@"%@/user/Google?method=getAccounts&", BaseGo2Url_IP]
+#define Go2_Google_getAccounts_Tag 17
+
+
+
+//新增Go2事件    method=add    修改Go2事件   method=update
+#define Go2_Local_privateEvent [NSString stringWithFormat:@"%@/user/privateEvent", BaseGo2Url_IP]
+#define Go2_Local_privateEvent_Tag 18
+
+//
+#define Go2_Friends [NSString stringWithFormat:@"%@/user/friends", BaseGo2Url_IP]
+#define Go2_Friends_Tag 19
+#define Go2_Friends_queryUser_Tag 20 //获取所有好友
+#define Go2_Friends_sendFriendInvitee_Tag 21 //发送好友请求
+#define Go2_Friends_delete_Tag  22 //删除好友
+#define Go2_Friends_queryInviteesInfo_Tag 23 //获取所有邀请信息
+#define Go2_Friends_acceptFriend_Tag  24 //同意好友请求
+#define Go2_UpdateFriendNickName_tag 25
+
+// 获取所有社交活动 { mothed = getAllSocials }
+#define Go2_socials  [NSString stringWithFormat:@"%@/user/Social", BaseGo2Url_IP]
+#define Go2_getAllSocials_Tag  4 //得到所有活动
+#define Go2_addSocials_Tag 26    //新增活动
+#define Go2_socialsVoteTime_Tag 27
+#define Go2_EventNotification_tag 28
+#define Go2_getOneSocials_Tag 29
+#define Go2_UpdateEvents_tag 30
+#define Go2_AddEventMember_tag 31
+#define Go2_JoinEvent_tag 32
+#define Go2_ConfirmEventTime_tag 33
+#define Go2_SendMsg_tag 34
+#define Go2_GetEventChatImg_tag 35
+
+//上传社交活动图片 type=(img：活动显示图片;chat:聊天图片)
+#define Go2_UploadSocialFile  [NSString stringWithFormat:@"%@/user/UploadSocialFile", BaseGo2Url_IP]
+#define Go2_UploadSocialFile_Tag 36
+
+
+//获取个人信息 /user
+#define Go2_getUserInfo  [NSString stringWithFormat:@"%@/user?method=getUserInfo&", BaseGo2Url_IP]
+#define Go2_getUserInfo_Tag  37
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

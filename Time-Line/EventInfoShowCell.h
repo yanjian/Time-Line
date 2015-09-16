@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ActiveEventMode.h"
+#import "ActiveEventModel.h"
 @interface EventInfoShowCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *activePic;
 @property (weak, nonatomic) IBOutlet UILabel *activeTitle;
@@ -17,7 +17,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *unReadCount;
 @property (weak, nonatomic) IBOutlet UILabel *showShortTitle;
 
-@property (strong, nonatomic) ActiveBaseInfoMode *activeEvent;
+@property (strong, nonatomic) ActiveEventModel *activeEvent;
 
 
 @end

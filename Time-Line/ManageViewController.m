@@ -27,6 +27,8 @@
 #import "SimpleEventViewController.h"
 #import "HomeViewController.h"
 
+#import "ActiveEventModel.h"
+
 typedef NS_ENUM (NSInteger, ShowActiveType) {
 	ShowActiveType_upcoming     = 0,
 	ShowActiveType_toBeConfirm  = 1,
@@ -96,6 +98,9 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 - (BOOL)shouldAutomaticallyForwardAppearanceMethods {
     return YES;
 }
+
+
+
 
 -(UISearchBar *)mySearchBar{
     if (!_mySearchBar) {
@@ -279,7 +284,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
             
         }
 		if (resultDataArr.count > 0 || _activeArr.count>0) {
-             ActiveBaseInfoMode *activeEvent = nil;
+             ActiveEventModel *activeEvent = nil;
              if (self.isSearch) {
                 activeEvent = resultDataArr[indexPath.row];
              }else{
@@ -288,9 +293,9 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
             [self loadUnreadMsg:activeEvent.Id];
 			activeCell.activeEvent = activeEvent;
 
-            if ( activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl] ) {
+            if ( activeEvent.img && ![@"" isEqualToString:activeEvent.img] ) {
                 activeCell.showShortTitle.hidden = YES ;
-                NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, activeEvent.imgUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, activeEvent.thumbnail] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 NSLog(@"%@", _urlStr);
                 NSURL *url = [NSURL URLWithString:_urlStr];
                 [activeCell.activePic sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"go2_grey"]];
@@ -330,7 +335,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    ActiveBaseInfoMode *activeEvent = nil ;
+    ActiveEventModel *activeEvent = nil ;
     if (self.isSearch) {
         activeEvent = resultDataArr[indexPath.row];
     }else{
@@ -400,7 +405,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 	}else {
 		_tmpActiveArr = [NSMutableArray arrayWithCapacity:0];
 		
-        ASIHTTPRequest *activeRequest = [t_Network httpGet:nil Url:anyTime_GetEventBasicInfo Delegate:self Tag:anyTime_GetEventBasicInfo_tag];
+        ASIHTTPRequest *activeRequest = [t_Network httpGet:@{@"method":@"getAllSocials"}.mutableCopy Url:Go2_socials Delegate:self Tag:Go2_getAllSocials_Tag];
 		[activeRequest setDownloadCache:g_AppDelegate.anyTimeCache];
 		[activeRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy | ASIAskServerIfModifiedWhenStaleCachePolicy];
 		[activeRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy];
@@ -421,14 +426,14 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 	switch (activeType) {
 		case ShowActiveType_All: {
 			[_activeArr removeAllObjects];  //这里不能移到外面去，否则hide 的活动就不能显示咯
-			for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示create的活动
+			for (ActiveEventModel *eventMode in _tmpActiveArr) {//显示create的活动
 				[_activeArr addObject:eventMode];
 			}
 		} break;
 
 		case ShowActiveType_upcoming: {
 			[_activeArr removeAllObjects];
-			for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示upcoming和（voting）的活动
+			for (ActiveEventModel *eventMode in _tmpActiveArr) {//显示upcoming和（voting）的活动
 				if ([eventMode.status integerValue] == ActiveStatus_upcoming) {
 					[_activeArr addObject:eventMode];
 				}
@@ -437,7 +442,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 		case ShowActiveType_toBeConfirm: {
 			[_activeArr removeAllObjects];
-			for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示toBeConfirm的活动
+			for (ActiveEventModel *eventMode in _tmpActiveArr) {//显示toBeConfirm的活动
 				if ([eventMode.status integerValue] == ActiveStatus_toBeConfirm) {
 					[_activeArr addObject:eventMode];
 				}
@@ -446,7 +451,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 		case ShowActiveType_confirmed: {
 			[_activeArr removeAllObjects];
-			for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示confirmed的活动
+			for (ActiveEventModel *eventMode in _tmpActiveArr) {//显示confirmed的活动
 				if ([eventMode.status integerValue] == ActiveStatus_confirmed) {
 					[_activeArr addObject:eventMode];
 				}
@@ -455,7 +460,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 		case ShowActiveType_past: {
 			[_activeArr removeAllObjects];
-			for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示confirmed的活动
+			for (ActiveEventModel *eventMode in _tmpActiveArr) {//显示confirmed的活动
 				if ([eventMode.status integerValue] == ShowActiveType_past) {
 					[_activeArr addObject:eventMode];
 				}
@@ -464,11 +469,9 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 		case ShowActiveType_refusedNot: {
 			[_activeArr removeAllObjects];
-			for (ActiveEventMode *eventMode in _tmpActiveArr) {//显示confirmed的活动
-				if (!eventMode.isNotification) {
-					[_activeArr addObject:eventMode];
-				}
-			}
+			for (ActiveEventModel *eventMode in _tmpActiveArr) {//显示confirmed的活动
+				
+            }
 		} break;
 
 		default:
@@ -478,26 +481,26 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 - (void)requestFinished:(ASIHTTPRequest *)request {
 	switch (request.tag) {
-		case anyTime_GetEventBasicInfo_tag: {
+		case Go2_getAllSocials_Tag: {
 			NSError *error = [request error];
 			if (error) {
 				[MBProgressHUD showError:@"error"];
 			}
 			NSString *requestStr =  [request responseString];
 			NSDictionary *dic = [requestStr objectFromJSONString];
-			NSString *statusCode = [dic objectForKey:@"statusCode"];
-			if ([@"1" isEqualToString:statusCode]) {
-				id dataObj = [dic objectForKey:@"data"];
+			int statusCode = [[dic objectForKey:@"statusCode"] intValue];
+			if ( 1 == statusCode ) {
+				id dataObj = [dic objectForKey:@"datas"];
 				if ([dataObj isKindOfClass:[NSArray class]]) {
 					NSArray *activeArr = (NSArray *)dataObj;
 					for (int i = 0; i < activeArr.count; i++) {
-						ActiveBaseInfoMode *activeEvent = [[ActiveBaseInfoMode alloc] init];
-						[activeEvent parseDictionary:activeArr[i]];
-						if (activeEvent.member) {
-							NSDictionary *memberDataDic = [activeEvent.member firstObject];  //在活动基本信息接口中member只有当前用户
-							NSInteger notNum =  [[memberDataDic objectForKey:@"notification"] integerValue];
-							activeEvent.isNotification = notNum == 1 ? YES : NO;
-						}
+						ActiveEventModel *activeEvent = [[ActiveEventModel alloc] initWithDictionary:activeArr[i]];
+                        
+//						if (activeEvent.member) {
+//							NSDictionary *memberDataDic = [activeEvent.member firstObject];  //在活动基本信息接口中member只有当前用户
+//							NSInteger notNum =  [[memberDataDic objectForKey:@"notification"] integerValue];
+//							activeEvent.isNotification = notNum == 1 ? YES : NO;
+//						}
 						[_tmpActiveArr addObject:activeEvent];
 					}
 				}

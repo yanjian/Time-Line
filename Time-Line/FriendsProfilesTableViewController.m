@@ -17,6 +17,8 @@
 @interface FriendsProfilesTableViewController (){
     ShowButtonType showButtonType;
 }
+@property (nonatomic , retain) UIButton * leftBtn;
+
 @property (nonatomic , retain) NSMutableArray  * dataArr ;
 @property (nonatomic , retain) NSMutableArray  * arrayList ;
 @property (nonatomic , retain) NSIndexPath     * lastIndexPath ;
@@ -29,12 +31,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Friend's Profile" ;
-    UIButton *leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
-    [leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
-    [leftBtn addTarget:self action:@selector(backToInvitationsView) forControlEvents:UIControlEventTouchUpInside] ;
-    
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:leftBtn] ;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
     
     _arrayList = [NSMutableArray arrayWithCapacity:0] ;
@@ -43,19 +40,29 @@
     self.messageDic = self.noticesMsg.message ;
     
     if (self.isSendRequest) {
-        _dataArr = [NSMutableArray arrayWithObjects:self.friend,_arrayList, nil] ;
+        _dataArr = [NSMutableArray arrayWithObjects:self.friend/*,_arrayList*/, nil] ;
         showButtonType = ShowButtonType_Add ;
-        [self loadFriendGroupData];
+       // [self loadFriendGroupData];
         return;
     }
     
      showButtonType = ShowButtonType_Accept ;
-    _dataArr = [NSMutableArray arrayWithObjects:self.messageDic,_arrayList, nil] ;
+    _dataArr = [NSMutableArray arrayWithObjects:self.messageDic/*,_arrayList*/, nil] ;
     
     if (self.isAddSuccess) {//如果已是好友关系就直接加载组的数据
         showButtonType = ShowButtonType_Friend ;
-        [self loadFriendGroupData];
+       // [self loadFriendGroupData];
     }
+}
+
+-(UIButton *)leftBtn{
+    if (!_leftBtn) {
+        _leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_leftBtn setFrame:CGRectMake(0, 2, 22, 14)];
+        [_leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_arrow_left"] forState:UIControlStateNormal] ;
+        [_leftBtn addTarget:self action:@selector(backToInvitationsView) forControlEvents:UIControlEventTouchUpInside] ;
+    }
+    return _leftBtn ;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -72,10 +79,11 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if ( section == 0) {
         return 2 ;
-    }else if( section == 1 ){
-        NSArray * tmpArr = (NSArray *)_dataArr[section] ;
-         return tmpArr.count;
     }
+//    else if( section == 1 ){
+//        NSArray * tmpArr = (NSArray *)_dataArr[section] ;
+//         return tmpArr.count;
+//    }
     return 0 ;
 }
 
@@ -93,29 +101,30 @@
 }
 
 -(CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    if (section == 0) {
+//    if (section == 0) {
         return 1.0f;
-    }else{
-        return 50.f;
-    }
+//    }
+//    else{
+//        return 50.f;
+//    }
     
 }
 
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
-    if (section == 1 ) {
-        NSArray * tmpArr = self.dataArr[section];
-        if (tmpArr.count>0) {
-            UILabel * headLab = [[UILabel alloc] initWithFrame:CGRectMake(2, 27, 100, 20)];
-            [headLab setBackgroundColor:[UIColor clearColor]];
-            [headLab setTextColor:[UIColor grayColor]];
-            [headLab setText:@" Belongs to:"];
-            
-            UIView *sectionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 22)];
-            [sectionView setBackgroundColor:[UIColor clearColor]];
-            [sectionView addSubview:headLab];
-            return sectionView ;
-        }
-    }
+//    if (section == 1 ) {
+//        NSArray * tmpArr = self.dataArr[section];
+//        if (tmpArr.count>0) {
+//            UILabel * headLab = [[UILabel alloc] initWithFrame:CGRectMake(2, 27, 100, 20)];
+//            [headLab setBackgroundColor:[UIColor clearColor]];
+//            [headLab setTextColor:[UIColor grayColor]];
+//            [headLab setText:@" Belongs to:"];
+//            
+//            UIView *sectionView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, 22)];
+//            [sectionView setBackgroundColor:[UIColor clearColor]];
+//            [sectionView addSubview:headLab];
+//            return sectionView ;
+//        }
+//    }
     return nil;
 }
 
@@ -129,7 +138,7 @@
                 activeCell = (AcceptFriendTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"AcceptFriendTableViewCell" owner:self options:nil] firstObject];
             }
             if (self.isSendRequest) {
-                NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, self.friend.imgSmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, self.friend.thumbnail] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 NSLog(@"%@", _urlStr);
                 NSURL *url = [NSURL URLWithString:_urlStr];
                 [activeCell.userHeadImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
@@ -138,8 +147,8 @@
                 [activeCell.userAlias setText:self.friend.alias==nil? self.friend.email:self.friend.alias]  ;
 
             }else{
-                NSString *tmpUrl = [[self.messageDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, tmpUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSString *tmpUrl = [self.messageDic objectForKey:@"imgBig"] ;
+                NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, tmpUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 NSLog(@"%@", _urlStr);
                 NSURL *url = [NSURL URLWithString:_urlStr];
                 [activeCell.userHeadImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
@@ -165,15 +174,6 @@
             [acceptBtn.titleLabel setFont:[UIFont systemFontOfSize:14]];
             acceptBtn.layer.cornerRadius = 5 ;
             acceptBtn.layer.masksToBounds = YES;
-//            if (!self.isSendRequest) {
-//                if (!self.isAddSuccess) {
-//                    showButtonType = ShowButtonType_Accept;
-//                }else{
-//                    showButtonType = ShowButtonType_Friend;
-//                }
-//            }else{
-//                showButtonType = ShowButtonType_Add ;
-//            }
             switch (showButtonType) {
                 case ShowButtonType_Accept:{
                     [acceptBtn setTitleColor:defineBlueColor forState:UIControlStateNormal] ;
@@ -199,6 +199,8 @@
                 case ShowButtonType_Send:{
                     [acceptBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal] ;
                     [acceptBtn setTitle:@"Friend Request Sent" forState:UIControlStateNormal] ;
+                    [acceptBtn.layer setBorderColor:[UIColor redColor].CGColor];
+                    [acceptBtn.layer setBorderWidth:2.f];
                     [acceptBtn setBackgroundColor:[UIColor redColor]];
                 }break ;
                 default:
@@ -231,44 +233,64 @@
     return nil ;
 }
 
--(void)acceptFriendRequest:(UIButton *) sender{
-    [self loadFriendGroupData];
+-(void)acceptFriendRequest:(UIButton *) sender{//同意添加为好友
+    //[self loadFriendGroupData];
+   
+    [self acceptOrRejectFriend:2];
 }
+
+
+
+
+
+
+
+
+-(void)acceptOrRejectFriend:(NSInteger) statusValue{
+    ASIHTTPRequest *acceptFriendRequest = [t_Network httpPostValue:@{ @"method":@"handInvitee", @"id": self.noticesMsg.Id,@"status":@(statusValue)}.mutableCopy
+                                                               Url:Go2_Friends
+                                                          Delegate:nil
+                                                               Tag:Go2_Friends_acceptFriend_Tag];
+    __block ASIHTTPRequest * acceptRequest = acceptFriendRequest;
+    [acceptFriendRequest setCompletionBlock: ^{
+        NSString * responseStr = [acceptRequest responseString];
+        id obtTmp =  [responseStr objectFromJSONString];
+        if ([obtTmp isKindOfClass:[NSDictionary class]]) {
+            int statusCode = [[obtTmp objectForKey:@"statusCode"] intValue];
+            if ( statusCode == 1 ) {
+                if ( statusValue == 2 ) {
+                    [MBProgressHUD showSuccess:@"success"];
+                    showButtonType = ShowButtonType_Friend ;
+                }
+            }
+            [self.tableView reloadData] ;
+        }
+    }];
+    
+    [acceptFriendRequest setFailedBlock: ^{
+        [MBProgressHUD showError:@"Network error"];
+    }];
+    [acceptFriendRequest startAsynchronous];
+
+}
+
 
 #pragma mark - 解除好友关系 ---delete
 -(void)relieveFriendRelationship:(UIButton *) sender{
-//    ASIHTTPRequest *acceptFriendRequest = [t_Network httpPostValue:@{ @"fid":[self.messageDic objectForKey:@"fid"], @"fname":[self.messageDic objectForKey:@"fname"], @"mid":self.noticesMsg.Id, @"type":@(1) }.mutableCopy Url:anyTime_DisposeFriendRequest Delegate:nil Tag:anyTime_DisposeFriendRequest_tag];
-//
-//        __block ASIHTTPRequest *acceptRequest = acceptFriendRequest;
-//        [acceptFriendRequest setCompletionBlock: ^{
-//            NSString *responseStr = [acceptRequest responseString];
-//            id obtTmp =  [responseStr objectFromJSONString];
-//            if ([obtTmp isKindOfClass:[NSDictionary class]]) {
-//                NSString *statusCode = [obtTmp objectForKey:@"statusCode"];
-//                if ([statusCode isEqualToString:@"1"]) {
-//                    [MBProgressHUD showSuccess:@"Success"];
-//                }
-//            }
-//        }];
-//
-//        [acceptFriendRequest setFailedBlock: ^{
-//            [MBProgressHUD showError:@"Network error"];
-//        }];
-//        [acceptFriendRequest startAsynchronous];
-    
-    ASIHTTPRequest *acceptFriendRequest = [t_Network httpPostValue:@{ @"fid":[self.messageDic objectForKey:@"fid"], @"fname":[self.messageDic objectForKey:@"fname"] }.mutableCopy Url:anyTime_DeleteFriend Delegate:nil Tag:anyTime_DeleteFriend_tag];
+    ASIHTTPRequest *acceptFriendRequest = [t_Network httpPostValue:@{ @"method":@"delete", @"fid":[self.messageDic objectForKey:@"fid"] }.mutableCopy
+                                                               Url:Go2_Friends
+                                                          Delegate:nil
+                                                               Tag:Go2_Friends_delete_Tag];
     __block ASIHTTPRequest *acceptRequest = acceptFriendRequest;
     [acceptFriendRequest setCompletionBlock: ^{
         NSString *responseStr = [acceptRequest responseString];
         id obtTmp =  [responseStr objectFromJSONString];
         if ([obtTmp isKindOfClass:[NSDictionary class]]) {
-            NSString *statusCode = [obtTmp objectForKey:@"statusCode"];
-            if ([statusCode isEqualToString:@"1"]) {
-                
+            int statusCode = [[obtTmp objectForKey:@"statusCode"] intValue];
+            if ( statusCode == 1 ) {
                 [MBProgressHUD showSuccess:@"Delete success"];
-                
+                showButtonType = ShowButtonType_Add ;
             }
-            showButtonType = ShowButtonType_Add ;
             [self.tableView reloadData] ;
         }
     }];
@@ -317,7 +339,7 @@
       NSArray * tmpArr = self.dataArr[self.lastIndexPath.section];
       FriendGroup * fgroup = tmpArr[self.lastIndexPath.row] ;
     
-      ASIHTTPRequest *acceptFriendRequest = [t_Network httpPostValue:@{ @"fid":[self.messageDic objectForKey:@"fid"], @"tid":fgroup.Id, @"fname":[self.messageDic objectForKey:@"fname"], @"mid":self.noticesMsg.Id }.mutableCopy Url:anyTime_DisposeFriendRequest Delegate:nil Tag:anyTime_DisposeFriendRequest_tag];
+      ASIHTTPRequest *acceptFriendRequest = [t_Network httpPostValue:@{ @"fid":[self.messageDic objectForKey:@"fid"], @"tid":fgroup.Id, @"fname":[self.messageDic objectForKey:@"fname"], @"mid":self.noticesMsg.Id }.mutableCopy Url:Go2_Friends Delegate:nil Tag:Go2_Friends_sendFriendInvitee_Tag];
 
         __block ASIHTTPRequest *acceptRequest = acceptFriendRequest;
         [acceptFriendRequest setCompletionBlock: ^{
@@ -341,9 +363,9 @@
 
 -(void)addFriendRequest:(UIButton *)sender {
     if (self.friendsAddProfileblack) {
-        NSArray * tmpArr = self.dataArr[self.lastIndexPath.section];
-        FriendGroup * fgroup = tmpArr[self.lastIndexPath.row] ;
-        self.friendsAddProfileblack(fgroup.Id);
+//        NSArray * tmpArr = self.dataArr[self.lastIndexPath.section];
+//        FriendGroup * fgroup = tmpArr[self.lastIndexPath.row] ;
+        self.friendsAddProfileblack();
         showButtonType = ShowButtonType_Send;
         [self.tableView reloadData];
     }
@@ -404,15 +426,5 @@
 -(void)backToInvitationsView{
     [self.navigationController popViewControllerAnimated:YES];
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

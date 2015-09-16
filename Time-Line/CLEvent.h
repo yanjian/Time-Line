@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface CLEvent : NSObject
+@interface CLEvent : BaseMode
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, copy) NSString *startTime;

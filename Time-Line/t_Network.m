@@ -27,24 +27,23 @@
 
 + (ASIHTTPRequest *)httpGet:(NSMutableDictionary *)value Url:(NSString *)url Delegate:(id)delegate Tag:(NSInteger)tag userInfo:(NSDictionary *) dictionary{
     NSEnumerator * enumeratorKey = [value keyEnumerator];
-    NSRange rang=[url rangeOfString:@"?"];
-    NSString *urlString=url ;
-    if (rang.location==NSNotFound) {
+    NSRange rang = [url rangeOfString:@"?"];
+    NSString *urlString = url ;
+    if (rang.location == NSNotFound) {
         if (value) {
             urlString =[NSString stringWithFormat:@"%@?",url];
         }
     }
     NSArray *array=[enumeratorKey allObjects];
-    for (NSUInteger i=0;i<[array count];i++)
+    for (NSUInteger i=0 ; i< array.count ; i++)
     {
         NSObject *object=[array objectAtIndex:i];
         NSString *key=[object description];
-        if(i==[array count]-1)
+        if(i == [array count] -1)
         {
-            urlString =[NSString stringWithFormat:@"%@%@=%@",urlString,key,[value valueForKey:key]];
-        }
-        else {
-            urlString =[NSString stringWithFormat:@"%@%@=%@&",urlString,key,[value valueForKey:key]];
+            urlString = [NSString stringWithFormat:@"%@%@=%@",urlString,key,[value valueForKey:key]];
+        } else {
+            urlString = [NSString stringWithFormat:@"%@%@=%@&",urlString,key,[value valueForKey:key]];
         }
     }
     NSLog(@"requestURL: %@",urlString);

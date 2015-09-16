@@ -41,10 +41,11 @@
     NSMutableArray * joinArr = @[].mutableCopy;
     NSMutableArray * noJoinArr = @[].mutableCopy;
     NSMutableArray * noReplyArr = @[].mutableCopy;
+    
     for (MemberDataModel *memberData in self.memberArr) {
-        if ([memberData.join intValue] == 1) {
+        if ([memberData.isJoining intValue] == 1) {
             [joinArr addObject:memberData];
-        }else if ([memberData.join intValue] == 2){
+        }else if ([memberData.isJoining intValue] == 2){
             [noJoinArr addObject:memberData];
         }else{
             [noReplyArr addObject:memberData];
@@ -73,9 +74,9 @@
 -(NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
     NSArray *tmpDataArr =(NSArray *) joinAndNoJoinArr[section];
     for (MemberDataModel *memberData in tmpDataArr) {
-        if ([memberData.join intValue] == 1) {
+        if ([memberData.isJoining intValue] == 1) {
             return @"Join:";
-        }else if ([memberData.join intValue] == 2){
+        }else if ([memberData.isJoining intValue] == 2){
             return @"Not joining:";
         }else{
             return @"No Reply:" ;
@@ -106,21 +107,18 @@
     SetFriendTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"joinAndNoJoinID"];
     if (!cell) {
         cell = (SetFriendTableViewCell *)[[[NSBundle mainBundle] loadNibNamed:@"SetFriendTableViewCell" owner:self options:nil] lastObject];
-//        UIImageView * imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 30, 30)];
-//        imageView.image =[UIImage imageNamed:@"selecte_friend_cycle"] ;
-//        cell.accessoryView = imageView ;
-//        imageView.center = cell.accessoryView.center ;
     }
     
     NSArray *joinAndNoJoin = joinAndNoJoinArr[indexPath.section];
     MemberDataModel * memberData = (MemberDataModel *) joinAndNoJoin[indexPath.row];
-    NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, memberData.imgBig] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP,[memberData.user objectForKey:@"thumbnail"]] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSLog(@"%@", _urlStr);
     NSURL *url = [NSURL URLWithString:_urlStr];
     [cell.userHead sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
     
-    cell.nickName.text = memberData.nickname;
-    cell.userNote.text = memberData.username;
+    cell.nickName.text = [memberData.user objectForKey:@"nickname"];
+    cell.userNote.text = [memberData.user objectForKey:@"username"];
     return cell;
 }
 

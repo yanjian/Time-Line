@@ -15,4 +15,8 @@
 @property (nonatomic,strong) NSString * startTime ;
 @property (nonatomic,strong) NSString * tid ;
 @property (nonatomic,strong) NSString * uid ;
+
+
+@property (nonatomic,strong) NSString * createTime ;
+@property (nonatomic,strong) NSString * ptid ;
 @end

@@ -9,12 +9,12 @@
 #import "MGCDayPlannerEKViewController.h"
 
 #import "ActiveDataMode.h"
-#import "ActiveEventMode.h"
+#import "ActiveEventModel.h"
 @interface NewPurposeEventTimeViewController : UIViewController
 
 @property (nonatomic , retain) ActiveDataMode *activeDataMode;
 @property (nonatomic , assign) BOOL isEdit ;
-@property (strong, nonatomic) ActiveEventMode *activeEvent ;
+@property (strong, nonatomic) ActiveEventModel *activeEvent ;
 
 
 @end

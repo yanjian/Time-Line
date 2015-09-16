@@ -99,7 +99,7 @@
 //}
 
 - (void)loadUserRequestInfo:(NSInteger)num {
-	ASIHTTPRequest *msgRequest = [t_Network httpGet:@{ @"num":@(num) }.mutableCopy Url:anyTime_GetUserMessage2 Delegate:nil Tag:anyTime_GetUserMessage2_tag];
+	ASIHTTPRequest *msgRequest = [t_Network httpGet:@{ @"pageNum":@(num) }.mutableCopy Url:Go2_queryInviteesInfo Delegate:nil Tag:Go2_queryInviteesInfo_Tag];
 	[msgRequest setDownloadCache:g_AppDelegate.anyTimeCache];
 	[msgRequest setCachePolicy:ASIFallbackToCacheIfLoadFailsCachePolicy | ASIAskServerIfModifiedWhenStaleCachePolicy];
 	[msgRequest setCacheStoragePolicy:ASICachePermanentlyCacheStoragePolicy];
@@ -109,27 +109,20 @@
 	    id objTmp =  [responseStr objectFromJSONString];
 	    if ([objTmp isKindOfClass:[NSDictionary class]]) {
 	        NSDictionary *objDic = (NSDictionary *)objTmp;
-	        NSString *statusCode = [objDic objectForKey:@"statusCode"];
-	        if ([statusCode isEqualToString:@"1"]) {
+	        int statusCode = [[objDic objectForKey:@"statusCode"] intValue];
+	        if ( statusCode  == 1 ) {
 	            id dataDic = [objDic objectForKey:@"data"];
 	            if ([dataDic isKindOfClass:[NSDictionary class]]) {
-	                NotiveMsgPageBaseMode *notiveMsgPage = [NotiveMsgPageBaseMode new];
-	                [notiveMsgPage parseDictionary:dataDic];
-	                if (notiveMsgPage.records) {
-	                    for (NSDictionary *dic in notiveMsgPage.records) {
-	                        NSLog(@"%@", dic);
-	                        NoticesMsgModel *noticeMsg = [NoticesMsgModel new];
-	                        [noticeMsg parseDictionary:dic];
-                            if ([noticeMsg.type integerValue] != 4) {//是表示对方删除我得信息---排除在外......
-                                [_noticeArr addObject:noticeMsg];
-                            }
-						}
-					}
+                    NotiveMsgPageBaseMode *notiveMsgPage = [NotiveMsgPageBaseMode modelWithDictionary:dataDic];
+                    
+                    [notiveMsgPage.beanList enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+                          NoticesMsgModel *noticeMsg = [NoticesMsgModel modelWithDictionary:obj];
+                          if ([noticeMsg.type integerValue] != 4) {//是表示对方删除我得信息---排除在外......
+                              [_noticeArr addObject:noticeMsg];
+                           }
+                     }];
 				}
 	            [_tableView reloadData];  //刷新table
-			}
-	        else {
-                
 			}
 		}
 	}];
@@ -182,8 +175,8 @@
             if ([noticeMsg.type integerValue] == 1) { //好友请求
                 NSDictionary *msgDic =  noticeMsg.message;
                 if (msgDic) {
-                    NSString *tmpUrl = [[msgDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                    NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, tmpUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                    NSString *tmpUrl = [msgDic objectForKey:@"imgBig"] ;
+                    NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BaseGo2Url_IP, tmpUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                     NSLog(@"%@", _urlStr);
                     NSURL *url = [NSURL URLWithString:_urlStr];
                     [activeCell.showImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
@@ -202,8 +195,8 @@
             }else if ([noticeMsg.type integerValue] == 2 ||  [noticeMsg.type integerValue] == 3) { //对方同意 信息  //对方拒绝添加 你为
                 NSDictionary *msgDic =  noticeMsg.message;
                 if (msgDic) {
-                    NSString *tmpUrl = [[msgDic objectForKey:@"imgBig"] stringByReplacingOccurrencesOfString:@"\\" withString:@"/"];
-                    NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BASEURL_IP, tmpUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                    NSString *tmpUrl = [msgDic objectForKey:@"imgBig"];
+                    NSString *_urlStr = [[NSString stringWithFormat:@"%@/%@", BaseGo2Url_IP, tmpUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                     NSLog(@"%@", _urlStr);
                     NSURL *url = [NSURL URLWithString:_urlStr];
                     [activeCell.showImg sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"smile_1"] completed:nil];
@@ -234,10 +227,7 @@
             
             if ([noticeMsg.message isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *msgDic = [noticeMsg.message objectForKey:@"event"];
-                ActiveBaseInfoMode *activeEvent = [ActiveBaseInfoMode new];
-                if (msgDic) {
-                    [activeEvent parseDictionary:msgDic];
-                }
+                ActiveEventModel *activeEvent = [[ActiveEventModel alloc] initWithDictionary:msgDic];
                 //显示活动图片 ---网络下载的图片
 //                if (activeEvent.imgUrl && ![@"" isEqualToString:activeEvent.imgUrl]) {
 //                    activeCell.showShotTitle.hidden = YES ;
@@ -318,15 +308,12 @@
 	NoticesMsgModel *noticeMsg = [_noticeArr objectAtIndex:indexPath.row];
 	if ([noticeMsg.type integerValue] == 10 || [noticeMsg.type integerValue] == 11) {
 		NSDictionary *msgDic = [noticeMsg.message objectForKey:@"event"];
-		ActiveBaseInfoMode *activeEvent = [ActiveBaseInfoMode new];
-		if (msgDic) {
-			[activeEvent parseDictionary:msgDic];
-		}
-		else {
-			[MBProgressHUD showError:@"You already out of the activity"];
-			return;
-		}
-
+        if (!msgDic) {
+            [MBProgressHUD showError:@"You already out of the activity"];
+            return;
+        }
+		ActiveEventModel *activeEvent = [[ActiveEventModel alloc] initWithDictionary:msgDic];
+		
         UIStoryboard *storyboarb = [UIStoryboard storyboardWithName:@"ActiveDestination" bundle:[NSBundle mainBundle]];
         ActiveDestinationViewController * activeDesc =( ActiveDestinationViewController *)  [storyboarb instantiateViewControllerWithIdentifier:@"ActiveDescriptionId"];
         activeDesc.activeEventInfo = activeEvent;
