@@ -797,21 +797,23 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     if ( [ @"15" isEqualToString: chatType ] ) {//聊天信息
         int msgType = [[bodyDic objectForKey:@"msg_type"] intValue] ; //信息类型：0.表示文本信息，1.表示图片信息，2表示语音信息
         if( msgType == 0 ){
+            
            chatContent.text = [bodyDic objectForKey:@"content"] || ![@"" isEqualToString:[bodyDic objectForKey:@"content"]] ? [bodyDic objectForKey:@"content"] : @"" ;
 
         }else if ( msgType == 1 ){
-            chatContent.imgBig =  [bodyDic objectForKey:@"url"];//大图url
-            NSString *imgsmall = [bodyDic objectForKey:@"thumbnail"] ;//小图
             
-            NSData * imgSmallData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSString stringWithFormat:@"%@%@",BaseGo2Url_IP,imgsmall] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]] ;
-            chatContent.imgSmall =  [imgSmallData base64String];
+            chatContent.imgBig   =  [[bodyDic objectForKey:@"url"] base64String];//大图url
+            chatContent.imgSmall =  [[bodyDic objectForKey:@"thumbnail"] base64String];//小图
             chatContent.text = @"[Picture]";
+            
         }else if ( msgType == 2 ){
+            
              NSString * voiceUrl = [bodyDic objectForKey:@"url"];
              NSData * voiceData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSString stringWithFormat:@"%@%@",BaseGo2Url_IP,voiceUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]] ;
             NSLog(@"%@",[voiceData base64String]);
             chatContent.voiceAac = [voiceData base64String];
             chatContent.text = [bodyDic objectForKey:@"content"] ;
+            
         }
         
     }else if( [@"10" isEqualToString:chatType] ){
