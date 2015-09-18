@@ -16,13 +16,13 @@
 #import "TimeVoteModel.h"
 #import "ManageViewController.h"
 
-//#import "Go2ChildTableViewController.h"
+#import "Go2ChildTableViewController.h"
 
 @interface ActiveDestinationViewController ()<ASIHTTPRequestDelegate,ActiveSetingTableViewControllerDelegate>
 {
     ActiveInfoTableViewController * activeInfoVc ;
     ActiveVotingViewController * activeVotingVc ;
-   // Go2ChildTableViewController *chatVc;
+    Go2ChildTableViewController *chatVc;
     ActiveAlbumsViewController * activeAlbumsVc ;
 }
 
@@ -75,12 +75,12 @@
     activeVotingVc   = [[ActiveVotingViewController alloc] init];
     activeVotingVc.activeEvent = self.activeEventInfo ;
 
-    //chatVc = [[Go2ChildTableViewController alloc] init] ;
-   // chatVc.activeEvent = self.activeEventInfo ;
+    chatVc = [[Go2ChildTableViewController alloc] init] ;
+    chatVc.activeEvent = self.activeEventInfo ;
 
     activeAlbumsVc   = [[ActiveAlbumsViewController alloc] init];
     activeAlbumsVc.eid =  self.activeEventInfo.Id ;
-    return @[activeInfoVc,activeVotingVc,/*chatVc,*/activeAlbumsVc];
+    return @[activeInfoVc,activeVotingVc,chatVc,activeAlbumsVc];
 }
 
 
