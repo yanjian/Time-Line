@@ -20,6 +20,8 @@
 }
 @property (nonatomic, strong) NSMutableArray *activeArray;
 
+@property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
+
 @end
 
 @implementation ActiveAlbumsViewController
@@ -52,7 +54,7 @@
     [self _init];
 }
 
-- (NSString *)titleForPagerTabStripViewController:(XLPagerTabStripViewController *)pagerTabStripViewController{
+- (NSString *)segmentTitle{
     return @"ALBUMS" ;
 }
 
@@ -62,20 +64,20 @@
     
     //为当前UICollectionView对象创建布局对象
     UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
-    flowLayout.itemSize = CGSizeMake(80, 80);
-    flowLayout.minimumLineSpacing = 0.f;
-    flowLayout.minimumInteritemSpacing = 0.f;
+    flowLayout.itemSize = CGSizeMake(75, 75);
+    flowLayout.minimumLineSpacing = 5.f;
+    flowLayout.minimumInteritemSpacing = 5.f;
     
-    UICollectionView *collectionView = [[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, kScreen_Width, kScreen_Height-110) collectionViewLayout:flowLayout];
-    collectionView.dataSource = self;
-    collectionView.delegate = self;
-    collectionView.backgroundColor = [UIColor clearColor];
+    self.collectionView.collectionViewLayout = flowLayout ;
+    self.collectionView.dataSource = self;
+    self.collectionView.delegate = self;
+    self.collectionView.backgroundColor = [UIColor clearColor];
     
     //注册单元格
     _identify = @"PhotoCell";
-    [collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:_identify];
+    [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:_identify];
     
-    [self.view addSubview:collectionView];
+    [self.view addSubview:self.collectionView];
 }
 
 
@@ -115,7 +117,10 @@
     return cell;
 }
 
-
+-(UIScrollView *)streachScrollView
+{
+    return self.collectionView;
+}
 
 // 单元格选择代理
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{

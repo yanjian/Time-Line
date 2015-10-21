@@ -7,7 +7,7 @@
 //
 
 #import "AddNewActiveViewController.h"
-#import "InviteesViewController.h"
+//#import "InviteesViewController.h"
 #import "ActiveImageTableViewCell.h"
 #import "UIImageView+WebCache.h"
 #import "camera.h"
@@ -17,6 +17,11 @@
 #import "ActiveDataMode.h"
 #import "utilities.h"
 #import "UIColor+HexString.h"
+
+
+#import "EventTitleAndDescCellTableViewCell.h"
+#import "LocationTableViewCell.h"
+#import "NewPurposeEventTimeViewController.h"
 static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 
 @interface AddNewActiveViewController ()<UITableViewDataSource,UITableViewDelegate,UIActionSheetDelegate,PECropViewControllerDelegate,UINavigationControllerDelegate, UIImagePickerControllerDelegate,UITextFieldDelegate,getlocationDelegate,MKMapViewDelegate>
@@ -26,7 +31,6 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     UIView       *  datePickerView ;
     NSString     *  coorName;
     NSDictionary *  coorDic;//坐标点
-    NSMutableArray * selectFriendArr ;
     
     ActiveDataMode * activeDataMode;
     
@@ -40,8 +44,11 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 @property (nonatomic,retain) UIButton *rightBtn ;
 @property (nonatomic,retain) UITextField  *titleFiled ;
 @property (nonatomic,retain) UITextField  *descFiled ;
-@property (nonatomic,retain) MKMapView    *vMap;
 
+
+
+@property (nonatomic,retain) EventTitleAndDescCellTableViewCell * eventTitleAndDescCell;
+@property (nonatomic,retain) UIImageView * eventImg;
 @end
 
 @implementation AddNewActiveViewController
@@ -51,7 +58,6 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"Event Details";
- //   [self colorWithNavigationBar];
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.rightBtn] ;
@@ -62,16 +68,12 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
     activeDataMode = [[ActiveDataMode alloc] init];//开始初始化一个
     
     if (self.isEdit) {
-        selectFriendArr = @[].mutableCopy ;
         if ( self.activeEvent.location  &&  ![self.activeEvent.location isEqualToString:@""] ) {
             NSDictionary * locatonDic = [self.activeEvent.location objectFromJSONString];
             coorDic = @{LATITUDE:[locatonDic objectForKey:@"latitude"],LONGITUDE:[locatonDic objectForKey:@"longitude"]};
             coorName = [locatonDic objectForKey:@"location"] ;
         }
     }
-    
-    // [self createVariousView] ;
-    //[self createDatePicker];
     
 }
 -(UIButton *)leftBtn{
@@ -125,225 +127,171 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
 }
 
 
--(MKMapView *)vMap{
-    if (!_vMap) {
-        _vMap = [[MKMapView alloc] initWithFrame:CGRectMake(10, 0,kScreen_Width-20, 160)];
-        _vMap.delegate = self;
-        _vMap.camera.altitude = 170;
-        _vMap.showsBuildings = YES;
-        _vMap.zoomEnabled = NO ;
-        _vMap.scrollEnabled = NO ;
-    }
-    return _vMap ;
-}
-- (void)createDatePicker
-
-{
-    datePickerView = [[UIView alloc] initWithFrame:CGRectMake(0, kScreen_Height, kScreen_Width, 140)] ;
-    UIToolbar *toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, kScreen_Width, 44)];
-    toolBar.barStyle = UIBarStyleDefault;
-    UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
-                                                                    style: UIBarButtonItemStyleDone
-                                                                   target: self
-                                                                   action: @selector(done)];
-    
-    UIBarButtonItem *leftButton  = [[UIBarButtonItem alloc] initWithTitle:@"Cancel"
-                                                                            style: UIBarButtonItemStyleBordered
-                                                                           target: self                                                                           action: @selector(docancel)];
-    
-    UIBarButtonItem *fixedButton  = [[UIBarButtonItem alloc] initWithBarButtonSystemItem: UIBarButtonSystemItemFlexibleSpace
-                                                                                  target: nil
-                                                                                  action: nil];
-    
-    
-    
-    NSArray *array = [[NSArray alloc] initWithObjects: leftButton,fixedButton, rightButton, nil];
-    
-    [toolBar setItems: array];
-    
-}
-
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
-   // [self colorWithNavigationBar];
 }
 
-/**
- *配置NavigationBar的颜色，和字体的颜色
- */
--(void)colorWithNavigationBar{
-    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
-    [self.navigationController.navigationBar setBarTintColor:[UIColor colorWithHexString:@"31aaeb"]];
-}
-
-
--(BOOL)textFieldShouldReturn:(UITextField *)textField{
-    if (textField.becomeFirstResponder) {
-        [textField resignFirstResponder];
-    }
-    return  YES ;
-}
+//-(BOOL)textFieldShouldReturn:(UITextField *)textField{
+//    if (textField.becomeFirstResponder) {
+//        [textField resignFirstResponder];
+//    }
+//    return  YES ;
+//}
 
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-   
 }
 
 
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if ([self.titleFiled isFirstResponder]) {
-        [self.titleFiled resignFirstResponder];
+    if ([self.eventTitleAndDescCell.eventTitle isFirstResponder]) {
+        [self.eventTitleAndDescCell.eventTitle resignFirstResponder];
     }
-    if ([self.descFiled isFirstResponder]) {
+    if ([self.eventTitleAndDescCell.descriptionText isFirstResponder]) {
         [self.descFiled resignFirstResponder];
        
-    }
-     addNewActiveTableView.frame = CGRectMake(0, 0, addNewActiveTableView.frame.size.width, addNewActiveTableView.frame.size.height);
-    //[self docancel];
-}
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    
-    if (4 == textField.tag) {
-        [UIView beginAnimations:nil context:nil];
-        [UIView setAnimationDuration:0.3];
-        if (coorDic) {
-            addNewActiveTableView.frame = CGRectMake(0, -60, addNewActiveTableView.frame.size.width, addNewActiveTableView.frame.size.height);
-        }else{
-           addNewActiveTableView.frame = CGRectMake(0, -20, addNewActiveTableView.frame.size.width, addNewActiveTableView.frame.size.height);
-          }
-        [UIView commitAnimations];
     }
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 4;
+    return 3;
 }
 
-
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if (coorDic) {
-        if (section == 3) {
-            return 2 ;
-        }
-    }
-    
     return 1;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0 && indexPath.row == 0) {
-        return 160.f ;
-    }else{
+        return 180.f ;
+    }else if (indexPath.section == 1 && indexPath.row == 0) {
         if (coorDic) {
-            if ( indexPath.section == 3 && indexPath.row == 1 ) {
-                return 160.f;
-            }
+            return 200.f ;
+        }else{
+           return 44.f;
         }
-        
-        return 64.f;
+    }else{
+        return 200.f;
     }
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    return 0.01f;
+    return 10.f;
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-    return 0.01f;
+    if (section == 2) {
+         return 20.01f;
+    }else{
+         return 0.01f;
+    }
+   
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-   
     if (indexPath.section == 0 && indexPath.row == 0) {
-        if (!activeImgCell) {
-             activeImgCell =(ActiveImageTableViewCell *)[[[UINib nibWithNibName:@"ActiveImageTableViewCell" bundle:nil] instantiateWithOwner:nil options:nil] firstObject];
+        self.eventTitleAndDescCell = [tableView dequeueReusableCellWithIdentifier:AddNewActiveCellId];
+        if (!self.eventTitleAndDescCell) {
+             self.eventTitleAndDescCell = (EventTitleAndDescCellTableViewCell *)[[[UINib nibWithNibName:@"EventTitleAndDescCellTableViewCell" bundle:nil] instantiateWithOwner:nil options:nil] firstObject];
         }
+         if (self.isEdit) { //编辑数据
+             self.eventTitleAndDescCell.eventTitle.text = self.activeEvent.title ;
+             self.eventTitleAndDescCell.descriptionText.text = self.activeEvent.enventDesc ;
+         }
         
-        if (self.isEdit) { //编辑数据
-            NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, self.activeEvent.img] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            NSURL *url = [NSURL URLWithString:_urlStr];
-            
-            [activeImgCell.activeImag sd_setImageWithURL:url placeholderImage:ResizeImage([UIImage imageNamed:@"go2_grey"], CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds))  completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-                UIImage *reSizeImg = ResizeImage(image,CGRectGetWidth(activeImgCell.activeImag.bounds), CGRectGetHeight(activeImgCell.activeImag.bounds));
-                activeImgCell.activeImag.image = reSizeImg ;
-            }];
-        }
-       
-        [self addCellSeparator:160 cell:activeImgCell];
-        return activeImgCell ;
+       return self.eventTitleAndDescCell;
     }else{
-        UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:AddNewActiveCellId] ;
-        
+
+        LocationTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"LocationId"];
         if (!cell) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:AddNewActiveCellId];
+            cell = (LocationTableViewCell *)[[[UINib nibWithNibName:@"LocationTableViewCell" bundle:nil] instantiateWithOwner:nil options:nil] firstObject];
         }
-        if (indexPath.section == 1 && indexPath.row == 0) {
-            self.titleFiled.placeholder = @"Event Title";
-            [self.titleFiled becomeFirstResponder];
-            if(self.isEdit){//编辑数据
-                self.titleFiled.text = self.activeEvent.title ;
-            }
-            [cell.contentView addSubview:self.titleFiled];
-            
-            [self addCellSeparator:64 cell:cell];
-        }else if(indexPath.section == 2 && indexPath.row == 0){
-            self.descFiled.placeholder = @"Description";
-            if (self.isEdit) {//编辑数据
-                self.descFiled.text = self.activeEvent.enventDesc ;
-            }
-            [cell.contentView addSubview:self.descFiled];
-            
-            [self addCellSeparator:64 cell:cell];
-        }else if(indexPath.section == 3 && indexPath.row == 0){
-            cell.accessoryType  = UITableViewCellAccessoryDisclosureIndicator ;
-            cell.textLabel.text = @"Location:" ;
-            if (self.isEdit) {//编辑数据
-                   cell.detailTextLabel.text = coorName ;
-            }else{
-                   cell.detailTextLabel.text = coorName ;
-            }
-            
-            [self addCellSeparator:64 cell:cell];
-        }else if(indexPath.section == 3 && indexPath.row == 1){
-            
-            cell.accessoryType  = UITableViewCellAccessoryNone ;
-            cell.selectionStyle = UITableViewCellSelectionStyleNone ;
-            
-            self.vMap.centerCoordinate = CLLocationCoordinate2DMake([[coorDic objectForKey:LATITUDE] doubleValue], [[coorDic objectForKey:LONGITUDE] doubleValue]);
+        if(indexPath.section == 1 && indexPath.row == 0){
+            cell.descLable.text = @"Localtion:" ;
+            cell.decorativeIcon.image = [UIImage imageNamed:@"adress_Icon"];
+            cell.selectContentLable.text = coorName==nil?@"None":coorName;
+            if (coorDic) {
+             [cell.commonShowView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                  [obj removeFromSuperview];
+              }];
+                
+               MKMapView * _vMap = [[MKMapView alloc] initWithFrame: CGRectMake(0, 0, cell.commonShowView.frame.size.width, cell.commonShowView.frame.size.height+1) ];
+                _vMap.delegate = self;
+                _vMap.camera.altitude = 170;
+                _vMap.showsBuildings = YES;
+                _vMap.zoomEnabled = NO ;
+                _vMap.scrollEnabled = NO ;
+                
+                _vMap.centerCoordinate = CLLocationCoordinate2DMake([[coorDic objectForKey:LATITUDE] doubleValue], [[coorDic objectForKey:LONGITUDE] doubleValue]);
     
-            MKPointAnnotation * annotation = [[MKPointAnnotation alloc] init];
-            annotation.coordinate = self.vMap.centerCoordinate;
-            NSDictionary * locatonDic = [self.activeEvent.location objectFromJSONString];
-            annotation.title = coorName == nil ? [locatonDic objectForKey:@"location"]:coorName;
-            [self.vMap addAnnotation:annotation];
-            [cell addSubview:self.vMap];
+                MKPointAnnotation * annotation = [[MKPointAnnotation alloc] init];
+                annotation.coordinate = _vMap.centerCoordinate;
+                NSDictionary * locatonDic = [self.activeEvent.location objectFromJSONString];
+                annotation.title = coorName == nil ? [locatonDic objectForKey:@"location"]:coorName;
+                [_vMap addAnnotation:annotation];
+                [cell.commonShowView addSubview:_vMap];
+                [_vMap mas_makeConstraints:^(MASConstraintMaker *make) {
+                    make.top.equalTo(cell.commonShowView).with.offset(0);
+                    make.left.equalTo(cell.commonShowView).with.offset(0);
+                    make.bottom.equalTo(cell.commonShowView).with.offset(-0);
+                    make.right.equalTo(cell.commonShowView).with.offset(-0);
+                }];
+
+           }
+        }else if(indexPath.section == 2 && indexPath.row == 0){
+            cell.descLable.text = @"Event picture" ;
+            cell.decorativeIcon.image = [UIImage imageNamed:@"ic-Picture"];
+           
+            [cell.commonShowView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                [obj removeFromSuperview];
+            }];
             
-            [self addCellSeparator:160 cell:cell];
+            self.eventImg = [[UIImageView alloc] init];
+            self.eventImg.frame = CGRectMake(0, 0, cell.commonShowView.frame.size.width, cell.commonShowView.frame.size.height+1);
+            
+            if (self.isEdit) { //编辑数据
+                NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, self.activeEvent.img] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSURL *url = [NSURL URLWithString:_urlStr];
+    
+                [self.eventImg sd_setImageWithURL:url placeholderImage:ResizeImage([UIImage imageNamed:@"go2_grey"], CGRectGetWidth(self.eventImg.bounds), CGRectGetHeight(self.eventImg.bounds))  completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                    UIImage *reSizeImg = ResizeImage(image,CGRectGetWidth(self.eventImg.bounds), CGRectGetHeight(self.eventImg.bounds));
+                    self.eventImg.image = reSizeImg ;
+                }];
+            }else{
+                self.eventImg.image = [UIImage imageNamed:@"listdownload.jpg"];
+            }
+            [cell.commonShowView addSubview:self.eventImg];
+            [self.eventImg mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(cell.commonShowView).with.offset(0);
+                make.left.equalTo(cell.commonShowView).with.offset(0);
+                make.bottom.equalTo(cell.commonShowView).with.offset(-0);
+                make.right.equalTo(cell.commonShowView).with.offset(-0);
+            }];
+            
         }
-        return cell ;
+        
+        return cell;
     }
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == 0 && indexPath.row == 0) {
-        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                                 delegate:self
-                                                        cancelButtonTitle:nil
-                                                   destructiveButtonTitle:nil
-                                                        otherButtonTitles:@"Photo Album", nil];
-        if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-            [actionSheet addButtonWithTitle:@"Camera"];
-        }
-        
-        [actionSheet addButtonWithTitle:@"Cancel"];
-         actionSheet.cancelButtonIndex = actionSheet.numberOfButtons - 1;
-        [actionSheet showInView:self.view];
-    }else if(indexPath.section==3 && indexPath.row == 0){
+//        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+//                                                                 delegate:self
+//                                                        cancelButtonTitle:nil
+//                                                   destructiveButtonTitle:nil
+//                                                        otherButtonTitles:@"Photo Album", nil];
+//        if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+//            [actionSheet addButtonWithTitle:@"Camera"];
+//        }
+//        
+//        [actionSheet addButtonWithTitle:@"Cancel"];
+//         actionSheet.cancelButtonIndex = actionSheet.numberOfButtons - 1;
+//        [actionSheet showInView:self.view];
+    }else if(indexPath.section==1 && indexPath.row == 0){
         LocationViewController *locationView = [[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
         locationView.detelegate = self;
         [self.navigationController pushViewController:locationView animated:YES];
@@ -467,34 +415,26 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
              [self.navigationController popViewControllerAnimated:YES];
         }break;
         case 2:{//open ---> viewController
-            if (self.titleFiled.text && [@"" isEqualToString:self.titleFiled.text]) {
+            if (!self.eventTitleAndDescCell.eventTitle.text || [@"" isEqualToString:self.eventTitleAndDescCell.eventTitle.text]) {
                 [MBProgressHUD showError:@"You forget give to a cool name of the event"];
                 return;
             }
-            InviteesViewController * inviteesVC = [[InviteesViewController alloc] init];
+            NewPurposeEventTimeViewController * purposeEventVC = [[NewPurposeEventTimeViewController alloc] init];
 
-            
-            activeDataMode.activeTitle       = self.titleFiled.text ;
-            activeDataMode.activeDesc        = self.descFiled.text ;
+            activeDataMode.activeTitle       = self.eventTitleAndDescCell.eventTitle.text ;
+            activeDataMode.activeDesc        =self.eventTitleAndDescCell.descriptionText.text ;
             activeDataMode.activeLocName     = coorName ;
             activeDataMode.activeCoordinate  = coorDic ;
-           // activeDataMode.activeDueVoteDate = [datePicker date] ;
-            activeDataMode.activeImg         = activeImgCell.activeImag.image ;
-            inviteesVC.activeDataMode = activeDataMode ;
-            inviteesVC.navStyleType = NavStyleType_LeftRightSame ;
+            activeDataMode.activeImg         = self.eventImg.image ;
+            purposeEventVC.activeDataMode = activeDataMode ;
+          
             
             if(self.isEdit){
                 activeDataMode.Id = self.activeEvent.Id ;
-                [selectFriendArr removeAllObjects];
-                for (NSDictionary *tmpDic in self.activeEvent.invitees) {
-                    [selectFriendArr addObject:[tmpDic objectForKey:@"uid"]];
-                }
-                inviteesVC.joinAllArr = selectFriendArr ;
-                inviteesVC.isEdit = self.isEdit ;
-                inviteesVC.activeEvent = self.activeEvent ;
+                purposeEventVC.isEdit = self.isEdit ;
+                purposeEventVC.activeEvent = self.activeEvent ;
             }
-
-            [self.navigationController pushViewController:inviteesVC animated:YES];
+            [self.navigationController pushViewController:purposeEventVC animated:YES];
         }break;
             
         default:
@@ -504,11 +444,6 @@ static  NSString * AddNewActiveCellId = @"AddNewActiveCellId" ;
    
 }
 
--(NSString *)stringFromNSDate:(NSDate *) parmDate{
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"EEE d MMM"];
-    return [dateFormatter stringFromDate:parmDate];
-}
 
 //添加分割线
 -(void)addCellSeparator:(CGFloat) LocaltionY cell:(UITableViewCell *) cell{

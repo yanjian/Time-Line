@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="200" id="KGk-i7-Jjw" customClass="LocationTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="199"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tAI-1w-JJh">
+                        <rect key="frame" x="8" y="1" width="304" height="198"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic-Location.png" translatesAutoresizingMaskIntoConstraints="NO" id="oGf-Cv-Y9o">
+                                <rect key="frame" x="8" y="12" width="13" height="19"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="13" id="6nz-J4-6Ho"/>
+                                    <constraint firstAttribute="height" constant="19" id="fco-CU-7Rx"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Location:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cbk-6M-Xao">
+                                <rect key="frame" x="29" y="0.0" width="97" height="44"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="None" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g5A-lf-jqC">
+                                <rect key="frame" x="125" y="0.0" width="158" height="44"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="158" id="2cJ-Ul-cxG"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hxt-Sn-g0N">
+                                <rect key="frame" x="0.0" y="39" width="304" height="161"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic-Details.png" translatesAutoresizingMaskIntoConstraints="NO" id="zcZ-nS-zrs">
+                                <rect key="frame" x="288" y="12" width="13" height="19"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="19" id="gKb-pe-IXA"/>
+                                    <constraint firstAttribute="width" constant="13" id="yVJ-Xb-cIb"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="g5A-lf-jqC" firstAttribute="baseline" secondItem="Cbk-6M-Xao" secondAttribute="baseline" id="0Ad-r0-IgS"/>
+                            <constraint firstItem="hxt-Sn-g0N" firstAttribute="top" secondItem="g5A-lf-jqC" secondAttribute="bottom" constant="-5" id="3QY-Q5-XLX"/>
+                            <constraint firstItem="g5A-lf-jqC" firstAttribute="trailing" secondItem="tAI-1w-JJh" secondAttribute="trailingMargin" constant="-13" id="71c-LY-NHI"/>
+                            <constraint firstItem="hxt-Sn-g0N" firstAttribute="top" secondItem="oGf-Cv-Y9o" secondAttribute="bottom" constant="8" id="AiC-ac-tGD"/>
+                            <constraint firstAttribute="trailing" secondItem="hxt-Sn-g0N" secondAttribute="trailing" id="DqE-GK-wMH"/>
+                            <constraint firstItem="zcZ-nS-zrs" firstAttribute="leading" secondItem="g5A-lf-jqC" secondAttribute="trailing" constant="5" id="FIa-QI-qk9"/>
+                            <constraint firstAttribute="bottom" secondItem="hxt-Sn-g0N" secondAttribute="bottom" constant="-2" id="KXM-L0-w5N"/>
+                            <constraint firstItem="zcZ-nS-zrs" firstAttribute="top" secondItem="oGf-Cv-Y9o" secondAttribute="top" id="Vhm-3n-gWh"/>
+                            <constraint firstItem="Cbk-6M-Xao" firstAttribute="leading" secondItem="oGf-Cv-Y9o" secondAttribute="trailing" constant="8" id="Vr6-gR-wbk"/>
+                            <constraint firstItem="oGf-Cv-Y9o" firstAttribute="leading" secondItem="tAI-1w-JJh" secondAttribute="leading" constant="8" id="aRF-Yq-gSG"/>
+                            <constraint firstItem="oGf-Cv-Y9o" firstAttribute="top" secondItem="tAI-1w-JJh" secondAttribute="top" constant="12" id="bx1-5H-qSW"/>
+                            <constraint firstItem="g5A-lf-jqC" firstAttribute="leading" secondItem="Cbk-6M-Xao" secondAttribute="trailing" constant="-1" id="cl1-1e-i3M"/>
+                            <constraint firstItem="hxt-Sn-g0N" firstAttribute="leading" secondItem="tAI-1w-JJh" secondAttribute="leading" id="ggD-Uy-Lxn"/>
+                            <constraint firstItem="oGf-Cv-Y9o" firstAttribute="centerY" secondItem="Cbk-6M-Xao" secondAttribute="centerY" id="jF5-AV-v5R"/>
+                            <constraint firstItem="oGf-Cv-Y9o" firstAttribute="centerY" secondItem="g5A-lf-jqC" secondAttribute="centerY" id="rfp-d1-fpj"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <animations/>
+                <constraints>
+                    <constraint firstAttribute="trailingMargin" secondItem="zcZ-nS-zrs" secondAttribute="trailing" constant="3" id="0Xo-YN-m63"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="hxt-Sn-g0N" secondAttribute="bottom" constant="-10" id="78f-PM-l0I"/>
+                    <constraint firstItem="tAI-1w-JJh" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="C3H-3X-URT"/>
+                    <constraint firstItem="tAI-1w-JJh" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" constant="0.5" id="MhR-fe-1Sf"/>
+                    <constraint firstAttribute="leadingMargin" secondItem="hxt-Sn-g0N" secondAttribute="leading" id="NmW-Bc-Wjw"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="hxt-Sn-g0N" secondAttribute="trailing" id="b4t-zM-DMK"/>
+                    <constraint firstItem="tAI-1w-JJh" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-7" id="zNg-gb-3Wq"/>
+                    <constraint firstItem="tAI-1w-JJh" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="zQF-HQ-FWc"/>
+                </constraints>
+            </tableViewCellContentView>
+            <animations/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <connections>
+                <outlet property="commonShowView" destination="hxt-Sn-g0N" id="CyV-Jp-DEb"/>
+                <outlet property="decorativeIcon" destination="oGf-Cv-Y9o" id="dYg-ha-Qgd"/>
+                <outlet property="descLable" destination="Cbk-6M-Xao" id="jtD-6w-e1t"/>
+                <outlet property="locationContentView" destination="tAI-1w-JJh" id="cZh-aq-GzB"/>
+                <outlet property="selectContentLable" destination="g5A-lf-jqC" id="grG-Nq-eL2"/>
+            </connections>
+            <point key="canvasLocation" x="-94" y="-183"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="ic-Details.png" width="40" height="40"/>
+        <image name="ic-Location.png" width="45" height="45"/>
+    </resources>
+</document>

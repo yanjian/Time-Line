@@ -11,7 +11,7 @@
 @interface NoticesMsgModel : BaseMode
 
 
-@property (nonatomic,  copy) NSNumber *Id;
+@property (nonatomic,  copy) NSString *Id;
 @property (nonatomic,  copy) NSNumber *isRead;           // 1 己读     0 未读
 @property (nonatomic,  copy) NSNumber *isReceive;        // 1 己接收    0 未返回
 @property (nonatomic, retain) NSDictionary *message;

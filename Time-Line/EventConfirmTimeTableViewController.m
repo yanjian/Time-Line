@@ -116,6 +116,9 @@
 -(void)backToEventSettingView:(UIButton *) sender {
     switch (sender.tag) {
         case 1:{
+            if ( self.delegate && [self.delegate respondsToSelector:@selector(popEventConfirmTimeTableViewController:)] ) {
+                [self.delegate popEventConfirmTimeTableViewController:self];
+            }
             [self.navigationController popViewControllerAnimated:YES];
         }break;
         case 2:{

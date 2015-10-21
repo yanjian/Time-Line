@@ -13,21 +13,30 @@
 #import "ManageViewController.h"
 #import "MJRefresh.h"
 #import "ActiveEventMode.h"
-//#import "ActiveTableViewCell.h"
+
 #import "EventInfoShowCell.h"
 #import "UIColor+HexString.h"
 #import "UIImageView+WebCache.h"
 #import "CalendarDateUtil.h"
 #import "ActivedetailsViewController.h"
-//#import "JCMSegmentPageController.h"
+
 
 #import "AddNewActiveViewController.h"
-//#import "AddActiveViewController.h"
 #import "ActiveDestinationViewController.h"
 #import "SimpleEventViewController.h"
 #import "HomeViewController.h"
 
 #import "ActiveEventModel.h"
+
+
+#import "ARSegmentPageController.h"
+#import "UIImage+ImageEffects.h"
+#import "NavigationViewController.h"
+#import "ActiveInfoTableViewController.h"
+#import "ActiveVotingViewController.h"
+#import "Go2ChildTableViewController.h"
+#import "ActiveAlbumsViewController.h"
+#import "ActiveSetingTableViewController.h"
 
 typedef NS_ENUM (NSInteger, ShowActiveType) {
 	ShowActiveType_upcoming     = 0,
@@ -41,7 +50,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 
 
 @interface ManageViewController () <UITableViewDelegate, UITableViewDataSource,
-                                    UIScrollViewDelegate, ASIHTTPRequestDelegate, ActivedetailsViewControllerDelegate,UISearchBarDelegate>
+                                    UIScrollViewDelegate, ASIHTTPRequestDelegate, ActivedetailsViewControllerDelegate,UISearchBarDelegate,ARSegmentPageControllerDelegate,ActiveSetingTableViewControllerDelegate>
 {
 	NSMutableArray * _tmpActiveArr;   //抓取到的数据都放在这个里面的（除隐藏的活动，直接放到_activeArr中的）
 	ShowActiveType   _showActiveType;
@@ -56,6 +65,13 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 @property (nonatomic,retain )     UISearchBar  * mySearchBar ;
 
 @property (nonatomic ,assign) BOOL isSearchExe;
+
+@property (nonatomic, strong) ARSegmentPageController *pager;
+
+@property (nonatomic, strong) ActiveEventModel *activeEvent;
+@property (nonatomic, strong) UIImage *defaultImage;
+@property (nonatomic, strong) UIImage *darkImage;
+
 @end
 
 @implementation ManageViewController
@@ -99,7 +115,10 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
     return YES;
 }
 
-
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    g_AppDelegate.isRead = @(UNREADMESSAGE_NO);
+}
 
 
 -(UISearchBar *)mySearchBar{
@@ -147,22 +166,16 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 	[self.tableView footerEndRefreshing];
 }
 
-//- (void)viewWillAppear:(BOOL)animated {
-//	[super viewWillAppear:animated];
-//    
-//    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
-//    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
-//}
-
 
 -(void)fetchChatGroupInfo:(NSNotification *)notification{
     ChatContentModel * chatContent = [notification.userInfo objectForKey:CHATGROUP_USERINFO];
     if(chatContent){
+        NSLog(@"%@",[NSString stringFromBase64String:chatContent.text]);
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateStyle:NSDateFormatterMediumStyle];
         [formatter setTimeStyle:NSDateFormatterShortStyle];
         [formatter setDateFormat:@"YYYY-MM-dd HH:mm:ss"];
-        NSTimeZone *timeZone = [NSTimeZone defaultTimeZone];
+        NSTimeZone *timeZone = [NSTimeZone localTimeZone];
         [formatter setTimeZone:timeZone];
         NSRange  timePointRange = [chatContent.time rangeOfString:@"."];
         NSDate * objDate1 = nil ;
@@ -178,11 +191,10 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
             latestMsgCount+=1;
             [latestMsgDic removeObjectForKey:chatContent.eid];
             [latestMsgDic setObject:@{latestCount:@(latestMsgCount),latestEventMsg:chatContent.text==nil?@"":chatContent.text,latestMsgTime:objDate1,latestUserName:chatContent.username}.mutableCopy forKey:chatContent.eid];
-            
         }else{
             [latestMsgDic setObject:@{latestCount:@(1),latestEventMsg:chatContent.text==nil?@"":chatContent.text,latestMsgTime:objDate1,latestUserName:chatContent.username==nil?@"":chatContent.username }.mutableCopy forKey:chatContent.eid];
         }
-        [self fefreshTableView ];
+        [self fefreshTableView];
     }
 }
 
@@ -284,31 +296,31 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
             
         }
 		if (resultDataArr.count > 0 || _activeArr.count>0) {
-             ActiveEventModel *activeEvent = nil;
+             ActiveEventModel *activeEventModel = nil;
              if (self.isSearch) {
-                activeEvent = resultDataArr[indexPath.row];
+                activeEventModel = resultDataArr[indexPath.row];
              }else{
-                activeEvent = _activeArr[indexPath.row];
+                activeEventModel = _activeArr[indexPath.row];
              }
-            [self loadUnreadMsg:activeEvent.Id];
-			activeCell.activeEvent = activeEvent;
+            [self loadUnreadMsg:activeEventModel.Id];
+			activeCell.activeEvent = activeEventModel;
 
-            if ( activeEvent.img && ![@"" isEqualToString:activeEvent.img] ) {
+            if ( activeEventModel.img && ![@"" isEqualToString:activeEventModel.img] ) {
                 activeCell.showShortTitle.hidden = YES ;
-                NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, activeEvent.thumbnail] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSString *_urlStr = [[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, activeEventModel.thumbnail] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
                 NSLog(@"%@", _urlStr);
                 NSURL *url = [NSURL URLWithString:_urlStr];
                 [activeCell.activePic sd_setImageWithURL:url placeholderImage:[UIImage imageNamed:@"go2_grey"]];
             }else{
                 activeCell.showShortTitle.hidden = NO ;
                 [activeCell.activePic setBackgroundColor: [UIColor colorWithHexString:@"2e9ef1"]];
-                activeCell.showShortTitle.text = [[activeEvent.title substringToIndex:1] uppercaseString];
+                activeCell.showShortTitle.text = [[activeEventModel.title substringToIndex:1] uppercaseString];
             }
 			
-			activeCell.activeTitle.text = activeEvent.title;
+			activeCell.activeTitle.text = activeEventModel.title;
             
-            NSDictionary *latestDic = [latestMsgDic objectForKey:activeEvent.Id];
-            activeCell.latestModifyMsg.text = [latestDic objectForKey:latestEventMsg] ;
+            NSDictionary *latestDic = [latestMsgDic objectForKey:activeEventModel.Id];
+            activeCell.latestModifyMsg.text = [NSString stringFromBase64String:[latestDic objectForKey:latestEventMsg] ];
             NSString * reUserName = [latestDic objectForKey:latestUserName];
             if (reUserName && ![@"" isEqualToString:reUserName ]) {
                  activeCell.latestModifyUserName.text =[NSString stringWithFormat:@"%@:",reUserName]  ;
@@ -335,20 +347,98 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    ActiveEventModel *activeEvent = nil ;
+    
     if (self.isSearch) {
-        activeEvent = resultDataArr[indexPath.row];
+        self.activeEvent = resultDataArr[indexPath.row];
     }else{
-        activeEvent = _activeArr[indexPath.row];
+        self.activeEvent = _activeArr[indexPath.row];
     }
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 
-    UIStoryboard *storyboarb = [UIStoryboard storyboardWithName:@"ActiveDestination" bundle:[NSBundle mainBundle]];
-     ActiveDestinationViewController * activeDesc =( ActiveDestinationViewController *)  [storyboarb instantiateViewControllerWithIdentifier:@"ActiveDescriptionId"];
-     activeDesc.activeEventInfo = activeEvent;
-     activeDesc.manageViewController = self ;
-     activeDesc.hidesBottomBarWhenPushed = YES ;
-    [self.navigationController pushViewController:activeDesc animated:YES];
+//    UIStoryboard *storyboarb = [UIStoryboard storyboardWithName:@"ActiveDestination" bundle:[NSBundle mainBundle]];
+//     ActiveDestinationViewController * activeDesc =( ActiveDestinationViewController *)  [storyboarb instantiateViewControllerWithIdentifier:@"ActiveDescriptionId"];
+//     activeDesc.activeEventInfo = activeEvent;
+//     activeDesc.manageViewController = self ;
+//     activeDesc.hidesBottomBarWhenPushed = YES ;
+//    [self.navigationController pushViewController:activeDesc animated:YES];
+    
+    ActiveInfoTableViewController *activeInfoTVC = [[ActiveInfoTableViewController alloc] init];
+     activeInfoTVC.activeEvent = self.activeEvent ;
+    
+//    ActiveVotingViewController *activeVotingVC = [[ActiveVotingViewController alloc] init];
+//    activeVotingVC.activeEvent = self.activeEvent ;
+    
+   
+    
+    Go2ChildTableViewController *chatVc = [[Go2ChildTableViewController alloc] init];
+    chatVc.activeEvent = self.activeEvent;
+    
+    ActiveAlbumsViewController * activeAlbumsVc   = [[ActiveAlbumsViewController alloc] init];
+    activeAlbumsVc.eid =  self.activeEvent.Id ;
+    
+    ARSegmentPageController *pager = [[ARSegmentPageController alloc] init];
+    pager.segmentMiniTopInset = 0;
+    pager.delegate = self ;
+    [pager setViewControllers:@[activeInfoTVC,chatVc,activeAlbumsVc]];
+    
+    pager.hidesBottomBarWhenPushed = YES ;
+   
+    self.pager = pager;
+    [self.pager addObserver:self forKeyPath:@"segmentToInset" options:NSKeyValueObservingOptionNew context:NULL];
+    [self.navigationController pushViewController:pager animated:YES];
+    
+}
+
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    
+   if( !self.defaultImage ){
+       if (!self.activeEvent.img || [@"" isEqualToString:self.activeEvent.img]) {
+           self.defaultImage = [UIImage imageNamed:@"Active_PictureDefault"];
+           self.darkImage    = [self.defaultImage applyDarkEffect] ;
+       }else{
+            NSURL * url = [NSURL URLWithString:[[NSString stringWithFormat:@"%@%@", BaseGo2Url_IP, self.activeEvent.img] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+            
+            [self.pager.headerView.imageView  sd_setImageWithURL:url
+                                                placeholderImage:[UIImage imageNamed:@"Active_PictureDefault"]
+                                                       completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
+                if (error) {
+                    return ;
+                }
+                self.defaultImage =  image ;
+                self.darkImage    = [image applyDarkEffect] ;
+            }];
+       }
+    }
+    
+    CGFloat topInset = [change[NSKeyValueChangeNewKey] floatValue];
+    if (topInset <= self.pager.segmentMiniTopInset) {
+         self.pager.title = nil;
+         self.pager.headerView.imageView.image =  self.darkImage ;
+    }else{
+        self.pager.title = nil;
+        self.pager.headerView.imageView.image  =  self.defaultImage;
+    }
+    
+}
+
+
+-(void)closeSegmentPageController:(ARSegmentPageController *) arSegmentPageController{
+    self.defaultImage = nil ;
+    
+    [self.pager removeObserver:self forKeyPath:@"segmentToInset"];
+    
+    [self.navigationController popViewControllerAnimated:YES];
+    
+}
+
+-(void)openActiveSetingTableViewController:(ARSegmentPageController *)arSegmentPageController{
+    ActiveSetingTableViewController * activeSetingVC = [[ActiveSetingTableViewController alloc] init];
+    activeSetingVC.activeEvent = self.activeEvent ;
+    activeSetingVC.delegate = self ;
+    
+    [self.navigationController pushViewController:activeSetingVC animated:YES];
 }
 
 #pragma mark -抓取隐藏的活动
@@ -495,12 +585,6 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 					NSArray *activeArr = (NSArray *)dataObj;
 					for (int i = 0; i < activeArr.count; i++) {
 						ActiveEventModel *activeEvent = [[ActiveEventModel alloc] initWithDictionary:activeArr[i]];
-                        
-//						if (activeEvent.member) {
-//							NSDictionary *memberDataDic = [activeEvent.member firstObject];  //在活动基本信息接口中member只有当前用户
-//							NSInteger notNum =  [[memberDataDic objectForKey:@"notification"] integerValue];
-//							activeEvent.isNotification = notNum == 1 ? YES : NO;
-//						}
 						[_tmpActiveArr addObject:activeEvent];
 					}
 				}
@@ -655,6 +739,7 @@ typedef NS_ENUM (NSInteger, ShowActiveType) {
 -(void)dealloc{
     
     [[NSNotificationCenter defaultCenter] removeObserver:DELETEEVENTNOTI];
+    [[NSNotificationCenter defaultCenter] removeObserver:CHATGROUP_ACTIVENOTIFICTION];
 }
 
 @end

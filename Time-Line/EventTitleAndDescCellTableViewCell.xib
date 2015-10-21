@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="180" id="KGk-i7-Jjw" customClass="EventTitleAndDescCellTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="180"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="179"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pjf-4O-Ddi">
+                        <rect key="frame" x="8" y="3" width="304" height="176"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Event name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7H3-Rr-D2V">
+                                <rect key="frame" x="5" y="2" width="295" height="35"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="bgn-ex-F2j"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YU0-RS-4h5">
+                                <rect key="frame" x="5" y="45" width="295" height="129"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="7H3-Rr-D2V" firstAttribute="top" secondItem="pjf-4O-Ddi" secondAttribute="topMargin" constant="-6" id="3hE-wC-k8y"/>
+                            <constraint firstItem="7H3-Rr-D2V" firstAttribute="leading" secondItem="YU0-RS-4h5" secondAttribute="leading" id="FQK-QB-dXv"/>
+                            <constraint firstItem="YU0-RS-4h5" firstAttribute="leading" secondItem="pjf-4O-Ddi" secondAttribute="leading" constant="1" id="KAX-EO-ULT"/>
+                            <constraint firstItem="7H3-Rr-D2V" firstAttribute="leading" secondItem="pjf-4O-Ddi" secondAttribute="leading" constant="5" id="Lpq-Qu-2J2"/>
+                            <constraint firstItem="YU0-RS-4h5" firstAttribute="leading" secondItem="pjf-4O-Ddi" secondAttribute="leading" constant="5" id="R0V-o8-BQA"/>
+                            <constraint firstItem="YU0-RS-4h5" firstAttribute="top" secondItem="7H3-Rr-D2V" secondAttribute="bottom" constant="8" id="aKL-yK-aF3"/>
+                            <constraint firstItem="7H3-Rr-D2V" firstAttribute="trailing" secondItem="YU0-RS-4h5" secondAttribute="trailing" id="fne-Rq-0zF"/>
+                            <constraint firstItem="YU0-RS-4h5" firstAttribute="leading" secondItem="7H3-Rr-D2V" secondAttribute="leading" id="ht9-dd-bqm"/>
+                            <constraint firstAttribute="bottom" secondItem="YU0-RS-4h5" secondAttribute="bottom" constant="2" id="rWp-a9-cmf"/>
+                            <constraint firstItem="7H3-Rr-D2V" firstAttribute="centerX" secondItem="pjf-4O-Ddi" secondAttribute="centerX" id="ssN-QQ-jGy"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="FQK-QB-dXv"/>
+                                <exclude reference="Lpq-Qu-2J2"/>
+                                <exclude reference="KAX-EO-ULT"/>
+                            </mask>
+                        </variation>
+                    </view>
+                </subviews>
+                <animations/>
+                <constraints>
+                    <constraint firstAttribute="trailingMargin" secondItem="YU0-RS-4h5" secondAttribute="trailing" constant="4" id="EIq-oV-Cdn"/>
+                    <constraint firstItem="pjf-4O-Ddi" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" constant="1.5" id="k0y-IK-153"/>
+                    <constraint firstItem="pjf-4O-Ddi" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="qoa-pY-SL4"/>
+                    <constraint firstItem="pjf-4O-Ddi" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="r6n-Ye-qi5"/>
+                    <constraint firstAttribute="leadingMargin" secondItem="pjf-4O-Ddi" secondAttribute="leading" id="x7N-Dt-IsI"/>
+                    <constraint firstItem="pjf-4O-Ddi" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-5" id="yxP-E2-NK7"/>
+                </constraints>
+            </tableViewCellContentView>
+            <animations/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <connections>
+                <outlet property="descriptionText" destination="YU0-RS-4h5" id="1n8-Vu-Ddm"/>
+                <outlet property="eventContentView" destination="pjf-4O-Ddi" id="gS2-JZ-4uE"/>
+                <outlet property="eventTitle" destination="7H3-Rr-D2V" id="Epk-9I-gFL"/>
+            </connections>
+            <point key="canvasLocation" x="170" y="148"/>
+        </tableViewCell>
+    </objects>
+</document>

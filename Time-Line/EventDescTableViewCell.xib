@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="Roboto-Italic.ttf">
+            <string>Roboto-Italic</string>
+        </mutableArray>
+        <mutableArray key="Roboto-Light.ttf">
+            <string>Roboto-Light</string>
+        </mutableArray>
+        <mutableArray key="Roboto-Regular.ttf">
+            <string>Roboto-Regular</string>
+        </mutableArray>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" rowHeight="160" id="4Yr-3f-zkZ" customClass="EventDescTableViewCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="160"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="4Yr-3f-zkZ" id="FOq-YV-Gd4">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="159"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dW4-3H-Iwe">
+                        <rect key="frame" x="8" y="3" width="304" height="160"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="240" verticalCompressionResistancePriority="250" text="" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ftI-fX-ua4" customClass="DescLable">
+                                <rect key="frame" x="8" y="37" width="288" height="88"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" name="Roboto-Regular" family="Roboto" pointSize="13"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" misplaced="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZCo-Fd-BGk">
+                                <rect key="frame" x="8" y="126" width="64" height="26"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" name="Roboto-Italic" family="Roboto" pointSize="13"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" misplaced="YES" image="smile_1.png" translatesAutoresizingMaskIntoConstraints="NO" id="Rou-Q8-dPd">
+                                <rect key="frame" x="80" y="127" width="25" height="25"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="25" id="bZ8-aa-WmA"/>
+                                    <constraint firstAttribute="height" constant="25" id="pFy-g6-Vvx"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UU2-w5-esH" userLabel="Dinner &amp; Fun">
+                                <rect key="frame" x="8" y="7" width="288" height="27"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="27" id="3aB-zI-Fqb"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Roboto-Light" family="Roboto" pointSize="23"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="ZCo-Fd-BGk" firstAttribute="top" secondItem="ftI-fX-ua4" secondAttribute="bottom" constant="1" id="BYI-FM-ld8"/>
+                            <constraint firstItem="UU2-w5-esH" firstAttribute="top" secondItem="dW4-3H-Iwe" secondAttribute="top" constant="7" id="JwE-ic-qeC"/>
+                            <constraint firstItem="ZCo-Fd-BGk" firstAttribute="leading" secondItem="dW4-3H-Iwe" secondAttribute="leading" constant="8" id="Zju-U8-JyO"/>
+                            <constraint firstItem="UU2-w5-esH" firstAttribute="leading" secondItem="dW4-3H-Iwe" secondAttribute="leading" constant="8" id="bSf-ML-C3v"/>
+                            <constraint firstItem="Rou-Q8-dPd" firstAttribute="top" secondItem="ftI-fX-ua4" secondAttribute="bottom" constant="2" id="ezj-px-rO2"/>
+                            <constraint firstAttribute="bottom" secondItem="ZCo-Fd-BGk" secondAttribute="bottom" constant="8" id="g20-TD-CMD"/>
+                            <constraint firstAttribute="bottom" secondItem="Rou-Q8-dPd" secondAttribute="bottom" constant="8" id="tBc-um-GRn"/>
+                            <constraint firstItem="ftI-fX-ua4" firstAttribute="top" secondItem="UU2-w5-esH" secondAttribute="bottom" constant="3" id="u08-7m-dt2"/>
+                            <constraint firstItem="Rou-Q8-dPd" firstAttribute="leading" secondItem="ZCo-Fd-BGk" secondAttribute="trailing" constant="8" id="wbW-C5-sld"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <animations/>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                <constraints>
+                    <constraint firstAttribute="trailingMargin" secondItem="dW4-3H-Iwe" secondAttribute="trailing" id="AEK-RY-Bmx"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="UU2-w5-esH" secondAttribute="trailing" constant="8" id="Do7-Ve-TIO"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="ftI-fX-ua4" secondAttribute="trailing" constant="8" id="Onm-t7-5Ar"/>
+                    <constraint firstAttribute="leadingMargin" secondItem="dW4-3H-Iwe" secondAttribute="leading" id="Uxe-Wn-Dbi"/>
+                    <constraint firstItem="ftI-fX-ua4" firstAttribute="leading" secondItem="FOq-YV-Gd4" secondAttribute="leadingMargin" constant="8" id="Zo9-d7-3kN"/>
+                    <constraint firstItem="dW4-3H-Iwe" firstAttribute="top" secondItem="FOq-YV-Gd4" secondAttribute="topMargin" constant="-5" id="dyP-TL-8rW"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="dW4-3H-Iwe" secondAttribute="bottom" constant="-12" id="sRx-BA-HBk"/>
+                </constraints>
+            </tableViewCellContentView>
+            <animations/>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <connections>
+                <outlet property="eventBgView" destination="dW4-3H-Iwe" id="ec4-tR-kky"/>
+                <outlet property="eventCreatName" destination="ZCo-Fd-BGk" id="oON-f9-TUt"/>
+                <outlet property="eventCreatorImg" destination="Rou-Q8-dPd" id="qGo-CL-F1P"/>
+                <outlet property="eventDesc" destination="ftI-fX-ua4" id="cjq-QC-jmE"/>
+                <outlet property="eventTitle" destination="UU2-w5-esH" id="ojO-RD-VDi"/>
+            </connections>
+            <point key="canvasLocation" x="290" y="38"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="smile_1.png" width="256" height="256"/>
+    </resources>
+</document>

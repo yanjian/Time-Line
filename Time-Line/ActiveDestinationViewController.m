@@ -15,7 +15,6 @@
 #import "ActiveSetingTableViewController.h"
 #import "TimeVoteModel.h"
 #import "ManageViewController.h"
-
 #import "Go2ChildTableViewController.h"
 
 @interface ActiveDestinationViewController ()<ASIHTTPRequestDelegate,ActiveSetingTableViewControllerDelegate>
@@ -66,17 +65,17 @@
 
 -(NSArray *)childViewControllersForPagerTabStripViewController:(XLPagerTabStripViewController *)pagerTabStripViewController{
 
-    activeInfoVc  = [[ActiveInfoTableViewController alloc]   init];
-    activeInfoVc.activeEvent = self.activeEventInfo ;
-    activeInfoVc.activeDestinationBlank = ^(){
-        [pagerTabStripViewController moveToViewControllerAtIndex:1];//这里
-    };
+//    activeInfoVc  = [[ActiveInfoTableViewController alloc]   init];
+//    activeInfoVc.activeEvent = self.activeEventInfo ;
+//    activeInfoVc.activeDestinationBlank = ^(){
+//        [pagerTabStripViewController moveToViewControllerAtIndex:1];//这里
+//    };
     
-    activeVotingVc   = [[ActiveVotingViewController alloc] init];
-    activeVotingVc.activeEvent = self.activeEventInfo ;
-
-    chatVc = [[Go2ChildTableViewController alloc] init] ;
-    chatVc.activeEvent = self.activeEventInfo ;
+//    activeVotingVc   = [[ActiveVotingViewController alloc] init];
+//    activeVotingVc.activeEvent = self.activeEventInfo ;
+//
+//    chatVc = [[Go2ChildTableViewController alloc] init] ;
+//    chatVc.activeEvent = self.activeEventInfo ;
 
     activeAlbumsVc   = [[ActiveAlbumsViewController alloc] init];
     activeAlbumsVc.eid =  self.activeEventInfo.Id ;

@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "XLPagerTabStripViewController.h"
-@interface ActiveAlbumsViewController : UIViewController<XLPagerTabStripChildItem>
+#import "ARSegmentControllerDelegate.h"
+@interface ActiveAlbumsViewController : UIViewController<ARSegmentControllerDelegate>
 
 @property (nonatomic,copy) NSString * eid ;
 

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ActiveDataMode.h"
-#import "ActiveEventMode.h"
+#import "ActiveEventModel.h"
 
 @interface PurposeEventTimeViewController : UIViewController
 
@@ -17,5 +17,5 @@
 @property (weak, nonatomic) IBOutlet  UITableView    *  dateShowTableView ;
 @property (nonatomic , retain) ActiveDataMode *activeDataMode;
 @property (nonatomic , assign) BOOL isEdit ;
-@property (strong, nonatomic) ActiveEventMode *activeEvent ;
+@property (strong, nonatomic) ActiveEventModel *activeEvent ;
 @end

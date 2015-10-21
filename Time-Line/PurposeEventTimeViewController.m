@@ -46,7 +46,7 @@
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm"];
         [dateFormatter setTimeZone:[NSTimeZone timeZoneWithName:SYS_DEFAULT_TIMEZONE]];
-        for (NSDictionary *tmpDic in self.activeEvent.time) {
+        for (NSDictionary *tmpDic in self.activeEvent.proposeTimes) {
             NSDate  * startDate = [dateFormatter dateFromString:[tmpDic objectForKey:@"startTime"]] ;
             NSDate  * endDate   = [dateFormatter dateFromString:[tmpDic objectForKey:@"endTime"]] ;
             [voteTimeArr addObject:@{startTime:startDate,endTime:endDate,@"id":[tmpDic objectForKey:@"id"]}];

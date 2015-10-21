@@ -13,7 +13,8 @@
 
 @end
 
-@interface LocationViewController : UIViewController 
+@interface LocationViewController:UIViewController
+
 @property (weak, nonatomic) IBOutlet UITextField *locationFiled;
 @property (nonatomic, weak) id<getlocationDelegate> detelegate;
 @end

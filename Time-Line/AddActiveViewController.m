@@ -942,9 +942,9 @@ NS_ENUM (NSInteger, voteAndFixDateType) {
 		else if (indexPath.section == 4) {
 		}
 		else if (indexPath.section == 5) {
-			LocationViewController *locationView = [[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
-			locationView.detelegate = self;
-			[self.navigationController pushViewController:locationView animated:YES];
+//			LocationViewController *locationView = [[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
+//			locationView.detelegate = self;
+//			[self.navigationController pushViewController:locationView animated:YES];
 		}
 	}
 }

@@ -8,8 +8,13 @@
 
 #import "NewPurposeEventTimeViewController.h"
 #import "Go2DayPlannerView.h"
-#import "ReviewViewController.h"
-@interface NewPurposeEventTimeViewController ()<Go2DayPlannerViewDelegate>
+//#import "ReviewViewController.h"
+
+#import "InviteesViewController.h"
+
+@interface NewPurposeEventTimeViewController ()<Go2DayPlannerViewDelegate>{
+    NSMutableArray * selectFriendArr ;
+}
 
 @property (nonatomic,strong) UIButton *leftBtn ;
 @property (nonatomic,strong) UIButton *rightBtn ;
@@ -23,9 +28,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    selectFriendArr = @[].mutableCopy ;
     
     self.title = @"Purpose Event Time" ;
-    
     [self.leftBtn setTag:1];
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
     
@@ -98,13 +103,20 @@
                 return ;
             }
             self.activeDataMode.activeVoteDate = self.voteTimeArr ;
-            ReviewViewController * reviewVC = [[ReviewViewController alloc] init] ;
-            reviewVC.activeDataMode = self.activeDataMode ;
+            InviteesViewController * inviteesVC = [[InviteesViewController alloc] init] ;
+            inviteesVC.activeDataMode = self.activeDataMode ;
+            inviteesVC.navStyleType = NavStyleType_LeftRightSame ;
+            
             if (self.isEdit) {
-                reviewVC.isEdit = self.isEdit ;
-                reviewVC.activeEvent = self.activeEvent ;
+                [selectFriendArr removeAllObjects];
+                for (NSDictionary *tmpDic in self.activeEvent.invitees) {
+                    [selectFriendArr addObject:[tmpDic objectForKey:@"uid"]];
+                }
+                inviteesVC.joinAllArr = selectFriendArr ;
+                inviteesVC.isEdit = self.isEdit ;
+                inviteesVC.activeEvent = self.activeEvent ;
             }
-            [self.navigationController pushViewController:reviewVC animated:YES] ;
+            [self.navigationController pushViewController:inviteesVC animated:YES] ;
         }break;
             
         default:

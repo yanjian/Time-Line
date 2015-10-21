@@ -13,7 +13,7 @@
 #import "LoginViewController.h"
 #import "CoreDataUtil.h"
 
-#import "NavigationController.h"
+#import "NavigationViewController.h"
 #import "HomeViewController.h"
 #import "SetingViewController.h"
 #import "ManageViewController.h"
@@ -67,7 +67,6 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	self.window.backgroundColor = [UIColor whiteColor];
-    
 	[GMSServices provideAPIKey:GOOGLE_API_KEY];//google地图key值
 
 	[MagicalRecord setupCoreDataStackWithStoreNamed:@"Go2.sqlite"];//coreData 类的加载
@@ -134,18 +133,18 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 - (void)setupViewControllers {
     UIViewController *manageViewController = [[ManageAndScheduleParentViewController alloc] init];
-    NavigationController *manageNavigationController = [[NavigationController alloc]
+    NavigationViewController *manageNavigationController = [[NavigationViewController alloc]
                                                    initWithRootViewController:manageViewController];
     
     UIViewController *noticesViewController = [[NoticesViewController alloc] init];
-    NavigationController *notesNavigationController = [[NavigationController alloc]
+    NavigationViewController *notesNavigationController = [[NavigationViewController alloc]
                                                    initWithRootViewController:noticesViewController];
     
     UIViewController *friendInfoViewController = [[FriendInfoViewController alloc] init];
-    NavigationController *friendInfoNavigationController = [[NavigationController alloc]
+    NavigationViewController *friendInfoNavigationController = [[NavigationViewController alloc]
                                                    initWithRootViewController:friendInfoViewController];
     UIViewController *setingViewController = [[SetingViewController alloc] init];
-    NavigationController *setingNavigationController = [[NavigationController alloc]
+    NavigationViewController *setingNavigationController = [[NavigationViewController alloc]
                                                    initWithRootViewController:setingViewController];
 
     self.tabBarController = [[UITabBarController alloc] init];
@@ -204,7 +203,7 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 
 - (void)initLoginView:(LoginOrLogoutType)loginOrLogoutType {
 	LoginViewController *loginVc   = [[LoginViewController alloc] init];
-	NavigationController *navLogin = [[NavigationController alloc] initWithRootViewController:loginVc];
+	NavigationViewController *navLogin = [[NavigationViewController alloc] initWithRootViewController:loginVc];
 	navLogin.navigationBar.hidden  = YES;
     if (loginOrLogoutType == LoginOrLogoutType_SetupMainOpen) {
         self.window.rootViewController = navLogin;
@@ -256,7 +255,15 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 		if (isAccount == AccountTypeLocal) {//本地账号
 			[paramDic setObject:currUserInfo.username forKey:@"username"];
 			[paramDic setObject:currUserInfo.password forKey:@"pwd"];
-			[paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
+#if !TARGET_IPHONE_SIMULATOR
+            if( currUserInfo.deviceToken ){
+                [paramDic setObject:@(0) forKey:@"type"];
+                
+            }else{
+                [paramDic setObject:@(1) forKey:@"type"];
+            }
+            [paramDic setObject:currUserInfo.deviceToken forKey:@"deviceToken"];
+#endif
 			ASIHTTPRequest *request = [t_Network httpGet:paramDic Url:Go2_UserLogin Delegate:self Tag:Go2_UserLogin_Tag];
 			[request startSynchronous];
 		}
@@ -265,7 +272,14 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
 				[paramDic setObject:currUserInfo.email forKey:@"email"];
 			if (currUserInfo.authCode) {
 				[paramDic setObject:currUserInfo.authCode forKey:@"authCode"];
-				[paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
+				//[paramDic setObject:@(UserLoginTypeGoogle) forKey:@"type"];
+                if( currUserInfo.deviceToken ){
+                    [paramDic setObject:@(0) forKey:@"type"];
+                    
+                }else{
+                    [paramDic setObject:@(1) forKey:@"type"];
+                }
+                [paramDic setObject:currUserInfo.deviceToken forKey:@"deviceToken"];
 				ASIHTTPRequest *request = [t_Network httpGet:paramDic Url:LOGIN_USER Delegate:self Tag:LOGIN_USER_TAG];
 				[request startSynchronous];
 			}
@@ -402,14 +416,13 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
  *  @param deviceToken 设备令牌
  */
 -(void)addDeviceToken:(NSData *)deviceToken{
-    NSString *key=@"DeviceToken";
-    NSString *oldToken= [[NSUserDefaults standardUserDefaults] objectForKey:key];
+    NSString *oldToken= [[NSUserDefaults standardUserDefaults] objectForKey:DeviceTokenKey];
     
     NSString * deviceTokenStr = [[[[deviceToken description] stringByReplacingOccurrencesOfString:@"<" withString:@""]                  stringByReplacingOccurrencesOfString:@">" withString:@""]                 stringByReplacingOccurrencesOfString:@" " withString: @""];
     //如果偏好设置中的已存储设备令牌和新获取的令牌不同则存储新令牌并且发送给服务器端
     if (![oldToken isEqualToString:deviceTokenStr]) {
-        [[NSUserDefaults standardUserDefaults] setObject:deviceTokenStr forKey:key];
-        [self sendDeviceTokenWidthOldDeviceToken:oldToken newDeviceToken:deviceTokenStr];
+        [[NSUserDefaults standardUserDefaults] setObject:deviceTokenStr forKey:DeviceTokenKey];
+       // [self sendDeviceTokenWidthOldDeviceToken:oldToken newDeviceToken:deviceTokenStr];
     }
 }
 
@@ -797,23 +810,19 @@ static const int ddLogLevel = LOG_LEVEL_INFO;
     if ( [ @"15" isEqualToString: chatType ] ) {//聊天信息
         int msgType = [[bodyDic objectForKey:@"msg_type"] intValue] ; //信息类型：0.表示文本信息，1.表示图片信息，2表示语音信息
         if( msgType == 0 ){
+            chatContent.text = [bodyDic objectForKey:@"content"] || ![@"" isEqualToString:[bodyDic objectForKey:@"content"]] ? [[bodyDic objectForKey:@"content"] base64String]: @"" ;
             
-           chatContent.text = [bodyDic objectForKey:@"content"] || ![@"" isEqualToString:[bodyDic objectForKey:@"content"]] ? [bodyDic objectForKey:@"content"] : @"" ;
-
         }else if ( msgType == 1 ){
-            
+ 
             chatContent.imgBig   =  [[bodyDic objectForKey:@"url"] base64String];//大图url
             chatContent.imgSmall =  [[bodyDic objectForKey:@"thumbnail"] base64String];//小图
             chatContent.text = @"[Picture]";
             
         }else if ( msgType == 2 ){
-            
-             NSString * voiceUrl = [bodyDic objectForKey:@"url"];
-             NSData * voiceData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSString stringWithFormat:@"%@%@",BaseGo2Url_IP,voiceUrl] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]] ;
-            NSLog(@"%@",[voiceData base64String]);
-            chatContent.voiceAac = [voiceData base64String];
+            NSLog(@"%@",[bodyDic objectForKey:@"url"]);
+            NSString * voiceUrl = [[bodyDic objectForKey:@"url"] base64String];
+            chatContent.voiceAac = voiceUrl ;
             chatContent.text = [bodyDic objectForKey:@"content"] ;
-            
         }
         
     }else if( [@"10" isEqualToString:chatType] ){

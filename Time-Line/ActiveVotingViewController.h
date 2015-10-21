@@ -12,12 +12,27 @@ typedef NS_ENUM(NSInteger, VoteTimeType) {
 };
 
 #import <UIKit/UIKit.h>
+#import "ARSegmentControllerDelegate.h"
 #import "XLPagerTabStripViewController.h"
 #import "ActiveTimeVoteMode.h"
 #import "ActiveEventModel.h"
-
-@interface ActiveVotingViewController : UITableViewController<XLPagerTabStripChildItem>
+@protocol ActiveVotingViewControllerDelegate ;
+@interface ActiveVotingViewController : UITableViewController
+/**活动数据对象*/
 @property (strong, nonatomic) ActiveEventModel *activeEvent ;
+/**代理*/
+@property (nonatomic,assign) id<ActiveVotingViewControllerDelegate> delegate ;
 
+@end
+
+@protocol ActiveVotingViewControllerDelegate <NSObject>
+
+/**
+ *  刷新并关闭控制器视图
+ *
+ *  @param vc      本视图控制器
+ *  @param refresh 是否刷新数据
+ */
+-(void)refreshDataWithCloseController:(ActiveVotingViewController *) vc isRefresh:(BOOL) refresh;
 
 @end

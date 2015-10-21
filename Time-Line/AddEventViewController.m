@@ -1000,9 +1000,9 @@
         [self.navigationController pushViewController:caVC animated:YES];
     
     }else if(indexPath.section==2){
-        LocationViewController *locationView=[[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
-        locationView.detelegate=self;
-        [self.navigationController pushViewController:locationView animated:YES];
+//        LocationViewController *locationView=[[LocationViewController alloc] initWithNibName:@"LocationViewController" bundle:nil];
+//        locationView.detelegate=self;
+//        [self.navigationController pushViewController:locationView animated:YES];
     }else if(indexPath.section==6){
         RepeatViewController *repeatVc = [[RepeatViewController alloc] init];
         repeatVc.recurrObj = recurObj;

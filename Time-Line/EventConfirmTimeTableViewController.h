@@ -21,6 +21,20 @@
 
 
 @protocol EventConfirmTimeTableViewControllerDelegate <NSObject>
+@optional
+/**
+ *  用户pop该视图时回调该方法
+ *
+ *  @param eventConfiremVC 该视图
+ */
+-(void)popEventConfirmTimeTableViewController:(EventConfirmTimeTableViewController *)eventConfiremVC;
 
+
+/**
+ *  创建者投票成功后回调该方法（网络请求成功）
+ *
+ *  @param eventConfirmVC 该控制器
+ *  @param tid            时间的id
+ */
 -(void)eventConfirmTimeTableViewControllerDelegate:(EventConfirmTimeTableViewController *) eventConfirmVC setTimeId:(NSString *)tid ;
 @end

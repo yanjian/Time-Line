@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:CalendarGoUtil/CalendarGoUtil.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:Go2.xcodeproj">
    </FileRef>
    <FileRef

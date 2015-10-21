@@ -291,7 +291,7 @@ static NSString * cellActiveSeting = @"cellActiveSeting" ;
         }else{
             [MBProgressHUD showError:@"Sorry,only the host can\n confirm the event time."];
         }
-    }else if (indexPath.section == 1 && indexPath.row == 0 ) {
+    }else if ( indexPath.section == 1 && indexPath.row == 0 ) {
         InviteesJoinOrReplyTableViewController * inviteesJoinOrReplyVC = [[InviteesJoinOrReplyTableViewController alloc] init];
         inviteesJoinOrReplyVC.memberArr = memberArr ;
         [self.navigationController pushViewController:inviteesJoinOrReplyVC animated:YES];

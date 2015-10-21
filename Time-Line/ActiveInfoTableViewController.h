@@ -8,17 +8,18 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
-#import "XLPagerTabStripViewController.h"
+
+#import "ARSegmentControllerDelegate.h"
 #import "ActiveEventModel.h"
-@ class ActiveDestinationViewController ;
-typedef void(^ActiveDestinationBlank)(void);
 
-
-@interface ActiveInfoTableViewController : UITableViewController<XLPagerTabStripChildItem,MKMapViewDelegate>
+@interface ActiveInfoTableViewController : UITableViewController<ARSegmentControllerDelegate,MKMapViewDelegate>
+/**活动数据*/
 @property (strong, nonatomic) ActiveEventModel *activeEvent ;
-@property (strong, nonatomic) ActiveDestinationBlank activeDestinationBlank;
 
-
-
+/**
+ *  刷新单个活动数据
+ *
+ *  @param eventId 活动的ID
+ */
 -(void)refreshActiveEventData:(NSString *)eventId ;
 @end

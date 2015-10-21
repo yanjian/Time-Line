@@ -19,12 +19,16 @@ static NSString * cellVotingId = @"cellVotingId";
 @interface ActiveVotingViewController ()<ASIHTTPRequestDelegate>{
     NSMutableDictionary *_selectIndexPathDic; //用户选择的indexPath
     
-    VoteTimeType voteTimeType;
-    BOOL isTimeConfirm ;//确定是否已经确定时间 true 表示确定《《《《《《《
+    VoteTimeType _voteTimeType;
+    BOOL _isTimeConfirm  ; //确定是否已经确定时间 true 表示确定《《《《《《《
+    
+    BOOL _isListenOption ; //用户是否有对某个时间进行个投票... YES ? 有（关闭页面跟新数据） : 没有 (不更新数据).
 }
 @property (strong, nonatomic) NSArray * activeTimeVoteArr ;
 @property (strong, nonatomic) NSArray * voteTimeArr ;//用户对那些时间投票咯
 @property (strong, nonatomic) NSArray * voteMemberArr ;
+
+@property (strong, nonatomic) UIButton * leftBtn;
 
 @end
 
@@ -33,6 +37,11 @@ static NSString * cellVotingId = @"cellVotingId";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.title = @"VOTING" ;
+    [self.leftBtn setFrame:CGRectMake(0, 0, 17 , 17)];
+    [self.leftBtn addTarget:self action:@selector(backToEventDeatailsView:) forControlEvents:UIControlEventTouchUpInside] ;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.leftBtn] ;
+    
     _selectIndexPathDic = @{}.mutableCopy ;
     
     NSMutableArray * timeArr = @[].mutableCopy ;
@@ -55,10 +64,6 @@ static NSString * cellVotingId = @"cellVotingId";
         [memberArr addObject:memberDataModel];
     }
     self.voteMemberArr = memberArr ;
-}
-
-- (NSString *)titleForPagerTabStripViewController:(XLPagerTabStripViewController *)pagerTabStripViewController{
-    return @"VOTING" ;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -107,7 +112,7 @@ static NSString * cellVotingId = @"cellVotingId";
     ActiveTimeVoteMode * activeTimeVote = [activeTimeVoteArr objectAtIndex:indexPath.section];
     
     if ( [activeTimeVote.finalTime integerValue] == 2 ) {//表示时间已经确定(只要有一个确定就表示为真)
-        isTimeConfirm = true ;
+        _isTimeConfirm = true ;
     }
     
     NSPredicate * pre = [NSPredicate predicateWithFormat:@"ptid == %@",activeTimeVote.Id];
@@ -140,8 +145,6 @@ static NSString * cellVotingId = @"cellVotingId";
     
     cell.startTimeLab.text = [NSString stringWithFormat:@"From - %@",[self formaterDate:start]] ;
     cell.endTimeLab.text   = [NSString stringWithFormat:@"To - %@",[self formaterDate:end]] ;
-  
-   
     return cell;
 }
 
@@ -152,11 +155,11 @@ static NSString * cellVotingId = @"cellVotingId";
     if (![_selectIndexPathDic objectForKey:indexPathStr]) {
         sender.selected = YES ;
         [_selectIndexPathDic setObject:@(sender.tag) forKey:indexPathStr];
-        voteTimeType = voteTimeType_Vote ;
+        _voteTimeType = voteTimeType_Vote ;
     }else {
         sender.selected = NO ;
         [_selectIndexPathDic removeObjectForKey:indexPathStr];
-        voteTimeType = voteTimeType_cancel ;
+        _voteTimeType = voteTimeType_cancel ;
     }
     ASIHTTPRequest *voteTimeRequest = [t_Network httpPostValue:@{@"method":@"voteTime",@"eid":activeTimeVote.eid, @"timeId":activeTimeVote.Id }.mutableCopy Url:Go2_socials Delegate:self Tag:Go2_socialsVoteTime_Tag];
     
@@ -164,11 +167,9 @@ static NSString * cellVotingId = @"cellVotingId";
 }
 
 #pragma mark - Table view delegate
-
-// In a xib-based application, navigation from a table can be handled in -tableView:didSelectRowAtIndexPath:
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if(isTimeConfirm){
+    if(_isTimeConfirm){
         //暂时屏蔽这一块功能。。。。
 //        UIStoryboard *storyboarb = [UIStoryboard storyboardWithName:@"ActiveDestination" bundle:[NSBundle mainBundle]];
 //        TimeSlotDetailsViewController *  activeDesc = ( TimeSlotDetailsViewController *)  [storyboarb instantiateViewControllerWithIdentifier:@"timeSlotDetails"];
@@ -207,7 +208,7 @@ static NSString * cellVotingId = @"cellVotingId";
 }
 
 
-#pragma mark - asihttprequest 的代理
+#pragma mark - ASIhttprequest 的代理
 - (void)requestFinished:(ASIHTTPRequest *)request {
     NSString *responeStr = [request responseString];
     NSLog(@"%@", [request responseString]);
@@ -217,6 +218,7 @@ static NSString * cellVotingId = @"cellVotingId";
             int statusCode = [[groupObj objectForKey:@"statusCode"] intValue];
             if ( statusCode  == 1 ) {
                 [MBProgressHUD showSuccess:@"Vote success!"];
+                _isListenOption = YES ;
             }
         }
         break;
@@ -226,16 +228,13 @@ static NSString * cellVotingId = @"cellVotingId";
     }
 }
 
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+#pragma mark - 关闭模式打开灯的视图控制器
+-(void)backToEventDeatailsView:(UIButton *)sender{
+    [self.delegate refreshDataWithCloseController:self isRefresh:_isListenOption];
 }
-*/
+
+
+
 
 -(NSString *)formaterDate:(NSDate *) selectDate{
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -244,5 +243,14 @@ static NSString * cellVotingId = @"cellVotingId";
     return  [dateFormatter stringFromDate:selectDate];
 }
 
+-(UIButton *)leftBtn{
+    if (!_leftBtn) {
+        _leftBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_leftBtn setBackgroundImage:[UIImage imageNamed:@"go2_cross"] forState:UIControlStateNormal] ;
 
+        [_leftBtn setFrame:CGRectZero];
+        
+    }
+    return _leftBtn ;
+}
 @end

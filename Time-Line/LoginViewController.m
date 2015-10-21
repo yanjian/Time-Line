@@ -99,7 +99,17 @@
         }
         [paramDic setObject:usernsme forKey:@"username"];
         [paramDic setObject:password forKey:@"pwd"];
-        [paramDic setObject:@(UserLoginTypeLocal) forKey:@"type"];
+#if !TARGET_IPHONE_SIMULATOR
+        NSString * deviceStr = [USER_DEFAULT objectForKey:DeviceTokenKey];
+        if( deviceStr ){
+            [paramDic setObject:@(0) forKey:@"type"];
+            
+        }else{
+            [paramDic setObject:@(1) forKey:@"type"];  
+        }
+
+        [paramDic setObject:deviceStr forKey:@"deviceToken"];
+#endif
         [self addNetWorkRequest:paramDic];
     }else if (sender.tag == 12){//sign up button
         LoginRegisterViewController *loginRegist=[[LoginRegisterViewController alloc] init];
